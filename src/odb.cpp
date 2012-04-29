@@ -233,7 +233,7 @@ int Database::get_field_offset(char *fieldName)
 
 	for( int i = 0; i < dbf_field_count; ++i )
 	{
-		if( stricmp(fieldName, dbf_record_spec[i].field_name) == 0)
+		if( strcasecmp(fieldName, dbf_record_spec[i].field_name) == 0)
 		{
 			// the first char is a space, and Database::read don't include that space
 			return dbf_record_spec[i].field_offset - 1;
@@ -256,7 +256,7 @@ int Database::get_field_width(char *fieldName)
 
 	for( int i = 0; i < dbf_field_count; ++i )
 	{
-		if( stricmp(fieldName, dbf_record_spec[i].field_name) == 0)
+		if( strcasecmp(fieldName, dbf_record_spec[i].field_name) == 0)
 		{
 			if( dbf_record_spec[i].field_type == 'N' )
 				return dbf_record_spec[i].len_info.num_size.len;				// numeric field
@@ -282,7 +282,7 @@ int Database::get_field_dec_width(char *fieldName)
 
 	for( int i = 0; i < dbf_field_count; ++i )
 	{
-		if( stricmp(fieldName, dbf_record_spec[i].field_name) == 0)
+		if( strcasecmp(fieldName, dbf_record_spec[i].field_name) == 0)
 		{
 			if( dbf_record_spec[i].field_type == 'N' )
 				return dbf_record_spec[i].len_info.num_size.dec;				// numeric field

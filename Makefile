@@ -8,14 +8,14 @@ SRCDIR                = .
 SUBDIRS               =
 DLLS                  =
 LIBS                  =
-EXES                  = --lower-all
+EXES                  = 7k2
 
 
 
 ### Common settings
 
-CEXTRA                =
-CXXEXTRA              =
+CEXTRA                = -g -O2 -Wall -m32
+CXXEXTRA              = -g -O2 -Wall -m32
 RCEXTRA               =
 DEFINES               =
 INCLUDE_PATH          = -I. \
@@ -27,12 +27,20 @@ DLL_IMPORTS           =
 LIBRARY_PATH          =
 LIBRARIES             =
 
+7k2_LDFLAGS   = -m32
+7k2_ARFLAGS   =
+7k2_DLL_PATH  =
+7k2_DLLS      =
+7k2_LIBRARY_PATH=
+7k2_LIBRARIES = ole32 winmm dsound gdi32 dinput jpeg
 
-### --lower-all sources and settings
 
-__lower_all_MODULE    = --lower-all
-__lower_all_C_SRCS    =
-__lower_all_CXX_SRCS  = src/ounadraw.cpp \
+
+### 7k2 sources and settings
+
+7k2_MODULE    = 7k2
+7k2_C_SRCS    =
+7k2_CXX_SRCS  = src/ounadraw.cpp \
 			src/of_inni.cpp \
 			src/of_traii.cpp \
 			src/oai_act.cpp \
@@ -479,40 +487,19 @@ __lower_all_CXX_SRCS  = src/ounadraw.cpp \
 			src/osfrmres.cpp \
 			src/oisoarea.cpp \
 			src/oend_con.cpp \
-			src/ofirmlnk.cpp \
-			misc/t/obullet.cpp \
-			misc/t/onews.cpp \
-			misc/t/of_work.cpp \
-			misc/t/of_campi.cpp \
-			misc/t/ogamcamp.cpp \
-			misc/t/ogamsing.cpp \
-			misc/t/oun_atk.cpp \
-			misc/t/oun_proc.cpp \
-			misc/t/or_nat.cpp \
-			misc/t/oun_if.cpp \
-			misc/t/oun_info.cpp \
-			misc/t/oun_grp.cpp \
-			misc/temp/ounitb.cpp \
-			misc/temp/oun_grp.cpp
-__lower_all_RC_SRCS   = misc/am2.rc
-__lower_all_LDFLAGS   =
-__lower_all_ARFLAGS   =
-__lower_all_DLL_PATH  =
-__lower_all_DLLS      =
-__lower_all_LIBRARY_PATH=
-__lower_all_LIBRARIES =
-
-__lower_all_OBJS      = $(__lower_all_C_SRCS:.c=.o) \
-			$(__lower_all_CXX_SRCS:.cpp=.o) \
-			$(__lower_all_RC_SRCS:.rc=.res)
+			src/ofirmlnk.cpp
+7k2_RC_SRCS   = misc/am2.rc
+7k2_OBJS      = $(7k2_C_SRCS:.c=.o) \
+			$(7k2_CXX_SRCS:.cpp=.o) \
+			$(7k2_RC_SRCS:.rc=.res)
 
 
 
 ### Global source lists
 
-C_SRCS                = $(__lower_all_C_SRCS)
-CXX_SRCS              = $(__lower_all_CXX_SRCS)
-RC_SRCS               = $(__lower_all_RC_SRCS)
+C_SRCS                = $(7k2_C_SRCS)
+CXX_SRCS              = $(7k2_CXX_SRCS)
+RC_SRCS               = $(7k2_RC_SRCS)
 
 
 ### Tools
@@ -569,7 +556,7 @@ $(EXTRASUBDIRS:%=%/__clean__): dummy
 ### Target specific build rules
 DEFLIB = $(LIBRARY_PATH) $(LIBRARIES) $(DLL_PATH) $(DLL_IMPORTS:%=-l%)
 
-$(__lower_all_MODULE): $(__lower_all_OBJS)
-	$(CXX) $(__lower_all_LDFLAGS) -o $@ $(__lower_all_OBJS) $(__lower_all_LIBRARY_PATH) $(DEFLIB) $(__lower_all_DLLS:%=-l%) $(__lower_all_LIBRARIES:%=-l%)
+$(7k2_MODULE): $(7k2_OBJS)
+	$(CXX) $(7k2_LDFLAGS) -o $@ $(7k2_OBJS) $(7k2_LIBRARY_PATH) $(DEFLIB) $(7k2_DLLS:%=-l%) $(7k2_LIBRARIES:%=-l%)
 
 

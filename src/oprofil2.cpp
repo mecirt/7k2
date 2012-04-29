@@ -21,6 +21,7 @@
 // Filename    : OPROFIL2.H
 // Description : PlayerProfile menu
 
+#include <unistd.h>
 #include <oprofile.h>
 #include <all.h>
 #include <odir.h>
@@ -44,8 +45,6 @@
 #include <ounitres.h>
 #include <oraceres.h>
 #include <ot_gmenu.h>
-
-#include <io.h>
 
 
 #define PPOPTION_PAGE          0x40000000
@@ -621,7 +620,7 @@ int PlayerProfile::register_menu()
 				int i;
 				for( i = 0; i < profileCount; ++i )
 				{
-					if( stricmp( profileArray[i].player_name, keyinPlayerName ) == 0 )
+					if( strcasecmp( profileArray[i].player_name, keyinPlayerName ) == 0 )
 					{
 						// box.msg( "Same profile has already been created" );
 						box.msg( text_game_menu.str_profile_error_dup() );
@@ -766,7 +765,7 @@ int PlayerProfile::register_menu()
 				RemoveDirectory( str );
 				// ###### patch end Gilbert 12/4 #######//
 
-				if(stricmp( file_name, profileArray[selectedProfile-1].file_name) == 0)
+				if(strcasecmp( file_name, profileArray[selectedProfile-1].file_name) == 0)
 				{
 					// deleting current profile, unregister profile
 					player_name[0] = '\0';

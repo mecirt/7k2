@@ -23,7 +23,6 @@
 // Ownership   : Ban
 
 #include <math.h>
-#include <time.h>
 #include <ovgabuf.h>
 #include <all.h>
 #include <ovga.h>

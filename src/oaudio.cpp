@@ -35,7 +35,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <direct.h>
 #include <mmsystem.h>
 #include <string.h>
 #include <limits.h>

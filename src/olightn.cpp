@@ -23,7 +23,6 @@
 // Ownership   : Gilbert
 
 #include	<math.h>
-#include <time.h>
 #include <ovgabuf.h>
 #include <omisc.h>
 #include <olightn.h>

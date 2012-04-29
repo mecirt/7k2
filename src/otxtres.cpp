@@ -382,7 +382,7 @@ char* TextResource::format(int inNum, int formatType)
    else
       sign  = 0;
 
-   longStr  = ltoa( inNum, longBuf, 10 );
+   sprintf(longBuf, "%ld", inNum);
    intDigit = strlen(longStr);  // no. of integer digits
 
    //--------- negetive bracket ------------//
@@ -443,7 +443,7 @@ char* TextResource::roman_number(int inNum)
 	}
 
 	char deciStr[12];
-	itoa( inNum, deciStr, 10 );
+        sprintf(deciStr, "%d", inNum);
 
 	int deciLen = strlen( deciStr );
 

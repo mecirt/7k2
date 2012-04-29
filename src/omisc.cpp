@@ -25,7 +25,6 @@
 #include <windowsx.h>
 #include <mmsystem.h>
 
-#include <dos.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
@@ -680,7 +679,7 @@ char* Misc::format( int inNum, int formatType )
    else
       sign  = 0;
 
-   longStr  = ltoa( inNum, longBuf, 10 );
+   sprintf(longBuf, "%ld", inNum);
    intDigit = strlen(longStr);  // no. of integer digits
 
    //--------- negetive bracket ------------//
@@ -825,7 +824,7 @@ char* Misc::num_to_str(int inNum)
 {
    static char strBuf[25];
 
-   return ltoa( inNum, strBuf, 10 );
+   sprintf(strBuf, "%ld", inNum);
 }
 //---------- End of function Misc::format ---------//
 

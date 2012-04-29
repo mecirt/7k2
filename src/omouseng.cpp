@@ -24,7 +24,6 @@
 
 #if( !defined(GERMAN) && !defined(FRENCH) && !defined(SPANISH) && !defined(ITALIAN) )
 
-
 #include <omouse.h>
 #include <all.h>
 #include <osys.h>

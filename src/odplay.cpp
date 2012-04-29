@@ -824,7 +824,7 @@ DPPlayer *MultiPlayerDP::search_player(char *name)
 	DPPlayer *player;
 	int i = 0;
 	while( (player = get_player(++i)) != NULL )
-		if( strnicmp(player->formal_name, name, MP_FORMAL_NAME_LEN)== 0)
+		if( strncasecmp(player->formal_name, name, MP_FORMAL_NAME_LEN)== 0)
 			return player;
 	return NULL;
 }

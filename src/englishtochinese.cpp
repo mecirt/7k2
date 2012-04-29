@@ -169,7 +169,7 @@ const char* CEnglishToChinese::GetChineseByEnglish(const char *lpcszEnglish)
 {
 	for(int i=0;i<m_lStrings;i++)
 	{
-		if(stricmp(m_ppchStringTable[i*2+1],lpcszEnglish)==0)
+		if(strcasecmp(m_ppchStringTable[i*2+1],lpcszEnglish)==0)
 		{
 			return m_ppchStringTable[i*2];
 		}

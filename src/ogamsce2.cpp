@@ -186,8 +186,8 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 		j = scenInfoArray[i].dir_id;
 
 		// drop auto.scn and auto2.scn in dir 0
-		if( j == 0 && (stricmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
-			|| stricmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
+		if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
+			|| strcasecmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
 			continue;
 
 		if( j >= 0 && j < MAX_SCENARIO_PATH )
@@ -390,8 +390,8 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 					j = scenInfoArray[i].dir_id;
 
 					// drop auto.scn and auto2.scn in dir 0
-					if( j == 0 && (stricmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
-						|| stricmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
+					if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
+						|| strcasecmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
 						continue;
 
 					if( j >= 0 && j < MAX_SCENARIO_PATH )

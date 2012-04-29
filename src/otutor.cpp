@@ -295,7 +295,7 @@ void Tutor::load(int tutorId)
 
 		//------ read in the display button code of the tutorial segment -------//
 
-		if( strcmpi( tokenStr, "Button" ) == 0 )
+		if( strcasecmp( tokenStr, "Button" ) == 0 )
 		{
 			fileTxt.get_token(1);		// advance the pointer
 
@@ -314,17 +314,17 @@ void Tutor::load(int tutorId)
 		//------ read in the display title of the tutorial segment -------//
 	
 		tutorTextBlock->objective_no = 0;
-		if( strcmpi( tokenStr, "Title" ) == 0 )
+		if( strcasecmp( tokenStr, "Title" ) == 0 )
 		{
 			fileTxt.get_token(1);		// advance the pointer
 			tutorTextBlock->title_code[0] = NULL;
 			while (1)
 			{
 				tokenStr = fileTxt.get_token(1);
-				if ( strcmpi( tokenStr, "**" ) == 0 )
+				if ( strcasecmp( tokenStr, "**" ) == 0 )
 					break;
 				else
-				if ( strcmpi( tokenStr, "*" ) == 0 )
+				if ( strcasecmp( tokenStr, "*" ) == 0 )
 				{
 					tokenStr = fileTxt.get_token(1);
 					tutorTextBlock->objective_no = (tokenStr[0] - '0') * 10 + tokenStr[1] - '0';

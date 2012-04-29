@@ -7987,13 +7987,13 @@ void Tutor::load_in_game_box(int tutorId, int objectiveRecno)
 		//------ read in the display title of the tutorial segment -------//
 	
 		int objective_no = 0;
-		if( strcmpi( tokenStr, "Title" ) == 0 )
+		if( strcasecmp( tokenStr, "Title" ) == 0 )
 		{
 			fileTxt.get_token(1);		// advance the pointer
 			while (1)
 			{
 				tokenStr = fileTxt.get_token(1);
-				if ( strcmpi( tokenStr, "*" ) == 0 )
+				if ( strcasecmp( tokenStr, "*" ) == 0 )
 				{
 					tokenStr = fileTxt.get_token(1);
 					objective_no = (tokenStr[0] - '0') * 10 + tokenStr[1] - '0';

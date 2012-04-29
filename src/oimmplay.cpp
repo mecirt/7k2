@@ -458,7 +458,7 @@ IMPlayer *MultiPlayerIM::search_player(char *name)
 	IMPlayer *player;
 	int i = 0;
 	while( (player = get_player(++i)) != NULL )
-		if( strnicmp(player->szFormal, name, IMMLONGNAMEMAX)== 0)
+		if( strncasecmp(player->szFormal, name, IMMLONGNAMEMAX)== 0)
 			return player;
 	return NULL;
 }

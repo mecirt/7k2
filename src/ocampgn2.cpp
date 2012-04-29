@@ -22,6 +22,7 @@
 // Description : Campaign mode menu
 
 #include <stdio.h>
+#include <unistd.h>
 #include <ocampgn.h>
 #include <ogame.h>
 #include <oinfo.h>
@@ -73,11 +74,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <conio.h>
 #include <math.h>
 #include <malloc.h> 
 #include <string.h>
-#include <io.h>
 #include <fcntl.h> 
 #include <signal.h>
 #include <float.h>
@@ -4568,7 +4567,7 @@ String	str(DIR_IMAGE);
     } // end for index
 
 // finally the image data itself
-	_lseek(file_handle,-(int)(bitmap->bitmapinfoheader.biSizeImage),SEEK_END);
+	lseek(file_handle,-(int)(bitmap->bitmapinfoheader.biSizeImage),SEEK_END);
 
 // allocate the memory for the image
 	if (!(bitmap->buffer = new UCHAR [bitmap->bitmapinfoheader.biSizeImage]))
