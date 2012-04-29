@@ -21,16 +21,16 @@
 //Filename   : OUN_GRP.CPP
 //Description: UnitGroup class
 
-#include <ALL.H>
-#include <OMOUSE.H>
-#include <OPOWER.H>
-#include <ONATION.H>
-#include <OWAYPNT.H>
-#include <OUN_GRP.H>
-#include <OPREUSE.H>
-#include <OREMOTE.H>
-#include <OFONT.H>
-#include <OF_MFORT.H>
+#include <all.h>
+#include <omouse.h>
+#include <opower.h>
+#include <onation.h>
+#include <owaypnt.h>
+#include <oun_grp.h>
+#include <opreuse.h>
+#include <oremote.h>
+#include <ofont.h>
+#include <of_mfort.h>
 
 static void put_profile(int y, char* dispDes, int dispValue);
 

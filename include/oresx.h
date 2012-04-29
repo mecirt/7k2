@@ -28,13 +28,16 @@
 
 //--------- Define structure ResIndex ----------//
 
-#pragma pack(1)
+/* winemaker: #pragma pack(1) */
+#include <pshpack1.h>
 struct ResIndex
 {
    char name[9];
    long pointer;
 };
-#pragma pack()
+/* winemaker: #pragma pack() */
+/* winemaker:warning: Using 4 as the default alignment */
+#include <pshpack4.h>
 
 //--------- Define class ResourceIdx ----------//
 
