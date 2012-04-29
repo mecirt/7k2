@@ -93,7 +93,6 @@ static union
 	char	talk_msg[sizeof(TalkMsg)];
 } temp_obj;
 
-
 //----------- Begin of function BaseObj::crc8 -----------//
 UCHAR BaseObj::crc8()
 {

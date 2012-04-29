@@ -160,20 +160,6 @@ void WallRes::draw_selected()
 {
 	if( selected_x_loc < 0 )
 		return;
-/*
-	int x = selected_x_loc * ZOOM_LOC_WIDTH;
-	int y = selected_y_loc * ZOOM_LOC_HEIGHT;
-
-	x = x - World::view_top_x + ZOOM_X1;
-	y = y - World::view_top_y + ZOOM_Y1;
-
-	//------------ draw the square frame now ------------//
-
-	if( m.is_touch( x, y, x, x, ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2 ) )
-	{
-		vga_back.rect( x, y, x+ZOOM_LOC_WIDTH-1, y+ZOOM_LOC_HEIGHT-1, 1, OWN_SELECT_FRAME_COLOR );
-	}
-	*/
 }
 //--------- End of function WallRes::draw_selected ---------//
 
@@ -222,66 +208,6 @@ WallInfo* WallRes::operator[](int wallId)
 void WallInfo::draw(int xLoc, int yLoc, short *remapTbl)
 {
 	return ;		// no wall in 7k2
-	/*
-	//----------- calculate absolute positions ------------//
-	//-------- check if the wall is within the view area --------//
-
-	int x1 = xLoc*ZOOM_LOC_WIDTH + offset_x - World::view_top_x;
-	int x2 = x1 + bitmap_width() -1;
-	if( x2 < 0 || x1 >= ZOOM_WIDTH )	// out of the view area, not even a slight part of it appears in the view area
-		return;
-
-	int y1 = yLoc*ZOOM_LOC_HEIGHT +offset_y - World::view_top_y;
-	int y2 = y1 + bitmap_height() -1;
-	if( y2 < 0 || y1 >= ZOOM_HEIGHT )
-		return;
-
-	//------- decide which approach to use for displaying -----//
-	//---- only portion of the sprite is inside the view area ------//
-
-	if( x1 < 0 || x2 >= ZOOM_WIDTH || y1 < 0 || y2 >= ZOOM_HEIGHT )
-	{
-		if(is_trans())
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_area_trans_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1,
-					remapTbl);
-			else
-				vga_back.put_bitmap_area_trans( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1);
-		}
-		else
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_area_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1,
-					remapTbl);
-			else
-				vga_back.put_bitmap_area( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1);
-		}
-	}
-
-	//---- the whole sprite is inside the view area ------//
-	else
-	{
-		if(is_trans() )
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_trans_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr, remapTbl);
-			else
-				vga_back.put_bitmap_trans( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr);
-		}
-		else
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr, remapTbl );
-			else
-				vga_back.put_bitmap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr);
-		}
-	}
-	*/
 }
 //--------- End of function WallInfo::draw -----------//
 
@@ -299,67 +225,6 @@ void WallInfo::draw(int xLoc, int yLoc, short *remapTbl)
 void WallInfo::draw_at(int absBaseX, int absBaseY, short *remapTbl)
 {
 	// no wall in 7k2
-	/*
-	//-------- check if the wall is within the view area --------//
-
-	int x1 = absBaseX - World::view_top_x;
-	int x2 = x1 + bitmap_width() -1;
-	if( x2 < 0 || x1 >= ZOOM_WIDTH )	// out of the view area, not even a slight part of it appears in the view area
-		return;
-
-	int y1 = absBaseY - World::view_top_y;
-	int y2 = y1 + bitmap_height() -1;
-	if( y2 < 0 || y1 >= ZOOM_HEIGHT )
-		return;
-
-	//------- decide which approach to use for displaying -----//
-	//---- only portion of the sprite is inside the view area ------//
-
-	if( x1 < 0 || x2 >= ZOOM_WIDTH || y1 < 0 || y2 >= ZOOM_HEIGHT )
-	{
-		// no put_bitmap_area_remap
-		if(is_trans())
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_area_trans_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1,
-					remapTbl);
-			else
-				vga_back.put_bitmap_area_trans( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1);
-		}
-		else
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_area_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1,
-					remapTbl);
-			else
-				vga_back.put_bitmap_area( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-					max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1);
-
-		}
-	}
-
-	//---- the whole sprite is inside the view area ------//
-	else
-	{
-		if(is_trans() )
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_trans_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr, remapTbl);
-			else
-				vga_back.put_bitmap_trans( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr);
-		}
-		else
-		{
-			if( remapTbl)
-				vga_back.put_bitmap_remap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr, remapTbl );
-			else
-				vga_back.put_bitmap( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr);
-		}
-	}
-	*/
 }
 //--------- End of function WallInfo::draw_at -----------//
 

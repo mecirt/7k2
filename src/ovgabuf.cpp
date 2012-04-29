@@ -987,56 +987,7 @@ void VgaBuf::put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorR
 
 void VgaBuf::put_large_bitmapW(int x1, int y1, File* filePtr)
 {
-	if( filePtr == NULL )
-		return;
-
-	int pictWidth = filePtr->file_get_short();
-
-	//------ read in bitmap and display it --------//
-
-	int pictHeight = filePtr->file_get_short();
-	int x2 = x1 + pictWidth  - 1;
-	int y2 = y1 + pictHeight - 1;
-
-	long pictSize = (long) pictWidth * pictHeight * sizeof(short);
-
-	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	//---- if pict size less than 64K, read in the picture in one step ----//
-
-	if( BitmapW::size(pictWidth, pictHeight) <= COMMON_DATA_BUF_SIZE )
-	{
-		((BitmapW *)sys.common_data_buf)->init(pictWidth, pictHeight);
-
-		filePtr->file_read( ((BitmapW *)sys.common_data_buf)->bitmap, pictSize );
-
-		// ##### begin Gilbert 30/10 ######//
-		put_bitmapW( x1, y1, (short *)sys.common_data_buf );
-		// ##### end Gilbert 30/10 ######//
-	}
-	else //----- if the picture size > 64K, read in line by line -----//
-	{
-		int bufferLine = (COMMON_DATA_BUF_SIZE - 2*sizeof(short) )/ pictWidth / sizeof(short);   // max. no. of lines can be in the buffer
-		int ty=y1+bufferLine-1;
-
-		if( ty> y2 )
-			ty=y2;
-
-		while( y1<=y2 )
-		{
-			((BitmapW *)sys.common_data_buf)->init( pictWidth, (ty-y1+1) );
-			filePtr->file_read( ((BitmapW *)sys.common_data_buf)->bitmap, (unsigned)pictWidth * (ty-y1+1) * sizeof(short) );
-
-			// ##### begin Gilbert 30/10 ######//
-			put_bitmapW( x1, y1, (short *)sys.common_data_buf);
-			// ##### end Gilbert 30/10 ######//
-
-			y1 += bufferLine;
-
-			if( (ty+=bufferLine) > y2 )
-				ty=y2;
-		}
-	}
+  // not used
 }
 //----------- End of function VgaBuf::put_large_bitmapW --------//
 

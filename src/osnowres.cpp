@@ -39,49 +39,7 @@
 // ------- Begin of function SnowInfo::draw_at ------//
 void SnowInfo::draw_at(short absX, short absY)
 {
-
 	// no snow in 7k2
-	
-	/*
-	//----------- calculate absolute positions ------------//
-
-	int absX1   = absX + offset_x;
-	int absY1   = absY + offset_y;
-
-	//----------- use fast method for non-gate square
-	short bitmapWidth = bitmap_width();
-	short bitmapHeight = bitmap_height();
-	int absX2 = absX1 + bitmapWidth  - 1;
-	int absY2 = absY1 + bitmapHeight - 1;
-
-	//-------- check if the firm is within the view area --------//
-
-	int x1 = absX1 - World::view_top_x;
-	if( x1 <= -bitmapWidth || x1 >= ZOOM_WIDTH )	// out of the view area, not even a slight part of it appears in the view area
-		return;
-
-	int y1 = absY1 - World::view_top_y;
-	if( y1 <= -bitmapHeight || y1 >= ZOOM_HEIGHT )
-		return;
-
-	//------- decide which approach to use for displaying -----//
-
-	int x2 = absX2 - World::view_top_x;
-	int y2 = absY2 - World::view_top_y;
-
-	//---- only portion of the sprite is inside the view area ------//
-	if( x1 < 0 || x2 >= ZOOM_WIDTH || y1 < 0 || y2 >= ZOOM_HEIGHT )
-	{
-		// no put_bitmap_area_remap
-		vga_back.put_bitmap_area_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-			max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1);
-	}
-	else
-	//---- the whole sprite is inside the view area ------//
-	{
-		vga_back.put_bitmap_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr);
-	}
-	*/
 
 }
 // ------- End of function SnowInfo::draw_at ------//

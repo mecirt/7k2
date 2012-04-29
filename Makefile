@@ -16,6 +16,7 @@ EXES                  = 7k2
 
 CEXTRA                = -g -O2 -Wall -m32
 CXXEXTRA              = -g -O2 -Wall -m32
+ASMFLAGS              = -elf -Zg -zt1
 RCEXTRA               =
 DEFINES               =
 INCLUDE_PATH          = -I. \
@@ -32,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm dsound gdi32 dinput jpeg
+7k2_LIBRARIES = ole32 winmm ddraw dsound gdi32 dinput jpeg shell32
 
 
 
@@ -487,13 +488,61 @@ LIBRARIES             =
 			src/osfrmres.cpp \
 			src/oisoarea.cpp \
 			src/oend_con.cpp \
-			src/ofirmlnk.cpp
+			src/ofirmlnk.cpp \
+			src/asm/CRC.cpp
+
+			
+7k2_ASM_SRCSO  =         \
+
+7k2_ASM_SRCS  =         \
+			src/asm/ib_r.asm \
+			src/asm/ib_tr.asm \
+			src/asm/i_alpha.asm \
+			src/asm/ib_a.asm \
+			src/asm/ib_ar.asm \
+			src/asm/i_bar.asm \
+			src/asm/ib_arm.asm \
+			src/asm/ib.asm \
+			src/asm/ib_at.asm \
+			src/asm/ib_atk.asm \
+			src/asm/ib_atr.asm \
+			src/asm/ib_atrd.asm \
+			src/asm/ib_atrdm.asm \
+			src/asm/ib_atrm.asm \
+			src/asm/ib_bar.asm \
+			src/asm/ib_barm.asm \
+			src/asm/ib_br.asm \
+			src/asm/ib_brm.asm \
+			src/asm/ib_hrdm.asm \
+			src/asm/i_bright.asm \
+			src/asm/ib_rm.asm \
+			src/asm/ib_t.asm \
+			src/asm/ib_tk.asm \
+			src/asm/ib_trd.asm \
+			src/asm/ib_trdm.asm \
+			src/asm/ib_trm.asm \
+			src/asm/ib_war.asm \
+			src/asm/ib_warm.asm \
+			src/asm/ib_wr.asm \
+			src/asm/ib_wrm.asm \
+			src/asm/ic.asm \
+			src/asm/i_ctrl.asm \
+			src/asm/i_effect.asm \
+			src/asm/ij_tr.asm \
+			src/asm/i_line.asm \
+			src/asm/ip_td.asm \
+			src/asm/i_read.asm \
+			src/asm/ib_ahrd.asm \
+			src/asm/ib_ahrdm.asm \
+			src/asm/ib_hrd.asm \
+			src/asm/i_scroll.asm
+		
 7k2_RC_SRCS   = misc/am2.rc
 7k2_OBJS      = $(7k2_C_SRCS:.c=.o) \
 			$(7k2_CXX_SRCS:.cpp=.o) \
 			$(7k2_RC_SRCS:.rc=.res)
 
-
+7k2_ASMOBJS   = $(7k2_ASM_SRCS:.asm=.o)
 
 ### Global source lists
 
@@ -507,8 +556,8 @@ RC_SRCS               = $(7k2_RC_SRCS)
 CC = winegcc
 CXX = wineg++
 RC = wrc
-AR = ar
-
+AR = ar r
+ASM = ./jwasm
 
 ### Generic targets
 
@@ -523,7 +572,7 @@ $(SUBDIRS): dummy
 
 # Implicit rules
 
-.SUFFIXES: .cpp .cxx .rc .res
+.SUFFIXES: .cpp .cxx .asm .rc .res
 DEFINCL = $(INCLUDE_PATH) $(DEFINES) $(OPTIONS)
 
 .c.o:
@@ -531,6 +580,11 @@ DEFINCL = $(INCLUDE_PATH) $(DEFINES) $(OPTIONS)
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $(CXXEXTRA) $(DEFINCL) -o $@ $<
+
+.asm.o:
+	$(ASM) $(ASMFLAGS) -Fo$@.coff $<
+	objcopy -O elf32-i386 $@.coff $@
+	rm -f $@.coff
 
 .cxx.o:
 	$(CXX) -c $(CXXFLAGS) $(CXXEXTRA) $(DEFINCL) -o $@ $<
@@ -544,7 +598,7 @@ CLEAN_FILES     = y.tab.c y.tab.h lex.yy.c core *.orig *.rej \
                   \\\#*\\\# *~ *% .\\\#*
 
 clean:: $(SUBDIRS:%=%/__clean__) $(EXTRASUBDIRS:%=%/__clean__)
-	$(RM) $(CLEAN_FILES) $(RC_SRCS:.rc=.res) $(C_SRCS:.c=.o) $(CXX_SRCS:.cpp=.o)
+	$(RM) $(CLEAN_FILES) $(RC_SRCS:.rc=.res) $(C_SRCS:.c=.o) $(CXX_SRCS:.cpp=.o) $(ASM_SRCS:.asm=.o)
 	$(RM) $(DLLS:%=%.so) $(LIBS) $(EXES) $(EXES:%=%.so)
 
 $(SUBDIRS:%=%/__clean__): dummy
@@ -556,7 +610,7 @@ $(EXTRASUBDIRS:%=%/__clean__): dummy
 ### Target specific build rules
 DEFLIB = $(LIBRARY_PATH) $(LIBRARIES) $(DLL_PATH) $(DLL_IMPORTS:%=-l%)
 
-$(7k2_MODULE): $(7k2_OBJS)
-	$(CXX) $(7k2_LDFLAGS) -o $@ $(7k2_OBJS) $(7k2_LIBRARY_PATH) $(DEFLIB) $(7k2_DLLS:%=-l%) $(7k2_LIBRARIES:%=-l%)
+$(7k2_MODULE): $(7k2_OBJS) $(7k2_ASMOBJS)
+	$(CXX) $(7k2_LDFLAGS) -o $@ $(7k2_OBJS) $(7k2_ASMOBJS) $(7k2_LIBRARY_PATH) $(DEFLIB) $(7k2_DLLS:%=-l%) $(7k2_LIBRARIES:%=-l%)
 
 

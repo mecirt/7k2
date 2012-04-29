@@ -679,7 +679,7 @@ char* Misc::format( int inNum, int formatType )
    else
       sign  = 0;
 
-   sprintf(longBuf, "%ld", inNum);
+   sprintf(longStr, "%ld", inNum);
    intDigit = strlen(longStr);  // no. of integer digits
 
    //--------- negetive bracket ------------//

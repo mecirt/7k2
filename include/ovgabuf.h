@@ -25,6 +25,7 @@
 #define __VGABUF_H
 
 #include <imgfun.h>
+#include <windows.h>
 // #include <ddraw.h>
 
 typedef void *LPVOID;
@@ -183,27 +184,12 @@ public:
 
 	void		put_bitmap(int x,int y,char* bitmapBuf);
 
-	void		put_bitmap_hmirror( int x, int y, char *bitmapBuf )
-				{ IMGbltRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
 	void		put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
 				{ IMGbltAreaRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_area_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2)
-				{ IMGbltAreaRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
 
 	void		put_bitmap_remap(int desX, int desY, char* bitmapBuf, short *colorRemapTable);
 	void		put_bitmap_remap_fast( int x, int y, char *bitmapBuf, short *colorRemapTable )
 				{ IMGbltRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_remap_hmirror( int x, int y, char *bitmapBuf, short *colorRemapTable )
-				{ IMGbltRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_area_remap(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable )
-				{ IMGbltAreaRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	void		put_bitmap_area_remap_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
 
 	// functions with transparent color keying
 
@@ -229,9 +215,6 @@ public:
 
 	void		put_bitmap_area_trans_remap( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable )
 				{ IMGbltAreaTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	void		put_bitmap_area_trans_remap_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaTransRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
 
 	// functions with run-length transparent key decompression
 
@@ -370,9 +353,6 @@ public:
 	// cut (srcX1,srcY1)-(srcX2,srcY2) of srcBuf and put at (srcX1,srcY1) of this VgaBuf
 
 	void		blt_buf_bright( VgaBuf *srcBuf, int srcX1, int srcY1, int srcX2, int srcY2, int brightness);
-
-	void		join_trans_remap( VgaBuf *srcBuf, int x, int y, char *bitmapBuf, short *colorRemapTable)
-				{ IMGjoinTransRemap( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
 
 	void		join_trans( VgaBuf *srcBuf, int x, int y, char *bitmapBuf )
 				{ IMGjoinTransRemap( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, x, y, bitmapBuf, default_remap_table ); }
