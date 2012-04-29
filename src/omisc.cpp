@@ -668,7 +668,7 @@ char* Misc::format( int inNum, int formatType )
    static char outBuf[35];
    static char longBuf[25];
    char   *outPtr=outBuf;
-   char   *longStr;
+   char   _longStr[25];
    int    i, intDigit, sign;
 
    if( inNum < 0 )
@@ -679,8 +679,9 @@ char* Misc::format( int inNum, int formatType )
    else
       sign  = 0;
 
-   sprintf(longStr, "%ld", inNum);
-   intDigit = strlen(longStr);  // no. of integer digits
+   sprintf(_longStr, "%d", inNum);
+   intDigit = strlen(_longStr);  // no. of integer digits
+   char *longStr = _longStr;
 
    //--------- negetive bracket ------------//
 
@@ -824,7 +825,8 @@ char* Misc::num_to_str(int inNum)
 {
    static char strBuf[25];
 
-   sprintf(strBuf, "%ld", inNum);
+   sprintf(strBuf, "%d", inNum);
+   return strBuf;
 }
 //---------- End of function Misc::format ---------//
 
