@@ -40,20 +40,6 @@ char*	TextResGameMenu::str_version( const char *versionStr )
 	return process( get_format_str( 1, "VERS" ), versionStr );
 }
 
-// text id 2
-// [VERD]Demo Version
-char*	TextResGameMenu::str_demo_version()
-{
-	return get_format_str( 2, "VERD" );
-}
-
-// text id 3
-// [VERB]This is a Beta version. Unauthorized distribution of this Beta is strictly prohibited.
-char*	TextResGameMenu::str_beta_version()
-{
-	return get_format_str( 3, "VERB" );
-}
-
 // text id 4
 // [SPLR]Single Player
 char*	TextResGameMenu::str_single_player()

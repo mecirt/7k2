@@ -56,12 +56,6 @@
 #include <ot_gmenu.h>
 #include <ot_reps.h>
 
-#ifdef DEMO
-#define ONLY_TERRAIN_SET_1
-#define ONLY_SMALL_BUILDING
-#endif
-
-
 //---------- Define option modes --------//
 
 enum
@@ -107,12 +101,6 @@ static int debug_version_flag()
 		1
 #else
 		0
-#endif
-#ifdef BETA
-		| 2
-#endif
-#ifdef DEMO
-		| 4
 #endif
 	;
 }
@@ -617,10 +605,6 @@ void Game::multi_player_game(char *cmdLine)
 	{
 		player_profile.reload();
 		++player_profile.num_start_games;
-#ifdef DEMO
-		if( player_profile.demo_try_count < 255 )
-			++player_profile.demo_try_count; 
-#endif
 		// update profile
 		player_profile.save();
 
@@ -797,10 +781,6 @@ void Game::load_mp_game(char *fileName, char *cmdLine)
 	{
 		player_profile.reload();
 		// ++player_profile.num_start_games;	// new game only
-#ifdef DEMO
-		if( player_profile.demo_try_count < 255 )
-			++player_profile.demo_try_count; 
-#endif
 		// update profile
 		player_profile.save();
 	}
@@ -1546,13 +1526,6 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 	// clear goals
 	tempConfig.clear_goals();
 	// ######## end Gilbert 24/5 ##########//
-
-#ifdef ONLY_TERRAIN_SET_1
-	tempConfig.terrain_set = 1;
-#endif
-#ifdef ONLY_SMALL_BUILDING
-	tempConfig.building_size = 2;
-#endif
 
 	TempGameSet tempGameSet(1);		// game_set.open_set
 	TempUnitRes tempUnitRes;			// unit_res.init
@@ -2432,12 +2405,8 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 						font_bold_black.put( aiMonsterNationGroup[MAX_NATION-1].x2+10, aiMonsterNationGroup[MAX_NATION-1].y1,
 							text_game_menu.str_fryhtan() ); //"Fryhtan" );
 						font_bold_black.center_put( 341, 305-30, 654, 324-30, text_game_menu.str_difficulty_level()); // "Difficulty Level" );
-#ifndef ONLY_TERRAIN_SET_1
 						font_bold_black.center_put( 370, 380-60, 633, 393-60, text_game_menu.str_terrain_set()); // "Terrain Type" );
-#endif
-#ifndef ONLY_SMALL_BUILDING
 						font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set()); // "Building Size" );
-#endif
 
 						// ------- display option Mode ------//
 
@@ -2540,14 +2509,10 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 						else
 							diffGroup.paint(diffGroup.button_num-1);	// last button
 					}
-#ifndef ONLY_TERRAIN_SET_1
 					if( refreshFlag & SGOPTION_TERRAIN )
 						terrainGroup.paint(tempConfig.terrain_set-1);
-#endif
-#ifndef ONLY_SMALL_BUILDING
 					if( refreshFlag & SGOPTION_BUILDING_SIZE )
 						buildingSizeGroup.paint(tempConfig.building_size-1);
-#endif
 					if( refreshFlag & SGOPTION_NAME_FIELD )
 						playerNameField.paint(0);		// don't put cursor, it is not inputable
 				}
@@ -3611,7 +3576,6 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 							// refreshFlag |= SGOPTION_DIFFICULTY;
 						}
 					}
-#ifndef ONLY_TERRAIN_SET_1
 					else if( terrainGroup.detect() >= 0)
 					{
 						tempConfig.terrain_set = terrainGroup[terrainGroup()].custom_para.value;
@@ -3621,15 +3585,12 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 						configChange = 1;
 						//refreshFlag |= SGOPTION_TERRAIN;
 					}
-#endif
-#ifndef ONLY_SMALL_BUILDING
 					else if( buildingSizeGroup.detect() >= 0)
 					{
 						tempConfig.building_size = buildingSizeGroup[buildingSizeGroup()].custom_para.value;
 						configChange = 1;
 						//refreshFlag |= SGOPTION_BUILDING_SIZE;
 					}
-#endif
 				}
 
 				// -------- detect advanced option ---------//
@@ -3962,9 +3923,6 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 				}
 				if( q >= regPlayerCount )		// not all playerReadyFlag[p] = 1;
 				{
-#if( defined(DEBUG) || defined(BETA) || defined(DEMO) )
-					sumBalance = 0;
-#endif
 					if( sumBalance >= 0 )
 					{
 //						MpStructBase msgStart(MPMSG_START_GAME);
@@ -5183,12 +5141,8 @@ int Game::mp_select_load_option(char *fileName)
 						font_bold_black.put( aiMonsterNationGroup[MAX_NATION-1].x2+10, aiMonsterNationGroup[MAX_NATION-1].y1,
 							text_game_menu.str_fryhtan() ); //"Fryhtan" );
 						font_bold_black.center_put( 341, 305-30, 654, 324-30, text_game_menu.str_difficulty_level()); // "Difficulty Level" );
-#ifndef ONLY_TERRAIN_SET_1
 						font_bold_black.center_put( 370, 380-60, 633, 393-60, text_game_menu.str_terrain_set()); // "Terrain Type" );
-#endif
-#ifndef ONLY_SMALL_BUILDING
 						font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set()); // "Building Size" );
-#endif
 
 						// ------- display option Mode ------//
 
@@ -5291,14 +5245,10 @@ int Game::mp_select_load_option(char *fileName)
 						else
 							diffGroup.paint(diffGroup.button_num-1);	// last button
 					}
-#ifndef ONLY_TERRAIN_SET_1
 					if( refreshFlag & SGOPTION_TERRAIN )
 						terrainGroup.paint(tempConfig.terrain_set-1);
-#endif
-#ifndef ONLY_SMALL_BUILDING
 					if( refreshFlag & SGOPTION_BUILDING_SIZE )
 						buildingSizeGroup.paint(tempConfig.building_size-1);
-#endif
 					if( refreshFlag & SGOPTION_NAME_FIELD )
 						playerNameField.paint(0);		// don't put cursor, it is not inputable
 				}
@@ -6172,9 +6122,6 @@ int Game::mp_select_load_option(char *fileName)
 				}
 				if( q >= regPlayerCount )		// not all playerReadyFlag[p] = 1;
 				{
-#if( defined(DEBUG) || defined(BETA) || defined(DEMO) )
-					sumBalance = 0;
-#endif
 					if( regPlayerCount != maxPlayer )
 					{
 						box.msg( text_game_menu.str_mp_lack_players(regPlayerCount, maxPlayer) );

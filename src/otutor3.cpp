@@ -124,25 +124,10 @@ int Tutor::select_learning_campaign_menu()
 	int learningCampaignCount = sizeof(learningCampaignList) / sizeof(learningCampaignList[0]);
 
 	err_when(MAX_NO_OF_TUTORIAL < learningCampaignCount);
-/*		
-	int tutorial_finish_count[2];
-	
-	// check in player profile to find which learning campaign have been finished
-	for (i = 0; i < 2; i++)
-#ifdef BETA
-		tutorial_finish_count[i] = 9;
-#else
-		tutorial_finish_count[i] = (player_profile.tutorial_finish_count % (int)pow(10.0, (i+1))) / (int)pow(10.0, i);
-#endif
-*/
-		
+
 	int tutorial_finish_count;
 	// check in player profile to find which learning campaign have been finished
-#ifdef BETA
-		tutorial_finish_count = 99;
-#else
-		tutorial_finish_count = player_profile.tutorial_finish_count;
-#endif
+	tutorial_finish_count = player_profile.tutorial_finish_count;
 		
 	Config tempConfig = config;
 
@@ -569,13 +554,6 @@ int Tutor::select_learning_campaign_menu()
 		cx += w + 12;
 	}
 
-#ifdef DEMO
-	if( tempConfig.building_size != 2 )
-		tempConfig.building_size = 2;
-	buildingSizeGroup[0].visible_flag = 0;		// terrain set 1 only
-#endif
-
-	
 	// ------- loop ---------//
 	{
 		VgaFrontLock vgaLock;
@@ -631,9 +609,7 @@ int Tutor::select_learning_campaign_menu()
 						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
-					#ifndef DEMO
 						font_bold_black.put( 230, 406, text_game_menu.str_building_set() );
-					#endif
 
 						int tutorId = campaign_id_array[browseRecno-1] * 2 + specy_array[browseRecno-1] + 1;
 						if( browseRecno && image_tutorial.get_index(this->operator[](tutorId)->code) )
@@ -707,10 +683,8 @@ int Tutor::select_learning_campaign_menu()
 				//	if( refreshFlag & SGOPTION_RACE )
 				//		speciesGroup.paint( tempConfig.race_id < 0 );
 
-				#ifndef DEMO
 					if( refreshFlag & SGOPTION_BUILDING_SIZE )
 						buildingSizeGroup.paint(building_size-1);
-				#endif
 				}
 
 				refreshFlag = 0;
@@ -873,41 +847,6 @@ static void i_disp_color_button(ButtonCustom *button, int repaintBody)
 //
 void Tutor::update_tutorial_finish_count()
 {
-/*	int tempTutorId = cur_tutor_id - 1;
-	int isMonster = tempTutorId % 2;
-
-#ifdef BETA
-	int tutorialCount = 0;
-#else
-	int tutorialCount = (tempTutorId>>1) + 1;
-#endif
-
-	int tempTutorialFinishCount = player_profile.tutorial_finish_count;
-
-	if (isMonster)
-		tempTutorialFinishCount = 
-		tempTutorialFinishCount %10 +
-		tutorialCount * 10;
-	//	player_profile.tutorial_finish_count = 
-	//	player_profile.tutorial_finish_count %10 +
-	//	tutorialCount * 10;
-	else
-		tempTutorialFinishCount = 
-		(tempTutorialFinishCount /10) *10 +
-		tutorialCount;
-	//	player_profile.tutorial_finish_count = 
-	//	(player_profile.tutorial_finish_count /10) *10 +
-	//	tutorialCount;
-	
-	if (tempTutorialFinishCount > player_profile.tutorial_finish_count &&
-			((tempTutorialFinishCount - player_profile.tutorial_finish_count) == 10 ||
-			 (tempTutorialFinishCount - player_profile.tutorial_finish_count) == 1))
-	{
-		player_profile.tutorial_finish_count = tempTutorialFinishCount;
-		player_profile.save();
-	}*/
-
-#ifndef BETA
 //	{ cur_tutor_id human   : 1, 3, 5, 7, ..
 //	{ cur_tutor_id frythan : 2, 4, 6, 8, ..	
 	int id_array[16] = { -1,  2,  0,  3,  1,  4, -1,  5, -1,  6, -1,  7 };
@@ -920,7 +859,6 @@ void Tutor::update_tutorial_finish_count()
 		player_profile.tutorial_finish_count = tempTutorialFinishCount;
 		player_profile.save();
 	}
-#endif
 }
 // ------- End of function Tutor::update_tutorial_finish_count -----//
 
@@ -1906,17 +1844,6 @@ int Tutor::update_tutorial_objective_finish_count()
 						achieved_objective_array[13] == 1)
 					{
 						achieved_objective_array[14] = 1;
-					#ifdef DEMO	
-						achieved_objective_array[15] = 1;
-						achieved_objective_array[16] = 1;
-						achieved_objective_array[17] = 1;
-						achieved_objective_array[18] = 1;
-						achieved_objective_array[19] = 1;
-						achieved_objective_array[20] = 1;
-						achieved_objective_array[21] = 1;
-						achieved_objective_array[22] = 1;
-						return 22;
-					#endif
 						return 14;				
 					}
 				}

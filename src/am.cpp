@@ -411,28 +411,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	//--------------------------------------//
 
-#if(defined(BETA))
-#define EXPIRE_YEAR 1999
-#define EXPIRE_MONTH 8
-#define EXPIRE_DAY 31
-	SYSTEMTIME sysTime;
-	GetLocalTime(&sysTime);
-	if( config.expired_flag || sysTime.wYear > EXPIRE_YEAR ||
-		(sysTime.wYear == EXPIRE_YEAR && (sysTime.wMonth > EXPIRE_MONTH
-		|| sysTime.wMonth == EXPIRE_MONTH && sysTime.wDay >= EXPIRE_DAY)) )
-	{
-		if( !config.expired_flag )
-		{
-			// write back config with expired_flag set
-			config.expired_flag = 1;
-			config.save("CONFIG.DAT");
-		}
-		MessageBox( NULL, "Beta version expired", "Seven Kingdoms 2",
-			MB_OK | MB_ICONSTOP | MB_DEFBUTTON1 | MB_TASKMODAL );
-		return 2;
-	}
-#endif
-
 #ifdef IMAGICMP
 	static char lobbyLaunchCmdLine[] = "IM";
 #else
@@ -458,10 +436,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
    err.set_extra_handler( extra_error_handler );   // set extra error handler, save the game when a error happens
 
-//#ifdef DEMO
-//	game.demo_disp_logo();
-//   game.main_menu();
-//#else
 	// ######## begin Gilbert 2/7 #######//
 	if( strstr(lpCmdLine, lobbyLaunchCmdLine) != NULL )
 	{
@@ -484,17 +458,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		game.main_menu();
 	}
 	// ######## end Gilbert 24/2 #######//
-//#endif
-
-#ifdef DEMO
-	if (vga.is_inited())
-	{
-		vga.disp_image_file("FEATURE1");
-		mouse.wait_press(60);
-		vga.disp_image_file("FEATURE2");
-		mouse.wait_press(60);
-	}
-#endif
 
    sys.deinit();
 

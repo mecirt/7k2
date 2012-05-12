@@ -27,8 +27,6 @@
 
 //----------- Define constant -------------//
 
-#define NULL 0
-
 enum { NO_HELP, BRIEF_HELP, DETAIL_HELP };	 	// for config.help_mode  
 
 enum { MAX_HELP_INFO=200 };     // Maximum no. of help info allowed

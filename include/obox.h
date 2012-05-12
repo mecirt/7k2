@@ -26,8 +26,6 @@
 
 //------- constant for arrow box ----------//
 
-#define NULL 0
-
 enum { ARROW_BOX_WIDTH        = 390,
        ARROW_BOX_X_MARGIN     = 15,
        ARROW_BOX_Y_MARGIN     = 15,

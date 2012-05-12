@@ -73,8 +73,6 @@ enum ScreenObjectType
 
 //--------- Define class Power ----------//
 
-#define NULL 0
-
 struct Location;
 
 class File;

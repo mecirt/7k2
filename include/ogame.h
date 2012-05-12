@@ -53,7 +53,6 @@ enum { GAME_PREGAME=1,
 
 // ----- define constant -------//
 
-#define NULL 0
 #define MAX_WIN_CONDITION 8
 #define MAX_LOSE_CONDITION 8
 
@@ -169,9 +168,6 @@ public:
 	int 			select_run_scenario(int countScenarioOnly=0);
 	int 			select_scenario(int scenCount, ScenInfo* scenInfoArray);
 	int 			run_scenario(ScenInfo* scenInfo);
-
-	void 			demo_disp_ad_page();
-	void			demo_disp_logo();
 
 	short*		get_color_remap_table(int nationRecno, int selectedFlag);
 	static void	disp_gen_game_status( int addStep );

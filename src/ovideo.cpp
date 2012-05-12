@@ -513,11 +513,7 @@ static void create_dummy_window(HINSTANCE hInstance)
 		wc.hInstance      = hInstance;
 		wc.hIcon          = NULL;	// LoadIcon( hInstance, MAKEINTATOM(IDI_ICON1));
 		wc.hCursor        = LoadCursor( NULL, IDC_ARROW );
-	#ifdef VC5 
-		wc.hbrBackground  = GetStockObject(BLACK_BRUSH);
-	#else
 		wc.hbrBackground  = (HBRUSH__ *) GetStockObject(BLACK_BRUSH);
-	#endif
 		wc.lpszMenuName   = NULL;
 		wc.lpszClassName  = "Seven Kingdoms Video Window";
 

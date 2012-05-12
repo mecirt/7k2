@@ -380,8 +380,6 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 
 	//--- otherwise, ask if the player wants to stay in the game ---//
 
-	#ifndef DEMO		// cannot continue to stay in the game in the demo version
-
 	if( !retireFlag && !game.is_campaign_mode() && !remote.is_enable() )		// can't stay in the game in a multiplayer game
 	{
 		vga_front.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_BLACK );		// clear the screen
@@ -396,8 +394,6 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 
 		power.win_opened = powerWinFlag;
 	}
-
-	#endif
 
 	//-------- restore display mode ---------//
 

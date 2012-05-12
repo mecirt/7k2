@@ -46,20 +46,8 @@
 #include <ot_gmenu.h>
 #include <ocoltbl.h>
 
-#undef DISABLE_MULTI_PLAYER
-#undef DISABLE_SINGLE_PLAYER_NEW_GAME
-#undef DISABLE_SCENARIO_EDITOR
-
-#ifdef DEMO
-#define DISABLE_MULTI_PLAYER
-#define DISABLE_SINGLE_PLAYER_NEW_GAME
-#define DISABLE_SCENARIO_EDITOR
-#endif
-
 // define the macro to disable single player menu
 //#define DISABLE_SINGLE_PLAYER
-
-extern void play_video( HINSTANCE, int );
 
 //----------- Define structure ---------//
 
@@ -88,20 +76,16 @@ void Game::run_main_menu_option(int optionId)
 
 	if( optionId==1 )
 	{
-#ifndef DISABLE_SINGLE_PLAYER
 		game_mode = GAME_SINGLE_PLAYER;
 		single_player_menu();
-#endif
 	}
 
 	//-------- Multiplayer Game ----------//
 
 	if( optionId==2 )
 	{
-#ifndef DISABLE_MULTI_PLAYER
 		game_mode = GAME_MULTI_PLAYER;
 		multi_player_menu(NULL);
-#endif
 	}
 
 	//----------- scenario editor -----------//
@@ -133,28 +117,6 @@ void Game::run_main_menu_option(int optionId)
 		view_credits();
 	}
 
-	if( optionId==6 )		// go to home page
-	{
-		const char *shortcutFilename = "7k2home.url";
-
-		if( !m.is_file_exist(shortcutFilename) )
-		{
-			// create 7k2home.url file
-
-			char fileStr[] = "[InternetShortcut]\r\nURL=http://www.enlight.com/7k2\r\n";
-
-			File urlFile;
-			urlFile.file_create(shortcutFilename);
-			urlFile.file_write( fileStr, strlen(fileStr) );
-			urlFile.file_close();
-		}
-
-		if( m.is_file_exist("7k2home.url") )
-		{
-			HINSTANCE hinst = ShellExecute( sys.main_hwnd, "open", shortcutFilename, NULL, "", SW_SHOWNORMAL );
-		}
-	}
-
 	if( optionId==7 )
 	{
 		sys.signal_exit_flag = 1;
@@ -170,29 +132,7 @@ void Game::disp_version()
 
 	String str;
 
-	// ####### begin Gilbert 5/6 ########//
-//	str  = "Version ";
-//	str += GAME_VERSION_STR;
-//	#ifdef DEMO
-//		str = "Demo Version";
-//	#endif
-//	#ifdef BETA
-//		str = "This is a Beta version. Unauthorized distribution of this Beta is strictly prohibited.";
-//	#endif
-
-#if(defined(BETA))
-//	str = "This is a Beta version. Unauthorized distribution of this Beta is strictly prohibited.";
-	str = text_game_menu.str_beta_version();
-#elif(defined(DEMO))
-//	str = "Demo Version";
-//	str = text_game_menu.str_demo_version();
-	str = "";
-#else
-//	str  = "Version ";
-//	str += GAME_VERSION_STR;
 	str = text_game_menu.str_version( GAME_VERSION_STR );
-#endif
-	// ####### end Gilbert 5/6 ########//
 
 	if( str.len() > 40 )
 		font_san.center_put( 0, VGA_HEIGHT-20, VGA_WIDTH-1, VGA_HEIGHT-1, str );
@@ -417,25 +357,7 @@ void Game::main_menu()
 
 	// test sys.game_version, skip single player and scenario editor
 	optionFlag[0] = optionFlag[2] =
-#if(defined(DISABLE_SINGLE_PLAYER))
-		0;
-#elif(defined(DEBUG))
-		1;
-#elif(defined(BETA))
-		1;
-#else
 		(sys.game_version == VERSION_MULTIPLAYER_ONLY) ? 0 : 1;
-#endif
-
-
-#ifdef DISABLE_MULTI_PLAYER
-	// disable multiplayer game, Game::multi_player_menu is disabled
-	optionFlag[1] = 0;
-#endif
-
-#ifdef DISABLE_SCENARIO_EDITOR
-	optionFlag[2] = 0;
-#endif
 
 	int emptyProfileTesting = 1;
 
@@ -661,13 +583,6 @@ void Game::main_menu()
 				run_main_menu_option(0);		// profile
 				refreshFlag = MMOPTION_ALL;
 			}
-#ifdef DEBUG
-			else if( mouse.single_click(BUTTON7_X1, BUTTON7_Y1, BUTTON7_X2, BUTTON7_Y2) )
-			{
-				play_video( (HINSTANCE) sys.app_hinstance, 0 );
-				refreshFlag = MMOPTION_ALL;
-			}
-#endif
 			else if( mouse.single_click( BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2) )
 			{
 				// quit
@@ -694,40 +609,22 @@ void Game::main_menu()
 
 		}	// end while
 	}	// end the scope of vgaLock
-
-//	#ifdef DEMO
-//		demo_disp_ad_page();
-//	#else
-//		//---- display game end advertising page ----//
-//		vga.disp_image_file("MAINMENU");
-//		mouse.wait_press(60);
-//		vga.finish_disp_image_file();
-//	#endif
 }
 
 
 #define SPOPTION_PAGE        0x40000000
 #define SPOPTION_ALL         0x7fffffff
 
-#ifndef DISABLE_SINGLE_PLAYER
 //---------- Begin of function Game::single_player_menu ----------//
 //
 void Game::single_player_menu()
 {
 	int refreshFlag = SPOPTION_ALL;
 
-#ifdef DEMO
-	char optionFlag[5] = { 1, 0, 0, 1, 1, };
-#else
 	char optionFlag[5] = { 1, 1, 1, 1, 1, };
-#endif
 
 	mouse_cursor.set_icon(CURSOR_NORMAL);
 
-#ifdef DISABLE_SINGLE_PLAYER_NEW_GAME
-	optionFlag[1] = 0;		// disable new campaign
-	optionFlag[2] = 0;		// disable new single game
-#endif
 	optionFlag[4] = select_run_scenario(1) > 0;		// 1 - count number of scenario
 
 	{
@@ -885,7 +782,6 @@ void Game::single_player_menu()
 	}	// end scope of vgaLock
 }
 //---------- End of function Game::single_player_menu ----------//
-#endif
 
 #ifndef DISABLE_SCENARIO_EDITOR
 //---------- Begin of function Game::scenario_editor_menu ----------//
@@ -1016,7 +912,6 @@ void Game::scenario_editor_menu()
 //---------- End of function Game::scenario_editor_menu ----------//
 #endif
 
-//#ifndef DISABLE_MULTI_PLAYER
 //---------- Begin of function Game::multi_player_menu ----------//
 //
 void Game::multi_player_menu(char *cmdLine)
@@ -1266,7 +1161,6 @@ void Game::multi_player_menu(char *cmdLine)
 		}	// end while
 	}	// end scope of vgaLock
 }
-//#endif
 
 
 void Game::set_load_game_in_main_menu( char *fileName )

@@ -230,12 +230,6 @@ void Tutor::load_tutor_info()
 		m.rtrim_fld( tutorInfo->des , tutorRec->des , tutorRec->DES_LEN  );
 		translate.multi_to_win(tutorInfo->des, tutorInfo->DES_LEN);
 	}
-
-	//--- exclude the Fryhtan and Seat of Power tutorials in the demo ---//
-
-	#ifdef DEMO
-		tutor_count -= 2;
-	#endif
 }
 //--------- End of function Tutor::load_tutor_info ---------//
 

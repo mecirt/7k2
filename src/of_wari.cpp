@@ -609,12 +609,8 @@ void FirmWar::disp_firm_info(int dispY1, int refreshFlag)
 	{
 		button_select_build.paint();
 
-#ifdef DEMO
-		button_select_build2.visible_flag = 0;
-#else
 		button_select_build2.visible_flag = nation_recno 
 			&& tech_res.tech_class(TECH_CLASS_MEGA_WEAPON)->total_tech_count(nation_recno) > 0;
-#endif
 		button_select_build2.paint();
 
 		// ------- display rally points button ------//

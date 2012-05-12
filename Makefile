@@ -33,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm ddraw dsound gdi32 dinput jpeg shell32
+7k2_LIBRARIES = ole32 winmm ddraw dsound gdi32 dinput jpeg
 
 
 
@@ -242,7 +242,6 @@ LIBRARIES             =
 			src/of_spec.cpp \
 			src/ogamcamp.cpp \
 			src/ohelp.cpp \
-			src/ogamdemo.cpp \
 			src/oc_east8.cpp \
 			src/oeffect.cpp \
 			src/oc_pld5.cpp \

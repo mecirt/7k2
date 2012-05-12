@@ -101,15 +101,6 @@ static void		disp_scroll_bar_func(SlideVBar *scroll, int);
 GameFileArray::GameFileArray() : DynArray( sizeof(GameFile), 10 )
 {
 	demo_format = 0;
-/*
-	#ifdef DEMO
-		demo_format = 1;
-	#endif
-
-	#ifdef DEMO_DESIGN
-		demo_format = 1;
-	#endif
-*/
 	last_file_name[0] = NULL;
 	save_default_dir[0] = '\0';
 	strcpy( save_default_ext, "*.SAV");
@@ -228,13 +219,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 
 		return 1;
 	}
-
-	// #### begin Gilbert 25/9 ########//
-	//#ifdef DEMO          // No game saving in demo version
-	//	box.msg( "Sorry, you cannot load/save game in the demo version." );
-	//	return -1;
-	//#endif
-	// #### end Gilbert 25/9 ########//
 
 	action_mode = actionMode;
 	pre_game = 0;

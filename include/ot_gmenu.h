@@ -35,8 +35,6 @@ public:
 
 	// version
 	char*	str_version( const char *verionStr );
-	char*	str_demo_version();
-	char*	str_beta_version();
 
 	// main menu
 	char* str_first_welcome();

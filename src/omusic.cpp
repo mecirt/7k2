@@ -35,26 +35,6 @@
 
 // -------- define song name --------//
 
-#ifdef DEMO
-
-static const char *music_file[] =
-{
-	"DEMO.WAV",		// opening
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-	"DEMO.WAV",
-};
-
-#else
-
 static const char *music_file[] =
 {
 	"CBRIEF.WAV",		// opening
@@ -70,8 +50,6 @@ static const char *music_file[] =
 	"BKMUSIC6.WAV",
 	"BKMUSIC7.WAV",
 };
-
-#endif
 
 // -------- begin of function Music::Music ---------//
 Music::Music()

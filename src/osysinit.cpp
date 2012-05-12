@@ -103,18 +103,6 @@ int Sys::init( HANDLE hInstance )
 
    app_hinstance = hInstance;
 
-	#ifdef BETA
-		debug_session       = m.is_file_exist("DEBUG.SYS");
-		testing_session     = m.is_file_exist("TESTING.SYS");
-		scenario_cheat_flag = m.is_file_exist("EDITOR.SYS");
-	#endif
-
-	#ifdef DEBUG
-		debug_session       = m.is_file_exist("DEBUG.SYS");
-		testing_session     = m.is_file_exist("TESTING.SYS");
-		scenario_cheat_flag = m.is_file_exist("EDITOR.SYS");
-	#endif
-
 	// ##### begin Gilbert 15/2 ########//
 #ifdef USE_FLIP
 	use_true_front         = USE_TRUE_FRONT_BUFFER;
@@ -216,15 +204,9 @@ int Sys::init_win()
    wc.lpfnWndProc    = static_main_win_proc;
    wc.cbClsExtra     = 0;
    wc.cbWndExtra     = 0;
-#ifdef VC5
-   wc.hInstance      = app_hinstance;
-   wc.hIcon          = LoadIcon( app_hinstance, MAKEINTATOM(IDI_ICON1));
-   wc.hbrBackground  = GetStockObject(BLACK_BRUSH);
-#else
    wc.hInstance      = (HINSTANCE__ *) app_hinstance;
    wc.hIcon          = LoadIcon( (HINSTANCE__ *) app_hinstance, MAKEINTATOM(IDI_ICON1));
    wc.hbrBackground  = (HBRUSH__ *) GetStockObject(BLACK_BRUSH);
-#endif
    wc.hCursor        = LoadCursor( NULL, IDC_ARROW );
    wc.lpszMenuName   = NULL;
    wc.lpszClassName  = WIN_CLASS_NAME;
@@ -248,11 +230,7 @@ int Sys::init_win()
        GetSystemMetrics(SM_CYSCREEN),
        NULL,
        NULL,
-#ifdef VC5
-		 app_hinstance,
-#else
        (HINSTANCE__ *) app_hinstance,
-#endif
        NULL );
 
    if( !main_hwnd )
@@ -402,11 +380,7 @@ int Sys::init_objects()
    mouse_cursor.init();
    mouse_cursor.set_frame_border(ZOOM_X1,ZOOM_Y1,ZOOM_X2,ZOOM_Y2);
 
-#ifdef VC5 
-   mouse.init( app_hinstance, main_hwnd, NULL);
-#else
    mouse.init( (HINSTANCE__ *)app_hinstance, main_hwnd, NULL);
-#endif 
 	SetFocus( main_hwnd );
 
    //------- init resource class ----------//
@@ -707,18 +681,7 @@ void Sys::set_game_dir()
 
    //-------- set game version ---------//
 
-	#ifdef BETA
-      game_version = VERSION_FULL;
-   #else
-      #ifdef DEMO
-         game_version = VERSION_DEMO;
-      #else
-         if( 1 ) // no longer checkcd if( cdrom_drive )
             game_version = VERSION_FULL;     // single player game is not available when game_version == VERSION_FULL
-         else
-            game_version = VERSION_MULTIPLAYER_ONLY;
-      #endif
-   #endif
 }
 //----------- End of function Sys::set_game_dir ----------//
 

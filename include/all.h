@@ -35,10 +35,6 @@
 
 //-------- define standard type ---------//
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 typedef unsigned short USHORT;
 typedef void *LPVOID;
 

@@ -29,8 +29,6 @@
 #include <oresdb.h>
 #endif
 
-#define NULL 0
-
 //------------ Define constant -------------//
 
 #define	WALL_SPACE_LOC 		 5		// no. of space between the wall and the town border

@@ -772,9 +772,6 @@ int FirmInfo::nation_can_build(int nationRecno, int raceId, int checkCash)
 	{
 		//--- if this nation has acquired the needed scroll of power ---//
 		//----- each nation can only build one seat of power -----//
-#ifdef DEMO
-		return 0;
-#else
 		if( game.game_mode == GAME_TUTORIAL &&
 			nationRecno != nation_array.player_recno )
 		{
@@ -786,7 +783,6 @@ int FirmInfo::nation_can_build(int nationRecno, int raceId, int checkCash)
 		{
 			return 0;
 		}
-#endif
 	}
 
 	// ###### begin Gilbert 23/12 ########//
@@ -795,16 +791,6 @@ int FirmInfo::nation_can_build(int nationRecno, int raceId, int checkCash)
 		return 0;		// cannot build monster fortress
 	}
 	// ###### end Gilbert 23/12 ########//
-
-#ifdef DEMO
-	if( firm_id == FIRM_OFFENSIVE_BUILDING_1 ||
-	 	 firm_id == FIRM_OFFENSIVE_BUILDING_2 ||
-		 firm_id == FIRM_OFFENSIVE_BUILDING_3 ||
-		 firm_id == FIRM_OFFENSIVE_BUILDING_4 )
-	{
-		return 0;		// cannot build monster fortress
-	}
-#endif
 
 	return 1;
 }
