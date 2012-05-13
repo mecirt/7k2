@@ -154,6 +154,7 @@ public:
 	void			deinit_all();
 
 	void			main_menu();
+	int			process_messages();
 	void			set_load_game_in_main_menu(char *);             // game to load automatically in main_menu
 	void			clear_load_game_in_main_menu();         // game to load automatically in main_menu
 	void			in_game_menu();

@@ -340,6 +340,33 @@ void Game::disp_gen_game_status(int addStep)
 }
 //---------- End of function Game::disp_gen_game_status ---------//
 
+// Windows message queue - used by various dialogs
+int Game::process_messages()
+{
+  while (1) {
+    MSG msg;
+    if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
+    {
+      if (!GetMessage( &msg, NULL, 0, 0))
+      {
+        sys.signal_exit_flag = 1;
+        // BUGHERE : vga_front is unlocked
+        return 0;
+      }
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+      continue;
+    }
+    else if( sys.paused_flag || !sys.active_flag )
+    {
+      WaitMessage();
+      continue;
+    }
+    break;
+  }
+  return 1;
+}
+
 // ----- define const for flag of refreshFlag ------//
 
 #define MMOPTION_PAGE        0x40000000
@@ -373,24 +400,7 @@ void Game::main_menu()
 
 		while(1)
 		{
-			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!process_messages()) return;
 			if( sys.need_redraw_flag || m.get_time() - lastRedrawTime > 8000 )
 			{
 				refreshFlag = MMOPTION_ALL;
@@ -634,24 +644,7 @@ void Game::single_player_menu()
 
 		while(1)
 		{
-			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!process_messages()) return;
 			if( sys.need_redraw_flag )
 			{
 				refreshFlag = SPOPTION_ALL;
@@ -800,23 +793,7 @@ void Game::scenario_editor_menu()
 		while(1)
 		{
 			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!process_messages()) return;
 			if( sys.need_redraw_flag )
 			{
 				refreshFlag = SPOPTION_ALL;
@@ -1009,24 +986,7 @@ void Game::multi_player_menu(char *cmdLine)
 
 		while(1)
 		{
-			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!process_messages()) return;
 			if( sys.need_redraw_flag )
 			{
 				refreshFlag = SPOPTION_ALL;

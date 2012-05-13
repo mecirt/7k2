@@ -21,8 +21,6 @@
 // Filename    : OCAMPGN3.CPP
 // Description : functions on royal units
 
-#define NEED_WINDOWS
-
 #include <ocampgn.h>
 #include <all.h>
 #include <onation.h>
@@ -570,24 +568,7 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 
 		while(1)
 		{
-			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!game.process_messages()) return;
 			if( sys.need_redraw_flag )
 			{
 				refreshFlag = DROPTION_ALL;

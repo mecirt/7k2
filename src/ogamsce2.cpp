@@ -22,8 +22,6 @@
 // Description : select scenario menu
 
 
-#define NEED_WINDOWS
-
 #include <ogame.h>
 #include <osys.h>
 #include <omouse.h>
@@ -305,24 +303,7 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 	while(1)
 	{
-		MSG msg;
-		if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-		{
-			if (!GetMessage( &msg, NULL, 0, 0))
-			{
-				sys.signal_exit_flag = 1;
-				// BUGHERE : vga_front is unlocked
-				return 0;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			continue;
-		}
-		else if( sys.paused_flag || !sys.active_flag )
-		{
-			WaitMessage();
-			continue;
-		}
+		if (!game.process_messages()) return 0;
 		if( sys.need_redraw_flag )
 		{
 			refreshFlag = TUOPTION_ALL;

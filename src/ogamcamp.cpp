@@ -22,8 +22,6 @@
 //Filename    : OGAMCAMP.CPP
 //Description : Campaign related functions
 
-#define NEED_WINDOWS
-
 #include <osys.h>
 #include <ogame.h>
 #include <ocampall.h>
@@ -39,6 +37,7 @@
 #include <ofont.h>
 #include <obuttcus.h>
 #include <ogeta.h>
+#include <ogame.h>
 #include <omusic.h>
 #include <ot_gmenu.h>
 #include <ot_camp.h>
@@ -522,24 +521,7 @@ int Game::select_campaign_menu()
 
 		while(1)
 		{
-			MSG msg;
-			if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-			{
-				if (!GetMessage( &msg, NULL, 0, 0))
-				{
-					sys.signal_exit_flag = 1;
-					// BUGHERE : vga_front is unlocked
-					return 0;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				continue;
-			}
-			else if( sys.paused_flag || !sys.active_flag )
-			{
-				WaitMessage();
-				continue;
-			}
+			if (!game.process_messages()) return 0;
 
 			if( sys.need_redraw_flag )
 			{
