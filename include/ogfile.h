@@ -26,18 +26,11 @@
 #ifndef __OGFILE_H
 #define __OGFILE_H
 
-#ifndef __OFILE_H
 #include <ofile.h>
-#endif
-
-#ifndef __ODYNARR_H
 #include <odynarr.h>
-#endif
-
-#ifndef __ONATION_Hd
 #include <onation.h>
-#endif
 
+#include <time.h>
 
 #ifdef AMPLUS
 //------------ Define constant for game version == 1xx -----------------//
@@ -87,7 +80,7 @@ public:
    char     nation_color;
 
    int      game_date;      // the game date of the saved game
-   FILETIME file_date;              // saving game date
+   time_t   file_date;              // saving game date
    short    terrain_set;				// duplicate from config
 	int		display_mode_id;			// duplicate from config
 	char		building_size;				// duplicate from config

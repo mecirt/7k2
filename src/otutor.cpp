@@ -223,6 +223,8 @@ void Tutor::load_tutor_info()
 		tutorRec  = (TutorRec*) dbTutor.read(i+1);
 		tutorInfo = tutor_info_array+i;
 
+                for (int i = 1; (i < strlen(tutorRec->code)) && (i < tutorRec->CODE_LEN); ++i)
+                  tutorRec->code[i] = tolower(tutorRec->code[i]);
 		m.rtrim_fld( tutorInfo->intro, tutorRec->intro, tutorRec->CODE_LEN );
 		m.rtrim_fld( tutorInfo->result, tutorRec->result, tutorRec->CODE_LEN );
 		m.rtrim_fld( tutorInfo->code, tutorRec->code, tutorRec->CODE_LEN );
@@ -567,10 +569,10 @@ void Tutor::run(int tutorId, int inGameCall)
 		
 		// building_size = 1 or 0 means large size building
 		if (building_size == 2) 
-			str += "S";
+			str += "s";
 		else
-			str += "L";
-		str += ".TUT";
+			str += "l";
+		str += ".tut";
 
 		if( m.is_file_exist(str) )
 		{
@@ -588,7 +590,7 @@ void Tutor::run(int tutorId, int inGameCall)
 		}
 		else
 		{
-			str = "TUTORIAL\\STANDARD.TUT";
+			str = "Tutorial/Standard.tut";
 		//	str = "SAVE\\BANT_001\\AUTO.SAV";
 		//	str = "SAVE\\BANTHEGR\\AUTO.SAV";
 			if( m.is_file_exist(str) )
@@ -666,7 +668,7 @@ void Tutor::play_speech(int tutorId, int objectiveRecno)
 
 	String str;
 	str  = DIR_TUTORIAL;
-	str += "\\SOUND\\";
+	str += "/SOUND/";
 
 	char str2[10] = "H1-XX.WAV";
 	str2[0] = tutor[tutorId]->code[0];

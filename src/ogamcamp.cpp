@@ -22,6 +22,8 @@
 //Filename    : OGAMCAMP.CPP
 //Description : Campaign related functions
 
+#define NEED_WINDOWS
+
 #include <osys.h>
 #include <ogame.h>
 #include <ocampall.h>

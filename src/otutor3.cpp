@@ -21,6 +21,8 @@
 //Filename    : OTUTOR3.CPP
 //Description : Learning Campaign related functions
 
+#define NEED_WINDOWS
+
 #include <ofirmall.h>
 #include <onationa.h>
 #include <otutor.h>

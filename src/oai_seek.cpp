@@ -29,6 +29,7 @@
 #include <otown.h>
 #include <osite.h>
 #include <onation.h>
+#include <stdlib.h>
 
 //--------- Begin of function Nation::seek_mine --------//
 //

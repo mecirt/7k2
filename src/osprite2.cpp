@@ -29,7 +29,7 @@
 #include <osprite.h>
 #include <oseres.h>
 #include <oworldmt.h>
-#include <math.h>
+#include <stdlib.h>
 
 //--------- define static vars ---------//
 

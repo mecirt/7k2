@@ -21,6 +21,9 @@
 // Filename    : OCAMPGN.H
 // Description : Campaign mode menu
 
+// because of that .bmp file reading
+#define NEED_WINDOWS
+
 #include <stdio.h>
 #include <unistd.h>
 #include <ocampgn.h>

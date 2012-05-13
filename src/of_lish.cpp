@@ -41,7 +41,7 @@
 #include <omonsres.h>
 #include <oraceres.h>
 #include <oweather.h>
-#include <math.h>
+#include <stdlib.h>
 #include <oseres.h>
 
 enum { SCAN_X_RANGE = 6,

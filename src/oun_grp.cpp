@@ -1556,7 +1556,7 @@ void UnitGroup::cluster_units_for_path_reuse(int destX, int destY, int centerX, 
 	// remember to mem_del at the end of function
 //	Unit** units = (Unit **) mem_add(sizeof(Unit*)*unitsSelected);
 //	BOOL* processed = (BOOL *) mem_add(sizeof(BOOL)*unitsSelected);
-//	::ZeroMemory(processed, sizeof(BOOL)*unitsSelected);
+//	memset(processed, 0, sizeof(BOOL)*unitsSelected);
 
 	// path reuse has limit, so change use local auto array
 	Unit *units[MAX_REUSE_NUMBER_OF_UNITS];

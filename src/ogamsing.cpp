@@ -21,6 +21,8 @@
 //Filename    : OGAMSING.CPP
 //Description : Single player game interface
 
+#define NEED_WINDOWS
+
 #include <ogame.h>
 #include <obitmap.h>
 #include <ovga.h>
@@ -169,7 +171,7 @@ static int select_option2()
 	const int mapIdSize = 11;		// enough to hold a dword in decimal
 	char mapIdStr[mapIdSize+1];
 	info.init_random_seed(0);
-        sprintf(mapIdStr, "%d", mapIdStr);
+        sprintf(mapIdStr, "%d", info.random_seed);
 	// GetA mapIdField;
 
 	// ------ initialize human / fryhtan button ------//

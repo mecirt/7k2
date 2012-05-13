@@ -21,6 +21,8 @@
 // Filename    : OCAMPGN3.CPP
 // Description : functions on royal units
 
+#define NEED_WINDOWS
+
 #include <ocampgn.h>
 #include <all.h>
 #include <onation.h>

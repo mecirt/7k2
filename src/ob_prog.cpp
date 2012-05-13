@@ -29,7 +29,7 @@
 #include <oworldmt.h>
 #include <oseres.h>
 #include <oconfig.h>
-#include <math.h>
+#include <stdlib.h>
 
 // --------- begin of function BulletProgram::BulletProgram --------//
 BulletProgram::BulletProgram()

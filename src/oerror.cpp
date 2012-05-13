@@ -21,6 +21,8 @@
 //Filename    : OERR.CPP
 //Description : Object Error Handling
 
+#define NEED_WINDOWS
+
 #include <new>
 #include <stdlib.h>
 #include <stdio.h>

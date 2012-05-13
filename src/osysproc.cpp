@@ -21,6 +21,8 @@
 //Filename    : OSYSDET.CPP
 //Description : class Sys - detect functions
 
+#define NEED_WINDOWS
+
 #include <osys.h>
 #include <oinfo.h>
 #include <key.h>

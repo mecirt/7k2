@@ -24,10 +24,12 @@
 
 #ifndef IMAGICMP
 
-//#define INITGUID
+#define NEED_WINDOWS
+
 // #define INITGUID for dplay.h to define IID_IDirectPlay3A
 #include <dplay.h>
-//#undef INITGUID
+#include <dplobby.h>
+#include <odynarrb.h>
 #include <odplay.h>
 #include <all.h>
 #include <string.h>
@@ -76,6 +78,22 @@ const DWORD session_desc_flags =
 // folder may not exist after installed dx5
 
 HANDLE PLAYER_MESSAGE_HANDLE = NULL;	// ???
+
+struct DPSessionDesc : public DPSESSIONDESC2
+{
+	char session_name[MP_SESSION_NAME_LEN+1];
+	char pass_word[MP_SESSION_NAME_LEN+1];
+
+	DPSessionDesc();
+	DPSessionDesc(const DPSESSIONDESC2 &);
+	DPSessionDesc(const DPSessionDesc &);
+	DPSessionDesc& operator= (const DPSessionDesc &);
+	void after_copy();
+	DPSessionDesc *before_use();
+
+	char *name_str() { return session_name; };
+	GUID session_id() { return guidInstance; }
+};
 
 
 DPSessionDesc::DPSessionDesc()
@@ -144,12 +162,17 @@ DPSessionDesc *DPSessionDesc::before_use()
 // service; create_session or poll_sessions+join_session;
 // finally create_player.
 
+struct MultiPlayerDP::Private {
+  DPSessionDesc joined_session;
+};
 
 // ------- begin of function MultiPlayerDP::MultiPlayerDP -------//
 MultiPlayerDP::MultiPlayerDP() : service_providers(sizeof(DPServiceProvider), 10 ),
 	current_sessions(sizeof(DPSessionDesc), 10 ), player_pool(sizeof(DPPlayer), 8 ),
 	recv_buffer(new char[MP_RECV_BUFFER_SIZE])
 {
+  d = new Private;
+
 	init_flag = 0;
 	co_inited = 0;
 	direct_play_lobby = NULL;
@@ -177,6 +200,7 @@ MultiPlayerDP::~MultiPlayerDP()
 	}
 
 	delete[] recv_buffer;
+  delete d;
 }
 // ------- end of function MultiPlayerDP::~MultiPlayerDP -------//
 
@@ -319,7 +343,7 @@ void MultiPlayerDP::init_lobbied(int maxPlayers, char *)
 					return;
 			}
 
-			joined_session = *connection_string->lpSessionDesc;
+			d->joined_session = *connection_string->lpSessionDesc;
 
 			// ##### begin Gilbert 31/5 ########//
 			// drop the current direct_play4
@@ -366,8 +390,8 @@ void MultiPlayerDP::init_lobbied(int maxPlayers, char *)
 				lobbied_flag = 4;		// user selectable
 
 			bufferSize = sizeof(DPSESSIONDESC2);
-			direct_play4->GetSessionDesc( &joined_session, &bufferSize);
-			joined_session.after_copy();			
+			direct_play4->GetSessionDesc( &d->joined_session, &bufferSize);
+			d->joined_session.after_copy();			
 		}
 		else
 		{
@@ -610,23 +634,23 @@ int MultiPlayerDP::create_session(char *sessionName, int maxPlayers)
 		return TRUE;
 	}
 
-	memset(&joined_session, 0, sizeof( joined_session) );
-	joined_session.dwSize = sizeof( DPSESSIONDESC2 );
+	memset(&d->joined_session, 0, sizeof( d->joined_session) );
+	d->joined_session.dwSize = sizeof( DPSESSIONDESC2 );
 	// DPSESSION_NODATAMESSAGES disable unital data
 	// remove DPSESSION_MIGRATEHOST 
-	joined_session.dwFlags = session_desc_flags;
-	joined_session.guidApplication = GAME_GUID;
-	joined_session.dwMaxPlayers = maxPlayers;
-	strncpy(joined_session.session_name, sessionName, MP_SESSION_NAME_LEN );
-	joined_session.session_name[MP_SESSION_NAME_LEN]= '\0';
-	joined_session.lpszSessionNameA = joined_session.session_name;
+	d->joined_session.dwFlags = session_desc_flags;
+	d->joined_session.guidApplication = GAME_GUID;
+	d->joined_session.dwMaxPlayers = maxPlayers;
+	strncpy(d->joined_session.session_name, sessionName, MP_SESSION_NAME_LEN );
+	d->joined_session.session_name[MP_SESSION_NAME_LEN]= '\0';
+	d->joined_session.lpszSessionNameA = d->joined_session.session_name;
 
 	MouseDispCount showMouse;
 	// ##### patch begin Gilbert 9/1 #########//
 //	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
 	// ##### end begin Gilbert 9/1 #########//
 	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
-	if( !direct_play4->Open(&joined_session, DPOPEN_CREATE) )
+	if( !direct_play4->Open(&d->joined_session, DPOPEN_CREATE) )
 	{
 		host_flag = 1;
 		return TRUE;
@@ -654,9 +678,9 @@ int MultiPlayerDP::join_session(DPSessionDesc* sessionDesc)
 		return TRUE;
 	}
 
-	joined_session = *sessionDesc;
+	d->joined_session = *sessionDesc;
 	VgaFrontLock vgaLock;
-	if(!direct_play4->Open(&joined_session, DPOPEN_JOIN))
+	if(!direct_play4->Open(&d->joined_session, DPOPEN_JOIN))
 	{
 		host_flag = 0;
 		return TRUE;
@@ -683,8 +707,8 @@ int MultiPlayerDP::join_session(int currentSessionIndex)
 	}
 
 	VgaFrontLock vgaLock;
-	joined_session = *get_session(currentSessionIndex);
-	if(!direct_play4->Open(&joined_session, DPOPEN_JOIN))
+	d->joined_session = *get_session(currentSessionIndex);
+	if(!direct_play4->Open(&d->joined_session, DPOPEN_JOIN))
 	{
 		host_flag = 0;
 		return TRUE;
@@ -711,9 +735,9 @@ void MultiPlayerDP::disable_join_session()
 	err_when( !host_flag );
 	if( init_flag && host_flag )
 	{
-		joined_session.dwFlags |= DPSESSION_JOINDISABLED | DPSESSION_NEWPLAYERSDISABLED;
+		d->joined_session.dwFlags |= DPSESSION_JOINDISABLED | DPSESSION_NEWPLAYERSDISABLED;
 		VgaFrontLock vgaLock;
-		direct_play4->SetSessionDesc( &joined_session, 0 );
+		direct_play4->SetSessionDesc( &d->joined_session, 0 );
 	}
 }
 // ------ end of function MultiPlayerDP::disable_join_session ------//
@@ -1162,7 +1186,7 @@ void MultiPlayerDP::handle_system_msg(LPVOID lpData, DWORD dSize)
 	case DPSYS_SETSESSIONDESC:
 		{
 			DPMSG_SETSESSIONDESC *dpmsg = (DPMSG_SETSESSIONDESC *)lpData;
-			joined_session = dpmsg->dpDesc;
+			d->joined_session = dpmsg->dpDesc;
 		}
 		break;
 	}

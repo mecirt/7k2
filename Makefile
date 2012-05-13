@@ -33,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm ddraw dsound gdi32 dinput jpeg
+7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 jpeg
 
 
 
@@ -88,7 +88,6 @@ LIBRARIES             =
 			src/oc_pla2.cpp \
 			src/oflc.cpp \
 			src/of_off2i.cpp \
-			src/englishtochinese.cpp \
 			src/oitem.cpp \
 			src/ofontchi.cpp \
 			src/otwalres.cpp \
@@ -110,7 +109,6 @@ LIBRARIES             =
 			src/oplace.cpp \
 			src/ofirmdie.cpp \
 			src/ot_endc.cpp \
-			src/ogfilea.cpp \
 			src/of_camp.cpp \
 			src/oremote2.cpp \
 			src/oplasma.cpp \
@@ -224,6 +222,7 @@ LIBRARIES             =
 			src/ospritea.cpp \
 			src/ocampgn4.cpp \
 			src/am.cpp \
+			src/ogfilea.cpp \
 			src/otownlnk.cpp \
 			src/of_off2.cpp \
 			src/ou_god.cpp \

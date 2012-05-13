@@ -22,10 +22,13 @@
 // Description : mouse class, english keyboard version
 
 
+#define NEED_WINDOWS
+
 #if( !defined(GERMAN) && !defined(FRENCH) && !defined(SPANISH) && !defined(ITALIAN) )
 
-#include <omouse.h>
 #include <all.h>
+#include <dinput.h>
+#include <omouse.h>
 #include <osys.h>
 #include <ovga.h>
 #include <omodeid.h>

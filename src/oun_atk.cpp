@@ -40,6 +40,7 @@
 #include <oun_spab.h>
 #include <oeffect.h>
 #include <onews.h>
+#include <stdlib.h>
 
 
 // similar to MAX_UNIT_WAIT_STATE, but for attack, smaller for faster response

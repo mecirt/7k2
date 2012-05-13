@@ -30,6 +30,7 @@
 #include <itemid.h>
 #include <olocate.h>
 #include <ogodres.h>
+#include <stdlib.h>
 
 #define	MAX_RETRY_STATE	5
 static short move_x_pixel_array[] = { 0, LOCATE_WIDTH, LOCATE_WIDTH, LOCATE_WIDTH, 0, -LOCATE_WIDTH, -LOCATE_WIDTH, -LOCATE_WIDTH };

@@ -21,6 +21,8 @@
 //Filename    : OGAMMAIN.CPP
 //Description : Main Game Object - Main menu
 
+#define NEED_WINDOWS
+
 #include <ogame.h>
 #include <ovga.h>
 #include <omodeid.h>
@@ -533,7 +535,7 @@ void Game::main_menu()
 						&& box.ask(text_game_menu.str_first_training()) )		// ask continue training
 					{
 						// ##### patch begin Gilbert 4/10 #####//
-						game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+						game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 						// ##### patch end Gilbert 4/10 #####//
 						tutor.building_size = 2;	// default small building size
 						tutor.run( 2, 0 );			// 2 - is the first fryhtan training tutorial id, 0 - not inGameCall
@@ -717,7 +719,7 @@ void Game::single_player_menu()
 			// detect training
 			if( optionFlag[0] && mouse.single_click(BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 
 				tutor.select_run_tutor(0);
 				break;
@@ -726,7 +728,7 @@ void Game::single_player_menu()
 			// detect new campaign
 			else if( optionFlag[1] && mouse.single_click( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 
 				run_campaign();
 				break;
@@ -735,7 +737,7 @@ void Game::single_player_menu()
 			// detect new single game
 			else if( optionFlag[2] && mouse.single_click( BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 
 				single_player_game(0);
 				break;
@@ -744,7 +746,7 @@ void Game::single_player_menu()
 			// detect load game
 			else if( optionFlag[3] && mouse.single_click( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 
 				// ##### begin Gilbert 20/1 #######//
 				// if( game_file_array.menu(2) == 1)
@@ -766,7 +768,7 @@ void Game::single_player_menu()
 			// run scenario
 			else if( optionFlag[4] && mouse.single_click(BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SAV" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.sav" );	// necessary to set the path and extension
 
 				select_run_scenario();
 				break;
@@ -869,7 +871,7 @@ void Game::scenario_editor_menu()
 			// detect new 
 			if( mouse.single_click( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 			{
-				game_file_array.init( DIR_SCENARIO, "*.SCN" );	// necessary to set the path and extension
+				game_file_array.init( DIR_SCENARIO, "*.scn" );	// necessary to set the path and extension
 
 				single_player_game(0);
 				break;
@@ -879,7 +881,7 @@ void Game::scenario_editor_menu()
 			else if( mouse.single_click( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) )
 			{
 				err_when( MAX_SCENARIO_PATH <= 1 );
-				game_file_array.init( DIR_SCENARIO, "*.SCN" );	// necessary to set the path and extension
+				game_file_array.init( DIR_SCENARIO, "*.scn" );	// necessary to set the path and extension
 
 				// ##### begin Gilbert 20/1 #######//
 				// if( game_file_array.menu(2) == 1)
@@ -931,7 +933,7 @@ void Game::multi_player_menu(char *cmdLine)
 				player_profile.mp_new_game_flag = 0;
 				player_profile.save();
 
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SVM" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.svm" );	// necessary to set the path and extension
 				multi_player_game(cmdLine);
 
 				return;
@@ -941,13 +943,13 @@ void Game::multi_player_menu(char *cmdLine)
 				player_profile.mp_new_game_flag = 0;
 
 				// if load file is specified in the profile
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SVM" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.svm" );	// necessary to set the path and extension
 
 				char loadFileName[16];
 				if( player_profile.mp_load_file_name[0] )
 				{
 					strcpy(loadFileName, player_profile.mp_load_file_name);
-					strcat( loadFileName, ".SVM" ),		// append extension
+					strcat( loadFileName, ".svm" ),		// append extension
 					player_profile.mp_load_file_name[0] = '\0';
 				}
 				else
@@ -1106,7 +1108,7 @@ void Game::multi_player_menu(char *cmdLine)
 			else if( player_profile.is_registered()
 				&& mouse.single_click( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 			{
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SVM" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.svm" );	// necessary to set the path and extension
 
 				multi_player_game(cmdLine);
 
@@ -1126,7 +1128,7 @@ void Game::multi_player_menu(char *cmdLine)
 			{
 				int loadedRecno = 0;
 
-				game_file_array.init( player_profile.save_game_path(NULL), "*.SVM" );	// necessary to set the path and extension
+				game_file_array.init( player_profile.save_game_path(NULL), "*.svm" );	// necessary to set the path and extension
 
 				// ##### begin Gilbert 20/1 #######//
 				// if( game_file_array.menu(2, &loadedRecno) == 1 )

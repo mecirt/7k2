@@ -37,7 +37,7 @@
 #include <oinfo.h>
 #include <ofirmall.h>
 #include <olog.h>
-#include <math.h>
+#include <stdlib.h>
 
 
 //--------- Begin of function Town::process_ai ----------//

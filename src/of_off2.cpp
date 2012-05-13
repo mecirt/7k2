@@ -41,7 +41,7 @@
 #include <omonsres.h>
 #include <oraceres.h>
 #include <oweather.h>
-#include <math.h>
+#include <stdlib.h>
 #include <oconfig.h>
 #include <oseres.h>
 

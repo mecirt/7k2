@@ -27,6 +27,7 @@
 #include <oworldmt.h> 
 #include <osprite.h>
 #include <osys.h>
+#include <stdlib.h>
 
 //------- define constant --------//
 
@@ -97,27 +98,6 @@ static CanWalkFunc can_walk_func = NULL;
 
 static int is_location_walkable(int xLoc, int yLoc);
 static int is_location_accessible(int xLoc, int yLoc);
-
-static void normalize_node_count_base()
-{
-	if( node_count_base == 0)
-		return;
-
-	for( int j = 0; j < MAX_MAP_HEIGHT_A; ++j )
-	{
-		int *p = node_matrix[j];
-		for( int i = 0; i < MAX_MAP_WIDTH_A; ++i )
-		{
-			if( p[i] > node_count_base )
-				p[i] -= node_count_base;
-			else
-				p[i] = 0;
-		}
-	}
-
-	node_count_base = 0;
-}
-
 
 // Gilbert : Improvment
 // 1. node_arr, can be a static array like stack ,memset in reset() may be removed
@@ -336,7 +316,6 @@ void PathFinder::reset()
 #ifdef USE_NODE_COUNT_BASE
 	if( node_count_base >= SAFE_NODE_COUNT_BASE - MAX_NODE_NUM )
 	{
-		//normalize_node_count_base();
 		memset(node_matrix, 0, sizeof(int)*MAX_MAP_WIDTH_A*MAX_MAP_HEIGHT_A );
 		node_count_base = 0;
 	}
@@ -580,7 +559,7 @@ bool PathFinder::find_path2(int sourceX, int sourceY, int destX, int destY, int 
 
 	PathNode* node;
 	node = node_arr + node_count++;
-	::ZeroMemory(node, sizeof(PathNode));
+	memset(node, 0, sizeof(PathNode));
 
 	node->g = 0;
 	node->h = dist;
@@ -591,8 +570,6 @@ bool PathFinder::find_path2(int sourceX, int sourceY, int destX, int destY, int 
 #ifdef USE_NODE_COUNT_BASE
 	node_matrix[sourceY][sourceX] = node_count + node_count_base;  // node_count has been increased
 	err_when( node_count_base + node_count > SAFE_NODE_COUNT_BASE );
-//	if( node_count_base + node_count >= SAFE_NODE_COUNT_BASE )	// assume reset() can prevent
-//		normalize_node_count_base();
 #else
 	node_matrix[sourceY][sourceX] = node_count;
 #endif
@@ -1285,7 +1262,7 @@ void PathFinder::gen_child(PathNode* n, int x, int y)
 		err_when( node_count >= MAX_NODE_NUM);
 		succ = node_arr + node_count++;
 
-		ZeroMemory(succ, sizeof(PathNode));
+		memset(succ, 0, sizeof(PathNode));
 
 		succ->parent = n;
 		// succ->g = g;
@@ -1298,8 +1275,6 @@ void PathFinder::gen_child(PathNode* n, int x, int y)
 #ifdef USE_NODE_COUNT_BASE
 		node_matrix[y][x] = node_count + node_count_base;		// node_count has been increased
 		err_when( node_count_base + node_count > SAFE_NODE_COUNT_BASE );
-//		if( node_count_base + node_count >= SAFE_NODE_COUNT_BASE )	// assume reset() can prevent
-//			normalize_node_count_base();
 #else
 		node_matrix[y][x] = node_count;
 #endif

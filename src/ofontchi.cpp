@@ -41,7 +41,6 @@
 #include <ohelp.h>
 #include <oblob.h>
 #include <resource.h>
-#include <englishtochinese.h>
 #include <string.h>
 #include <stdio.h>
 //

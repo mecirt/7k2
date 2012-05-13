@@ -18,7 +18,7 @@
  *
  */
 
-#include <math.h>
+#include <stdlib.h>
 #include <oisoarea.h>
 #include <omisc.h>
 #include <all.h>

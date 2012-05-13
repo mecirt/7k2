@@ -27,7 +27,7 @@
 #include <osprtres.h>
 #include <osfrmres.h>
 #include <of_fort.h>
-
+#include <stdlib.h>
 
 // --------- begin of function BulletHoming::BulletHoming --------//
 BulletHoming::BulletHoming() : Bullet()

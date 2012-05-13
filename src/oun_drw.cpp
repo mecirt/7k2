@@ -38,6 +38,7 @@
 #include <ogame.h>
 #include <oitemres.h>
 #include <math.h>
+#include <stdlib.h>
 
 //--------- Begin of function Unit::draw ---------//
 //

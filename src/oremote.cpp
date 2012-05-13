@@ -21,6 +21,8 @@
 //Filename    : OREMOTE.CPP
 //Description : Object Remote
 
+#define NEED_WINDOWS
+
 #include <win32_compat.h>
 
 #include <all.h>

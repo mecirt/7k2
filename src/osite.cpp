@@ -38,7 +38,7 @@
 #include <oimgres.h>
 #include <oconfig.h>
 #include <ogame.h>
-#include <math.h>
+#include <stdlib.h>
 
 //-------------- Define constant -----------//
 

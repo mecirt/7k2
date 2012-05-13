@@ -34,7 +34,7 @@
 #include <ob_homin.h>
 #include <ob_flame.h>
 #include <ob_prog.h>
-#include <math.h>
+#include <stdlib.h>
 
 //--------- Begin of function BulletArray::BulletArray ---------//
 //

@@ -23,7 +23,11 @@
 #define _WIN32_COMPAT_H
 
 
-#ifdef NO_WINDOWS 
+#ifdef NEED_WINDOWS 
+
+#include <windows.h>
+
+#else
 
 #include <ctype.h>
 #include <stdint.h>
@@ -42,23 +46,6 @@ typedef uint32_t WPARAM;
 #define FALSE 0
 
 #define MAX_PATH 260
-#define FILE_NAME_LEN 512
-
-typedef struct {
-	DWORD dwLowDateTime;
-	DWORD dwHighDateTime;
-} FILETIME;
-
-typedef struct {
-	WORD wYear;
-	WORD wMonth;
-	WORD wDayOfWeek;
-	WORD wDay;
-	WORD wHour;
-	WORD wMinute;
-	WORD wSecond;
-	WORD wMilliseconds;
-} SYSTEMTIME;
 
 #ifndef __stdcall
 # ifdef __i386__
@@ -117,10 +104,6 @@ inline char *strlwr(char *str)
 	}
 	return str;
 }
-
-#else // NO_WINDOWS
-
-#include <windows.h>
 
 #endif
 

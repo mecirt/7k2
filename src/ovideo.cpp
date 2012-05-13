@@ -22,6 +22,8 @@
 //Description : Video for Windows playback class
 //Owner       : Gilbert
 
+#define NEED_WINDOWS
+
 // for some .h files to define some IIDs
 #include <win32_compat.h>
 #include <control.h>

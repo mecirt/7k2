@@ -115,18 +115,12 @@ void Log::dump()
 // -------- begin of function Log::debug_log ----------//
 void Log::debug_log(const char *msg)
 {
-	String s;
-	s = msg; 
-	s += "\r\n"; 
-	OutputDebugString(s);
+  fprintf(stderr, "%s\n", msg);
 }
 
 
 void Log::debug_log(int n)
 {
-	String s;
-	s = n; 
-	s += "\r\n"; 
-	OutputDebugString(s);
+  fprintf(stderr, "%d\n", n);
 }
 // -------- end of function Log::debug_log ----------//

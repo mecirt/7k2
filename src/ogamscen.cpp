@@ -63,7 +63,7 @@ int Game::select_run_scenario(int countScenarioOnly)
 			{
 				String str;
 				str  = DIR_SCENARIO_PATH(dirId);
-				str += "*.SCN";
+				str += "*.scn";
 				gameDir.read( str, 1 );     // Read in all file names with the "SCN" extension
 			}
 
@@ -78,7 +78,7 @@ int Game::select_run_scenario(int countScenarioOnly)
 					scenInfoArray[scenInfoSize].file_name = gameDir[i]->name;    // keep the pointers to the file name string
 					scenInfoArray[scenInfoSize].dir_id    = dirId;
 
-					m.change_file_ext( txtFileName, gameDir[i]->name, "SCT" );
+					m.change_file_ext( txtFileName, gameDir[i]->name, "sct" );
 
 					String str;
 					str  = DIR_SCENARIO_PATH(dirId);

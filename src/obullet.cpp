@@ -39,6 +39,8 @@
 #include <osys.h>
 #include <oeffect.h>
 
+#include <stdlib.h>
+
 // -------- Define constant ---------//
 
 const int SCAN_RADIUS = 2;

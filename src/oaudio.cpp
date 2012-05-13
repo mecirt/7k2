@@ -22,6 +22,7 @@
 //Description : Object Midi Audio and Digitized Sound
 //Ownership   : Gilbert
 
+#define NEED_WINDOWS
 
 #include <all.h>
 #include <oaudio.h>

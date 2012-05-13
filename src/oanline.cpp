@@ -25,7 +25,7 @@
 #include <oanline.h>
 #include <ovgabuf.h>
 #include <all.h>
-#include <math.h>
+#include <stdlib.h>
 
 // ----------- Define color table
 unsigned char AnimLine::init_color_code[ANIMCOLOR_PERIOD][ANIMLINE_PERIOD] =

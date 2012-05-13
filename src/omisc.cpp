@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include <all.h>
 #include <ostr.h>
@@ -520,7 +521,7 @@ int Misc::valid_char( char ch )
    return ( ch>='a' && ch<='z'  ||
             ch>='A' && ch<='Z'  ||
             ch>='0' && ch<='9'  ||
-            ch=='\\'  ||  ch=='.'  || ch=='_'  ||  ch==':' ) ;
+            ch=='/'  ||  ch=='.'  || ch=='_'  ||  ch==':' ) ;
 }
 
 //--------- END OF FUNCTION Misc::valid_char ----------//
@@ -1216,7 +1217,7 @@ void Misc::extract_file_name(char* desFileName, const char* srcFileName)
 	int i;
 	for( i=strlen(srcFileName) ; i>=0 ; i-- )
 	{
-		if( srcFileName[i]=='\\' )			// get last '\' before the file name
+		if( srcFileName[i]=='/' )			// get last '/' before the file name
 			break;
 	}
 
@@ -1277,7 +1278,13 @@ char* Misc::num_th(int inNum)
 //
 unsigned long Misc::get_time()
 {
-	return timeGetTime();
+  static struct timeval atStart = { 0, 0 };
+
+  if (atStart.tv_sec) gettimeofday (&atStart, NULL);
+
+  struct timeval res;
+  gettimeofday (&res, NULL);
+  return (res.tv_sec - atStart.tv_sec) * 1000 + (res.tv_usec - atStart.tv_usec) / 1000;
 }
 //---------- End of function Misc::get_time ---------//
 

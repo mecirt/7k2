@@ -28,12 +28,9 @@
 
 // ------- declare type --------//
 
+#ifndef NEED_WINDOWS
 typedef void *HANDLE;
-
-#ifdef VC5 
-	typedef void *HWND;				// vc5 and before
-#else
-	typedef struct HWND__ *HWND;	// vc6
+typedef void *HWND;
 #endif
 
 typedef long LPARAM;

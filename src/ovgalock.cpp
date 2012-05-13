@@ -24,6 +24,8 @@
 // Mainly used by ODPLAY.CPP to separate OVGA.H
 // some GUID initialization problems exist if OVGA.H is included in ODPLAY.CPP
 
+#define NEED_WINDOWS
+
 #include <ddraw.h>
 #include <osys.h>
 #include <ovgalock.h>

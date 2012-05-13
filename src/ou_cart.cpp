@@ -22,7 +22,7 @@
 // Description : Explosive Cart
 
 #include <ou_cart.h>
-#include <math.h>
+#include <stdlib.h>
 
 // --------- define constant --------//
 

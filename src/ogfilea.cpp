@@ -103,7 +103,7 @@ GameFileArray::GameFileArray() : DynArray( sizeof(GameFile), 10 )
 	demo_format = 0;
 	last_file_name[0] = NULL;
 	save_default_dir[0] = '\0';
-	strcpy( save_default_ext, "*.SAV");
+	strcpy( save_default_ext, "*.sav");
 	has_read_hall_of_fame = 0;
 
 	memset( hall_fame_array[0], 0, sizeof(HallFame)*HALL_FAME_NUM );
@@ -114,7 +114,7 @@ GameFileArray::GameFileArray() : DynArray( sizeof(GameFile), 10 )
 
 //------ Begin of function GameFileArray::init ------//
 //
-// <char *>path - path of the save game, without '\\' at the end
+// <char *>path - path of the save game, without '/' at the end
 // <char *>extStr - extension of the save game
 //
 void GameFileArray::init(const char *path, const char *extStr)
@@ -130,10 +130,10 @@ void GameFileArray::init(const char *path, const char *extStr)
 	//-- Load all headers of all saved game files in current directory --//
 
 	strcpy( save_default_dir, path );
-	// REMOVE '\\' at the end if any, 
+	// REMOVE '/' at the end if any, 
 	m.rtrim( save_default_dir);		// trim space at the end first
 	int dirLen = strlen(save_default_dir);
-	if( dirLen > 1 && save_default_dir[dirLen-1] == '\\' )
+	if( dirLen > 1 && save_default_dir[dirLen-1] == '/' )
 		save_default_dir[dirLen-1] = '\0';
 
 	strcpy( save_default_ext, extStr);
@@ -813,10 +813,7 @@ void GameFile::disp_info(int x, int y)
 	x2 = font_small.put( x+380, y+12, text_game_menu.str_file_name() );
 	font_small.put( x2, y+12, shortFileName );
 
-	SYSTEMTIME sysTime;
-	FILETIME localFileTime;
-	FileTimeToLocalFileTime( &file_date, &localFileTime );
-	FileTimeToSystemTime( &localFileTime, &sysTime );
+        struct tm *tval = localtime(&file_date);
 
 //	str  = translate.process("File Date: ");
 //	str += date.date_str(date.julian(sysTime.wYear, sysTime.wMonth,sysTime.wDay), 1);
@@ -824,8 +821,8 @@ void GameFile::disp_info(int x, int y)
 //	str += date.time_str( sysTime.wHour * 100 + sysTime.wMinute );
 //	font_small.put( x+380, y+32, str );
 	x2 = font_small.put( x+380, y+32, text_game_menu.str_file_date() );
-	x2 = font_small.put( x2, y+32, date.date_str(date.julian(sysTime.wYear, sysTime.wMonth,sysTime.wDay), 1) );
-	x2 = font_small.put( x2+6, y+32, date.time_str( sysTime.wHour * 100 + sysTime.wMinute ) );
+	x2 = font_small.put( x2, y+32, date.date_str(date.julian(1900 + tval->tm_year, tval->tm_mon + 1, tval->tm_mday), 1) );
+	x2 = font_small.put( x2+6, y+32, date.time_str( tval->tm_hour * 100 + tval->tm_min) );
 }
 //--------- End of function GameFile::disp_info --------//
 
@@ -942,7 +939,7 @@ int GameFileArray::save_new_game(const char* fileName)
 		if( save_default_dir[0] != '\0' )
 		{
 			strcpy( gameFile.file_name, save_default_dir );
-			strcat( gameFile.file_name, "\\" );
+			strcat( gameFile.file_name, "/" );
 			strcat( gameFile.file_name, fileName );
 		}
 		else
@@ -1117,7 +1114,7 @@ void GameFileArray::load_all_game_header(const char *path, const char *extStr)
 	if( path && path[0] != '\0' )
 	{
 		str = path;
-		str += "\\";
+		str += "/";
 		str += extStr;
 	}
 	else
@@ -1138,7 +1135,7 @@ void GameFileArray::load_all_game_header(const char *path, const char *extStr)
 		if( path && path[0] != '\0' )
 		{
 			str = path;
-			str += "\\";
+			str += "/";
 			str += gameDir[i]->name;
 		}
 		else
@@ -1391,16 +1388,16 @@ int GameFileArray::auto_save()
 
 	String str1(save_default_dir);
 	if( save_default_dir[0] )
-		str1 += "\\";
-	str1 += "AUTO";
+		str1 += "/";
+	str1 += "auto";
 	str1 += strchr( save_default_ext, '.' );
 
 	// prepare backup auto save game name
 
 	String str2(save_default_dir);
 	if( save_default_dir[0] )
-		str2 += "\\";
-	str2 += "AUTO2";
+		str2 += "/";
+	str2 += "auto2";
 	str2 += strchr( save_default_ext, '.' );
 
       //--- rename the existing AUTO.xxx to AUTO2.xxx and save a new game ---//

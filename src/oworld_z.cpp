@@ -113,6 +113,10 @@ static int update_abs_x1, update_abs_y1, update_abs_x2, update_abs_y2;
 
 //-------- Declare static functions ---------//
 
+struct POINT {
+  int x, y;
+};
+
 static int sort_display_function( const void *a, const void *b );
 
 static void draw_cubic_plane(int x, int y, LocationCorners, UCHAR);

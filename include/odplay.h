@@ -27,9 +27,6 @@
 
 #ifndef IMAGICMP
 
-#include <dplay.h>
-#include <dplobby.h>
-#include <odynarrb.h>
 
 extern GUID GAME_GUID;
 extern HANDLE PLAYER_MESSAGE_HANDLE;
@@ -40,6 +37,18 @@ extern HANDLE PLAYER_MESSAGE_HANDLE;
 #define MP_FRIENDLY_NAME_LEN 20
 #define MP_FORMAL_NAME_LEN 64
 #define MP_RECV_BUFFER_SIZE 0x2000
+
+typedef DWORD DPID, *LPDPID;
+struct tagDPLCONNECTION;
+struct IDirectPlay4;
+struct IDirectPlayLobby3;
+typedef struct tagDPLCONNECTION DPLCONNECTION;
+typedef struct IDirectPlay4 *LPDIRECTPLAY4A;
+typedef struct IDirectPlayLobby3 *LPDIRECTPLAYLOBBY3A;
+
+#ifndef NEED_WINDOWS
+typedef DWORD *LPDWORD;
+#endif
 
 struct DPServiceProvider
 {
@@ -53,21 +62,7 @@ struct DPServiceProvider
 	GUID service_id() { return guid; }
 };
 
-struct DPSessionDesc : public DPSESSIONDESC2
-{
-	char session_name[MP_SESSION_NAME_LEN+1];
-	char pass_word[MP_SESSION_NAME_LEN+1];
-
-	DPSessionDesc();
-	DPSessionDesc(const DPSESSIONDESC2 &);
-	DPSessionDesc(const DPSessionDesc &);
-	DPSessionDesc& operator= (const DPSessionDesc &);
-	void after_copy();
-	DPSessionDesc *before_use();
-
-	char *name_str() { return session_name; };
-	GUID session_id() { return guidInstance; }
-};
+struct DPSessionDesc;
 
 
 struct DPPlayer
@@ -94,7 +89,6 @@ public:
 //	LPDIRECTPLAY			direct_play1;
 	LPDIRECTPLAY4A			direct_play4;
 	LPDIRECTPLAYLOBBY3A	direct_play_lobby;
-	DPSessionDesc			joined_session;
 	DPLCONNECTION *		connection_string;		// only when lobbied
 
 	DPID						my_player_id;
@@ -104,6 +98,8 @@ public:
 	char *					recv_buffer;
 	DWORD						recv_buffer_size;
 
+        struct Private;
+        Private *d;
 public:
 	MultiPlayerDP();
 	~MultiPlayerDP();

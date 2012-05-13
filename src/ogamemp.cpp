@@ -21,7 +21,10 @@
 //Filename    : OGAMEMP.CPP
 //Description : Main Game Object - Multiplayer Game (using Imagic multiplayer SDK)
 
+#define NEED_WINDOWS
+
 #include <osys.h>
+#include <dplay.h>
 #include <omouse.h>
 #include <omousecr.h>
 #include <obox.h>
@@ -67,6 +70,24 @@ enum
 	OPTION_GOAL,
 	OPTION_CHAT_LOG,
 };
+
+struct DPSessionDesc : public DPSESSIONDESC2
+{
+  char session_name[MP_SESSION_NAME_LEN+1];
+  char pass_word[MP_SESSION_NAME_LEN+1];
+
+  DPSessionDesc();
+  DPSessionDesc(const DPSESSIONDESC2 &);
+  DPSessionDesc(const DPSessionDesc &);
+  DPSessionDesc& operator= (const DPSessionDesc &);
+  void after_copy();
+  DPSessionDesc *before_use();
+
+  char *name_str() { return session_name; };
+  GUID session_id() { return guidInstance; }
+};
+
+
 
 // --------- Define constant --------//
 
@@ -1003,14 +1024,14 @@ int Game::mp_select_mode(char *defSaveFileName)
 			m.str_cut(saveFileName, extractedFileName, 1, newLen-1);
 		else
 			err_here();
-		if( m.str_icmpx(saveFileName, "AUTO") || m.str_icmpx(saveFileName, "AUTO2") )
+		if( m.str_icmpx(saveFileName, "auto") || m.str_icmpx(saveFileName, "auto2") )
 		{
-			strcpy(saveFileName, "MULTI");
+			strcpy(saveFileName, "multi");
 		}
 	}
 	else
 	{
-		strcpy(saveFileName, "MULTI");
+		strcpy(saveFileName, "multi");
 	}
 
 	GetAGroup keyInField(2);
@@ -1169,11 +1190,11 @@ int Game::mp_select_mode(char *defSaveFileName)
 			if( strlen(getSaveFile.input_field) == 0 )
 			{
 				// empty, set back to default save game name
-				strcpy( getSaveFile.input_field, "MULTI" );
+				strcpy( getSaveFile.input_field, "multi" );
 			}
 
 			strcpy(remote.save_file_name, saveFileName);
-			strcat(remote.save_file_name, ".SVM");
+			strcat(remote.save_file_name, ".svm");
 			break;
 		}
 	}

@@ -24,10 +24,8 @@
 #ifndef __OMOUSE_H
 #define __OMOUSE_H
  
-// define DIRECTINPUT_VERSION before include dinput.h for directx 3 emulation
-#define DIRECTINPUT_VERSION 0x0300
-#include <dinput.h>
 #include <omodeid.h>
+#include <win32_compat.h>
 
 //-------- Define macro constant --------//
 //
@@ -86,6 +84,17 @@ enum MouseEventType
 #define DEFAULT_TRIPLE_SPEED_THRESHOLD 16
 #define DEFAULT_FIRST_REPEAT_KEY_TIME 500
 #define DEFAULT_REPEAT_RATE 100
+
+
+struct IDirectInputA;
+struct IDirectInputDeviceA;
+typedef struct IDirectInputA *LPDIRECTINPUT;
+typedef struct IDirectInputDeviceA *LPDIRECTINPUTDEVICE;
+#ifndef NEED_WINDOWS
+typedef void *HHOOK;
+typedef void *HINSTANCE;
+typedef void *HWND;
+#endif
 
 //-------- Define struct MouseClick -------//
 

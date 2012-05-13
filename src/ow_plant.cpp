@@ -29,7 +29,7 @@
 #include <oplant.h>
 #include <oterrain.h>
 #include <all.h>
-#include <math.h>
+#include <stdlib.h>
 #include	<orockres.h>
 #include	<orock.h>
 

@@ -21,8 +21,9 @@
 //Filename    : AM.CPP
 //Description : Ambition Entry Program
 
+#define NEED_WINDOWS
+
 #include <all.h>
-#include <initguid.h>
 #include <dshow.h>
 #include <oanline.h>
 #include <oaudio.h>

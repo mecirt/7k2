@@ -24,6 +24,9 @@
 #include <string.h>
 #include <win32_compat.h>
 #include <odir.h>
+#include <glob.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 
 //----------- Define static function ------------//
@@ -52,34 +55,27 @@ Directory::Directory() : DynArray( sizeof(FileInfo), 20 )
 //
 int Directory::read(const char *fileSpec, int sortName)
 {
-   FileInfo				fileInfo;
-	WIN32_FIND_DATA	findData;
-   
-   //----------- get the file list -------------//
+  printf ("Searching for %s\n", fileSpec);
 
-   HANDLE findHandle = FindFirstFile( fileSpec, &findData );
+  glob_t globs;
+  if (glob (fileSpec, GLOB_NOSORT, NULL, &globs) != 0) return 0;
+  int count = globs.gl_pathc;
 
-   while(findHandle!=INVALID_HANDLE_VALUE)
-   {
-      m.extract_file_name( fileInfo.name, findData.cFileName );		// get the file name only from a full path string 
+  FileInfo fileInfo;
+  for (int i = 0; i < count; ++i) {
+    m.extract_file_name(fileInfo.name, globs.gl_pathv[i]);
+    struct stat info;
+    stat(fileInfo.name, &info);
+    fileInfo.size = info.st_size;
+    fileInfo.time = info.st_mtime;
 
-      fileInfo.size = findData.nFileSizeLow;
-      fileInfo.time = findData.ftLastWriteTime; 
+    linkin(&fileInfo);
+  }
 
-      linkin( &fileInfo );
+  globfree (&globs);
 
-      if( !FindNextFile( findHandle, &findData ) )
-			break;
-   }
-
-	FindClose(findHandle);
-
-   //------ the file list by file name ---------//
-
-   if( sortName )
-      quick_sort( sort_file_function );
-
-   return size();       // DynArray::size()
+  printf ("Success, returning %d\n", count);
+  return count;
 }
 //-------- End of function Directory::read -------//
 

@@ -21,6 +21,8 @@
 //Filename    : OSYSINIT.CPP
 //Description : class Sys - initialization functions
 
+#define NEED_WINDOWS
+
 #include <ddraw.h>
 #include <resource.h>
 #include <osys.h>
@@ -659,7 +661,7 @@ void Sys::set_game_dir()
 	set_one_dir( "movie/intro.mpg"          , "movie/" , dir_movie );
 	set_one_dir( "Campaign/EAST.TXR"	     , "Campaign/", dir_campaign );
 
-   set_one_dir( "Music\\Norman.wav"      , "Music/", dir_music );
+   set_one_dir( "Music/Norman.wav"      , "Music/", dir_music );
 	set_one_dir( "Tutorial/Standard.tut" , "Tutorial/", dir_tutorial );
    set_one_dir( "Scenario/scenario.sys"    , "Scenario/", dir_scenario );
 
@@ -718,7 +720,7 @@ void Sys::get_cdrom_drive()
    cdrom_drive = 0;
 
    driveStr[1] = ':';
-   driveStr[2] = '\\';
+   driveStr[2] = '/';
    driveStr[3] = 0;
 
 	for(i='C'; i<='Z'; i++)

@@ -21,6 +21,7 @@
 //Filename    : OTALKMSG.CPP
 //Description : Object TalkMsg
 
+#include <win32_compat.h>
 #include <omouse.h>
 #include <osys.h>
 #include <ovga.h>

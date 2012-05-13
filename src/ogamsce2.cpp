@@ -22,6 +22,8 @@
 // Description : select scenario menu
 
 
+#define NEED_WINDOWS
+
 #include <ogame.h>
 #include <osys.h>
 #include <omouse.h>
@@ -186,8 +188,8 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 		j = scenInfoArray[i].dir_id;
 
 		// drop auto.scn and auto2.scn in dir 0
-		if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
-			|| strcasecmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
+		if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "auto.scn") == 0
+			|| strcasecmp( scenInfoArray[i].file_name, "auto2.scn") == 0) )
 			continue;
 
 		if( j >= 0 && j < MAX_SCENARIO_PATH )
@@ -390,8 +392,8 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 					j = scenInfoArray[i].dir_id;
 
 					// drop auto.scn and auto2.scn in dir 0
-					if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "AUTO.SCN") == 0
-						|| strcasecmp( scenInfoArray[i].file_name, "AUTO2.SCN") == 0) )
+					if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "auto.scn") == 0
+						|| strcasecmp( scenInfoArray[i].file_name, "auto2.scn") == 0) )
 						continue;
 
 					if( j >= 0 && j < MAX_SCENARIO_PATH )
@@ -428,8 +430,8 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 			char* pathName;
 
 			scenFileName = scenInfoArray[scenIndex[browseRecno-1]].file_name;
-			m.change_file_ext( pictName, scenFileName, "SCP" );
-			m.change_file_ext( textName, scenFileName, "SCT" );
+			m.change_file_ext( pictName, scenFileName, "scp" );
+			m.change_file_ext( textName, scenFileName, "sct" );
 			pathName = DIR_SCENARIO_PATH(scenInfoArray[scenIndex[browseRecno-1]].dir_id);
 			err_when( ! *pathName );
 

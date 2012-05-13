@@ -21,6 +21,8 @@
 //Filename    : OSYSDISP.CPP
 //Description : class Sys - display functions
 
+#define NEED_WINDOWS
+
 #include <ddraw.h>
 #include <osys.h>
 #include <ovga.h>

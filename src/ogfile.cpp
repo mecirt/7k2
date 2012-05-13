@@ -24,6 +24,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
+#include <sys/types.h>
 
 #include <win32_compat.h>
 #include <obox.h>
@@ -71,7 +74,7 @@ int GameFile::save_game(const char *path, const char* fileName, const char *game
 		if( path && path[0] != '\0' )		// non empty string
 		{
 			strcpy(file_name, path);
-			strcat(file_name, "\\");
+			strcat(file_name, "/");
 			strcat(file_name, fileName);
 		}
 		else
@@ -90,14 +93,10 @@ int GameFile::save_game(const char *path, const char* fileName, const char *game
 
 	int rc = 1;
 	char lowDiskSpaceFlag = 0;
-	DWORD sectorPerCluster = 0;
-	DWORD bytePerSector = 0;
-	DWORD freeCluster = 0;
-	DWORD totalCluster = 0;
-	if( GetDiskFreeSpace( NULL,	// address of root path, NULL means the current root directory
-		&sectorPerCluster, &bytePerSector, &freeCluster, &totalCluster))
+        struct statvfs free;
+        if (statvfs(path, &free) == 0)
 	{
-		DWORD freeSpace = DWORD( (double)freeCluster * sectorPerCluster * bytePerSector / 1024.0);
+		long freeSpace = free.f_bavail * free.f_bsize;
 
 		if( m.is_file_exist(file_name) )
 		{	
@@ -119,7 +118,7 @@ int GameFile::save_game(const char *path, const char* fileName, const char *game
 		// create directory
 		char *lastSlash = NULL;
 		char *s = file_name;
-		while( (s = strchr( s, '\\')) )
+		while( (s = strchr( s, '/')) )
 		{
 			lastSlash = s;
 			++s;		// start again at next character
@@ -128,9 +127,9 @@ int GameFile::save_game(const char *path, const char* fileName, const char *game
 		if( lastSlash )
 		{
 			char backupChar = *lastSlash;
-			err_when( backupChar != '\\' );
-			*lastSlash = '\0';		// truncate to and not including the last '\\'
-			CreateDirectory( file_name, NULL );
+			err_when( backupChar != '/' );
+			*lastSlash = '\0';		// truncate to and not including the last '/'
+			mkdir( file_name, 0755 );
 			*lastSlash = backupChar;		// res
 		}
 	}
@@ -214,7 +213,7 @@ int GameFile::load_game(const char *path, const char* fileName)
 		if( path && path[0] != '\0' )		// non empty string
 		{
 			strcpy(file_name, path);
-			strcat(file_name, "\\");
+			strcat(file_name, "/");
 			strcat(file_name, fileName);
 		}
 		else
@@ -337,11 +336,11 @@ void GameFile::set_file_name(const char *path, const char *extension)
 	baseName = (~nation_array)->king_name();
 
 	// #### begin Gilbert 31/10 #####//
-	// str = player_profile.save_game_path("");		// save dir "\\"
+	// str = player_profile.save_game_path("");		// save dir "/"
 	if( path && path != '\0' )
 	{
 		str = path;
-		str += "\\";
+		str += "/";
 	}
 	else
 	{
@@ -519,10 +518,6 @@ int GameFile::write_game_header(File* filePtr)
 	// ##### end Gilbert 28/3 #########//
 
 	game_date = info.game_date;
-
-	//----- set the file date ------//
-
-	CoFileTimeNow(&file_date);
 
 	//------- write GameFile to the saved game file -------//
 

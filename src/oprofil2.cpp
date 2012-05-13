@@ -21,7 +21,10 @@
 // Filename    : OPROFIL2.H
 // Description : PlayerProfile menu
 
+#define NEED_WINDOWS
+
 #include <unistd.h>
+#include <sys/stat.h>
 #include <oprofile.h>
 #include <all.h>
 #include <odir.h>
@@ -338,12 +341,10 @@ int PlayerProfile::register_menu()
 				if( selectedProfile == 0 && profileDir.size() > 0 )
 				{
 					int latestFile = 1;
-					FILETIME latestTime = profileDir[1]->time;
+					time_t latestTime = profileDir[1]->time;
 					for( i = 2; i <= profileDir.size(); ++i )
 					{
-						if( profileDir[i]->time.dwHighDateTime > latestTime.dwHighDateTime
-							|| profileDir[i]->time.dwHighDateTime == latestTime.dwHighDateTime
-							&& (profileDir[i]->time.dwLowDateTime > latestTime.dwLowDateTime))
+						if (profileDir[i]->time > latestTime)
 						{
 							latestTime = profileDir[i]->time;
 							latestFile = i;
@@ -643,7 +644,7 @@ int PlayerProfile::register_menu()
 					// remove backslash at the end
 					if( !m.is_file_exist(str) )
 					{
-						if( !CreateDirectory( str, NULL ) )
+						if( !mkdir( str, 0755 ) )
 						{
 							// box.msg( "Error creating SAVE directory" );
 							box.msg( text_game_menu.str_profile_error_dir(str) );
@@ -715,11 +716,11 @@ int PlayerProfile::register_menu()
 
 					// ------ create directory -------//
 
-					BOOL dirCreated = CreateDirectory( str, NULL );
+					BOOL dirCreated = mkdir( str, 0755 );
 					if( !save() )
 					{
 						if( dirCreated )
-							RemoveDirectory( str);	// clear the directory created
+							rmdir( str);	// clear the directory created
 						// box.msg( "Error creating profile" );
 						box.msg( text_game_menu.str_profile_error_create() );
 					}
@@ -762,7 +763,7 @@ int PlayerProfile::register_menu()
 				// ###### patch begin Gilbert 12/4 #######//
 				str = DIR_SAVE;
 				str += profileArray[selectedProfile-1].save_dir;
-				RemoveDirectory( str );
+				rmdir( str );
 				// ###### patch end Gilbert 12/4 #######//
 
 				if(strcasecmp( file_name, profileArray[selectedProfile-1].file_name) == 0)
@@ -817,17 +818,17 @@ int PlayerProfile::re_create_directory()
 	do
 	{
 		char backupSearchPtr;
-		searchPtr = strchr( beginPtr, '\\' );
+		searchPtr = strchr( beginPtr, '/' );
 		if( searchPtr )
 		{
 			backupSearchPtr = *searchPtr;
-			*searchPtr = '\0';		// replace '\\' with '\0' (string terminator)
+			*searchPtr = '\0';		// replace '/' with '\0' (string terminator)
 		}
 
 		if( searchPtr != beginPtr				// if path is "\SAVE\GILBERT", searchPtr == beginPtr
 			&& !m.is_file_exist(pathName) )	// not beginPtr, eg "SAVE\GILBERT'
 		{
-			if( !CreateDirectory( pathName, NULL ) )
+			if( !mkdir( pathName, 0755) )
 			{
 				//String str = "Error creating ";
 				//str += pathName;
@@ -843,7 +844,7 @@ int PlayerProfile::re_create_directory()
 		if( searchPtr )
 		{
 			*searchPtr = backupSearchPtr;
-			beginPtr = searchPtr+1;		// beginPtr points to next character after '\\'
+			beginPtr = searchPtr+1;		// beginPtr points to next character after '/'
 		}
 
 	} while( searchPtr );

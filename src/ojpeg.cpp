@@ -23,7 +23,6 @@
 
 
 #define XMD_H
-#define HAVE_BOOLEAN
 #include <all.h>
 #include <stdio.h>
 extern "C"

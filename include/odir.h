@@ -24,9 +24,8 @@
 #ifndef __ODIR_H
 #define __ODIR_H
 
-#ifndef __ODYNARR_H
 #include <odynarr.h>
-#endif
+#include <time.h>
 
 //---------- Define struct FileInfo ----------//
 
@@ -34,7 +33,7 @@ struct FileInfo
 {
     char				name[MAX_PATH+1];
     unsigned long size;
-	 FILETIME		time;
+    time_t time;
 };
 
 //---------- Define class Directory ----------//

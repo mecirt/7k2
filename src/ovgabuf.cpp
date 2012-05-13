@@ -21,6 +21,8 @@
 //Filename    : OVGABUF.CPP
 //Description : OVGABUF direct draw surface class
 
+#define NEED_WINDOWS
+
 #include <ddraw.h>
 #include <ovgabuf.h>
 #include <ovga.h>
@@ -88,7 +90,7 @@ void VgaBuf::init_front(LPVOID vdd4Ptr)
 	// ##### begin Gilbert 4/11 ######//
 	//------ Get Direct Draw capacity info --------//
 //	DDCAPS              ddcaps;
-//	ZeroMemory( &ddcaps, 0, sizeof(ddcaps) );
+//	memset( &ddcaps, 0, sizeof(ddcaps) );
 //	ddcaps.dwSize = sizeof( ddcaps );
 //	if( ddPtr->GetCaps( &ddcaps, NULL ) != DD_OK )
 //		err.run( "Error creating Direct Draw front surface!" );
@@ -98,7 +100,7 @@ void VgaBuf::init_front(LPVOID vdd4Ptr)
 	// Create the Front Buffer
 	//---------------------------------------------//
 
-	ZeroMemory( &ddsd, sizeof(ddsd) );
+	memset( &ddsd, 0, sizeof(ddsd) );
 	ddsd.dwSize = sizeof( ddsd );
 
 	ddsd.dwFlags = DDSD_CAPS;
