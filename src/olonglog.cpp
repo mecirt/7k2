@@ -20,9 +20,9 @@
 
 // Filename   : OLONGLOG.CPP
 
+#include <win32_compat.h>
 #include <olonglog.h>
 #include <stdio.h>
-#include <windows.h>
 
 
 LongLog::LongLog(char suffix)

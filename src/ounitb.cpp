@@ -21,7 +21,7 @@
 //Filename	 : OUNITB.CPP
 //Description: Functions in the UnitB class
 
-#include <windows.h>
+#include <win32_compat.h>
 #include <opfind.h>
 #include <onation.h>
 #include <ounitres.h>

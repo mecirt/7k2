@@ -21,9 +21,7 @@
 //Filename    : OREMOTE.CPP
 //Description : Object Remote
 
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
+#include <win32_compat.h>
 
 #include <all.h>
 #include <obox.h>

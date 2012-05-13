@@ -21,8 +21,8 @@
 //Filename    : OHERORES.CPP
 //Description : Hero resource object
 
-#include <oherores.h>
 #include <all.h>
+#include <oherores.h>
 #include <onation.h>
 #include <oinfo.h>
 #include <otown.h>

@@ -31,7 +31,7 @@
 
 void TextResFirm::init()
 {
-	TextResource::init( DIR_RES"T_FIRM.RES" );
+	TextResource::init( DIR_RES"t_firm.res" );
 }
 
 // text id 1 - 12

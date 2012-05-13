@@ -25,6 +25,7 @@
 // Owner       : Gilbert
 
 
+#include <win32_compat.h>
 #include <oseres.h>
 #include <ose.h>
 #include <ogameset.h>

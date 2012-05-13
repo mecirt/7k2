@@ -27,7 +27,7 @@
 
 void TextResNews::init()
 {
-	TextResource::init( DIR_RES"T_NEWS.RES" );
+	TextResource::init( DIR_RES"t_news.res" );
 }
 
 char* TextResNews::str_town_of_nation( char* townName, char* nationName)

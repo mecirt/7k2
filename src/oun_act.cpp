@@ -21,6 +21,7 @@
 //Filename	 : OUN_ACT.CPP
 //Description: Unit class functions
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <ounitres.h>
 #include <oseres.h>

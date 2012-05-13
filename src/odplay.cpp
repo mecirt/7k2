@@ -570,7 +570,7 @@ int MultiPlayerDP::poll_sessions()
 	// ##### patch begin Gilbert 9/1 #########//
 //	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
 	// ##### end begin Gilbert 9/1 #########//
-	VgaCustomPalette vgaCPal(DIR_RES"PAL_WIN.RES");
+	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 	return DP_OK == direct_play4->EnumSessions(&sessionDesc , 0, EnumSessionsCallback, this, 
 		DPENUMSESSIONS_AVAILABLE | DPENUMSESSIONS_ASYNC);
 }
@@ -625,7 +625,7 @@ int MultiPlayerDP::create_session(char *sessionName, int maxPlayers)
 	// ##### patch begin Gilbert 9/1 #########//
 //	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
 	// ##### end begin Gilbert 9/1 #########//
-	VgaCustomPalette vgaCPal(DIR_RES"PAL_WIN.RES");
+	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 	if( !direct_play4->Open(&joined_session, DPOPEN_CREATE) )
 	{
 		host_flag = 1;

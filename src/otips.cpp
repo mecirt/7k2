@@ -35,7 +35,7 @@
 #include <ot_gmenu.h>
 
 
-#define TIPS_FILE_NAME "TIPS.RES"
+#define TIPS_FILE_NAME "tips.res"
 #define MAX_TIPS_LEN 2000
 
 #define TIPS_TEXT_WIDTH 350

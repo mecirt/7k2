@@ -24,9 +24,6 @@
 #ifndef __ODATE_H
 #define __ODATE_H
 
-struct _FILETIME;
-typedef _FILETIME FILETIME;
-
 class DateInfo
 {
 public:
@@ -46,8 +43,6 @@ public:
    int   day_year(int,int,int);
 
 	int 	add_months(int inDate, int addMonth);
-
-	int	file_time_to_julian(FILETIME& fileTime);
 
 private:
    long ytoj(int);

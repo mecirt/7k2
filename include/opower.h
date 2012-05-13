@@ -24,6 +24,8 @@
 #ifndef __OPOWER_H
 #define __OPOWER_H
 
+#include <stdlib.h>
+
 //-------- Define command id. -----------//
 
 enum { 

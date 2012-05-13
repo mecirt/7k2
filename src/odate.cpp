@@ -23,7 +23,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <windowsx.h>
 
 #include <ostr.h>
 #include <omisc.h>
@@ -472,25 +471,4 @@ int DateInfo::add_months(int inDate, int addMonth)
 //---------- End of function DateInfo::add_months ------//
 
 
-//-------- Begin of function DateInfo::file_time_to_julian ------//
-//
-int DateInfo::file_time_to_julian(FILETIME& fileTime)
-{
-/*
-	WORD dosTime, dosDate;
-
-	CoFileTimeToDosDateTime( &fileTime, &dosDate, &dosTime );
-
-	//--------------------------------------------//
-	// Bits	Contents
-	// 0-4	Days of the month (1-31).
-	// 5-8	Months (1 = January, 2 = February, and so forth).
-	// 9-15	Year offset from 1980 (add 1980 to get actual year).
-	//--------------------------------------------//
-
-	return julian( 1980 + (dosDate>>9), (dosDate>>5) & 0x0F, dosDate & 0x0F );
-*/
-	return 0;
-}
-//---------- End of function DateInfo::file_time_to_julian ------//
 

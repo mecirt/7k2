@@ -21,9 +21,9 @@
 //Filename    : OTOWNRES.CPP
 //Description : Town resource object
 
+#include <all.h>
 #include <otownres.h>
 #include <otownrec.h>
-#include <all.h>
 #include <osys.h>
 #include <ogameset.h>
 #include <oworld.h>

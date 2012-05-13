@@ -21,6 +21,7 @@
 //Filename    : OTUTOR.CPP
 //Description : Class Tutor
 
+#include <win32_compat.h>
 #include <otutor.h>
 #include <ovga.h>
 #include <omodeid.h>
@@ -55,7 +56,7 @@
 
 //---------- define constant ------------//
 
-#define TUTOR_DB   		"TUT_LIST.RES"
+#define TUTOR_DB   		"tut_list.res"
 #define TUTOR_TEXT_RES  "TUT_TEXT.RES"
 #define TUTOR_INTRO_RES "TUT_INTR.RES"
 

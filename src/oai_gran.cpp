@@ -21,6 +21,7 @@
 //Filename   : OAI_GRAN.CPP
 //Description: AI grand plans
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <otalkres.h>
 #include <oraceres.h>

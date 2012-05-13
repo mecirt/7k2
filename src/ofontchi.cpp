@@ -651,8 +651,11 @@ void Font::init(char* fontName, int interCharSpace, int italicShift)
 	String str;
 
 	str  = DIR_RES;
-	str += "FNT_";
-	str += fontName;
+        if (!strcmp(fontName,"MID")) str += "fnt_mid";
+        else {
+	  str += "FNT_";
+	  str += fontName;
+        }
 	str += ".RES";
 
 	fontFile.file_open(str);

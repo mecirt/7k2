@@ -23,7 +23,7 @@
 #define _WIN32_COMPAT_H
 
 
-#ifdef NO_WINDOWS // !WINE && !WIN32
+#ifdef NO_WINDOWS 
 
 #include <ctype.h>
 #include <stdint.h>
@@ -42,6 +42,7 @@ typedef uint32_t WPARAM;
 #define FALSE 0
 
 #define MAX_PATH 260
+#define FILE_NAME_LEN 512
 
 typedef struct {
 	DWORD dwLowDateTime;
@@ -58,6 +59,27 @@ typedef struct {
 	WORD wSecond;
 	WORD wMilliseconds;
 } SYSTEMTIME;
+
+#ifndef __stdcall
+# ifdef __i386__
+#  ifdef __GNUC__
+#   ifdef __APPLE__ /* Mac OS X uses a 16-byte aligned stack and not a 4-byte one */
+#    define __stdcall __attribute__((__stdcall__)) __attribute__((__force_align_arg_pointer__))
+#   else
+#    define __stdcall __attribute__((__stdcall__))
+#   endif
+#  elif defined(_MSC_VER)
+    /* Nothing needs to be done. __stdcall already exists */
+#  else
+#   error You need to define __stdcall for your compiler
+#  endif
+# elif defined(__x86_64__) && defined (__GNUC__)
+#  define __stdcall __attribute__((ms_abi))
+# else  /* __i386__ */
+#  define __stdcall
+# endif  /* __i386__ */
+#endif /* __stdcall */
+
 
 inline char *itoa(int num, char *str, int radix)
 {
@@ -96,7 +118,7 @@ inline char *strlwr(char *str)
 	return str;
 }
 
-#else // WINE || WIN32
+#else // NO_WINDOWS
 
 #include <windows.h>
 

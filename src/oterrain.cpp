@@ -22,8 +22,8 @@
 //Description : Terrain resource object
 //Ownership   : Gilbert
 
-#include <oterrain.h>
 #include <all.h>
+#include <oterrain.h>
 #include <oimgres.h>
 #include <color.h>
 #include <osys.h>
@@ -247,8 +247,7 @@ void TerrainRes::init()
 
 	str = DIR_RES;
 	// str += "I_TERANM.RES";
-	str += "I_TERA";
-	str += config.terrain_set;
+	str += (config.terrain_set == 1) ? "I_TERA1" : "i_tera2";
 	str += ".RES";
 
 	anm_bitmap.init_imported(str,1);
@@ -715,7 +714,7 @@ void TerrainRes::load_sub_info()
 
 	//---- read in terrain count and initialize terrain info array ----//
 
-	Database terSubDbObj(DIR_RES"TERSUB.RES", 1);
+	Database terSubDbObj(DIR_RES"tersub.res", 1);
 	//Database *dbTerrain = game_set.open_db(TERRAIN_SUB_DB);
 	Database *dbTerrain = &terSubDbObj;
 
@@ -1068,7 +1067,7 @@ void TerrainRes::load_pal()
 
 	File palFile;
 	palFile.file_open(str);
-	palFile.file_seek(8, FILE_CURRENT);		// skip header
+	palFile.file_seek(8, false);		// skip header
 	palFile.file_read(&palSrc, sizeof(palSrc));
 
 	BYTE reservedColorArray[] = { 0xff };

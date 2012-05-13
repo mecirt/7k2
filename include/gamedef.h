@@ -39,15 +39,13 @@ extern const int GAME_VERSION;
 
 //------- Data sub-directories -------//
 
-#define DIR_RES         "RESOURCE\\"
-#define DIR_SPRITE      "SPRITE\\"
-#define DIR_FIRM			"FIRM\\"
-#define DIR_FIRM_SMALL	"FIRMSML\\"
-#define DIR_SOUND       "SOUND\\"
-#define DIR_SAVE        "SAVE\\"
+#define DIR_RES         "Resource/"
+#define DIR_SPRITE      "Sprite/"
+#define DIR_FIRM			"Firm/"
+#define DIR_FIRM_SMALL	"Firmsml/"
+#define DIR_SOUND       "Sound/"
+#define DIR_SAVE        "Save/"
 #define DIR_IMAGE       sys.dir_image
-#define DIR_ENCYC       sys.dir_encyc
-#define DIR_ENCYC2		sys.dir_encyc2
 #define DIR_MUSIC       sys.dir_music
 #define DIR_MOVIE       sys.dir_movie
 #define DIR_TUTORIAL		sys.dir_tutorial

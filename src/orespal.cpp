@@ -22,9 +22,8 @@
 // Description : Palette ResourcePal
 
 
-
-#include <orespal.h>
 #include <all.h>
+#include <orespal.h>
 #include <osys.h>
 #include <ovga.h>
 #include <odb.h>

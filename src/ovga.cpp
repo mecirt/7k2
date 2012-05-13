@@ -23,8 +23,8 @@
 
 #define DEBUG_LOG_LOCAL 1
 
-#include <windowsx.h>
 #include <ddraw.h>
+#include <windowsx.h>
 // include ddraw before ovga.h such that dd_buf is translated
 #include <all.h>
 #include <imgfun.h>

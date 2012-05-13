@@ -24,6 +24,8 @@
 #ifndef __OBOX_H
 #define __OBOX_H
 
+#include <stdlib.h>
+
 //------- constant for arrow box ----------//
 
 enum { ARROW_BOX_WIDTH        = 390,

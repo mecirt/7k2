@@ -27,7 +27,7 @@
 
 void TextResTutorial::init()
 {
-	TextResource::init( DIR_RES"T_TUTOR.RES" );
+	TextResource::init( DIR_RES"t_tutor.res" );
 }
 
 // text id 1

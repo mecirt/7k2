@@ -21,6 +21,7 @@
 //Filename    : OF_LAIRA.CPP
 //Description : Firm Monster Lair  - AI functions
 
+#include <win32_compat.h>
 #include <otown.h>
 #include <ounit.h>
 #include <onation.h>

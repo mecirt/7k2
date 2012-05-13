@@ -22,6 +22,7 @@
 // Description : interface functions of Incubator
 
 
+#include <win32_compat.h>
 #include <of_incu.h>
 #include <oinfo.h>
 #include <ovga.h>

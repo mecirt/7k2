@@ -292,9 +292,9 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 		else
 		{
 			if ((~nation_array)->race_id > 0)
-				fileName = "LOSEGAME";
+				fileName = "Losegam";
 			else
-				fileName = "LOSEGAM2";
+				fileName = "Losegam2";
 		}
 		vga.disp_image_file(fileName);		//BUGHERE
 

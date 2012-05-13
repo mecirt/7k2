@@ -29,7 +29,7 @@
 
 void TextResUnit::init()
 {
-	TextResource::init(DIR_RES"T_UNIT.RES");
+	TextResource::init(DIR_RES"t_unit.res");
 }
 
 // title for human and fryhtan king, general and soldier

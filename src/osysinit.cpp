@@ -268,7 +268,7 @@ int Sys::init_directx()
    DEBUG_LOG("vga.init() ok");
 
    DEBUG_LOG("Attempt vga.load_pal()");
-   vga.load_pal(DIR_RES"PAL_STD.RES");
+   vga.load_pal(DIR_RES"pal_std.res");
    DEBUG_LOG("vga.load_pal() finish");
 
 	// update Sys::deinit and Sys::change_display_mode
@@ -494,7 +494,7 @@ int Sys::init_objects()
 
 	//----------------------------------------//
 
-	help.init("HELP.RES");
+	help.init("help.res");
 
 //#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
 //	translate.init();		// translate never active, even in other language, use text resources
@@ -637,7 +637,6 @@ void Sys::set_game_dir()
 
    get_cdrom_drive();
 
-#ifndef DEBUG
 	if( cdrom_drive )
 	{
 		char driveStr[] = "D:\\";
@@ -655,27 +654,18 @@ void Sys::set_game_dir()
 			cdrom_drive = '\0';
 		}
 	}
-#endif
 
-	set_one_dir( "IMAGE\\HALFAME1.JPG"       , "IMAGE\\" , dir_image );
-	set_one_dir( "ENCYC\\SEAT\\NORMAN.ICN"   , "ENCYC\\" , dir_encyc );
-	set_one_dir( "ENCYC2\\SEAT\\EGYPTIAN.ICN", "ENCYC2\\", dir_encyc2 );
-	set_one_dir( "MOVIE\\INTRO.MPG"          , "MOVIE\\" , dir_movie );
-	set_one_dir( "CAMPAIGN\\EAST.TXR"	     , "CAMPAIGN\\", dir_campaign );
+	set_one_dir( "Image/Halfame1.jpg"       , "Image/" , dir_image );
+	set_one_dir( "movie/intro.mpg"          , "movie/" , dir_movie );
+	set_one_dir( "Campaign/EAST.TXR"	     , "Campaign/", dir_campaign );
 
-#ifdef DEMO
-	set_one_dir( "MUSIC\\DEMO.WAV"        , "MUSIC\\", dir_music );
-   set_one_dir( "TUTORIAL\\STANDARD.TUT" , "TUTORIAL\\", dir_tutorial );
-   set_one_dir( "SCENARIO\\DEMO.SCN"     , "SCENARIO\\", dir_scenario );
-#else
-   set_one_dir( "MUSIC\\NORMAN.WAV"      , "MUSIC\\", dir_music );
-	set_one_dir( "TUTORIAL\\STANDARD.TUT" , "TUTORIAL\\", dir_tutorial );
-   set_one_dir( "SCENARIO\\SCENARIO.SYS"    , "SCENARIO\\", dir_scenario );
-#endif
+   set_one_dir( "Music\\Norman.wav"      , "Music/", dir_music );
+	set_one_dir( "Tutorial/Standard.tut" , "Tutorial/", dir_tutorial );
+   set_one_dir( "Scenario/scenario.sys"    , "Scenario/", dir_scenario );
 
 	// ####### begin Gilbert 26/5 #########//
 #if(MAX_SCENARIO_PATH >= 2)
-   set_one_dir( "SCENARIO\\PREMADE\\SCENARIO.SYS"    , "SCENARIO\\PREMADE\\", dir_scenario_path[1] );
+   set_one_dir( "Scenario/Premade/scenario.sys"    , "Scenario/Premade/", dir_scenario_path[1] );
 #endif
 	// ####### end Gilbert 26/5 #########//
 

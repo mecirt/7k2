@@ -22,7 +22,7 @@
 //Description : Object Directory
 
 #include <string.h>
-#include <windows.h>
+#include <win32_compat.h>
 #include <odir.h>
 
 

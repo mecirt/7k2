@@ -23,19 +23,17 @@
 //Ownership   : Gilbert
 
 
-#include <oaudio.h>
 #include <all.h>
+#include <oaudio.h>
+#include <dsound.h>
 #include <osys.h>
 #include <obox.h>
 #include <ovgalock.h>
 
-#include <windows.h>
-#include <windowsx.h>
-#include <commdlg.h>
+#include <win32_compat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <mmsystem.h>
 #include <string.h>
 #include <limits.h>
 
@@ -481,7 +479,7 @@ int Audio::play_wav(const char* wavName, DsVolume dsVolume)
 
 #ifndef LOAD_FULL_WAVE
 	// seek to the start of wave data
-	filePtr->file_seek(wavDataOffset-128,FILE_CURRENT);
+	filePtr->file_seek(wavDataOffset-128,false);
 #endif
 
 	//------- Create DirectSoundBuffer to store a wave ------//
@@ -641,7 +639,7 @@ int Audio::play_wav(short resIdx, DsVolume dsVolume)
 
 #ifndef LOAD_FULL_WAVE
 	// seek to the start of wave data
-	filePtr->file_seek(wavDataOffset-128,FILE_CURRENT);
+	filePtr->file_seek(wavDataOffset-128,false);
 #endif
 
 	//------- Create DirectSoundBuffer to store a wave ------//
@@ -1004,7 +1002,7 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
 	wavDataLength = *(DWORD *)(dataTag+4);
 
 	// seek to the start of wave data
-	long temp1 = filePtr->file_seek(wavDataOffset,FILE_BEGIN);
+	long temp1 = filePtr->file_seek(wavDataOffset);
 
 	WORD OptBufferSize=LWAV_STREAM_BUFSIZ,
 		MinRemainder =(WORD)(wavDataLength % (OptBufferSize * LWAV_BANKS));
@@ -1284,7 +1282,7 @@ int	Audio::play_loop_wav(const char *wavName, int repeatOffset, DsVolume dsVolum
 	wavDataLength = *(DWORD *)(dataTag+4);
 
 	// seek to the start of wave data
-	long temp1 = filePtr->file_seek(wavDataOffset,FILE_BEGIN);
+	long temp1 = filePtr->file_seek(wavDataOffset);
 
 	WORD OptBufferSize=LOOPWAV_STREAM_BUFSIZ;
 

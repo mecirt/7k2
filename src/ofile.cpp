@@ -21,10 +21,11 @@
 //Filename    : OFILE.CPP
 //Description : Object File
 
+#define NO_WINDOWS
+
+#include <all.h>
 #include <ofile.h>
 #include <obox.h>
-#include <all.h>
-#include <windows.h>
 #include <stdio.h>
 
 //--------- Define static variables -----------//
@@ -51,7 +52,7 @@ int File::file_open(const char* fileName, int handleError, int allowVarySize)
 	if( strlen(fileName) > MAX_PATH )
       err.run( "File : file name is too long." );
 
-   if( file_handle != INVALID_HANDLE_VALUE )
+   if (file_handle != NULL)
       file_close();
 
    strcpy( file_name, fileName );
@@ -65,23 +66,76 @@ int File::file_open(const char* fileName, int handleError, int allowVarySize)
    {
       char    filePath[MAX_PATH];
       strcpy( filePath, path_array[i] );
-      strcat( filePath, fileName );
+      strcat( filePath, file_name );
 
-      file_handle = CreateFile(filePath,
-			   GENERIC_READ,
-			   FILE_SHARE_READ,
-			   (LPSECURITY_ATTRIBUTES) NULL,
-			   OPEN_EXISTING,
-			   FILE_ATTRIBUTE_NORMAL,
-			   (HANDLE) NULL);
+      file_handle = fopen(filePath, "r");
 
-      if( file_handle != INVALID_HANDLE_VALUE)
-			return TRUE;
+      if (file_handle) return true;
    }
 
-	err.run( "Error opening file %s.", file_name );
+   // No luck. Try to convert the ext to lowercase
+   int len = strlen(file_name);
+   if (len > 3) {
+     file_name[len-1] = tolower(file_name[len-1]);
+     file_name[len-2] = tolower(file_name[len-2]);
+     file_name[len-3] = tolower(file_name[len-3]);
+   }
 
-   return FALSE;
+   for( int i=0 ; i<sizeof(path_array)/sizeof(path_array[0]) ; i++ )
+   {
+      char    filePath[MAX_PATH];
+      strcpy( filePath, path_array[i] );
+      strcat( filePath, file_name );
+
+      file_handle = fopen(filePath, "r");
+
+      if (file_handle) return true;
+   }
+
+   // still nothing. convert it all to lowercase
+   if (len > 3) {
+     for (int i = len - 1; i >= 0; i--) {
+       if (file_name[i] == '/') break;
+       file_name[i] = tolower(file_name[i]);
+     }
+   }
+
+   for( int i=0 ; i<sizeof(path_array)/sizeof(path_array[0]) ; i++ )
+   {
+      char    filePath[MAX_PATH];
+      strcpy( filePath, path_array[i] );
+      strcat( filePath, file_name );
+
+      file_handle = fopen(filePath, "r");
+
+      if (file_handle) return true;
+   }
+
+   // try with the first letter in uppercase
+   if (len > 3) {
+     for (int i = len - 1; i >= 0; i--) {
+       if (file_name[i-1] == '/') {
+         file_name[i] = toupper(file_name[i]);
+         break;
+       }
+     }
+   }
+
+   for( int i=0 ; i<sizeof(path_array)/sizeof(path_array[0]) ; i++ )
+   {
+      char    filePath[MAX_PATH];
+      strcpy( filePath, path_array[i] );
+      strcat( filePath, file_name );
+
+      file_handle = fopen(filePath, "r");
+
+      if (file_handle) return true;
+   }
+
+
+   err.run( "Error opening file %s.", file_name );
+
+   return false;
 }
 //---------- End of function File::file_open ----------//
 
@@ -113,18 +167,12 @@ int File::file_create(const char* fileName, int handleError, int allowVarySize)
 
    // cannot use creat() because it can't specify Binary file type
 
-   file_handle = CreateFile(fileName,
-			   GENERIC_WRITE,
-			   0,
-			   (LPSECURITY_ATTRIBUTES) NULL,
-			   CREATE_ALWAYS,
-			   FILE_ATTRIBUTE_NORMAL,
-			   (HANDLE) NULL);
+   file_handle = fopen(fileName, "w");
 
-   if( file_handle == INVALID_HANDLE_VALUE)
-		err.run( "Error creating file %s", file_name );
+   if( file_handle == NULL)
+     err.run( "Error creating file %s", file_name );
 
-   return TRUE;
+   return true;
 }
 //---------- End of function File::file_create ----------//
 
@@ -149,7 +197,7 @@ int File::file_append(const char* fileName, int handleError, int allowVarySize)
 	if( strlen(fileName) > MAX_PATH )
       err.run( "File : file name is too long." );
 
-   if( file_handle != INVALID_HANDLE_VALUE )
+   if (file_handle != NULL)
       file_close();
 
    strcpy( file_name, fileName );
@@ -165,21 +213,15 @@ int File::file_append(const char* fileName, int handleError, int allowVarySize)
       strcpy( filePath, path_array[i] );
       strcat( filePath, fileName );
 
-      file_handle = CreateFile(filePath,
-			   GENERIC_WRITE,
-			   FILE_SHARE_WRITE,
-			   (LPSECURITY_ATTRIBUTES) NULL,
-			   OPEN_EXISTING,
-			   FILE_ATTRIBUTE_NORMAL,
-			   (HANDLE) NULL);
+      file_handle = fopen(filePath, "a");
 
-      if( file_handle != INVALID_HANDLE_VALUE)
-			return TRUE;
+      if (file_handle != NULL)
+			return true;
    }
 
-	err.run( "Error opening file %s.", file_name );
+   err.run( "Error opening file %s.", file_name );
 
-   return FALSE;
+   return false;
 }
 //---------- End of function File::file_append ----------//
 //#### end alex 24/7 ####//
@@ -188,10 +230,10 @@ int File::file_append(const char* fileName, int handleError, int allowVarySize)
 //
 void File::file_close()
 {
-   if( file_handle != INVALID_HANDLE_VALUE )
+   if (file_handle != NULL)
    {
-      CloseHandle(file_handle);
-      file_handle = INVALID_HANDLE_VALUE;
+      fclose(file_handle);
+      file_handle = NULL;
    }
 }
 //---------- End of function File::file_close ----------//
@@ -217,7 +259,7 @@ File::~File()
 //
 int File::file_write(void* dataBuf, unsigned dataSize)
 {
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
+   err_when(file_handle == NULL);       // not initialized
 
    if( allow_vary_size )        // allow the writing size and the read size to be different
    {
@@ -227,30 +269,14 @@ int File::file_write(void* dataBuf, unsigned dataSize)
          file_put_unsigned_short( dataSize );
    }
 
-	DWORD actualWritten;	
-
-   int rc = WriteFile( file_handle, dataBuf, dataSize, &actualWritten, NULL); 
+   int actualWritten = fwrite (dataBuf, dataSize, 1, file_handle);
 		
-   if( !rc && handle_error )
+   if( !actualWritten && handle_error )
       err.run( "Error writing file %s", file_name );
 
-   return rc;
+   return actualWritten;
 }
 //---------- End of function File::file_write ----------//
-
-#if(defined(CHINESE))
-#ifdef DEBUG
-//SXM
-static Total=0;
-void DumpBin(char* FileName,char* s,int Length);
-void Dump(char* FileName,char* s);
-void Dump(char* FileName,int i);
-void DumpBin(char* s,int Length);
-void Dump(char* s);
-void Dump(int i);
-//SXM
-#endif
-#endif
 
 //-------- Begin of function File::file_read ----------//
 //
@@ -264,33 +290,9 @@ void Dump(int i);
 
 int File::file_read(void* dataBuf, unsigned dataSize)
 {
-#if(defined(CHINESE))
-#ifdef DEBUG
-	//SXM:Test
-	
-	char s[10240];
-	strcpy(s,file_name);
-	strlwr(s);
-	if(strstr(s,".scn"))
-	{
-		Total+=dataSize;
-		Dump("Read ");
-		Dump(dataSize);
-		Dump(" bytes ");
-		Dump("  Total ");
-		Dump(Total);
-		Dump(" bytes");
-		Dump("  Offset ");
-		Dump(file_pos());
-		Dump("\n");
-	}
-	//SXM:Test
-#endif
-#endif
-
 	#define MAX_READ_SIZE 0xFFF0
 
-	err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
+	err_when (file_handle == NULL);       // not initialized
 
 	int curPos=file_pos();
 
@@ -306,17 +308,10 @@ int File::file_read(void* dataBuf, unsigned dataSize)
          readSize = min(dataSize, writtenSize);  // the read size is the minimum of the written size and the supposed read size
    }
 
-	DWORD actualRead;
-
-	// ######## begin Gilbert 29/4 ##########//
-   // int rc=ReadFile( file_handle, dataBuf, dataSize, &actualRead, NULL);
-   int rc=ReadFile( file_handle, dataBuf, readSize, &actualRead, NULL);
-	// ######## end Gilbert 29/4 ##########//
-		
-   //-------- if the data size has been reduced ----------//
+   int actualRead = fread(dataBuf, 1, dataSize, file_handle);
 
    if( readSize < writtenSize )
-      file_seek( writtenSize-readSize, FILE_CURRENT );
+      file_seek( writtenSize-readSize, false );
 
    //---- if the data size has been increased, reset the unread area ---//
 
@@ -325,7 +320,7 @@ int File::file_read(void* dataBuf, unsigned dataSize)
 
    //----- if reading error, popup box and ask for retry -----//
 
-	if( !rc && handle_error )
+	if( !actualRead && handle_error )
 	{
 		char msgStr[100];
 
@@ -338,7 +333,7 @@ int File::file_read(void* dataBuf, unsigned dataSize)
 		}
 	}
 
-	return rc;
+	return actualRead;
 }
 //---------- End of function File::file_read ----------//
 
@@ -353,19 +348,16 @@ int File::file_read(void* dataBuf, unsigned dataSize)
 //
 int File::file_put_short(short value)
 {
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
+   err_when( file_handle == NULL );       // not initialized
 
-	DWORD actualWritten;	
+	unsigned int actualWritten;	
 
-	if( WriteFile( file_handle, &value, sizeof(short), &actualWritten, NULL ) )
-		return TRUE;
-	else
-	{
-		if( handle_error )
-			err.run( "Error writing file %s", file_name );
+	if( fwrite (&value, sizeof(short), 1, file_handle) )
+		return true;
+	if( handle_error )
+		err.run( "Error writing file %s", file_name );
 
-		return FALSE;
-	}
+	return false;
 }
 //---------- End of function File::file_put_short ----------//
 
@@ -378,43 +370,17 @@ int File::file_put_short(short value)
 //
 short File::file_get_short()
 {
-#if(defined(CHINESE))
-#ifdef DEBUG
-	//SXM:Test
-	char s[10240];
-	strcpy(s,file_name);
-	strlwr(s);
-	if(strstr(s,".scn"))
-	{
-		Total+=sizeof(short);
-		Dump("Read ");
-		Dump(sizeof(short));
-		Dump(" bytes ");
-		Dump("  Total ");
-		Dump(Total);
-		Dump(" bytes");
-		Dump("  Offset ");
-		Dump(file_pos());
-		Dump("\n");
-	}
-	//SXM:Test
-#endif
-#endif
+   err_when( file_handle == NULL );       // not initialized
 
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
-
-	DWORD actualRead;	
+	unsigned int actualRead;	
 	short value;
 
-	if( ReadFile( file_handle, &value, sizeof(short), &actualRead, NULL ) )
+	if( fread (&value, sizeof(short), 1, file_handle) )
 		return value;
-	else
-	{
-		if( handle_error )
-			err.run( "Error reading file %s", file_name );
+	if( handle_error )
+		err.run( "Error reading file %s", file_name );
 
-		return FALSE;
-	}
+	return false;
 }
 //---------- End of function File::file_get_short ----------//
 
@@ -429,19 +395,14 @@ short File::file_get_short()
 //
 int File::file_put_unsigned_short(unsigned short value)
 {
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
+   err_when( file_handle == NULL );       // not initialized
 
-	DWORD actualWritten;	
+	if( fwrite (&value, sizeof(unsigned short), 1, file_handle) )
+		return true;
+	if( handle_error )
+		err.run( "Error writing file %s", file_name );
 
-	if( WriteFile( file_handle, &value, sizeof(unsigned short), &actualWritten, NULL ) )
-		return TRUE;
-	else
-	{
-		if( handle_error )
-			err.run( "Error writing file %s", file_name );
-
-		return FALSE;
-	}
+	return false;
 }
 //---------- End of function File::file_put_unsigned_short ----------//
 
@@ -454,43 +415,16 @@ int File::file_put_unsigned_short(unsigned short value)
 //
 unsigned short File::file_get_unsigned_short()
 {
-#if(defined(CHINESE))
-#ifdef DEBUG
-	//SXM:Test
-	char s[10240];
-	strcpy(s,file_name);
-	strlwr(s);
-	if(strstr(s,".scn"))
-	{
-		Total+=sizeof(unsigned short);
-		Dump("Read ");
-		Dump(sizeof(unsigned short));
-		Dump(" bytes ");
-		Dump("  Total ");
-		Dump(Total);
-		Dump(" bytes");
-		Dump("  Offset ");
-		Dump(file_pos());
-		Dump("\n");
-	}
-	//SXM:Test
-#endif
-#endif
+   err_when( file_handle == NULL );       // not initialized
 
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
-
-	DWORD actualRead;	
 	unsigned short value;
 
-	if( ReadFile( file_handle, &value, sizeof(unsigned short), &actualRead, NULL ) )
+	if( fread (&value, sizeof(unsigned short), 1, file_handle) )
 		return value;
-	else
-	{
-		if( handle_error )
-			err.run( "Error reading file %s", file_name );
-		
-		return 0;
-	}
+	if( handle_error )
+		err.run( "Error reading file %s", file_name );
+
+	return 0;
 }
 //---------- End of function File::file_get_unsigned_short ----------//
 
@@ -505,19 +439,16 @@ unsigned short File::file_get_unsigned_short()
 //
 int File::file_put_long(long value)
 {
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
+   err_when( file_handle == NULL );       // not initialized
 
-	DWORD actualWritten;	
+	unsigned int actualWritten;	
 
-	if( WriteFile( file_handle, &value, sizeof(long), &actualWritten, NULL ) )
-		return TRUE;
-	else
-	{
-		if( handle_error )
-			err.run( "Error writing file %s", file_name );
+	if( fwrite (&value, sizeof(long), 1, file_handle) )
+		return true;
+	if( handle_error )
+		err.run( "Error writing file %s", file_name );
 
-		return FALSE;
-	}
+	return false;
 }
 //---------- End of function File::file_put_long ----------//
 
@@ -530,43 +461,17 @@ int File::file_put_long(long value)
 //
 long File::file_get_long()
 {
-#if(defined(CHINESE))
-#ifdef DEBUG
-	//SXM:Test
-	char s[10240];
-	strcpy(s,file_name);
-	strlwr(s);
-	if(strstr(s,".scn"))
-	{
-		Total+=sizeof(long);
-		Dump("Read ");
-		Dump(sizeof(long));
-		Dump(" bytes ");
-		Dump("  Total ");
-		Dump(Total);
-		Dump(" bytes");
-		Dump("  Offset ");
-		Dump(file_pos());
-		Dump("\n");
-	}
-	//SXM:Test
-#endif
-#endif
+   err_when( file_handle == NULL );       // not initialized
 
-   err_when( file_handle == INVALID_HANDLE_VALUE );       // not initialized
-
-	DWORD actualRead;	
+	unsigned int actualRead;	
 	long  value;
 
-	if( ReadFile( file_handle, &value, sizeof(long), &actualRead, NULL ) )
+	if( fread (&value, sizeof(long), 1, file_handle) )
 		return value;
-	else
-	{
-		if( handle_error )
-			err.run( "Error reading file %s", file_name );
+	if( handle_error )
+		err.run( "Error reading file %s", file_name );
 
-		return FALSE;
-	}
+	return false;
 }
 //---------- End of function File::file_get_long ----------//
 
@@ -574,37 +479,14 @@ long File::file_get_long()
 //---------- Start of function File::file_seek ---------//
 //
 // <long> offset = seek offset
-// [int]  whence = FILE_BEGIN, FILE_CURRENT, FILE_END
-//                 (default : FILE_BEGIN)
+// [int]  fromStart - whether to seek from start (default yes)
 //
 // return : the offset of the pointer's new position, measured in
 //          bytes from the file beginning.
 //
-long File::file_seek(long offset, int whence)
+long File::file_seek(long offset, bool fromStart)
 {
-	if( whence == -1 )
-      whence = FILE_BEGIN;
-
-#if(defined(CHINESE))
-#ifdef DEBUG
-	//SXM:Test
-	
-	char s[10240];
-	strcpy(s,file_name);
-	strlwr(s);
-	if(strstr(s,".scn"))
-	{
-		Dump("Seek ");
-		Dump(offset);
-		Dump("  Offset ");
-		Dump(file_pos());
-		Dump("\n");
-	}
-	//SXM:Test
-#endif
-#endif
-	
-	return SetFilePointer( file_handle, offset, NULL, whence );
+  return fseek(file_handle, offset, fromStart ? SEEK_SET : SEEK_CUR);
 }
 //------------ End of function File::file_seek ----------//
 
@@ -617,7 +499,7 @@ long File::file_seek(long offset, int whence)
 //
 long File::file_pos()
 {
-   return SetFilePointer( file_handle, 0, NULL, FILE_CURRENT );	 
+   return ftell(file_handle);
 }
 
 //------------ End of function File::file_pos ----------//
@@ -627,6 +509,10 @@ long File::file_pos()
 
 long File::file_size()
 {
-	return GetFileSize(file_handle, NULL);
+  long pos = ftell(file_handle);
+  fseek(file_handle, 0, SEEK_END);
+  long sz = ftell(file_handle);
+  fseek(file_handle, pos, SEEK_SET);
+  return sz;
 }
 //------------ End of function File::file_size ----------//

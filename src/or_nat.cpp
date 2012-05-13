@@ -22,6 +22,7 @@
 //Description : Nation Report
 
 #include <stdlib.h>
+#include <win32_compat.h>
 #include <key.h>
 #include <oconfig.h>
 #include <oraceres.h>

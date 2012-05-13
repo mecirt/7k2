@@ -414,7 +414,7 @@ void Game::main_menu()
 				if( refreshFlag & MMOPTION_PAGE )
 				{
 					vga.use_back();
-					vga.disp_image_file("M_MAIN");
+					vga.disp_image_file("M_main");
 
 				//	// ------ display copyright message --------//
 
@@ -665,7 +665,7 @@ void Game::single_player_menu()
 				if( refreshFlag & SPOPTION_PAGE )
 				{
 					vga.use_back();
-					vga.disp_image_file("M_MAIN");
+					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
 
@@ -830,7 +830,7 @@ void Game::scenario_editor_menu()
 				if( refreshFlag & SPOPTION_PAGE )
 				{
 					vga.use_back();
-					vga.disp_image_file("M_MAIN");
+					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
 
@@ -1040,7 +1040,7 @@ void Game::multi_player_menu(char *cmdLine)
 				if( refreshFlag & SPOPTION_PAGE )
 				{
 					vga.use_back();
-					vga.disp_image_file("M_MAIN");
+					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
 

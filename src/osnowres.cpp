@@ -23,12 +23,12 @@
 // Onwer       : Gilbert
 
 
+#include <all.h>
 #include <osnowres.h>
 #include <ovgabuf.h>
 #include <ogameset.h>
 #include <oworld.h>
 #include <oworldmt.h>
-#include <all.h>
 
 
 // --------- define constant --------//

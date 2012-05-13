@@ -28,7 +28,7 @@
 
 void TextResCampaign::init()
 {
-	TextResource::init( DIR_RES"T_CAMP.RES" );
+	TextResource::init( DIR_RES"t_camp.res" );
 }
 
 // text id 1 - 9

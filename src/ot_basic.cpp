@@ -26,7 +26,7 @@
 
 void TextResBasic::init()
 {
-	TextResource::init( DIR_RES"T_BASIC.RES" );
+	TextResource::init( DIR_RES"t_basic.res" );
 }
 
 // text id 1

@@ -21,8 +21,8 @@
 //Filename    : OHELP.CPP
 //Description : Object Help
 
-#include <ohelp.h>
 #include <all.h>
+#include <ohelp.h>
 #include <osys.h>
 #include <ostr.h>
 #include <ovga.h>

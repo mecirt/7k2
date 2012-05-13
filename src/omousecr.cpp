@@ -21,8 +21,8 @@
 //Filename    : OMOUSECR.CPP
 //Description : Object Cursor Resource
 
-#include <omousecr.h>
 #include <all.h>
+#include <omousecr.h>
 #include <ovga.h>
 #include <omodeid.h>
 #include <odb.h>

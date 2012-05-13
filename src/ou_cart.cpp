@@ -21,7 +21,6 @@
 // Filename    : OU_CART.CPP
 // Description : Explosive Cart
 
-// #include <windows.h>
 #include <ou_cart.h>
 #include <math.h>
 

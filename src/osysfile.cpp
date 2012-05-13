@@ -124,42 +124,8 @@ void Sys::auto_save()
    if( !remote.is_enable() &&          // no auto save in a multiplayer game
        info.game_month%2==0 && info.game_day==1 && day_frame_count==0)
 	{
-/*    #ifdef DEBUG2
-		if(1)
-		#else
-		if( sys.debug_session || sys.testing_session )
-		#endif
-*/
 
       game_file_array.auto_save();
-
-      //-*********** syn game test ***********-//
-      #ifdef DEBUG
-         if(debug_seed_status_flag==DEBUG_SYN_AUTO_SAVE)
-         {
-            sp_write_seed();
-            sp_close_seed_file();
-
-            //if(info.game_date-info.game_start_date<=365)
-            if(0)
-            {
-               sp_open_seed_file("nseed.rs");
-               debug_seed_status_flag = DEBUG_SYN_AUTO_SAVE; // continue recording
-            }
-            else
-            {
-               debug_seed_status_flag = NO_DEBUG_SYN;
-               //sp_load_seed_file();
-               //SendMessage(main_hwnd, WM_KEYDOWN, 'L', 0);
-               mouse.add_key_event(DIK_BACKSLASH, m.get_time()); // load file for comparison
-            }
-         }
-
-         //debug_seed_status_flag = 2;
-         //sp_seed_pos_reset();
-         //sp_record_match_seed();
-      #endif
-      //-*********** syn game test ***********-//
    }
 
    // --------- multiplayer autosave game --------//

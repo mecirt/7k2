@@ -21,8 +21,8 @@
 //Filename    : ORESX.CPP
 //Description : Object of resource library with name index
 
-#include <oresx.h>
 #include <all.h>
+#include <oresx.h>
 #include <osys.h>
 #include <string.h>
 #include <stdlib.h>
@@ -352,7 +352,7 @@ char* ResourceIdx::get_data(int indexId)
 	{
 		if( user_start_read_pos > 0 )
 		{
-			file_seek(user_start_read_pos,FILE_CURRENT);			// skip the width and height info
+			file_seek(user_start_read_pos,false);			// skip the width and height info
 			dataSize -= user_start_read_pos;
 		}
 

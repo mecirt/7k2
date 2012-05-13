@@ -29,7 +29,7 @@
 
 void TextResGameMenu::init()
 {
-	TextResource::init( DIR_RES"T_GMENU.RES" );
+	TextResource::init( DIR_RES"t_gmenu.res" );
 }
 
 

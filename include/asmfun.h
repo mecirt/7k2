@@ -32,7 +32,7 @@
 
 #else // ASM Requires Wine or Win32 and JWasm!!
 
-#include <windows.h>
+#include <win32_compat.h>
 
 #ifdef ASM_FOR_MSVC
 #define __asmsym__(s)

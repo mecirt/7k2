@@ -21,7 +21,7 @@
 // EnglishToChinese.cpp: implementation of the CEnglishToChinese class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "windows.h"
+#include "win32_compat.h"
 #include "tchar.h"
 #include "englishtochinese.h"
 

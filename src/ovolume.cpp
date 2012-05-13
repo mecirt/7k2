@@ -21,6 +21,7 @@
 // Filename    : OVOLUME.CPP
 // Description : volume unit type
 
+#include <win32_compat.h>
 #include <oaudio.h>
 #include <oconfig.h>
 #include <ovolume.h>

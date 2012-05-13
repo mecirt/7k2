@@ -34,7 +34,7 @@
 
 // --------- Define Constant ------//
 
-#define REMAP_FILENAME "EXPREMAP.RES"
+#define REMAP_FILENAME "expremap.res"
 
 #define MASK_WIDTH 32
 #define MASK_HEIGHT 32

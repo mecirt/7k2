@@ -23,6 +23,7 @@
 // Owner       : Gilbert
 
 
+#include <win32_compat.h>
 #include <orockres.h>
 #include <ogameset.h>
 #include <omisc.h>

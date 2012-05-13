@@ -21,7 +21,7 @@
 // Filename    : OB_HOMIN.H
 // Description : BulletHoming, Homing bullet
 
-#include <windows.h>
+#include <win32_compat.h>
 #include <ob_homin.h>
 #include <oworldmt.h>
 #include <osprtres.h>

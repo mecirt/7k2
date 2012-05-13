@@ -23,11 +23,11 @@
 // Owner       : Gilbert
 
 
+#include <win32_compat.h>
 #include <olog.h>
 #include <stdio.h>
 #include <ofile.h>
 #include <all.h>
-#include <windows.h>
 
 
 // -------- begin of function Log::Log ----------//

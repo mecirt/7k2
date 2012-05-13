@@ -49,7 +49,6 @@ LIBRARIES             =
 			src/otalkspa.cpp \
 			src/of_resei.cpp \
 			src/ow_fire.cpp \
-			src/osysseed.cpp \
 			src/of_magii.cpp \
 			src/oun_spab.cpp \
 			src/olog.cpp \

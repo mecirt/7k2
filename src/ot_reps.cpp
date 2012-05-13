@@ -34,7 +34,7 @@
 
 void TextResReports::init()
 {
-	TextResource::init( DIR_RES"T_REPS.RES" );
+	TextResource::init( DIR_RES"t_reps.res" );
 }
 
 

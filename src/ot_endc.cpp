@@ -30,7 +30,7 @@
 
 void TextResEndCondition::init()
 {
-	TextResource::init( DIR_RES"T_ENDC.RES" );
+	TextResource::init( DIR_RES"t_endc.res" );
 }
 
 // text id 1 - 26 (27-32 reserved)

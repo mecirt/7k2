@@ -21,6 +21,7 @@
 //Filename    : OGFILE2.CPP
 //Description : Object Game file, save game and restore game, part 2
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <ounitres.h>
 #include <ofirmres.h>

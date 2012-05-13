@@ -1150,16 +1150,6 @@ void Sys::detect_debug_cheat_key(unsigned scanCode, unsigned skeyState)
 
 	switch( keyCode )
 	{
-/*
-      case 'j':      // allow all nations to have all god creatures
-         for( i=1; i<=nation_array.size() ; i++ )
-         {
-            if( !nation_array.is_deleted(i) )
-               god_res.enable_know_all(i);
-         }
-			box.msg( "Now knowledge of seat of power is available to all nations." );
-			break;
-*/
 		case 'n':
 			// #### begin Gilbert 9/2 #######//
 			config.blacken_map = !config.blacken_map;
@@ -1202,13 +1192,6 @@ void Sys::detect_debug_cheat_key(unsigned scanCode, unsigned skeyState)
          break;
 
       //-----------------------------------//
-/*
-      case 't':   // next town layout
-         if( town_array.selected_recno )
-            town_array[town_array.selected_recno]->auto_set_layout();
-         break;
-*/
-      //-------------------------------//
 
 		case 'h':		// locate independent hero
 			locate_independent_hero();
@@ -1221,16 +1204,6 @@ void Sys::detect_debug_cheat_key(unsigned scanCode, unsigned skeyState)
 		case 'j':
 			magic.test_flag();
 			break;
-/*
-		case 'i':
-			config.disable_ai_flag = !config.disable_ai_flag;
-
-			if( config.disable_ai_flag )
-				box.msg( "AI is now disabled" );
-			else
-				box.msg( "AI is now enabled" );
-			break;
-*/
 		case 'd':
 			config.show_ai_info = !config.show_ai_info;
 			config.show_debug_info = config.show_ai_info;
@@ -1243,70 +1216,6 @@ void Sys::detect_debug_cheat_key(unsigned scanCode, unsigned skeyState)
 			//	box.msg( "Now AI info will not be displayed." );
 			box.msg( text_game_menu.str_cheat_ai_info(config.show_ai_info) );
 			break;
-/*
-		case '/':
-			config.show_all_unit_icon = !config.show_all_unit_icon;
-
-			if( config.show_all_unit_icon )
-				box.msg( "Now all unit icons will be displayed." );
-			else
-				box.msg( "Now all unit icons will not be displayed." );
-			break;
-*/
-#ifdef DEBUG
-/*
-		case '`':
-         sys.testing_session = !sys.testing_session;
-
-         if( sys.testing_session )
-            box.msg( "sys.testing_session is now 1." );
-         else
-            box.msg( "sys.testing_session is now 0." );
-         break;
-
-      case '\r':
-         if(debug2_enable_flag)
-				debug2_enable_flag = 0;
-			else
-				debug2_enable_flag = 1;
-			break;
-
-	  //-*********** syn game test ***********-//
-      case '\'':
-         //if(debug2_enable_flag && debug_sim_game_type)
-			//game_file_array[0]->load_game("syn.sav");
-         game_file.load_game("syn.sav");
-         sp_load_seed_file();
-         debug_seed_status_flag = DEBUG_SYN_AUTO_LOAD;
-			break;
-
-      case '[':
-         if(m.is_file_exist("SYN.SYS"))
-			{
-            debug_seed_status_flag = DEBUG_SYN_AUTO_SAVE;
-            sp_seed_pos_reset();
-            sp_record_match_seed();
-            sp_create_seed_file("nseed.rs");
-
-            game_file.save_game("syn.sav");
-         }
-         break;
-
-      case ']':
-         if(debug_seed_status_flag==NO_DEBUG_SYN)
-         {
-            if(m.is_file_exist("SYN.SYS"))
-            {
-               debug_seed_status_flag = DEBUG_SYN_LOAD_AND_COMPARE_ONCE;
-               game_file.load_game("syn.sav");
-               sp_load_seed_file();
-            }
-            else
-					debug_seed_status_flag = NO_DEBUG_SYN;
-         }
-         break;
-*/       //-*********** syn game test ***********-//
-#endif
 	}
 
 	//---- F12 - restart the campaign game ----//

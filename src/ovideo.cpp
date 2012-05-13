@@ -23,20 +23,11 @@
 //Owner       : Gilbert
 
 // for some .h files to define some IIDs
-#include <windows.h>
-#include <windowsx.h>
-#include <commdlg.h>
-#include <string.h>
-#include <objbase.h>
-#include <strmif.h>
-#include <evcode.h>
+#include <win32_compat.h>
 #include <control.h>
-
-#include <amvideo.h>
+#include <evcode.h>
 #include <uuids.h>
-
-//#include <mmsystem.h>
-//#include <digitalv.h>
+#include <string.h>
 
 #include <all.h>
 #include <ostr.h>

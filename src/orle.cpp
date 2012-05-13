@@ -22,9 +22,9 @@
 // Description : run length compression
 
 
+#include <all.h>
 #include <orle.h>
 #include <ofile.h>
-#include <all.h>
 
 
 // --------- begin of function Rle::Rle -------------//

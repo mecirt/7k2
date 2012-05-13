@@ -21,10 +21,10 @@
 // Filename    : OITEM.CPP
 // Description : Item resource
 
+#include <all.h>
 #include <oitem.h>
 #include <oitemres.h>
 #include <itemid.h>
-#include <all.h>
 #include <oconfig.h>
 
 

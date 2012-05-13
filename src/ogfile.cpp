@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <win32_compat.h>
 #include <obox.h>
 #include <ostr.h>
 #include <odate.h>

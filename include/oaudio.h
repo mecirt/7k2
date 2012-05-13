@@ -28,7 +28,6 @@
 
 #include <oresx.h>
 #include <ovolume.h>
-#include <dsound.h>
 
 //------ Define constant -----------//
 
@@ -42,6 +41,11 @@
 #define MAX_LOOP_WAV_CH        4
 
 //--------------- Define class Audio ---------------//
+
+struct IDirectSound;
+typedef struct IDirectSound *LPDIRECTSOUND;
+struct IDirectSoundBuffer;
+typedef struct IDirectSoundBuffer *LPDIRECTSOUNDBUFFER;
 
 class Audio
 {

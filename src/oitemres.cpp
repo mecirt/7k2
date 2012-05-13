@@ -22,10 +22,10 @@
 // Description : Item resource
 
 
+#include <all.h>
 #include <oitemres.h>
 #include <oitem.h>
 #include <itemid.h>
-#include <all.h>
 #include <ocoltbl.h>
 #include <ovga.h>
 #include <ounitres.h>

@@ -151,8 +151,6 @@ public:
 	char  	cdrom_drive;
 
 	char  	dir_image[MAX_PATH+1];
-	char  	dir_encyc[MAX_PATH+1];
-	char  	dir_encyc2[MAX_PATH+1];
 	char  	dir_music[MAX_PATH+1];
 	char  	dir_movie[MAX_PATH+1];
 	char  	dir_tutorial[MAX_PATH+1];
@@ -202,18 +200,6 @@ public:
 
 	void		mp_request_save(DWORD frame);
 	void		mp_clear_request_save();
-
-	//-------------- single player syn. game testing functions --------------//
-	void		sp_open_seed_file(const char *filename);
-	void		sp_create_seed_file(const char *filename);
-	void		sp_close_seed_file();
-	void		sp_load_seed_file();
-	void		sp_record_match_seed();
-	void		sp_record_seed();
-	void		sp_write_seed();
-	void		sp_compare_seed();
-	void		sp_seed_pos_reset();
-	void		sp_seed_pos_set(int pos);
 
 	//---- for setting game directories ----//
 

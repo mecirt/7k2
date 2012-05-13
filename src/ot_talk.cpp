@@ -29,7 +29,7 @@
 
 void TextResTalk::init()
 {
-	TextResource::init( DIR_RES"T_TALK.RES" );
+	TextResource::init( DIR_RES"t_talk.res" );
 }
 
 

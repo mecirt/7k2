@@ -21,6 +21,7 @@
 // Filename    : OOPTMENU.CPP
 // Description : in-game option menu (async version)
 
+#include <all.h>
 #include <ooptmenu.h>
 #include <ovga.h>
 #include <ovgabuf.h>

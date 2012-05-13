@@ -21,7 +21,7 @@
 //Filename   : OAI_SEEK.CPP
 //Description: AI - action progressing functions
 
-#include <windows.h>
+#include <win32_compat.h>
 #include <all.h>
 #include <ounit.h>
 #include <of_mine.h>

@@ -21,7 +21,7 @@
 // Filename: OPFIND.CPP
 // Description: Implementation of the Pathfinding algorithm
 
-#include <windows.h> 
+#include <win32_compat.h> 
 #include <all.h>
 #include <opfind.h>
 #include <oworldmt.h> 

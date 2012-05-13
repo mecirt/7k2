@@ -27,7 +27,7 @@
 
 void TextResItem::init()
 {
-	TextResource::init( DIR_RES"T_ITEM.RES" );
+	TextResource::init( DIR_RES"t_item.res" );
 }
 
 

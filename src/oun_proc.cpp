@@ -21,6 +21,7 @@
 //Filename	 : OUN_PROC.CPP
 //Description: Unit functions related to unit processing
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <ogame.h>
 #include <osys.h>

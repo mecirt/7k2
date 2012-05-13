@@ -21,7 +21,7 @@
 //Filename    : OTUTOR2.CPP
 //Description : Class Tutor
 
-
+#include <win32_compat.h>
 #include <otutor.h>
 #include <color.h>
 #include <osys.h>

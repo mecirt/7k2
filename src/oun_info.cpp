@@ -21,6 +21,7 @@
 //Filename	 : OUN_INFO.CPP
 //Description: Unit functions related to basic information
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <otransl.h>
 #include <ounitres.h>

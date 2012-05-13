@@ -21,9 +21,7 @@
 //Filename    : OMISC.CPP
 //Description : Object of Misc useful functions
 
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
+#include <win32_compat.h>
 
 #include <string.h>
 #include <stdlib.h>

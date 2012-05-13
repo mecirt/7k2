@@ -29,7 +29,7 @@
  
 void TextResEditor::init()
 {
-	TextResource::init( DIR_RES"T_SEDIT.RES" );
+	TextResource::init( DIR_RES"t_sedit.res" );
 }
 
 

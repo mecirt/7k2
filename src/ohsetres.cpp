@@ -22,8 +22,8 @@
 //Description : Hill Set, Pattern resource object
 //Ownership   : Gilbert
 
-#include <ohsetres.h>
 #include <all.h>
+#include <ohsetres.h>
 #include <osys.h>
 #include <ovga.h>
 #include <ogameset.h>

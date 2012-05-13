@@ -25,8 +25,7 @@
 #define __VGABUF_H
 
 #include <imgfun.h>
-#include <windows.h>
-// #include <ddraw.h>
+#include <win32_compat.h>
 
 typedef void *LPVOID;
 

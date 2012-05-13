@@ -24,7 +24,7 @@
 #ifndef __OFILE_H
 #define __OFILE_H
 
-#include <windows.h>
+#include <stdio.h>
 
 //--------------------------------------//
 
@@ -33,13 +33,13 @@ class File
 public:
    char file_name[MAX_PATH+1];
 
-   HANDLE file_handle;
+   FILE *file_handle;
    int    handle_error;
 
    char   allow_vary_size;    // allow the writing size and the read size to be different
 
 public:
-   File()     { file_handle=INVALID_HANDLE_VALUE; }
+   File()     { file_handle = NULL; }
    ~File();
 
    int   file_open(const char*, int=1, int=0);
@@ -48,7 +48,7 @@ public:
    void  file_close();
 
    long  file_size();
-   long  file_seek(long, int= -1);
+   long  file_seek(long, bool fromStart = true);
    long  file_pos();
 
    int   file_read(void*, unsigned);

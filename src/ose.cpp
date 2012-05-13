@@ -22,8 +22,8 @@
 // Description : Sound Effect Controller
 // Owner       : Gilbert
 
-#include <ose.h>
 #include <all.h>
+#include <ose.h>
 #include <oaudio.h>
 #include <ogameset.h>
 #include <omisc.h>

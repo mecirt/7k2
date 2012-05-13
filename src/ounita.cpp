@@ -21,6 +21,7 @@
 //Filename   : OUNITA.CPP
 //Description: Unit Array
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <ogodres.h>
 #include <orebel.h>

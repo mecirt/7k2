@@ -207,23 +207,6 @@ void Sys::main_loop(int isLoadedGame)
 	remote.enable_process_queue();
 	remote_send_success_flag = 1;
 
-#ifdef DEBUG
-	char longLogSuffix = 'A';
-	if( remote.is_enable() )
-	{
-		if(long_log)
-			delete long_log;
-		long_log = new LongLog(longLogSuffix);
-	}
-#endif
-
-   //-*********** syn game test ***********-//
-   #ifdef DEBUG
-   if(debug_seed_status_flag==DEBUG_SYN_LOAD_AND_COMPARE_ONCE)
-      sp_load_seed_file();
-   #endif
-   //-*********** syn game test ***********-//
-
 	VgaFrontLock vgaLock;
 
    // ------- establish_contact again --------//
@@ -495,19 +478,6 @@ void Sys::main_loop(int isLoadedGame)
 
          if(rc)
 			{
-            //-*********** syn game test ***********-//
-				//-------------------------------------------------------------//
-				// record random seed for comparison
-				//-------------------------------------------------------------//
-				#ifdef DEBUG
-					if(debug_seed_status_flag==DEBUG_SYN_LOAD_AND_COMPARE_ONCE ||
-						debug_seed_status_flag==DEBUG_SYN_AUTO_LOAD)
-						sp_compare_seed();
-					else if(debug_seed_status_flag==DEBUG_SYN_AUTO_SAVE)
-						sp_record_seed();
-				#endif
-				//-*********** syn game test ***********-//
-
             //------ auto save -------//
 
             auto_save();

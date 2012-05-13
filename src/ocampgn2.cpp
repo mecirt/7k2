@@ -825,7 +825,7 @@ void Campaign::disp_intro()
 	}
 	
 /*	vga.use_back();
-	vga.disp_image_file("HUWIN01");
+	vga.disp_image_file("Huwin01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
@@ -905,7 +905,7 @@ void Campaign::disp_monster_defeated()
 	
 	mouse.hide();
 	vga.use_back();
-	vga.disp_image_file("HUWIN02");
+	vga.disp_image_file("Huwin02");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
@@ -972,7 +972,7 @@ void Campaign::disp_monster_defeated()
 	}
 	
 /*	vga.use_back();
-	vga.disp_image_file("HUWIN03");
+	vga.disp_image_file("Huwin03");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
@@ -1129,7 +1129,7 @@ void Campaign::disp_final_victory()
 	}
 	
 /*	vga.use_back();
-	vga.disp_image_file("HUWIN04");
+	vga.disp_image_file("Huwin04");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{

@@ -21,6 +21,7 @@
 //Filename    : OCONFIG.CPP
 //Description : Config Object
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <osys.h>
 #include <ohelp.h>

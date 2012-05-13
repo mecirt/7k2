@@ -22,8 +22,8 @@
 // Description : Town Wall Resource
 
 
-#include <otwalres.h>
 #include <all.h>
+#include <otwalres.h>
 #include <omatrix.h>
 #include <oworldmt.h>
 #include <ogameset.h>

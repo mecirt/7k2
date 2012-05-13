@@ -21,6 +21,7 @@
 //Filename   : OAI_TALK.CPP
 //Description: AI routines on diplomacy.
 
+#include <win32_compat.h>
 #include <oconfig.h>
 #include <otalkres.h>
 #include <otechres.h>

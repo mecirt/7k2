@@ -131,9 +131,7 @@ void GameSet::open_set(int setId)
 
 	set_opened_flag=1;
 
-	#if( !defined(DEMO) && !defined(DEBUG) && !defined(BETA))
 		open_db("RELEASE");
-	#endif   
 }
 //----------- End of GameSet::open_set -------------//
 
