@@ -24,6 +24,13 @@
 #ifndef __PLATFORM_H
 #define __PLATFORM_H
 
+struct bitmap_file;
+
 void ShowMessageBox (const char *text);
+
+
+bitmap_file *load_bitmap_file(const char *filename);
+int unload_bitmap_file(bitmap_file *bitmap);
+void read_bitmap_palette(bitmap_file *bitmap, int idx, int *red, int *green, int *blue);
 
 #endif

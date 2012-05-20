@@ -29,6 +29,7 @@
 #include <control.h>
 #include <evcode.h>
 #include <uuids.h>
+#include <strmif.h>
 #include <string.h>
 
 #include <all.h>

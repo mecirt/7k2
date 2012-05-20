@@ -25,6 +25,7 @@
 
 #include <all.h>
 #include <dshow.h>
+#include <strmif.h>
 #include <oanline.h>
 #include <oaudio.h>
 #include <obaseobj.h>

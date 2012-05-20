@@ -29,6 +29,8 @@
 #include <ovgalock.h>
 #include <ovgabuf.h>
 
+#include <unistd.h>
+
 void ShowMessageBox (const char *text) {
   OutputDebugString(text);
   if( vga_front.vptr_dd_buf )
@@ -46,4 +48,139 @@ void ShowMessageBox (const char *text) {
     ShowCursor(FALSE);
   }
 }
+
+// the bitmap file structure /////////////////////////////////////////////////
+struct bitmap_file
+        {
+        BITMAPFILEHEADER bitmapfileheader;  // this contains the bitmapfile header
+        BITMAPINFOHEADER bitmapinfoheader;  // this is all the info is
+        PALETTEENTRY     palette[256];      // we will store the palette here
+        UCHAR            *buffer;           // this is a pointer to the data
+        };
+
+
+bitmap_file *load_bitmap_file(const char *filename)
+{
+// this function opens a bitmap file and loads the data into bitmap
+// this function will only work with non-compressed 8 bit palettized images
+// it uses file handles instead of streams just for a change, no reason
+
+#define BITMAP_ID        0x4D42       // this is the universal id for a bitmap
+int      file_handle,                 // the file handle
+         index;                       // looping index
+OFSTRUCT file_data;                   // the file data information
+
+String	str(DIR_IMAGE);
+			str += filename;
+//			str += ".COL";
+
+// open the file if it exists
+	if ((file_handle = OpenFile(str, &file_data,OF_READ))==-1)
+		return(0);
+  bitmap_file *bitmap = new bitmap_file;
+
+// now load the bitmap file header
+	_lread(file_handle, &bitmap->bitmapfileheader,sizeof(BITMAPFILEHEADER));
+
+// test if this is a bitmap file
+	if (bitmap->bitmapfileheader.bfType!=BITMAP_ID)
+   {
+		// close the file
+	   _lclose(file_handle);
+           delete bitmap;
+ 
+	   // return error
+		return(0);
+   } // end if
+
+// we know this is a bitmap, so read in all the sections
+
+// load the bitmap file header
+	_lread(file_handle, &bitmap->bitmapinfoheader,sizeof(BITMAPINFOHEADER));
+
+// now the palette
+	_lread(file_handle, &bitmap->palette,256*sizeof(PALETTEENTRY));
+
+// now set all the flags in the palette correctly and fix the reverse BGR
+	for (index=0; index<256; index++)
+    {
+		 int temp_color = bitmap->palette[index].peRed;
+	    bitmap->palette[index].peRed  = bitmap->palette[index].peBlue;
+		 bitmap->palette[index].peBlue = temp_color;
+		bitmap->palette[index].peFlags = PC_NOCOLLAPSE;
+    } // end for index
+
+// finally the image data itself
+	lseek(file_handle,-(int)(bitmap->bitmapinfoheader.biSizeImage),SEEK_END);
+
+// allocate the memory for the image
+	if (!(bitmap->buffer = new UCHAR [bitmap->bitmapinfoheader.biSizeImage]))
+   {
+   // close the file
+		_lclose(file_handle);
+                delete bitmap;
+   // return error
+		return(0);
+
+   } // end if
+
+// now read it in
+	_lread(file_handle,bitmap->buffer,bitmap->bitmapinfoheader.biSizeImage);
+
+// bitmaps are usually upside down, so flip the image
+int biWidth  = bitmap->bitmapinfoheader.biWidth,
+    biHeight = bitmap->bitmapinfoheader.biHeight;
+
+// allocate the temporary buffer
+UCHAR *flip_buffer = new UCHAR[biWidth*biHeight];
+
+// copy image to work area
+memcpy(flip_buffer,bitmap->buffer,biWidth*biHeight);
+
+// flip vertically
+for (index=0; index<biHeight; index++)
+    memcpy(&bitmap->buffer[((biHeight-1) - index)*biWidth],&flip_buffer[index * biWidth], biWidth);
+
+// release the working memory
+delete [] flip_buffer;
+
+// close the file
+_lclose(file_handle);
+
+// return success
+return bitmap;
+
+} // end Load_Bitmap_File
+
+///////////////////////////////////////////////////////////////////////////////
+
+int unload_bitmap_file(bitmap_file *bitmap)
+{
+// this function releases all memory associated with "bitmap"
+if (bitmap->buffer)
+   {
+   // release memory
+   delete [] bitmap->buffer;
+
+   // reset pointer
+   bitmap->buffer = NULL;
+
+   } // end if
+
+  delete bitmap;
+
+// return success
+return(1);
+
+} // end Unload_Bitmap_File
+
+///////////////////////////////////////////////////////////////////////////////
+
+void read_bitmap_palette(bitmap_file *bitmap, int idx, int *red, int *green, int *blue)
+{
+  *red = bitmap->palette[idx].peRed;
+  *green = bitmap->palette[idx].peGreen;
+  *blue = bitmap->palette[idx].peBlue;
+}
+
 

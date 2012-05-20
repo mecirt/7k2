@@ -21,9 +21,6 @@
 //Filename    : OVGABUF2.CPP
 //Description : OVGABUF direct draw surface class - part 2
 
-#define NEED_WINDOWS
-
-#include <ddraw.h>
 #include <all.h>
 #include <imgfun.h>
 #include <omouse.h>

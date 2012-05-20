@@ -25,8 +25,6 @@
 #ifndef __OVIDEO_H
 #define __OVIDEO_H
 
-#include <strmif.h>
-
 typedef enum tagState {UNINITIALIZED, STOPPED, PAUSED, PLAYING } State;
 
 //---------- Define class Video ----------//

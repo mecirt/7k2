@@ -21,9 +21,6 @@
 // Filename    : OCAMPGN.H
 // Description : Campaign mode menu
 
-// because of that .bmp file reading
-#define NEED_WINDOWS
-
 #include <stdio.h>
 #include <unistd.h>
 #include <ocampgn.h>
@@ -69,6 +66,7 @@
 #include <omousecr.h>
 #include <ot_camp.h>
 #include <ot_talk.h>
+#include <platform.h>
 
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -144,15 +142,6 @@
 // TYPES /////////////////////////////////////////////////////////////////////
 typedef unsigned char  UCHAR;
 
-// the bitmap file structure /////////////////////////////////////////////////
-typedef struct bitmap_file_tag
-        {
-        BITMAPFILEHEADER bitmapfileheader;  // this contains the bitmapfile header
-        BITMAPINFOHEADER bitmapinfoheader;  // this is all the info is
-        PALETTEENTRY     palette[256];      // we will store the palette here
-        UCHAR            *buffer;           // this is a pointer to the data
-        } bitmap_file, *bitmap_file_ptr;
-
 typedef struct pixel_colour
 			{
 			short red;
@@ -164,8 +153,6 @@ typedef struct pixel_colour
 
 static int curSpeechWavId = 0;
 static unsigned seed = 35;				// last random number
-static int load_bitmap_file(bitmap_file_ptr bitmap, const char *filename);
-static int unload_bitmap_file(bitmap_file_ptr bitmap);
 static void build_tables(void);
 static unsigned rand_seed(void);
 static char state_recno_of_screen[SCREEN_HEIGHT * SCREEN_WIDTH];
@@ -173,11 +160,7 @@ static char state_recno_of_screen[SCREEN_HEIGHT * SCREEN_WIDTH];
 pixel_colour	pixel[HFIELD_WIDTH * HFIELD_HEIGHT];
 
 
-UCHAR  			 *height_map_ptr   = NULL,  // pointer to height field height data
-					 *color_map_ptr    = NULL;  // pointer to height field color data
-
-bitmap_file     height_bmp_file,           // holds the height data
-                color_bmp_file;            // holds the color data
+bitmap_file     *color_bmp_file;            // holds the color data
 
 	// this is very important, it is based on the fov and scaling
 	// factors, it is the delta slope between two rays piercing
@@ -617,14 +600,6 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 				StateLocation *stateLoc = state_array.get_loc(xLoc, yLoc);
 				int s = stateLoc->state_recno;
 				int n;
-			//	int shadow = shadow_array[xr + (yr<<HFIELD_BIT_SHIFT)];
-			
-			//	if( yLoc == state_array.max_y_loc-1
-			//	|| xLoc == state_array.max_x_loc-1 
-			//	|| !s
-			//	|| stateLoc[1].state_recno != s
-			//	|| state_array.get_loc( xLoc, yLoc+1)->state_recno != s
-			//	|| state_array.get_loc( xLoc+1, yLoc+1)->state_recno != s 
 				if(!map[xr][yr]
 				||	map[xr+1][yr] != map[xr][yr]
 				||	map[xr][yr+1] != map[xr][yr]
@@ -639,10 +614,7 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 				|| ((i & 1) == 0 && (j & 1) == 1 && par < 2)
 				|| ((i & 1) == 1 && (j & 1) == 0 && par < 3)
 				|| ((i & 1) == 1 && (j & 1) == 1 && par < 4) )
-				{
-				//	*point = magic.draw(color_bmp_file.palette[color].peRed,
-				//		color_bmp_file.palette[color].peGreen, color_bmp_file.palette[color].peBlue,
-				//		vga.pixel_format_flag);
+				{  // NOTHING
 				}
 				else
 				{
@@ -689,64 +661,6 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 //
 void Campaign::disp_intro()
 {
-/*	load_bitmap_file(&color_bmp_file,"heightc3.bmp");
-	color_map_ptr = color_bmp_file.buffer;
-	int i, j;
-	for (i = 0; i < HFIELD_WIDTH; i++)
-		for (j = 0; j < HFIELD_HEIGHT; j++)
-			map[i][j] = smoothing_checking(i, j, HFIELD_BIT_SHIFT);
-	
-	
-	//-----------------------------//
-	int par = 0;
-
-	while(1)
-	{
-	//	par ++;
-	//	if (par > 8)
-	//		par = 0;
-		par = 3;
-
-		vga.use_back();
-
-		vga.disp_image_file("CAMP2");
-
-		disp_intro_text();
-
-//		disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, par < 5 ? par<<1 : (8 - par)<<1 );
-
-		vga.use_front();
-
-		vga.flip();
-
-		sys.blt_virtual_buf();
-
-		sys.yield();
-		mouse.get_event();
-		if( config.music_flag )
-		{
-			if( !music.is_playing(3) )
-				music.play(3, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-		}
-		else
-			music.stop();
-
-		sys.blt_virtual_buf();
-
-		if( mouse.left_press || mouse.right_press )
-			break;
-
-		if( m.upper(mouse.key_code)=='T' )		// testing run - no games will be played
-		{
-			auto_test_flag = 1;
-			break;
-		}
-
-		if( detect_cheat_key() )
-			break;
-	}
-	unload_bitmap_file(&color_bmp_file);*/
-
 	int i;
 	int counter = VGA_HEIGHT;
 	mouse.hide();
@@ -1410,8 +1324,7 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 
 	//---------- display map --------------//
 
-	load_bitmap_file(&color_bmp_file,"heightc3.bmp");
-	color_map_ptr = color_bmp_file.buffer;
+	color_bmp_file = load_bitmap_file("heightc3.bmp");
 	build_tables();
 
 	if (terrainMapOnly > 0 && terrainMapOnly < 5)
@@ -1419,7 +1332,7 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 	else
 		disp_state_map(MAIN_MAP_X1, MAIN_MAP_Y1, MAIN_MAP_X2-MAIN_MAP_X1+1, MAIN_MAP_Y2-MAIN_MAP_Y1+1, (3<<1) +1 );
 
-	unload_bitmap_file(&color_bmp_file);
+	unload_bitmap_file(color_bmp_file);
 
 	//------ display campaign score -------//
 
@@ -1978,9 +1891,9 @@ void Campaign::play_speech_animation(int raceId)
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 
 		}
 	}
@@ -2865,9 +2778,9 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 		}
 
 		// move attacker 
@@ -2995,9 +2908,9 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 		}
 
 		// animate attacker 
@@ -3127,9 +3040,9 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
-					Sleep(1);
+					sys.sleep(1);
 				else
-					Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+					sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 			}
 
 			// animate attacker 
@@ -3276,9 +3189,9 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
-					Sleep(1);
+					sys.sleep(1);
 				else
-					Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+					sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 			}
 
 			// move attacker 
@@ -3376,9 +3289,9 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
-					Sleep(1);
+					sys.sleep(1);
 				else
-					Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+					sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 			}
 
 			// animate attacker 
@@ -3647,9 +3560,9 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 		}
 
 		// move attacker 
@@ -3847,9 +3760,9 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 		}
 
 		// animate attacker
@@ -4029,9 +3942,9 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
-				Sleep(1);
+				sys.sleep(1);
 			else
-				Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+				sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 		}
 
 		// animate sprite
@@ -4293,9 +4206,9 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
-					Sleep(1);
+					sys.sleep(1);
 				else
-					Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+					sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 			}
 
 			// animate sprite
@@ -4458,9 +4371,9 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
-					Sleep(1);
+					sys.sleep(1);
 				else
-					Sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
+					sys.sleep( 50 - (endTime - startTime) );	// at least Sleep(1)
 			}
 
 			// animate sprite
@@ -4519,117 +4432,6 @@ static void build_tables(void)
 		sin_look[curr_angle] = (int)(sin(angle_rad) * FIXP_MUL);
 	}
 }
-
-static int load_bitmap_file(bitmap_file_ptr bitmap, const char *filename)
-{
-// this function opens a bitmap file and loads the data into bitmap
-// this function will only work with non-compressed 8 bit palettized images
-// it uses file handles instead of streams just for a change, no reason
-
-#define BITMAP_ID        0x4D42       // this is the universal id for a bitmap
-int      file_handle,                 // the file handle
-         index;                       // looping index
-OFSTRUCT file_data;                   // the file data information
-
-String	str(DIR_IMAGE);
-			str += filename;
-//			str += ".COL";
-
-// open the file if it exists
-	if ((file_handle = OpenFile(str, &file_data,OF_READ))==-1)
-		return(0);
- 
-// now load the bitmap file header
-	_lread(file_handle, &bitmap->bitmapfileheader,sizeof(BITMAPFILEHEADER));
-
-// test if this is a bitmap file
-	if (bitmap->bitmapfileheader.bfType!=BITMAP_ID)
-   {
-		// close the file
-	   _lclose(file_handle);
- 
-	   // return error
-		return(0);
-   } // end if
-
-// we know this is a bitmap, so read in all the sections
-
-// load the bitmap file header
-	_lread(file_handle, &bitmap->bitmapinfoheader,sizeof(BITMAPINFOHEADER));
-
-// now the palette
-	_lread(file_handle, &bitmap->palette,256*sizeof(PALETTEENTRY));
-
-// now set all the flags in the palette correctly and fix the reverse BGR
-	for (index=0; index<256; index++)
-    {
-		 int temp_color = bitmap->palette[index].peRed;
-	    bitmap->palette[index].peRed  = bitmap->palette[index].peBlue;
-		 bitmap->palette[index].peBlue = temp_color;
-		bitmap->palette[index].peFlags = PC_NOCOLLAPSE;
-    } // end for index
-
-// finally the image data itself
-	lseek(file_handle,-(int)(bitmap->bitmapinfoheader.biSizeImage),SEEK_END);
-
-// allocate the memory for the image
-	if (!(bitmap->buffer = new UCHAR [bitmap->bitmapinfoheader.biSizeImage]))
-   {
-   // close the file
-		_lclose(file_handle);
-
-   // return error
-		return(0);
-
-   } // end if
-
-// now read it in
-	_lread(file_handle,bitmap->buffer,bitmap->bitmapinfoheader.biSizeImage);
-
-// bitmaps are usually upside down, so flip the image
-int biWidth  = bitmap->bitmapinfoheader.biWidth,
-    biHeight = bitmap->bitmapinfoheader.biHeight;
-
-// allocate the temporary buffer
-UCHAR *flip_buffer = new UCHAR[biWidth*biHeight];
-
-// copy image to work area
-memcpy(flip_buffer,bitmap->buffer,biWidth*biHeight);
-
-// flip vertically
-for (index=0; index<biHeight; index++)
-    memcpy(&bitmap->buffer[((biHeight-1) - index)*biWidth],&flip_buffer[index * biWidth], biWidth);
-
-// release the working memory
-delete [] flip_buffer;
-
-// close the file
-_lclose(file_handle);
-
-// return success
-return(1);
-
-} // end Load_Bitmap_File
-
-///////////////////////////////////////////////////////////////////////////////
-
-static int unload_bitmap_file(bitmap_file_ptr bitmap)
-{
-// this function releases all memory associated with "bitmap"
-if (bitmap->buffer)
-   {
-   // release memory
-   delete [] bitmap->buffer;
-
-   // reset pointer
-   bitmap->buffer = NULL;
-
-   } // end if
-
-// return success
-return(1);
-
-} // end Unload_Bitmap_File
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4823,11 +4625,14 @@ void Campaign::render_terrain(int par)
 						||	map[xr+1][yr+2] != map[xr][yr]
 						||	map[xr+1][yr+1] != map[xr][yr])
 						{
-							if (par != 3)
-								*dest_column_ptr = magic.draw((color_bmp_file.palette[color].peRed * shadow) >>5,
-									(color_bmp_file.palette[color].peGreen * shadow) >>5,
-									(color_bmp_file.palette[color].peBlue * shadow) >>5,
+							if (par != 3) {
+                                                          int red, green, blue;
+                                                          read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
+								*dest_column_ptr = magic.draw((red * shadow) >>5,
+									(green * shadow) >>5,
+									(blue * shadow) >>5,
 									vga.pixel_format_flag);
+                                                        }
 							else
 								*dest_column_ptr = magic.draw(125, 125, 125,
 									vga.pixel_format_flag);
@@ -4838,10 +4643,12 @@ void Campaign::render_terrain(int par)
 						|| ((curr_column & 1) == 1 && (realStep & 1) == 0 && par < 3)
 						|| ((curr_column & 1) == 1 && (realStep & 1) == 1 && par < 4))
 						{
-							*dest_column_ptr = magic.draw((color_bmp_file.palette[color].peRed * shadow) >>5,
-								(color_bmp_file.palette[color].peGreen * shadow) >>5,
-								(color_bmp_file.palette[color].peBlue * shadow) >>5,
-								vga.pixel_format_flag);							
+                                                          int red, green, blue;
+                                                          read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
+								*dest_column_ptr = magic.draw((red * shadow) >>5,
+									(green * shadow) >>5,
+									(blue * shadow) >>5,
+									vga.pixel_format_flag);
 						}
 						else
 						{
@@ -5282,11 +5089,14 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
 						||	map[xr+1][yr+2] != map[xr][yr]
 						||	map[xr+1][yr+1] != map[xr][yr])
 						{
-							if (par != 3)
-								*dest_column_ptr = magic.draw((color_bmp_file.palette[color].peRed * modifiedShadow) >>5,
-									(color_bmp_file.palette[color].peGreen * modifiedShadow) >>5,
-									(color_bmp_file.palette[color].peBlue * modifiedShadow) >>5,
+							if (par != 3) {
+                                                          int red, green, blue;
+                                                          read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
+								*dest_column_ptr = magic.draw((red * modifiedShadow) >>5,
+									(green * modifiedShadow) >>5,
+									(blue * modifiedShadow) >>5,
 									vga.pixel_format_flag);
+                                                        }
 							else
 								*dest_column_ptr = magic.draw(125, 125, 125,
 									vga.pixel_format_flag);
@@ -5297,10 +5107,13 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
 						|| ((curr_column & 1) == 1 && (realStep & 1) == 0 && par < 3)
 						|| ((curr_column & 1) == 1 && (realStep & 1) == 1 && par < 4))
 						{
-							*dest_column_ptr = magic.draw((color_bmp_file.palette[color].peRed * modifiedShadow) >>5,
-								(color_bmp_file.palette[color].peGreen * modifiedShadow) >>5,
-								(color_bmp_file.palette[color].peBlue * modifiedShadow) >>5,
-								vga.pixel_format_flag);							
+                                                          int red, green, blue;
+                                                          read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
+								*dest_column_ptr = magic.draw((red * modifiedShadow) >>5,
+									(green * modifiedShadow) >>5,
+									(blue * modifiedShadow) >>5,
+									vga.pixel_format_flag);
+
 							state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
 						}
 						else
