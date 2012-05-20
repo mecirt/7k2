@@ -21,12 +21,11 @@
 //Filename    : OERR.CPP
 //Description : Object Error Handling
 
-#define NEED_WINDOWS
-
 #include <new>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <platform.h>
 #include <win32_compat.h>
 
 #include <osys.h>
@@ -111,24 +110,7 @@ void Error::internal(char* errMsg,const char* fileName,int lineNum)
 
 	//-------- display error message -------//
 
-	OutputDebugString( strBuf );
-
-	//if( vga.is_inited() )
-	//	box.msg( strBuf, 0 );
-	if( vga_front.vptr_dd_buf )
-	{
-		VgaFrontLock vgaLock;
-
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-	else
-	{
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
+	ShowMessageBox(strBuf);
 
 //	sys.deinit_directx();
 
@@ -158,26 +140,7 @@ void Error::mem()
 
 	//-------- display error message -------//
 
-	OutputDebugString( strBuf );
-
-	//if( vga.is_inited() )
-	//	box.msg( strBuf, 0 );
-	if( vga_front.vptr_dd_buf )
-	{
-		VgaFrontLock vgaLock;
-
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-	else
-	{
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-
-	// sys.deinit_directx();
+	ShowMessageBox(strBuf);
 
 	exit( -2 );
 }
@@ -211,26 +174,7 @@ void Error::msg( const char *format, ... )
 
 	//-------- display error message -------//
 
-	OutputDebugString( strBuf );
-
-	//if( vga.is_inited() )
-	//	box.msg( strBuf, 0 );
-	if( vga_front.vptr_dd_buf )
-	{
-		VgaFrontLock vgaLock;
-
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-	else
-	{
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-
-//	sys.deinit_directx();
+	ShowMessageBox(strBuf);
 	error_flag = 0;		// this error does not exit program
 }
 //--------- END OF FUNCTION Error::msg ----------//
@@ -266,26 +210,7 @@ void Error::run( const char *format, ... )
 
 	//-------- display error message -------//
 
-	OutputDebugString( strBuf );
-
-	// if( vga.is_inited() )
-	//	box.msg( strBuf, 0 );
-	if( vga_front.vptr_dd_buf )
-	{
-		VgaFrontLock vgaLock;
-
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-	else
-	{
-		ShowCursor(TRUE);
-		MessageBox(sys.main_hwnd, strBuf, WIN_TITLE, MB_OK | MB_ICONERROR);
-		ShowCursor(FALSE);
-	}
-
-//	sys.deinit_directx();
+	ShowMessageBox(strBuf);
 
 	exit( -2 );
 }

@@ -41,7 +41,8 @@ LIBRARIES             =
 
 7k2_MODULE    = 7k2
 7k2_C_SRCS    =
-7k2_CXX_SRCS  = src/ounadraw.cpp \
+7k2_CXX_SRCS  = src/platform.cpp \
+			src/ounadraw.cpp \
 			src/of_inni.cpp \
 			src/of_traii.cpp \
 			src/oai_act.cpp \
