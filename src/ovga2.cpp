@@ -89,10 +89,6 @@ void Vga::disp_image_file(const char* fileName, int x1, int y1)
 			colorRemapTable = (short *)colorTable.get_table(0);
 		}
 		
-		//-------- backup and switch palette ----------//
-	//	if( !back_up_pal )		// only save the palette when there isn't one saved already
-	//		back_up_pal = new VgaCustomPalette(NULL);
-
 		//---- load the interface into the back buffer ----//
 
 		File pictFile;

@@ -977,12 +977,6 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
 		return 0;
 	}
 
-	if( !filePtr )
-	{
-		delete filePtr;
-		return 0;
-	}
-
 	// load small part of the wave file (first 128 bytes) enough to hold
 	// the hold header
 	if( !filePtr->file_read( wav_buf, 128 ) )
@@ -1259,9 +1253,6 @@ int	Audio::play_loop_wav(const char *wavName, int repeatOffset, DsVolume dsVolum
 		delete filePtr;
 		return 0;
 	}
-
-	if( !filePtr )
-		return 0;
 
 	// load small part of the wave file (first 128 bytes) enough to hold
 	// the hold header

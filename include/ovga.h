@@ -96,8 +96,6 @@ public:
 		  short *					default_remap_table;				// new for 16-bit
 		  short *					default_blend_table;				// new for 16-bit
 
-		  VgaCustomPalette*		back_up_pal;
-
 		  static VgaBuf*			active_buf;
 		  static char				use_back_buf;
 		  static char				opaque_flag;

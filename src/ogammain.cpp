@@ -39,7 +39,6 @@
 #include <oconfig.h>
 #include <ovgalock.h>
 #include <oc_east.h>
-// #include <oc_tutor.h>
 #include <oprofile.h>
 #include <ogammenu.h>
 #include <obox.h>

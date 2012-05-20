@@ -371,7 +371,7 @@ char* TextResource::format(int inNum, int formatType)
    char *outBuf = get_free_short_str();
    char longBuf[25];
    char   *outPtr=outBuf;
-   char   *longStr;
+   char *longStr;
    int    i, intDigit, sign;
 
    if( inNum < 0 )
@@ -383,7 +383,8 @@ char* TextResource::format(int inNum, int formatType)
       sign  = 0;
 
    sprintf(longBuf, "%ld", inNum);
-   intDigit = strlen(longStr);  // no. of integer digits
+   intDigit = strlen(longBuf);  // no. of integer digits
+   longStr = longBuf;
 
    //--------- negetive bracket ------------//
 
