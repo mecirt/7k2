@@ -38,33 +38,33 @@
 
 VgaFrontLock::VgaFrontLock()
 {
-	if( vga_front.dd_buf )
+	if( vga_front.vptr_dd_buf )
 		vga_front.temp_unlock();
-	if( vga_back.dd_buf )
+	if( vga_back.vptr_dd_buf )
 		vga_back.temp_unlock();
 }
 
 VgaFrontLock::~VgaFrontLock()
 {
-	if( vga_back.dd_buf )
+	if( vga_back.vptr_dd_buf )
 		vga_back.temp_restore_lock();
-	if( vga_front.dd_buf )
+	if( vga_front.vptr_dd_buf )
 		vga_front.temp_restore_lock();
 }
 
 VgaFrontReLock::VgaFrontReLock()
 {
-	if( vga_front.dd_buf )
+	if( vga_front.vptr_dd_buf )
 		vga_front.temp_lock();
-	if( vga_back.dd_buf )
+	if( vga_back.vptr_dd_buf )
 		vga_back.temp_lock();
 }
 
 VgaFrontReLock::~VgaFrontReLock()
 {
-	if( vga_back.dd_buf )
+	if( vga_back.vptr_dd_buf )
 		vga_back.temp_restore_unlock();
-	if( vga_front.dd_buf )
+	if( vga_front.vptr_dd_buf )
 		vga_front.temp_restore_unlock();
 }
 

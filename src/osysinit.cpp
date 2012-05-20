@@ -279,24 +279,24 @@ int Sys::init_directx()
    if( use_true_front )                // if we are currently in triple buffer mode, don't lock the front buffer otherwise the system will hang up
    {
       DEBUG_LOG("Attempt vga_true_front.init_front()");
-      vga_true_front.init_front( vga.dd_obj );
+      vga_true_front.init_front();
       DEBUG_LOG("Attempt vga_front.init_back()");
-      vga_front.init_back( vga.dd_obj);		// create in video memory
+      vga_front.init_back();		// create in video memory
       vga_front.is_front = 1;       // set it to 1, overriding the setting in init_back()
       DEBUG_LOG("Attempt vga.activate_pal()");
       vga.activate_pal(&vga_true_front);
 		DEBUG_LOG("Attempt vga_back.init_back()");
-		vga_back.init_back( vga.dd_obj );
+		vga_back.init_back();
 		DEBUG_LOG("vga_back.init_back() finish");
    }
    else
    {
-      vga_front.init_front( vga.dd_obj );
+      vga_front.init_front();
       vga.activate_pal(&vga_front);
 #if(!defined(USE_FLIP))
-		vga_back.init_back( vga.dd_obj );		// create in system memory
+		vga_back.init_back();		// create in system memory
 #else
-		vga_back.init_back( vga.dd_obj, 0, 0, 1 );		// create in video memory
+		vga_back.init_back( 0, 0, 1 );		// create in video memory
 #endif
    }
 
@@ -321,14 +321,14 @@ int Sys::init_directx()
 //
 void Sys::deinit_directx()
 {
-   if( vga_back.dd_buf && vga_back.buf_locked )
+   if( vga_back.vptr_dd_buf && vga_back.buf_locked )
    {
       DEBUG_LOG("Attempt vga_back.unlock_buf()");
       vga_back.unlock_buf();
       DEBUG_LOG("vga_back.unlock_buf() finish");
    }
 
-   if( vga_front.dd_buf && vga_front.buf_locked )
+   if( vga_front.vptr_dd_buf && vga_front.buf_locked )
    {
       DEBUG_LOG("Attempt vga_front.unlock_buf()");
       vga_front.unlock_buf();

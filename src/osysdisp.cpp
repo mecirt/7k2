@@ -682,35 +682,31 @@ int Sys::change_display_mode(int modeId)
 	if( use_true_front )                // if we are currently in a triple buffer mode, don't lock the front buffer otherwise the system will hang up
    {
       DEBUG_LOG("Attempt vga_true_front.init_front()");
-		vga_true_front.init_front( vga.dd_obj );
+		vga_true_front.init_front();
 
       DEBUG_LOG("Attempt vga.activate_pal()");
       vga.activate_pal(&vga_true_front);
       DEBUG_LOG("vga.activate_pal() finish");
 
       DEBUG_LOG("Attempt vga_front.init_back()");
-      vga_front.init_back( vga.dd_obj );
+      vga_front.init_back();
       vga_front.is_front = 1;       // set it to 1, overriding the setting in init_back()
 
 		DEBUG_LOG("Attempt vga_back.init_back()");
-		vga_back.init_back( vga.dd_obj );
+		vga_back.init_back();
 		DEBUG_LOG("vga_back.init_back() finish");
 
    }
    else
    {
-      vga_front.init_front( vga.dd_obj );
+      vga_front.init_front();
       vga.activate_pal(&vga_front);
 #if(!defined(USE_FLIP))
-		vga_back.init_back( vga.dd_obj );		// create in system memory
+		vga_back.init_back();		// create in system memory
 #else
-		vga_back.init_back( vga.dd_obj, 0, 0, 1 );		// create in video memory
+		vga_back.init_back(0, 0, 1);		// create in video memory
 #endif
    }
-
-   //DEBUG_LOG("Attempt vga_back.init_back()");
-   //vga_back.init_back( vga.dd_obj );
-   //DEBUG_LOG("vga_back.init_back() finish");
 
 	// attach back buffer
 #if(defined(USE_FLIP))

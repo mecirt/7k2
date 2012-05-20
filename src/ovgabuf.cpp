@@ -76,9 +76,9 @@ VgaBuf::~VgaBuf()
 //
 // <LPVOID> vdd4Ptr     LPDIRECTDRAW4 of vga
 //
-void VgaBuf::init_front(LPVOID vdd4Ptr)
+void VgaBuf::init_front()
 {
-	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vdd4Ptr;
+	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vga.dd_obj;
 
 	DDSURFACEDESC2       ddsd;
 	HRESULT             rc;
@@ -144,9 +144,9 @@ void VgaBuf::init_front(LPVOID vdd4Ptr)
 // [DWORD] h      : height of the surface [default 0 : VGA_HEIGHT]
 // [int] videoMemoryFlag : 1 for create surface in video memory [default 0 : in system memory]
 //
-void VgaBuf::init_back( LPVOID vdd4Ptr, DWORD w, DWORD h, int videoMemoryFlag )
+void VgaBuf::init_back(DWORD w, DWORD h, int videoMemoryFlag )
 {
-	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vdd4Ptr;
+	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vga.dd_obj;
 
 	DDSURFACEDESC2       ddsd;
 	HRESULT             rc;
