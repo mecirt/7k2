@@ -28,13 +28,7 @@
 #include <omisc.h>
 #include <otransl.h>
 #include <odate.h>
-
-#define USE_TEXT_RES
-
-#if(defined(USE_TEXT_RES))
 #include <ot_basic.h>
-#endif
-
 
 //--------- Define static member variables -----------//
 
@@ -232,62 +226,10 @@ char* DateInfo::date_str( long julianDate, int shortMonthStr)
 
    static String str;
 
-#if(defined(USE_TEXT_RES))
-
 	if( shortMonthStr )
 		str = text_basic.str_short_date( day, month, year );
 	else
 		str = text_basic.str_long_date( day, month, year );
-
-#elif(defined(SPANISH))
-	if( shortMonthStr )
-	{
-		str  = itoa(day,strBuf,10);		// day
-		str += "-";
-		strcpy(strBuf, translate.process(month_str_array[month-1]));
-		if(strlen(strBuf) > 3)
-			strBuf[3] = '\0';		// limit month to 3 chars
-		str += strBuf;							// month
-		str += "-";
-	   str += itoa(year,strBuf,10);		// year
-	}
-	else
-	{
-		str  = itoa(day,strBuf,10);		// day
-		str += " de ";
-		str += translate.process(month_str_array[month-1]);
-		str += " de ";
-	   str += itoa(year,strBuf,10);		// year
-	}
-#elif(defined(FRENCH))
-	str  = itoa(day,strBuf,10);		// day
-	str += " ";
-	if( shortMonthStr )
-	{
-		strcpy(strBuf, translate.process(month_str_array[month-1]));
-		if(strlen(strBuf) > 3)
-			strBuf[3] = '\0';		// limit month to 4 chars
-		if(month == 7)				// Juillet(July) abbreviated to Jul.
-			strBuf[2] = 'l';
-		str += strBuf;							// month
-	}
-	else
-	{
-		str += translate.process(month_str_array[month-1]);
-	}
-	str += " ";
-	str += itoa(year,strBuf,10);		// year
-#else
-	// GERMAN and US
-	str = translate.process(month_str_array[month-1]);
-   if( shortMonthStr )
-      str = str.left(3);
-   str += " ";
-   str += itoa(day,strBuf,10);
-   str += ", ";
-   str += itoa(year,strBuf,10);
-#endif
-
    return str;
 }
 //------------- End of function DateInfo::date_str --------//
@@ -301,11 +243,7 @@ char* DateInfo::date_str( long julianDate, int shortMonthStr)
 //
 const char* DateInfo::month_str(int monthNo)
 {
-#if(defined(USE_TEXT_RES))
 	return text_basic.str_month_string( monthNo );
-#else
-	return translate.process(month_str_array[monthNo-1]);
-#endif
 }
 //------------- End of function DateInfo::month_str --------//
 

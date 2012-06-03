@@ -137,19 +137,9 @@ void HallFame::disp_info(int x, int y, int pos)
 	int xPop, xPeriod, xDiff;
 
 	xPop = x + 110;
-	#if(defined(FRENCH))
-		xPop -= 6;
-	#endif
 	xPeriod = xPop + 145; // x + 255;
-	#if(defined(GERMAN))
-		xPeriod -= 10;
-	#endif
 	xDiff = xPeriod + 155; // x + 410;
-	#if(defined(FRENCH))
-		xDiff += 6;
-	#endif
 
-	// str  = translate.process("Population: ");
 	str  = text_game_menu.str_hall_of_fame_population();
 	str += population;
 

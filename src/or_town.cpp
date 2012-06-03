@@ -97,21 +97,11 @@ void Info::disp_town(int refreshFlag)
 
 	vga_back.d3_panel_up(TOWN_BROWSE_X1, TOWN_BROWSE_Y1, TOWN_BROWSE_X2, TOWN_BROWSE_Y1+20 );
 
-	//SXM
-#if(defined(CHINESE))
-	font_bld.put( x	 , y, text_reports.str_town() ); // "Town" );
-	font_bld.put( x+150 +18, y, text_reports.str_citizens() ); // "Citizens" );
-	font_bld.put( x+225 +10, y, text_reports.str_peasants() ); // "Peasants" );
-	font_bld.put( x+300 +8, y, text_unit.str_loyalty() ); // "Loyalty" );
-	font_bld.put( x+400 +6, y, text_reports.str_nationality() ); // "Nationality" );
-#else
 	font_bld.put( x	 , y, text_reports.str_town() ); // "Town" );
 	font_bld.put( x+150, y, text_reports.str_citizens() ); // "Citizens" );
 	font_bld.put( x+225, y, text_reports.str_peasants() ); // "Peasants" );
 	font_bld.put( x+300, y, text_unit.str_loyalty() ); // "Loyalty" );
 	font_bld.put( x+400, y, text_reports.str_nationality() ); // "Nationality" );
-#endif
-	//SXM
 	if( refreshFlag == INFO_REPAINT )
 	{
 		browse_town.init( TOWN_BROWSE_X1, TOWN_BROWSE_Y1+22, TOWN_BROWSE_X2, TOWN_BROWSE_Y2-20,
@@ -132,42 +122,14 @@ void Info::disp_town(int refreshFlag)
 	x=FIRM_BROWSE_X1+9;
 	y=FIRM_BROWSE_Y1+4;
 
-#if(defined(FRENCH))
-	// two-line label
-	#define FIRM_LABEL_HEIGHT 36
-	vga_back.d3_panel_up(FIRM_BROWSE_X1, FIRM_BROWSE_Y1, FIRM_BROWSE_X2, FIRM_BROWSE_Y1+FIRM_LABEL_HEIGHT-1 );
-	font_bld.put( x	  , y+8, text_reports.str_structure() ); // "Structure" );
-	font_bld.center_put_paragraph( x+130, y, x+215, y+FIRM_LABEL_HEIGHT-8, text_reports.str_unit_cost(), DEFAULT_LINE_SPACE, 0, 0 ); // "Unit Cost" );
-	font_bld.center_put_paragraph( x+217, y, x+328, y+FIRM_LABEL_HEIGHT-8, text_reports.str_no_of_structures(), DEFAULT_LINE_SPACE, 0, 0  ); // "No. of Structures" );
-	font_bld.center_put_paragraph( x+340, y, x+438, y+FIRM_LABEL_HEIGHT-8, text_reports.str_yearly_expense(), DEFAULT_LINE_SPACE, 0, 0  ); // "Yearly Expense" );
-	font_bld.center_put_paragraph( x+440, y, x+548, y+FIRM_LABEL_HEIGHT-8, text_reports.str_yearly_income(), DEFAULT_LINE_SPACE, 0, 0  ); // "Yearly Income" );
-#else	
-	// one-line label
 	#define FIRM_LABEL_HEIGHT 21
 	vga_back.d3_panel_up(FIRM_BROWSE_X1, FIRM_BROWSE_Y1, FIRM_BROWSE_X2, FIRM_BROWSE_Y1+FIRM_LABEL_HEIGHT-1 );
 
-	//SXM
-	#if(defined(CHINESE))
-	font_bld.put( x	 , y, text_reports.str_structure() ); // "Structure" );
-	font_bld.put( x+140, y, text_reports.str_unit_cost() ); // "Unit Cost" );
-	font_bld.put( x+217 +16, y, text_reports.str_no_of_structures() ); // "No. of Structures" );
-	font_bld.put( x+340 +28, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
-	font_bld.put( x+450 +17, y, text_reports.str_yearly_income() ); // "Yearly Income" );
-	#elif(defined(ITALIAN))
-	font_bld.put( x	 , y, text_reports.str_structure() ); // "Structure" );
-	font_bld.put( x+110, y, text_reports.str_unit_cost() ); // "Unit Cost" );
-	font_bld.put( x+217, y, text_reports.str_no_of_structures() ); // "No. of Structures" );
-	font_bld.put( x+340, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
-	font_bld.put( x+450, y, text_reports.str_yearly_income() ); // "Yearly Income" );
-	#else // GERMAN and US
 	font_bld.put( x	 , y, text_reports.str_structure() ); // "Structure" );
 	font_bld.put( x+140, y, text_reports.str_unit_cost() ); // "Unit Cost" );
 	font_bld.put( x+217, y, text_reports.str_no_of_structures() ); // "No. of Structures" );
 	font_bld.put( x+340, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
 	font_bld.put( x+450, y, text_reports.str_yearly_income() ); // "Yearly Income" );
-	#endif
-	//SXM
-#endif
 
 	if( refreshFlag == INFO_REPAINT )
 	{

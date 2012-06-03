@@ -68,17 +68,6 @@ struct HyperField
 	short text_len;        // length of the hyper-field name
 };
 
-#if(defined(CHINESE))
-//SXM: Definition of Chinese Font set
-struct TChineseFont
-{
-	int m_Width;
-	int m_Height;
-	BYTE m_FontData[1];//We assume font data will have all the 94 sector of font data
-};
-//SXM
-#endif
-
 //--------- Define class Font ----------//
 
 struct FontInfo;
@@ -205,18 +194,6 @@ public:
 	void field(int,int,const char*,int,const char*,int,int,const char* helpCode=NULL);
 	int  disp(int,int,const char*,int,int=0);
 	short upper_case(short textChar);
-
-#if(defined(CHINESE))
-	//SXM
-	unsigned char m_ChineseShadowColor;
-	unsigned char m_ChineseBackgroundColor;
-	unsigned char m_ChineseForegroundColor;
-	unsigned char m_ChineseShadowX;
-	unsigned char m_ChineseShadowY;
-	char FontName[256];
-	void BreakOnString(char* String);
-	//SXM
-#endif
 };
 
 extern Font font_san, font_std, font_small, font_mid, font_news;
@@ -230,15 +207,7 @@ extern Font font_sop;
 extern Font	font_tut;
 extern Font font_scre, font_cmpa, font_cmph, font_cmpf, font_cmpo;
 
-#if(defined(CHINESE))
-//SXM
-extern TChineseFont* g_pChineseFont13,* g_pChineseFont16,* g_pChineseFont24;
-//SXM
-#endif
-
-//#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
 extern Font font_hall;
-//#endif
 
 //------------------------------------------------//
 

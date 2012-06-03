@@ -359,17 +359,6 @@ void RawRes::put_small_product_icon(int x, int y, int rawId)
 
 	Vga::active_buf->put_bitmap_trans(x, y, bitmapPtr);
 
-//	String str;
-//#ifdef FRENCH
-//	char productName[20];
-//	strcpy(productName, operator[](rawId)->name);
-//	strcat(productName, " Products");
-//	str  = translate.process(productName);
-//#else
-//	str  = operator[](rawId)->name;
-//	str += translate.process(" Products");
-//#endif
-
 	help.set_custom_help( x, y, x+RAW_SMALL_ICON_WIDTH-1, y+RAW_SMALL_ICON_HEIGHT-1, 
 		text_firm.str_product_name(rawId) );
 }

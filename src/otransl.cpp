@@ -236,20 +236,6 @@ void Translate::multi_to_win(char *c, int len)
 {
 	// look up table to convert multilingual char set to windows char set
 
-#if(defined(CHINESE))
-	//SXM:Risk, because I am not very clear the function of following codes.
-	//And I just returns it.
-	// Gilbert of Enlight : in US DOS, character set in DOS for (0x80-0xff)
-	// is different from character set in Windows
-	// we like to use Windows' US character set, but Database class (.DBF files)
-	// uses the DOS character set (exception are RACENAME.DBF and TOWNNAME.DBF 
-	// which are imported from text files in Windows' character set )
-
-	// in double byte like Chinese, no need to convert, 
-	// it is correct to do nothing
-	return;
-#else
-
 	static unsigned char multi_to_win_table[] = 
 		"ÇüéâäàåçêëèïîìÄÅ"
 		"ÉæÆôöòûùÿÖÜø£Ø×\x83"
@@ -267,6 +253,5 @@ void Translate::multi_to_win(char *c, int len)
 		if( *textPtr >= 0x80 && multi_to_win_table[*textPtr - 0x80] != '?' )
 			*textPtr = multi_to_win_table[*textPtr - 0x80];
 	}
-#endif
 }
 //------ End of function Translate::multi_to_win ----------//

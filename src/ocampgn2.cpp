@@ -2260,11 +2260,7 @@ static char* get_next_paragraph(char* textPtr)
 
 	for( ; *textPtr!=26 && *textPtr ; textPtr++ )
 	{
-#if(defined(CHINESE) && defined(TRADITIONAL) )
-		if( *textPtr == '~' && (textPtr[1]=='\r' || textPtr[1]=='\0' || textPtr[1]=='\n') )
-#else
 		if( *textPtr == '~' )			// paragraph separator
-#endif
 		{
 			return textPtr+3;		// skip '~' + new line characters
 		}

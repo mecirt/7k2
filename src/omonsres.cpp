@@ -114,21 +114,6 @@ void MonsterRes::load_monster_info()
 		m.rtrim_fld( monsterInfo->firm_build_code, monsterRec->firm_build_code, monsterRec->FIRM_BUILD_CODE_LEN );
 
 		strcpy( monsterInfo->adjective, monsterInfo->name );
-
-		// ##### patch begin Gilbert 26/10 ######//
-		// FRENCH has different adjective
-#if(defined(FRENCH))
-		switch(monsterInfo->monster_id)
-		{
-		case MONSTER_KHARSHUF:
-		case MONSTER_BREGMA:
-		case MONSTER_GROKKEN:
-		case MONSTER_EXOVUM:
-			strcat( monsterInfo->adjective, "s" );
-			break;
-		}
-#endif
-	// ##### patch end Gilbert 26/10 ######//
    }
 }
 //--------- End of function MonsterRes::load_monster_info ---------//

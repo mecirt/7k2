@@ -47,7 +47,6 @@ LIBRARIES             =
 			src/of_traii.cpp \
 			src/oai_act.cpp \
 			src/ou_god2.cpp \
-			src/otalkspa.cpp \
 			src/of_resei.cpp \
 			src/ow_fire.cpp \
 			src/of_magii.cpp \
@@ -90,7 +89,6 @@ LIBRARIES             =
 			src/oflc.cpp \
 			src/of_off2i.cpp \
 			src/oitem.cpp \
-			src/ofontchi.cpp \
 			src/otwalres.cpp \
 			src/or_town.cpp \
 			src/ogfile.cpp \
@@ -153,7 +151,6 @@ LIBRARIES             =
 			src/oai_act2.cpp \
 			src/oc_eas21.cpp \
 			src/oresdb.cpp \
-			src/otalkger.cpp \
 			src/or_news.cpp \
 			src/oc_pld2.cpp \
 			src/oc_eas12.cpp \
@@ -182,7 +179,6 @@ LIBRARIES             =
 			src/oc_east3.cpp \
 			src/oworld.cpp \
 			src/of_forta.cpp \
-			src/onewsspa.cpp \
 			src/oai_quer.cpp \
 			src/otalkmsg.cpp \
 			src/oc_plc3.cpp \
@@ -274,7 +270,6 @@ LIBRARIES             =
 			src/of_incua.cpp \
 			src/of_inna.cpp \
 			src/oun_proc.cpp \
-			src/onewsger.cpp \
 			src/ot_basic.cpp \
 			src/oc_plot.cpp \
 			src/ogame.cpp \
@@ -285,7 +280,6 @@ LIBRARIES             =
 			src/orespal.cpp \
 			src/of_marki.cpp \
 			src/oc_eas13.cpp \
-			src/otalkfre.cpp \
 			src/oinfo.cpp \
 			src/ogenmap.cpp \
 			src/osysview.cpp \
@@ -303,7 +297,6 @@ LIBRARIES             =
 			src/ocrc_sto.cpp \
 			src/of_animi.cpp \
 			src/otransl.cpp \
-			src/omousesp.cpp \
 			src/ogamecon.cpp \
 			src/otutor.cpp \
 			src/oresx.cpp \
@@ -322,7 +315,6 @@ LIBRARIES             =
 			src/obattle.cpp \
 			src/or_nat.cpp \
 			src/of_magia.cpp \
-			src/omousefr.cpp \
 			src/ostate.cpp \
 			src/of_mtrna.cpp \
 			src/ospy2.cpp \
@@ -386,7 +378,6 @@ LIBRARIES             =
 			src/osedit_v.cpp \
 			src/omonsres.cpp \
 			src/osedit_m.cpp \
-			src/omousege.cpp \
 			src/ogamcred.cpp \
 			src/oai_cap2.cpp \
 			src/ogamemp.cpp \
@@ -423,7 +414,6 @@ LIBRARIES             =
 			src/otownind.cpp \
 			src/oraceres.cpp \
 			src/oai_unit.cpp \
-			src/omouseit.cpp \
 			src/of_basea.cpp \
 			src/osysdet.cpp \
 			src/oun_ord.cpp \
@@ -436,7 +426,6 @@ LIBRARIES             =
 			src/oun_ai2.cpp \
 			src/of_lair.cpp \
 			src/oun_act.cpp \
-			src/onewsfre.cpp \
 			src/of_spya.cpp \
 			src/of_mtrni.cpp \
 			src/orain1.cpp \

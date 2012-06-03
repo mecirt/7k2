@@ -116,9 +116,6 @@ void Sys::disp_view_mode(int observeMode)
 		for (int i = 0 ; i < 8 ; i ++)
 		{
 			image_button.put_back( darkenX[i], darkenY[i], "SR800-UP");
-//			font_bld.center_put(darkenX[i], darkenY[i]-2, darkenX[i] + darkenWidth -1,
-//									 darkenY[i] + darkenHeight -3, text_reports.str_report_mode(i+1)); // scroll_name[i]);
-			// change in GERMAN version
 			font_bld.center_put(darkenX[i], darkenY[i], darkenX[i] + darkenWidth -1,
 									 darkenY[i] + darkenHeight -3, text_reports.str_report_mode(i+1)); // scroll_name[i]);
 		}

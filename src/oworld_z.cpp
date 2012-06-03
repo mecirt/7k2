@@ -1018,10 +1018,6 @@ void ZoomMatrix::draw_weather_effects()
 		snow.set_bound(ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2);
 		snow.init(weather.wind_speed()*sin(weather.wind_direct_rad())/200.0,
 			snowScale+2);
-		if( config.sound_effect_flag && config.snow_audio )
-		{
-			// audio.play_wav("SNOW", config.snow_volume);
-		}
 	}
 	// ###### begin Gilbert 6/9 #######//
 	if( snowScale > 0 && config.snow_visual && config.frame_speed > 0)
@@ -1685,15 +1681,7 @@ void ZoomMatrix::disp_text()
 			short curX2 = (firmPtr->loc_x2 + 1) * LOCATE_WIDTH;
 			short curY2 = (firmPtr->loc_y2 + 1) * LOCATE_HEIGHT;
 			short curZ = firmPtr->altitude;
-//			if ( firmPtr->firm_id == FIRM_FORT )
-//				str = firmPtr->firm_name(0);
-//			else
-//				str = firmPtr->firm_name();
-#if(defined(CHINESE))
-			put_center_text( (curX1+curX2)/2 +16, (curY1+curY2)/2 +16, curZ, firmPtr->firm_name() );
-#else
 			put_center_text( (curX1+curX2)/2, (curY1+curY2)/2, curZ, firmPtr->firm_name() );
-#endif
 		}
 
 		spyCount = 0;

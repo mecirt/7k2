@@ -81,21 +81,11 @@ void Info::disp_tech(int refreshFlag)
 
 	font_bld.put( x	 , y+7, text_reports.str_technology() ); // "Technology" );
 
-#if(defined(CHINESE))
-	font_bld.center_put_paragraph( x+223, TECH_BROWSE_Y1 +6, x+329, TECH_BROWSE_Y1+32, text_reports.str_tech_present_version(), 0, 1, 0);
-	font_bld.center_put_paragraph( x+316, TECH_BROWSE_Y1 +6, x+439, TECH_BROWSE_Y1+32, text_reports.str_tech_researching_version(), 0, 1, 0);
-	font_bld.center_put_paragraph( x+413, TECH_BROWSE_Y1 +6, x+540, TECH_BROWSE_Y1+32, text_reports.str_tech_research_progress(), 0, 1, 0);
-#else
-	// font_bld.center_put_paragraph( x+240, TECH_BROWSE_Y1, x+329, TECH_BROWSE_Y1+32, "Present Version", 0, 1, 0);
 	font_bld.center_put_paragraph( x+240, TECH_BROWSE_Y1, x+329, TECH_BROWSE_Y1+32, text_reports.str_tech_present_version(), 0, 1, 0);
 
-	// font_bld.center_put_paragraph( x+330, TECH_BROWSE_Y1, x+439, TECH_BROWSE_Y1+32, "Researching Version", 0, 1, 0);
 	font_bld.center_put_paragraph( x+330, TECH_BROWSE_Y1, x+439, TECH_BROWSE_Y1+32, text_reports.str_tech_researching_version(), 0, 1, 0);
 
-	// font_bld.center_put_paragraph( x+440, TECH_BROWSE_Y1, x+510, TECH_BROWSE_Y1+32, "Research Progress", 0, 1, 0);
-	// US font_bld.center_put_paragraph( x+440, TECH_BROWSE_Y1, x+510, TECH_BROWSE_Y1+32, text_reports.str_tech_research_progress(), 0, 1, 0);
 	font_bld.center_put_paragraph( x+440, TECH_BROWSE_Y1, x+540, TECH_BROWSE_Y1+32, text_reports.str_tech_research_progress(), 0, 1, 0);
-#endif
 
 	if( refreshFlag == INFO_REPAINT )
 	{

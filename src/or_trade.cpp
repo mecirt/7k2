@@ -92,11 +92,7 @@ void Info::disp_trade(int refreshFlag)
 	vga_back.d3_panel_up(CARAVAN_BROWSE_X1, CARAVAN_BROWSE_Y1, CARAVAN_BROWSE_X2, CARAVAN_BROWSE_Y1+20 );
 
 	font_bld.put( x	 , y, unit_res[UNIT_CARAVAN]->name ); // "Caravan" );
-#if(defined(CHINESE))
-	font_bld.put( x+78 +10, y, text_unit.str_hit_points() ); // "Hit Points" );
-#else // ITALIAN, FRENCH, GERMAN and US
 	font_bld.put( x+78 , y, text_unit.str_hit_points() ); // "Hit Points" );
-#endif
 	font_bld.put( x+160, y, text_reports.str_trade_stop(1) ); // "Stop 1" );
 	font_bld.put( x+250, y, text_reports.str_trade_stop(2) ); // "Stop 2" );
 	font_bld.put( x+340, y, text_reports.str_goods_carried() ); //"Goods Carried" );
@@ -115,45 +111,6 @@ void Info::disp_trade(int refreshFlag)
 		browse_caravan.paint();
 		browse_caravan.open(browse_caravan_recno, report_array.size());
 	}
-
-/*
-	//-------- display the ship browser ---------//
-
-	x=SHIP_BROWSE_X1+9;
-	y=SHIP_BROWSE_Y1+4;
-
-	vga_back.d3_panel_up(SHIP_BROWSE_X1, SHIP_BROWSE_Y1, SHIP_BROWSE_X2, SHIP_BROWSE_Y1+20 );
-
-	font_bld.put( x	 , y, "Ship" );
-#if(defined(FRENCH))
-	font_bld.put( x+75 , y, "Hit Points" );
-#else
-	font_bld.put( x+90 , y, "Hit Points" );
-#endif
-#if(defined(FRENCH))
-	font_bld.put( x+160, y, "Escale 1" );
-	font_bld.put( x+220, y, "Escale 2" );
-	font_bld.put( x+280, y, "Escale 3" );
-#else
-	font_bld.put( x+160, y, "Stop 1" );
-	font_bld.put( x+220, y, "Stop 2" );
-	font_bld.put( x+280, y, "Stop 3" );
-#endif
-	font_bld.put( x+340, y, "Goods Carried" );
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_ship.init( SHIP_BROWSE_X1, SHIP_BROWSE_Y1+22, SHIP_BROWSE_X2, SHIP_BROWSE_Y2-20,
-								0, 16, report_array2.size(), put_ship_rec, 1 );
-
-		browse_ship.open(browse_ship_recno);
-	}
-	else
-	{
-		browse_ship.paint();
-		browse_ship.open(browse_ship_recno, report_array2.size());
-	}
-*/
 
 	//------------ display total -------------//
 

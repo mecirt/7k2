@@ -273,6 +273,15 @@ private:
 };
 //---------- End of define class ---------------//
 
+class MouseDispCount
+{
+private:
+	void *cursor_handle;
+public:
+	MouseDispCount();
+	~MouseDispCount();
+};
+
 extern Mouse mouse;
 
 #endif

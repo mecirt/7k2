@@ -628,22 +628,11 @@ void FirmInn::disp_unit_info(int dispY1, int refreshFlag)
 
 	// display unit name
 
-#if(defined(CHINESE))
-	//SXM
-	y-=3;
-	//SXM
-#endif
-
 	if( innUnit->hero_id )
 		font_snds.put( x, y, hero_res[innUnit->hero_id]->name, 0, -1, 1 );
 	else
 		font_snds.put( x, y, unit_res[innUnit->unit_id]->name, 0, -1, 1 );
 
-#if(defined(CHINESE))
-	//SXM
-	y++;
-	//SXM
-#endif
 	y += 14;
 
 	// display combat level
@@ -679,11 +668,6 @@ void FirmInn::disp_unit_info(int dispY1, int refreshFlag)
 		}
 	}
 
-#if(defined(CHINESE))
-	//SXM
-	y++;
-	//SXM
-#endif
 	y += 14;
 
 	// display leadership skill
@@ -700,11 +684,6 @@ void FirmInn::disp_unit_info(int dispY1, int refreshFlag)
 
 	font_snds.right_put( INFO_X1+212, y, m.format(innUnit->hire_cost, 2) );
 
-#if(defined(CHINESE))
-	//SXM
-	y++;
-	//SXM
-#endif
 	y += 14;
 
 	// display item

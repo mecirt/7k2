@@ -643,7 +643,7 @@ int Sys::change_display_mode(int modeId)
 
 	// ##### begin Gilbert 30/10 ######//
 	// show mouse
-	ShowCursor(TRUE);
+	ShowMouseCursor(true);
 	// ##### end Gilbert 30/10 ######//
 
 	// change display mode
@@ -673,7 +673,7 @@ int Sys::change_display_mode(int modeId)
 
 	// ##### begin Gilbert 30/10 ######//
 	// show mouse
-	ShowCursor(FALSE);
+	ShowMouseCursor(false);
 	// ##### end Gilbert 30/10 ######//
 
 	// re-create surface

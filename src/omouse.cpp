@@ -1506,3 +1506,37 @@ int Mouse::key_auto_repeat_count()
 	return 0;
 }
 
+MouseDispCount::MouseDispCount()
+{
+	// set cursor position
+	SetCursorPos( mouse.cur_x, mouse.cur_y);
+
+	// show cursor
+	mouse.hide();
+	// #### begin Gilbert 9/1 #######//
+	vga_front.temp_unlock();
+	vga_back.temp_unlock();
+	// #### end Gilbert 9/1 #######//
+	ShowMouseCursor(true);
+}
+
+MouseDispCount::~MouseDispCount()
+{
+	// set cursor position
+	POINT winMousePos;
+	GetCursorPos(&winMousePos);
+	mouse.cur_x = winMousePos.x;
+	mouse.cur_y = winMousePos.y;
+
+	// hide cursor
+	ShowMouseCursor(false);
+	// #### begin Gilbert 9/1 #######//
+	vga_front.temp_restore_lock();
+	vga_back.temp_restore_lock();
+	// #### end Gilbert 9/1 #######//
+	mouse.show();
+	int ev = mouse.get_event();
+	ev = mouse.get_event();
+
+}
+

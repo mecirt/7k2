@@ -308,16 +308,7 @@ int FileTxt::read_paragraph(char* textPtr, int bufLen)
    {
       ch = *data_ptr++;
 
-#if(defined(CHINESE) && defined(TRADITIONAL) )
-//SXM:For Tra
-//	  if( (ch==CHAR_PAGE_BREAK || ch=='~' )&& (*(data_ptr+1)==0x0d
-//		  ||*(data_ptr+1)==0x0a||*(data_ptr+1)==0x0))
-//SXM:For Tra
-		// data_ptr has been increase
-		if( (ch==CHAR_PAGE_BREAK || ch=='~') && (*data_ptr==CHAR_RETURN||*data_ptr==CHAR_LINE_FEED||*data_ptr==0) )
-#else
 		if( ch==CHAR_PAGE_BREAK || ch=='~' )
-#endif
 			break;
 
       // RETURN + LINE_FEED = word wrap
@@ -354,12 +345,6 @@ int FileTxt::read_paragraph(char* textPtr, int bufLen)
 
    *textPtr++ = NULL;
    textReadLen++;
-
-#if(!defined(CHINESE))
-	//SXM:Risk
-	err_when( data_ptr-data_buf > file_length );
-	//SXM:Risk
-#endif
 
    return textReadLen;
 }

@@ -71,13 +71,7 @@ void Info::disp_economy(int refreshFlag)
 	vga_back.d3_panel_up(INCOME_BROWSE_X1, INCOME_BROWSE_Y1, INCOME_BROWSE_X2, INCOME_BROWSE_Y1+20 );
 
 	font_bld.put( x	 , y, text_reports.str_income_item() ); // "Income Item" );
-	//SXM
-#if(defined(CHINESE))
-	font_bld.put( x+350 +16, y, text_reports.str_yearly_income() ); // "Yearly Income" );
-#else
 	font_bld.put( x+350, y, text_reports.str_yearly_income() ); // "Yearly Income" );
-#endif
-	//SXM
 
 	int incomeCount;		// only display the cheat income if it amount is > 0
 
@@ -112,14 +106,7 @@ void Info::disp_economy(int refreshFlag)
 	vga_back.d3_panel_up(EXPENSE_BROWSE_X1, EXPENSE_BROWSE_Y1, EXPENSE_BROWSE_X2, EXPENSE_BROWSE_Y1+20 );
 
 	font_bld.put( x	 , y, text_reports.str_expense_item() ); // "Expense Item" );
-//SXM
-#if(defined(CHINESE))
-	font_bld.put( x+350 +16, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
-#else
 	font_bld.put( x+350, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
-#endif
-//SXM
-
 
 	if( refreshFlag == INFO_REPAINT )
 	{

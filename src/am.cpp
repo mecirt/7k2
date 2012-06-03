@@ -24,10 +24,10 @@
 #define NEED_WINDOWS
 
 #include <all.h>
-#include <dshow.h>
-#include <strmif.h>
+#include <odplay.h>
 #include <oanline.h>
 #include <oaudio.h>
+#include <ovideo.h>
 #include <obaseobj.h>
 #include <obattle.h> 
 #include <obox.h>
@@ -74,7 +74,6 @@
 #include <otransl.h>
 #include <ounit.h>
 #include <ovga.h>
-#include <ovideo.h>
 #include <owallres.h>
 #include <oworld.h>
 #include <oweather.h>
@@ -92,7 +91,6 @@
 #include <oexpmask.h>
 #include <oregion.h>
 #include <owarpt.h>
-#include <odplay.h>
 #include <oimmplay.h>
 #include <oerrctrl.h>
 #include <omusic.h>
@@ -146,7 +144,6 @@ Misc              m, m2;
 DateInfo          date;
 Config            config;
 SerialRepository  serial_repository( 1000, "GAMESERL.DAT" );
-Video             video;
 Log               msg_log;
 #ifdef DEBUG
 LongLog *			long_log;
@@ -376,8 +373,6 @@ unsigned long	last_unit_transform_fortress_profile_time = 0L;
 #endif
 
 
-void play_video(HINSTANCE hInstance, int videoId);
-
 //------- Define static functions --------//
 
 static void extra_error_handler();
@@ -503,40 +498,4 @@ static void extra_error_handler()
 //----------- End of function extra_error_handler -------------//
 
 
-void play_video(HINSTANCE hInstance, int videoId)
-{
-	String movieFileStr;
-	movieFileStr = DIR_MOVIE;
-	if( videoId == 0 )
-	{
-		movieFileStr += "INTRO.MPG";
-	}
-	else
-	{
-		movieFileStr += "MOVIE";
-		movieFileStr += videoId;
-		movieFileStr += ".AVI";
-	}
 
-	video.set_skip_on_fail();
-
-	if( m.is_file_exist(movieFileStr) )
-	{
-		//---------- play the movie now ---------//
-
-		video.init();
-
-		if( video.init_success )
-		{
-			video.play_until_end( movieFileStr, hInstance, 60 );
-		}
-		else
-		{
-			// display a message box (note:sys.main_hwnd is not valid)
-			// MessageBox( NULL, "Cannot initialize ActiveMovie",
-			//   "Seven Kingdoms", MB_OK | MB_ICONWARNING | MB_DEFBUTTON1 | MB_TASKMODAL );
-		}
-
-		video.deinit();
-	}
-}

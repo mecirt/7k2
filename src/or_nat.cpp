@@ -180,39 +180,13 @@ void Info::disp_nation(int refreshFlag)
 		vga_back.d3_panel_up(REPORT_BROWSE_X1, REPORT_BROWSE_Y1, REPORT_BROWSE_X2, REPORT_BROWSE_Y1+33 );
 
 		font_bld.put( x	 , y+7, text_reports.str_nat_kingdom()); // "Kingdom" );
-#if(defined(CHINESE))
-		font_bld.right_put( x+235 +3, y+7, text_reports.str_nat_reputation()); // "Reputation" );
-		font_bld.put( x+265 -6, y+7, text_reports.str_nat_status()); // "Status" );
-#else
 		font_bld.right_put( x+235, y+7, text_reports.str_nat_reputation());
 		font_bld.put( x+265, y+7, text_reports.str_nat_status()); // "Status" );
-#endif
 
-#if(defined(CHINESE))
-		font_bld.put_paragraph( x+343-8, y+7, x+405, y+28+7, text_reports.str_nat_allow_attack(), 0 );
-#else
-	#if(defined(GERMAN))
-		#define X_SHIFT -5
-	#else
-		#define X_SHIFT 0
-	#endif
-		font_bld.put_paragraph( x+343+X_SHIFT, y, x+405+X_SHIFT, y+28, text_reports.str_nat_allow_attack(), 0 );
-	#undef X_SHIFT
-#endif
+		font_bld.put_paragraph( x+343, y, x+405, y+28, text_reports.str_nat_allow_attack(), 0 );
 
-		//SXM
-#if(defined(CHINESE))
-		font_bld.put_paragraph( x+405 -16, y+7, x+465, y+28+7, text_reports.str_nat_trade_treaty(), 0 );
-		font_bld.put_paragraph( x+465 -14, y+7, x+525, y+28+7, text_reports.str_nat_trade_amount(), 0 );
-#else
-	//	font_bld.put( x+405, y   , "Trade" );
-	//	font_bld.put( x+405, y+13, "Treaty" );
 		font_bld.put_paragraph( x+405, y, x+465, y+28, text_reports.str_nat_trade_treaty(), 0 );
-	//	font_bld.put( x+465, y   , "Trade" );
-	//	font_bld.put( x+465, y+13, "Amount" );
 		font_bld.put_paragraph( x+465, y, x+525, y+28, text_reports.str_nat_trade_amount(), 0 );
-#endif
-		//SXM
 	}
 
 	if( refreshFlag == INFO_REPAINT )

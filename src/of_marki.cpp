@@ -318,10 +318,6 @@ void FirmMarket::disp_market_info(int dispY1, int refreshFlag)
 			font_snds.right_put( x+56, y+32, m.format((int)marketGoods->month_demand) );
 		}
 
-		// ------ display icon ---------//
-
-		// vga.active_buf->put_bitmap_trans( x+19, y+48, bitmapPtr );
-
 		// ----- display "full" icon -------//
 
 		if( marketGoods->stock_qty >= MAX_MARKET_STOCK-10 )
@@ -331,128 +327,6 @@ void FirmMarket::disp_market_info(int dispY1, int refreshFlag)
 				fullBitmap);
 		}
 	}
-
-	/*
-	static char lastNoTrade;
-
-	//--- only display market info if the player is allowed to trade with this market ---//
-
-	char noTrade;
-
-	if( nation_array.player_recno )
-		noTrade = nation_array[nation_recno]->get_relation(nation_array.player_recno)->trade_treaty==0;
-	else
-		noTrade = 0;		// the player has been destroyed
-
-	if( config.show_ai_info )
-		noTrade = 0;
-
-	if( lastNoTrade != noTrade )
-	{
-		lastNoTrade = noTrade;
-
-		if( refreshFlag == INFO_UPDATE )
-		{
-			info.disp();
-			return;
-		}
-	}
-
-	if( noTrade )
-	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			vga.d3_panel_up( INFO_X1, dispY1, INFO_X2, dispY1+51 );
-			font_san.center_put( INFO_X1, dispY1+3 , INFO_X2, dispY1+25, "You're not permitted to" );
-			font_san.center_put( INFO_X1, dispY1+23, INFO_X2, dispY1+51, "trade with this market." );
-		}
-
-		return;
-	}
-
-	//-----------------------------------------------------//
-
-	int 				i, x, y=dispY1;
-	static char* 	last_bitmap_array[MAX_MARKET_GOODS];
-	MarketGoods*	marketGoods;
-	String			str;
-	char*				bitmapPtr;
-
-	for( i=0, marketGoods=market_goods_array ; i<MAX_MARKET_GOODS ; i++, marketGoods++, y+=53 )
-	{
-		if( refreshFlag == INFO_REPAINT )
-			vga.d3_panel_up( INFO_X1, y, INFO_X2, y+51 );
-
-		if( marketGoods->raw_id )
-		{
-			str = raw_res[marketGoods->raw_id]->name;
-			bitmapPtr = raw_res.small_raw_icon(marketGoods->raw_id);
-		}
-		else if( marketGoods->product_raw_id )
-		{
-#ifdef FRENCH
-			char productName[20];
-			strcpy(productName, raw_res[marketGoods->product_raw_id]->name);
-			strcat(productName, " Products");
-			str = translate.process(productName);
-#else
-			str  = raw_res[marketGoods->product_raw_id]->name;
-			str += translate.process(" Products");
-#endif
-			bitmapPtr = raw_res.small_product_icon(marketGoods->product_raw_id);
-		}
-		else
-		{
-			button_clear_stock[i].reset();
-			continue;
-		}
-
-		//----- if product type changed, refresh info ----//
-
-		if( bitmapPtr != last_bitmap_array[i] )
-		{
-			refreshFlag = INFO_REPAINT;
-			last_bitmap_array[i] = bitmapPtr;
-		}
-
-		//------------ display info --------------//
-
-		x=INFO_X1+2;
-
-		if( refreshFlag == INFO_REPAINT )
-		{
-			vga_front.put_bitmap_trans( x+3, y+4, bitmapPtr );
-			font_san.put( x+19, y+4, str );
-
-			if( nation_recno == nation_array.player_recno )
-			{
-				button_clear_stock[i].paint_text( INFO_X2-46, y+2, INFO_X2-3, y+19, "Clear" );		// Clear Stock
-				button_clear_stock[i].set_help_code( "MK_CLEAR" );
-			}
-		}
-
-		x+=3;
-		int ty=y+18;
-
-		str  = (int) marketGoods->stock_qty;
-		str += "/";
-		str += (int) max_stock_qty;
-
-		font_san.field( x, ty, "Stock", x+60, str, x+119, refreshFlag, "MK_STOCK" );
-
-		font_san.field( x, ty+16, "Sales", x+60, (int) marketGoods->sales_365days(), 2,
-							 x+104, refreshFlag, "MK_SALES" );
-
-		x+=105;
-
-		// ####### patch begin Gilbert 16/3 #########//
-		//font_san.field( x, ty+16, "Demand", x+70, (int) marketGoods->month_demand, 1,
-		//					 INFO_X2-2, refreshFlag, "MK_DEMAN" );
-		font_san.field( x, ty+16, "Demand", x+67, (int) marketGoods->month_demand, 1,
-							 INFO_X2-1, refreshFlag, "MK_DEMAN" );
-		// ####### patch end Gilbert 16/3 #########//
-	}
-	*/
 }
 //----------- End of function FirmMarket::disp_market_info -----------//
 
@@ -481,15 +355,6 @@ void FirmMarket::detect_market_info()
 		}
 		else if( marketGoods->product_raw_id )
 		{
-//#ifdef FRENCH
-//			char productName[20];
-//			strcpy(productName, raw_res[marketGoods->product_raw_id]->name);
-//			strcat(productName, " Products");
-//			str = translate.process(productName);
-//#else
-//			str  = raw_res[marketGoods->product_raw_id]->name;
-//			str += translate.process(" Products");
-//#endif
 			str = text_firm.str_product_name( marketGoods->product_raw_id );
 		}
 		else

@@ -671,26 +671,6 @@ char* NationBase::nation_name()
 
 	//-------------------------------------------------//
 
-//#if(defined(SPANISH))
-//	strncpy( nation_name_str, "Reino de ", NATION_NAME_LEN );
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//	strncat( nation_name_str, king_name(1), NATION_NAME_LEN );		// 1-get the first word of the name only
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//#elif(defined(FRENCH))
-//	strncpy( nation_name_str, "Royaume de ", NATION_NAME_LEN );
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//	strncat( nation_name_str, king_name(1), NATION_NAME_LEN );		// 1-get the first word of the name only
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//#else
-//	// German and US
-//	strncpy( nation_name_str, king_name(1), NATION_NAME_LEN );		// 1-get the first word of the name only
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//	strncat( nation_name_str, "'s ", NATION_NAME_LEN );		// 1-get the first word of the name only
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//	strncat( nation_name_str, translate.process("Kingdom"), NATION_NAME_LEN );
-//	nation_name_str[NATION_NAME_LEN]=NULL;
-//#endif
-
 	strncpy( nation_name_str, 
 		text_unit.str_unit_nation(race_id, king_name(1)), NATION_NAME_LEN );	// 1-get the first word of the name only
 	nation_name_str[NATION_NAME_LEN]=NULL;

@@ -1435,10 +1435,6 @@ void FirmCamp::disp_overseer_info(int dispY1, int refreshFlag)
 
 	// ------- display combat ----------//
 
-#if(defined(CHINESE))
-	y += 3;
-#endif
-
 	if( unitInfo->class_info.has_combat_level )
 	{
 		// x2 = (disp_combat_or_skill==1?font_blu2:font_snds).put( x+110, y+12, "Combat" ) + 10;

@@ -1090,21 +1090,8 @@ void FirmCamp::detect_incident_nation()
 	}
 
 	int rc = button_go.detect();
-	// ### patch begin Gilbert 17/3 ###//
-#if(defined(CHINESE) && defined(TRADITIONAL))
-//	help.set_custom_help(button_go.x1, button_go.y1, button_go.x2, button_go.y2, "挑起突發事件");
-#else
-//	help.set_custom_help(button_go.x1, button_go.y1, button_go.x2, button_go.y2, "Create Incident");
-#endif
-	// ### patch end Gilbert 17/3 ###//
 	if( rc )
 	{
-		// switch menu mode first 
-//		firm_menu_mode = FIRM_MENU_INCIDENT_RESULT;
-//		create_incident_result = 0;		//waiting
-//		// switch menu mode before call action, it change create_incident_result
-//		spyPtr->create_incident( nation_recno, action_target_recno, COMMAND_PLAYER );
-
 		firm_menu_mode = FIRM_MENU_INCIDENT_CONFIRM;
 		spy_action_chance = spyPtr->get_incident_rating(nation_recno, action_target_recno);
 		se_ctrl.immediate_sound("TURN_ON");
@@ -1163,13 +1150,6 @@ void FirmCamp::detect_incident_confirm()
 	}
 
 	int rc = button_go.detect();
-	// ### patch begin Gilbert 17/3 ###//
-#if(defined(CHINESE) && defined(TRADITIONAL) )
-	//	help.set_custom_help(button_go.x1, button_go.y1, button_go.x2, button_go.y2, "挑起突發事件");
-#else
-	// help.set_custom_help(button_go.x1, button_go.y1, button_go.x2, button_go.y2, "Create Incident");
-#endif
-	// ### patch end Gilbert 17/3 ###//
 	if( rc )
 	{
 		firm_menu_mode = FIRM_MENU_INCIDENT_RESULT;

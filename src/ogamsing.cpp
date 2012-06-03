@@ -179,12 +179,7 @@ static int select_option2()
 	
 	w = font_thin_black.text_width( text_game_menu.str_species_humans() ); //  "Humans" 
 	h = font_thin_black.text_height();
-	//SXM
 	cx = 256;
-#if(defined(CHINESE))
-	cx = 250;
-#endif
-	//SXM
 	cy = 116;
 	speciesGroup[0].create( cx-w/2-10, cy-h/2-5, cx+w/2+10, cy+h/2+5,
 		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_humans(), 0 ), 0 );
@@ -830,13 +825,8 @@ static int select_option2()
 							text_game_menu.str_ai_treasure()); // "Computer's Treasure" );
 						font_bold_black.put_paragraph( 126, 289, option3X-10, 339-1,
 							text_game_menu.str_ai_aggressiveness()); // "Computer's Aggressiveness" );
-#if(defined(GERMAN))
-						font_bold_black.put_paragraph( 126, 348, option3X-10, 389-1,
-							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#else
 						font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
 							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#endif
 						font_bold_black.put_paragraph( 126, 389, option3X-10, 449-1,
 							text_game_menu.str_random_kingdom()); // "Random Kingdoms" );
 

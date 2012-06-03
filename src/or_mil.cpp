@@ -77,25 +77,11 @@ void Info::disp_military(int refreshFlag)
 	vga_back.d3_panel_up(TROOP_BROWSE_X1, TROOP_BROWSE_Y1, TROOP_BROWSE_X2, TROOP_BROWSE_Y1+33 );
 
 	font_bld.put( x	 , y+7 , text_reports.str_mil_commander() ); // "Commander" );
-	//SXM
-#if(defined(CHINESE))
-	font_bld.put( x+210 +12, y+7 , text_unit.str_leadership() ); // "Leadership" );
-	font_bld.put( x+287, y+7 , text_unit.str_loyalty() ); // "Loyalty" );
-	font_bld.center_put_paragraph( x+358 -4, y+6, x+406, y+24, text_unit.str_hit_points(), 0, 0, 0 );
-	font_bld.center_put_paragraph( x+404, y +6, x+487, y+24, text_reports.str_mil_commanded_soldiers(), 0, 0, 0 );
-	font_bld.put( x+485, y+7 , text_reports.str_mil_status() ); // "Status" );
-#else
 	font_bld.put( x+210, y+7 , text_unit.str_leadership() ); // "Leadership" );
 	font_bld.put( x+287, y+7 , text_unit.str_loyalty() ); // "Loyalty" );
-	//font_bld.put( x+362, y   , "Hit" );
-	//font_bld.put( x+352, y+13, "Points" );
 	font_bld.center_put_paragraph( x+358, y, x+406, y+24, text_unit.str_hit_points(), 0, 0, 0 );
-	// font_bld.put( x+406, y   , "Commanded" );
-	// font_bld.put( x+415, y+13, "Soldiers" );
 	font_bld.center_put_paragraph( x+404, y, x+487, y+24, text_reports.str_mil_commanded_soldiers(), 0, 0, 0 );
 	font_bld.put( x+485, y+7 , text_reports.str_mil_status() ); // "Status" );
-#endif
-	//SXM
 
 	if( refreshFlag == INFO_REPAINT )
 	{
@@ -120,13 +106,7 @@ void Info::disp_military(int refreshFlag)
 	vga_back.d3_panel_up(UNIT_BROWSE_X1, UNIT_BROWSE_Y1, UNIT_BROWSE_X2, UNIT_BROWSE_Y1+20 );
 
 	font_bld.put( x	 , y, text_reports.str_mil_unit_type() ); // "Unit Type" );
-	//SXM
-#if(defined(CHINESE))
-	font_bld.put( x+300 +12, y, text_reports.str_mil_no_of_units() ); // "No. of Units" );
-#else
 	font_bld.put( x+300, y, text_reports.str_mil_no_of_units() ); // "No. of Units" );
-#endif
-	//SXM
 
 	if( refreshFlag == INFO_REPAINT )
 	{
@@ -238,39 +218,11 @@ static void disp_troop_total()
 
 	//------ display soldiers under command count ------//
 
-#if(defined(FRENCH))
-	#define COMMANDED_SOLDIER_SHIFT -10
-#else
-	#define COMMANDED_SOLDIER_SHIFT 0
-#endif
-//	if( totalCommandedSoldier > 1 )
-//		str = "Total Soldiers Under Command";
-//	else
-//		str = "Total Soldier Under Command";
-//	str  = translate.process(str);
-//	str += ": ";
-//	str += totalCommandedSoldier;
-	font_bld.put( x+160+COMMANDED_SOLDIER_SHIFT, y, text_reports.str_total_soldier_under(totalCommandedSoldier) );
-#undef COMMANDED_SOLDIER_SHIFT
-
+	font_bld.put( x+160, y, text_reports.str_total_soldier_under(totalCommandedSoldier) );
 
 	//------ display soldiers count ------//
 
-//	if( totalSoldier > 1 )
-//		str = "Total Soldiers";
-//	else
-//		str = "Total Soldier";
-//	str  = translate.process(str);
-//	str += ": ";
-//	str += totalSoldier;
-
-#if(defined(FRENCH))
-	#define TOTAL_SOLDIER_SHIFT 10
-#else
-	#define TOTAL_SOLDIER_SHIFT 0
-#endif
-	font_bld.put( x+410+TOTAL_SOLDIER_SHIFT, y, text_reports.str_total_soldier(totalSoldier) );
-#undef TOTAL_SOLDIER_SHIFT
+	font_bld.put( x+410, y, text_reports.str_total_soldier(totalSoldier) );
 }
 //----------- End of static function disp_troop_total -----------//
 

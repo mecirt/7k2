@@ -564,21 +564,6 @@ static void disp_monster_firm_group(int recNo,int x,int y,int refreshFlag)
 	{
 		String str;
 		FirmGroup *firmGroup = firm_res.get_group( scenario_editor.monster_firm_group_array[recNo-1] );
-#if(0)
-		// format is <firm> <race>
-		FirmInfo *firmInfo = firm_res[firmGroup->firm_id];
-		int firmBuildId = firmInfo->get_build_id(firmGroup->race_code);
-		if( firmBuildId )
-			str = firm_res.get_build(firmBuildId)->name;
-		else
-			str += firmInfo->name;
-		if( firmGroup->firm_id != FIRM_LAIR )		// name in firm build already has monster name
-		{
-			str += " ";
-			str += monster_res[-firmGroup->race_id]->name;
-		}
-#else
-		// US and GERMAN : format is <race> <firm>
 		if( firmGroup->firm_id != FIRM_LAIR )		// name in firm build already has monster name
 			str  = monster_res[-firmGroup->race_id]->name;
 		else
@@ -595,7 +580,6 @@ static void disp_monster_firm_group(int recNo,int x,int y,int refreshFlag)
 			str += " ";
 			str += firmInfo->name;
 		}
-#endif
 
 		font_san.put(x+6, y+2, str, 0, x+browse_firm_width-1 );
 	}

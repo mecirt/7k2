@@ -96,12 +96,6 @@ void PlantRes::deinit()
 }
 //---------- End of function PlantRes::deinit -----------//
 
-#if(defined(CHINESE))
-//SXM: Prototype
-char* StrReplace(char* String,const char* ReplaceWith,const char* ReplaceTo);
-//SXM
-#endif
-
 //------- Begin of function PlantRes::load_plant_info -------//
 //
 void PlantRes::load_plant_info()
@@ -134,16 +128,6 @@ void PlantRes::load_plant_info()
 		plantInfo = plant_info_array+i;
 
 		m.rtrim_fld( plantInfo->code, plantRec->code, plantRec->CODE_LEN );
-#if(defined(CHINESE))
-		// so scenario editor can display Chinese word of "tree"
-		//SXM:Risk
-#if(defined(TRADITIONAL))
-		StrReplace(plantInfo->code,"TREE","¾ð");
-#else
-		StrReplace(plantInfo->code,"TREE","Ê÷");
-#endif
-		//SXM
-#endif
 		plantInfo->climate_zone = m.atoi( plantRec->climate_zone, plantRec->ZONE_LEN );
 
 		if( plantRec->tera_type1[0] == 'T' )		// town plant

@@ -619,21 +619,6 @@ static void disp_human_firm_group(int recNo,int x,int y,int refreshFlag)
 		if( firmGroupId > 0 )		// firm name
 		{
 			FirmGroup *firmGroup = firm_res.get_group( scenario_editor.human_firm_group_array[recNo-1] );
-#if(defined(GERMAN))
-			// GERMAN : format is <firm> <race>
-			FirmInfo *firmInfo = firm_res[firmGroup->firm_id];
-			int firmBuildId = firmInfo->get_build_id(firmGroup->race_code);
-			if( firmBuildId )
-				str = firm_res.get_build(firmBuildId)->name;
-			else
-				str = firmInfo->name;
-			if (firmGroup->race_id)
-			{
-				str += " ";
-				str += race_res[firmGroup->race_id]->adjective;
-			}
-#else
-			// US : format is <race> <firm>
 			if (firmGroup->race_id)
 				str = race_res[firmGroup->race_id]->adjective;
 			else
@@ -650,7 +635,6 @@ static void disp_human_firm_group(int recNo,int x,int y,int refreshFlag)
 				str += " ";
 				str += firmInfo->name;
 			}
-#endif
 			font_san.put( x+6, y+2, str, 0, x+browse_firm_width-1 );
 		}
 		else if( firmGroupId < 0 )		// town

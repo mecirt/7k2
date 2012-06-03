@@ -274,15 +274,6 @@ int ResourceIdx::get_index(const char* dataName)
 		err_when( loopCount++ > rec_count );
 		int mean = (l+u)/2;
 
-//#if(defined(CHINESE))
-//		//SXM:Risk
-//		if( strnicmp(dataName,"hotkey",6) == 0 )
-//		{
-//			for(int i=0;i<strlen(sorted_index_buf[mean].name);i++)
-//				sorted_index_buf[mean].name[i]=
-//					toupper(sorted_index_buf[mean].name[i]);
-//		}
-//#endif
 		if( strcmp( sorted_index_buf[mean].name, dataName ) <= 0 )
 			l = mean;
 		else

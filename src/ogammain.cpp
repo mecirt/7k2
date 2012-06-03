@@ -181,20 +181,10 @@ void Game::disp_gen_game_status(int addStep)
 	}
 	else
 	{
-#if(!defined(GERMAN) && !defined(FRENCH) && !defined(SPANISH) && !defined(ITALIAN))	// US
 		POPUP_WINDOW_WIDTH = 535;
 		POPUP_WINDOW_HEIGHT = 386;
-#else		
-		POPUP_WINDOW_WIDTH = 444;
-		POPUP_WINDOW_HEIGHT = 275;
-#endif
 	}	
 
-//	const POPUP_WINDOW_WIDTH = 266;
-//	const POPUP_WINDOW_HEIGHT = 149;
-//	const POPUP_WINDOW_WIDTH = 535;
-//	const POPUP_WINDOW_HEIGHT = 386;
-	
 	const int POPUP_WINDOW_X1 = (vga_front.buf_width() - POPUP_WINDOW_WIDTH) / 2;
 	const int POPUP_WINDOW_Y1 = (vga_front.buf_height() - POPUP_WINDOW_HEIGHT) / 2;
 
@@ -296,42 +286,10 @@ void Game::disp_gen_game_status(int addStep)
 		}
 		else
 		{
-#if(defined(GERMAN) || defined(FRENCH) || defined(SPANISH) || defined(ITALIAN))
-			// prepare palette
-			ColorTable colorTable;
-			{
-				String str = DIR_IMAGE;
-				str += "NW.COL";
-				PalDescFile palBufDesc( str, 8, 3, 0x100, 8 );	// 8 byte header
-				colorTable.generate_table_fast( 0, palBufDesc, ColorTable::bright_func );
-			}
-			short* colorRemapTable = (short *)colorTable.get_table(0);
-
-			// put background bitmap
-			{
-				File imageFile;
-				String str = DIR_IMAGE;
-				str += "NW.ICN";
-				imageFile.file_open(str);
-				vga.active_buf->put_large_bitmap_trans( POPUP_WINDOW_X1, POPUP_WINDOW_Y1,
-					&imageFile, colorRemapTable );
-			}
-
-			// put bar
-			int size = genGameProgress *237 / 100;
-			if (size > 237)
-				size = 237;
-			if( size > 0 )
-			{
-				vga.active_buf->put_bitmap_area_trans( BAR_X1, BAR_Y1, image_menu.read("PROGRESS"),
-					0, 0, size -1, 16-1 );
-			}
-#else
 			char fileName[] = "NW_00";
 			fileName[3] = '0' + (char) ((((genGameProgress) /5) +1) /10);
 			fileName[4] = '0' + (char) ((((genGameProgress) /5) +1) %10);
 			image_menu.put_front(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, fileName);
-#endif
 		}
 		sys.blt_virtual_buf();
 	}

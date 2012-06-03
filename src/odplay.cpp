@@ -35,13 +35,10 @@
 #include <string.h>
 #include <ovgalock.h>
 #include <oblob.h>
-
-#define USE_TEXT_RES
-
-#if(defined(USE_TEXT_RES))
+#include <omouse.h>
+#include <osys.h>
+#include <ovga.h>
 #include <ot_gmenu.h>
-#endif
-
 
 
 // Define constant
@@ -78,6 +75,11 @@ const DWORD session_desc_flags =
 // folder may not exist after installed dx5
 
 HANDLE PLAYER_MESSAGE_HANDLE = NULL;	// ???
+
+int broadcastPID()
+{
+  return DPID_ALLPLAYERS;
+}
 
 struct DPSessionDesc : public DPSESSIONDESC2
 {
@@ -260,7 +262,7 @@ void MultiPlayerDP::deinit()
 		if( my_player_id != DPID_ALLPLAYERS)
 		{
 			destroy_player( my_player_id );
-			Sleep(2000);		// 2 seconds
+			sys.sleep(2000);		// 2 seconds
 		}
 		// ######## patch end Gilbert 24/11 ######//
 
@@ -361,11 +363,7 @@ void MultiPlayerDP::init_lobbied(int maxPlayers, char *)
 			hr = direct_play_lobby->ConnectEx( 0, IID_IDirectPlay4A, (void**)&direct_play4, NULL);
 			if( hr != DP_OK )
 			{
-#if(defined(USE_TEXT_RES))
 				err.msg( text_game_menu.str_lobby_error_not_found() );
-#else
-				err.msg( "Cannot connect to lobby" );
-#endif
 				return;
 			}
 
@@ -397,11 +395,7 @@ void MultiPlayerDP::init_lobbied(int maxPlayers, char *)
 		{
 			if( hr != DPERR_NOTLOBBIED )
 			{
-#if(defined(USE_TEXT_RES))
 				err.run( text_game_menu.str_lobby_error_no_connect_str() ); // "Cannot get connection string from lobby");
-#else
-				err.run( "Cannot get connection string from lobby");
-#endif
 			}
 		}
 	}
@@ -409,11 +403,7 @@ void MultiPlayerDP::init_lobbied(int maxPlayers, char *)
 	{
 		if( hr != DPERR_NOTLOBBIED )
 		{
-#if(defined(USE_TEXT_RES))
 			err.run( text_game_menu.str_lobby_error_no_connect_str() ); // "Cannot get connection string from lobby");
-#else
-			err.run( "Cannot get connection string from lobby");
-#endif
 		}
 	}
 }
@@ -501,7 +491,6 @@ static BOOL FAR PASCAL enumConnectionsCallBack( LPCGUID lpguidSP,
 	{
 		sp.long_description[0] = '\0';
 
-#if(defined(USE_TEXT_RES))
 		// recognize by GUID
 		const char *longDescPtr = NULL;
 		if( memcmp( lpguidSP, &DPSPGUID_IPX, sizeof(GUID) ) == 0 )
@@ -518,7 +507,6 @@ static BOOL FAR PASCAL enumConnectionsCallBack( LPCGUID lpguidSP,
 			strncpy(sp.long_description, longDescPtr, MP_SERVICE_PROVIDER_NAME_LEN);
 			sp.long_description[MP_SERVICE_PROVIDER_NAME_LEN] = '\0';
 		}
-#endif
 
 	}
 

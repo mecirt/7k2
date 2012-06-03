@@ -376,33 +376,19 @@ static void disp_nation_rec(int recNo,int x,int y,int refreshFlag)
 		font_snds.put( x+18,  y+16, m.format((int)nationPtr->cash,2) );
 
 		char charStr[] = "?";
-			//SXM:Risk
-#if(defined(CHINESE))
-		charStr[0] = 'F';
-#else
 		charStr[0] = text_editor.str_player_food()[0];
-#endif
 		x2 = font_snds.put( x+90, y+16, charStr );
 		font_snds.put( x2+5,  y+16, (int)nationPtr->food );
 
 		if( !nationPtr->is_monster() )
 		{
-#if(defined(CHINESE))
-			charStr[0] = 'R';
-#else
 			charStr[0] = text_editor.str_player_reputation()[0];
-#endif
 			x2 = font_snds.put( x+160, y+16, charStr );
 			font_snds.put( x2+5, y+16, (int)nationPtr->reputation );
 		}
 		else
 		{
-#if(defined(CHINESE))
-			charStr[0] = 'L';
-#else
 			charStr[0] = text_editor.str_player_live_points()[0];
-#endif
-			//SXM:Risk
 			x2 = font_snds.put( x+146, y+16, charStr );
 			font_snds.put( x2+5, y+16, (int)nationPtr->live_points );
 		}

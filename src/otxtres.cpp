@@ -29,13 +29,8 @@
 #include <stdlib.h>
 
 
-#if(defined(SPANISH))
-	#define THOUSAND_SEPARATOR '.'
-	#define DECIMAL_SEPARATOR ','
-#else
-	#define THOUSAND_SEPARATOR ','
-	#define DECIMAL_SEPARATOR '.'
-#endif
+#define THOUSAND_SEPARATOR ','
+#define DECIMAL_SEPARATOR '.'
 
 // some country (like japan insert ',' every four digits)
 #define THOUSAND_SEPARATOR_COUNT 3

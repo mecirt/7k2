@@ -37,16 +37,21 @@ void ShowMessageBox (const char *text) {
   {
     VgaFrontLock vgaLock;
 
-    ShowCursor(TRUE);
+    ShowMouseCursor(true);
     MessageBox(sys.main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
-    ShowCursor(FALSE);
+    ShowMouseCursor(false);
   }
   else
   {
-    ShowCursor(TRUE);
+    ShowMouseCursor(true);
     MessageBox(sys.main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
-    ShowCursor(FALSE);
+    ShowMouseCursor(false);
   }
+}
+
+void ShowMouseCursor (bool show)
+{
+  ShowCursor (show);
 }
 
 // the bitmap file structure /////////////////////////////////////////////////

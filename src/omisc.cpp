@@ -39,13 +39,8 @@ static char		move_around_table_x[MOVE_AROUND_TABLE_SIZE] = {0};
 static char		move_around_table_y[MOVE_AROUND_TABLE_SIZE] = {0};
 static short	move_around_table_size = 0;
 
-#if(defined(SPANISH))
-	#define THOUSAND_SEPARATOR '.'
-	#define DECIMAL_SEPARATOR ','
-#else
-	#define THOUSAND_SEPARATOR ','
-	#define DECIMAL_SEPARATOR '.'
-#endif
+#define THOUSAND_SEPARATOR ','
+#define DECIMAL_SEPARATOR '.'
 // some country (like japan insert ',' every four digits)
 #define THOUSAND_SEPARATOR_COUNT 3
 
@@ -1185,18 +1180,6 @@ void Misc::change_file_ext(char* desFileName, const char* srcFileName, const cha
 {
    int nameLen = m.str_chr(srcFileName, '.');	// include the '.' in the nameLen
 
-#if(defined(CHINESE))
-#ifdef DEBUG
-   Dump("SXMSXM");
-   Dump(desFileName);
-   Dump("\n");
-   Dump(srcFileName);
-   Dump("\n");
-   Dump(newExt);
-   Dump("\n");
-#endif
-#endif
-
    err_when( nameLen<1 || nameLen>9 || strlen(newExt)>3 );
 
    memcpy( desFileName, srcFileName, nameLen );
@@ -1241,18 +1224,6 @@ char* Misc::num_th(int inNum)
 
    str = format(inNum);
 
-#if(defined(SPANISH)||defined(ITALIAN))
-	str += "º";
-#elif(defined(FRENCH))
-	if( inNum == 1 )
-		str += "er";
-	else
-		str += "ème";
-#elif(defined(GERMAN))
-	str += ".";
-#elif(defined(CHINESE))
-	// nothing
-#else
    if( inNum >=11 && inNum <= 13 )
    {
       str += "th";
@@ -1267,7 +1238,6 @@ char* Misc::num_th(int inNum)
 		default: str += "th";
 		}
    }
-#endif
 
    return str;
 }

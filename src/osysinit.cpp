@@ -258,7 +258,7 @@ int Sys::init_directx()
 
    //---------------------------------------//
 
-   ShowCursor(FALSE);
+   ShowMouseCursor(false);
 
 	DisplayModeInfo::set_current_display_mode(MODE_ID_DEFAULT);
 
@@ -389,11 +389,7 @@ int Sys::init_objects()
 
 	// ####### begin Gilbert 24/5 ########//
 	font_san.init("SAN", 0);      // 0-zero inter-character space
-//	#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
-//		font_std.init("SAN", 1);
-//	#else
-		font_std.init("STD", 2);
-//	#endif
+	font_std.init("STD", 2);
 	font_small.init("SMAL");
 	font_mid.init("MID");
 	font_news.init("NEWS");
@@ -498,12 +494,7 @@ int Sys::init_objects()
 
 	help.init("help.res");
 
-//#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
-//	translate.init();		// translate never active, even in other language, use text resources
-//#endif
-
 	tutor.init();
-	// game_file_array.init("*.SAV");	// game_file_arry is inited outside game.init
 
 	//---------- init game_set -----------//
 
@@ -566,9 +557,7 @@ void Sys::deinit_objects()
 	font_cmpf.deinit();
 	font_cmpo.deinit();
 	
-//	#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
-		font_hall.deinit();
-//	#endif
+	font_hall.deinit();
 
    image_gameif.deinit();
 	image_icon.deinit();
@@ -617,11 +606,6 @@ void Sys::deinit_objects()
 	//-----------------------------//
 
 	help.deinit();
-
-//#if( defined(GERMAN) || defined(FRENCH) || defined(SPANISH) )
-//	translate.deinit();		// translate never active, even in other language, use text resources
-//#endif
-
 	tutor.deinit();
    config.deinit();
    game_file_array.deinit();

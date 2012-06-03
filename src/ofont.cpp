@@ -21,9 +21,6 @@
 //Filename    : OFONT.CPP
 //Description : Font Object
 
-#if(!defined(CHINESE))
-// use OFONTCHI.CPP for chinese
-
 #include <ofont.h>
 #include <all.h>
 #include <imgfun.h>
@@ -1590,4 +1587,3 @@ short Font::upper_case(short textChar)
 }
 //--------- End of function Font::upper_case ---------//		
 
-#endif		// CHINESE

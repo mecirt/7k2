@@ -27,6 +27,9 @@
 
 typedef enum tagState {UNINITIALIZED, STOPPED, PAUSED, PLAYING } State;
 
+struct IGraphBuilder;
+void play_video(HINSTANCE hInstance, int videoId);
+
 //---------- Define class Video ----------//
 
 class Video
@@ -57,8 +60,6 @@ private:
 };
 
 //----------------------------------------//
-
-extern Video video;
 
 #endif
 

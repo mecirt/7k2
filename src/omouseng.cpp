@@ -24,8 +24,6 @@
 
 #define NEED_WINDOWS
 
-#if( !defined(GERMAN) && !defined(FRENCH) && !defined(SPANISH) && !defined(ITALIAN) )
-
 #include <all.h>
 #include <dinput.h>
 #include <omouse.h>
@@ -563,4 +561,3 @@ int Mouse::is_key(unsigned scanCode, unsigned short skeyState, char *keyStr, uns
 }
 // ------ End of Mouse::is_key -------//
 
-#endif

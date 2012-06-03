@@ -24,6 +24,7 @@
 #ifndef __OFILE_H
 #define __OFILE_H
 
+#include <win32_compat.h>
 #include <stdio.h>
 
 //--------------------------------------//

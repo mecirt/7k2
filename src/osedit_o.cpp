@@ -304,38 +304,9 @@ int ScenarioEditor::detect_hero_view()
 		{
 			if( !vbrowse_hero_id.none_record )
 			{
-			/*	//----- determine the unit id. of the hero -----//
-				HeroInfo *heroInfo = hero_res[hero_id_browse_recno];
-
-				if ( heroInfo->appeared_flag != 0 )
-				{
-					box.msg( "Cannot add existing Heros" );
-					return 0;
-				}
-				
-				int unitId;
-				if( heroInfo->infantry_unit && heroInfo->special_unit )
-				{
-				//	if( m.random(2)==0 )
-						unitId = race_res[heroInfo->race_id]->infantry_unit_id;
-				//	else
-				//		unitId = race_res[heroInfo->race_id]->special_unit_id;
-				}
-				else if( heroInfo->infantry_unit )
-					unitId = race_res[heroInfo->race_id]->infantry_unit_id;
-
-				else if( heroInfo->special_unit )
-					unitId = race_res[heroInfo->race_id]->special_unit_id;*/
-
 				if ( hero_res[hero_id_array[hero_id_browse_recno-1]]->appeared_flag != 0 )
 				{
-#if(defined(CHINESE) && defined(TRADITIONAL))
-					box.msg( "ぃ睰瞷筁璣动" );
-#elif(defined(CHINESE) && !defined(TRADITIONAL))
-					box.msg( "不能添加已出现过的英雄" );
-#else
 					box.msg( "Cannot add existing Heros" );
-#endif
 					return 0;
 				}
 

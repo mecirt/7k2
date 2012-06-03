@@ -155,7 +155,7 @@ void MultiPlayerIM::deinit()
 		if( my_player_id != IMMBROADCAST )
 		{
 			destroy_player( my_player_id );
-			Sleep(2000);		// 2 seconds
+			sys.sleep(2000);		// 2 seconds
 		}
 
 		my_player_id = IMMBROADCAST;		// mark player deleted

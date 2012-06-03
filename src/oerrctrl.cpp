@@ -24,7 +24,6 @@
 #define NEED_WINDOWS
 
 #include <win32_compat.h>
-#include <dplay.h>
 #include <oerrctrl.h>
 #include <odynarrb.h>
 #include <odplay.h>
@@ -584,7 +583,7 @@ void ErrorControl::en_recv_queue(void *dataPtr, long unsigned int dataLen)
 	}
 	else
 	{
-		char f = recv_tail;
+		int f = recv_tail;
 		err_when( recv_tail < 0 || recv_tail >= MAX_RECV_QUEUE);
 		if( ++recv_tail >= MAX_RECV_QUEUE )
 			recv_tail = 0;

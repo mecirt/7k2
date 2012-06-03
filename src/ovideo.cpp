@@ -46,6 +46,7 @@
 static long FAR PASCAL video_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void create_dummy_window(HINSTANCE hInstance);
 
+Video video;
 
 //#define FULL_SCREEN_VIDEO
 #define CREATE_DUMMY_WINDOW
@@ -376,15 +377,6 @@ void Video::play_until_end( char *fileName, HINSTANCE hInstance, DWORD t)
 
 	if( hwnd )
 	{
-//		PostMessage( hwnd, WM_CLOSE, 0, 0 );
-		//handle outstanding message
-//		MSG msg;
-//		while( GetMessage(&msg, hwnd, 0, ~0UL) )
-//		{
-//			TranslateMessage(&msg);
-//			DispatchMessage(&msg);
-//		}
-
 		DestroyWindow(hwnd);
 	}
 	hwnd = NULL;
@@ -572,4 +564,42 @@ static long FAR PASCAL video_win_proc(HWND hWnd, UINT message, WPARAM wParam, LP
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void play_video(HINSTANCE hInstance, int videoId)
+{
+	String movieFileStr;
+	movieFileStr = DIR_MOVIE;
+	if( videoId == 0 )
+	{
+		movieFileStr += "intro.mpg";
+	}
+	else
+	{
+		movieFileStr += "movie";
+		movieFileStr += videoId;
+		movieFileStr += ".avi";
+	}
+
+	video.set_skip_on_fail();
+
+	if( m.is_file_exist(movieFileStr) )
+	{
+		//---------- play the movie now ---------//
+
+		video.init();
+
+		if( video.init_success )
+		{
+			video.play_until_end( movieFileStr, hInstance, 60 );
+		}
+		else
+		{
+			// display a message box (note:sys.main_hwnd is not valid)
+			// MessageBox( NULL, "Cannot initialize ActiveMovie",
+			//   "Seven Kingdoms", MB_OK | MB_ICONWARNING | MB_DEFBUTTON1 | MB_TASKMODAL );
+		}
+
+		video.deinit();
+	}
 }

@@ -101,27 +101,12 @@ void Info::disp_rank(int refreshFlag)
 
 	vga_back.d3_panel_up(NATION_BROWSE_X1, NATION_BROWSE_Y1, NATION_BROWSE_X2, NATION_BROWSE_Y1+32 );
 
-#if(defined(CHINESE))
-	font_bld.put( x	 , y+7, text_reports.str_nat_kingdom() ); // "Kingdom" );
-	font_bld.put( x+180 +16, y+7, text_reports.str_population() ); // "Population" );
-	font_bld.put( x+264 -8, y+7, text_reports.str_military() ); // "Military" );
-	font_bld.put( x+332+6, y+7, text_reports.str_economy() ); //"Economy" );
-	font_bld.put( x+406 +14, y+7 , text_reports.str_reputation() ); //"Reputation" );
-	font_bld.put( x+484 -2, y+7, text_reports.str_overall() ); //"Overall" );
-#else
 	font_bld.put( x	 , y+7, text_reports.str_nat_kingdom() ); // "Kingdom" );
 	font_bld.put( x+180, y+7, text_reports.str_population() ); // "Population" );
 	font_bld.put( x+264, y+7, text_reports.str_military() ); // "Military" );
-#if(defined(GERMAN))
-	#define X_SHIFT -10
-#else
-	#define X_SHIFT 0
-#endif
-	font_bld.put( x+332+X_SHIFT, y+7, text_reports.str_economy() ); //"Economy" );
-#undef X_SHIFT
+	font_bld.put( x+332, y+7, text_reports.str_economy() ); //"Economy" );
 	font_bld.put( x+406, y+7, text_reports.str_reputation() ); //"Reputation" );
 	font_bld.put( x+484, y+7, text_reports.str_overall() ); //"Overall" );
-#endif
 
 	if( refreshFlag == INFO_REPAINT )
 	{
@@ -214,24 +199,12 @@ static void disp_score()
 		str += game.campaign()->campaign_difficulty;
 
 #ifdef DEBUG
-	#if(defined(CHINESE) && defined(TRADITIONAL))
-			str += " (¾Ô§Ð¡G";
-	#elif(defined(CHINESE) && !defined(TRADITIONAL))
-			str += " (Õ½ÒÛ£º";
-	#else
 			str += " (stage ";
-	#endif
 			str += game.campaign()->stage_id;
 
 			if( game.campaign()->plot_id )
 			{
-	#if(defined(CHINESE) && defined(TRADITIONAL))
-				str += " (³õ´º¡G";
-	#elif(defined(CHINESE) && !defined(TRADITIONAL))
-				str += " ³¡¾°£º ";
-	#else
 				str += " plot ";
-	#endif
 
 				str.add_char( game.campaign()->plot_category );
 				str += game.campaign()->plot_id;

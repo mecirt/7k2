@@ -27,7 +27,7 @@
 struct bitmap_file;
 
 void ShowMessageBox (const char *text);
-
+void ShowMouseCursor (bool show);
 
 bitmap_file *load_bitmap_file(const char *filename);
 int unload_bitmap_file(bitmap_file *bitmap);

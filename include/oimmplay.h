@@ -40,6 +40,8 @@ extern char *GAME_GUID_STR;
 #define MP_FORMAL_NAME_LEN 64
 #define MP_RECV_BUFFER_SIZE 0x2000
 
+int imm_broadcast() { return IMM_BROADCAST; }
+
 struct IMServiceProvider : public IMMSERVICEINFO
 {
 	IMServiceProvider(const IMMSERVICEINFO &);

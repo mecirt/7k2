@@ -131,20 +131,19 @@ BOOL Vga::init()
 		{
 			// not enough memory except same video mode
 
-			ShowCursor(TRUE);
+			ShowMouseCursor(true);
 			// approximation of video memory required, actual video memory used should be calculated from vga_(true)_front->buf_pitch()
 
 			extern char new_config_dat_flag;
 
 			if( new_config_dat_flag )
 			{
-				MessageBox(sys.main_hwnd, warnStr,
-					WIN_TITLE, MB_OK | MB_ICONWARNING | MB_SETFOREGROUND );
+				ShowMessageBox(warnStr);
 			}
 
 			low_video_memory_flag = 1;
 
-			ShowCursor(FALSE);
+			ShowMouseCursor(false);
 		}
 	}
 
@@ -331,8 +330,7 @@ BOOL Vga::set_mode(int w, int h)
 
 	if( pixel_format_flag == -1 )
 	{
-		MessageBox(sys.main_hwnd, "Cannot determine the pixel format of this display mode.",
-			WIN_TITLE, MB_OK | MB_ICONWARNING | MB_SETFOREGROUND );
+		ShowMessageBox("Cannot determine the pixel format of this display mode.");
 
 		pixel_format_flag = PIXFORM_BGR_565;
 	}
@@ -942,3 +940,68 @@ RGBColor log_alpha_func(RGBColor i, int scale, int absScale)
 
 	return r;
 }
+
+VgaCustomPalette::VgaCustomPalette(const char *fileName)
+{
+	backup_pal = NULL;
+	if( save_palette() && fileName)
+		set_custom_palette(fileName);
+}
+
+VgaCustomPalette::~VgaCustomPalette()
+{
+	restore_palette();
+	if( backup_pal)
+		mem_del(backup_pal);
+}
+
+int VgaCustomPalette::save_palette()
+{
+	// ------ allocate space --------//
+	if( !backup_pal )
+		backup_pal = mem_add( sizeof(PALETTEENTRY) * 256);
+
+	// ------- get current palette --------//
+	if( vga.dd_pal->GetEntries(0, 0, 256, (PALETTEENTRY *)backup_pal) )
+	{
+		// get palette fail, free backup_pal to indicate save_palette failed
+		mem_del(backup_pal);
+		backup_pal = NULL;
+		return 0;
+	}
+	else
+		return 1;
+}
+
+int VgaCustomPalette::set_custom_palette(const char *fileName)
+{
+	PALETTEENTRY palEntry[256];
+	char palBuf[256][3];
+	File palFile;
+
+	palFile.file_open(fileName);
+	palFile.file_seek(8);     				// bypass the header info
+	palFile.file_read(palBuf, 256*3);
+	palFile.file_close();
+
+	for(int i=0; i<256; i++)
+	{
+		palEntry[i].peRed   = palBuf[i][0];
+		palEntry[i].peGreen = palBuf[i][1];
+		palEntry[i].peBlue  = palBuf[i][2];
+		palEntry[i].peFlags = 0;
+	}
+
+	return !vga.dd_pal->SetEntries(0, 0, 256, palEntry);
+}
+
+int VgaCustomPalette::restore_palette()
+{
+	if( backup_pal)
+		return !vga.dd_pal->SetEntries(0, 0, 256, (PALETTEENTRY *)backup_pal);
+	else
+		return 1;
+}
+
+
+

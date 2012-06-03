@@ -66,43 +66,17 @@ void Info::disp_spy(int refreshFlag)
 	int x=SPY_BROWSE_X1+9;
 	int y=SPY_BROWSE_Y1+4;
 
-#if(defined(FRENCH))
-	#define SPY_BROWSE_HEIGHT 36
-#else
 	#define SPY_BROWSE_HEIGHT 21
-#endif
 
 	vga_back.d3_panel_up(SPY_BROWSE_X1, SPY_BROWSE_Y1, SPY_BROWSE_X2, SPY_BROWSE_Y1+SPY_BROWSE_HEIGHT-1 );
 
 	font_bld.put( x	 , y, text_reports.str_spy_name() ); //"Spy Name" );
 	font_bld.put( x+150, y, text_reports.str_nationality() ); // "Nationality" );
-#if(defined(CHINESE))
-	font_bld.put( x+250 +2, y, text_reports.str_spy_cloak() ); // "Cloak" );
-#else
 	font_bld.put( x+250, y, text_reports.str_spy_cloak() ); // "Cloak" );
-#endif
-#if(defined(CHINESE))
-	font_bld.put( x+305 +4, y, text_reports.str_spy_location() ); //"Location" );
-	font_bld.put( x+380, y, text_reports.str_skill() ); // "Skill" );
-	font_bld.put( x+424 -6, y, text_unit.str_loyalty() ); //"Loyalty" );
-	font_bld.put( x+490 +6, y, text_reports.str_spy_action() ); //"Action" );
-#elif(defined(FRENCH))
-	font_bld.put( x+305, y+14, text_reports.str_spy_location() ); //"Location" );
-	font_bld.put( x+380, y, text_reports.str_skill() ); // "Skill" );
-	font_bld.put( x+424, y+14, text_unit.str_loyalty() ); //"Loyalty" );
-	font_bld.put( x+490, y, text_reports.str_spy_action() ); //"Action" );
-#elif(defined(GERMAN))
-	font_bld.put( x+315, y, text_reports.str_spy_location() ); //"Location" );
-	font_bld.put( x+365, y, text_reports.str_skill() ); // "Skill" );
-	font_bld.put( x+414, y, text_unit.str_loyalty() ); //"Loyalty" );
-	font_bld.put( x+490, y, text_reports.str_spy_action() ); //"Action" );
-#else
-	// US
 	font_bld.put( x+305, y, text_reports.str_spy_location() ); //"Location" );
 	font_bld.put( x+380, y, text_reports.str_skill() ); // "Skill" );
 	font_bld.put( x+424, y, text_unit.str_loyalty() ); //"Loyalty" );
 	font_bld.put( x+490, y, text_reports.str_spy_action() ); //"Action" );
-#endif
 
 	if( refreshFlag == INFO_REPAINT )
 	{

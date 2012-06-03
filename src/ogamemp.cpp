@@ -1736,27 +1736,15 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 	h = font_thin_black.text_height();
 	cx = 256;
 	cy = 116;
-	//SXM -30
-#if(defined(CHINESE))
-	speciesGroup[0].create( cx-w/2-30, cy-h/2-5, cx+w/2+10, cy+h/2+5,
-		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_humans(), 0 ), 0 );
-#else
 	speciesGroup[0].create( cx-w/2-10, cy-h/2-5, cx+w/2+10, cy+h/2+5,
 		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_humans(), 0 ), 0 );
-#endif
-	//SXM
 
 	w = font_thin_black.text_width( text_game_menu.str_species_fryhtans() );
 	h = font_thin_black.text_height();
 	cx = 532;
 	cy = 116;
-#if(defined(CHINESE))
-	speciesGroup[1].create( cx-w/2-10 -30, cy-h/2-5, cx+w/2+10, cy+h/2+5,
-		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_fryhtans(), 1 ), 0 );
-#else
 	speciesGroup[1].create( cx-w/2-10, cy-h/2-5, cx+w/2+10, cy+h/2+5,
 		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_fryhtans(), 1 ), 0 );
-#endif
 
 	// ###### begin Gilbert 11/3 #########//
 	// ----- initialize process frame delay group -------//
@@ -2493,13 +2481,8 @@ int Game::mp_select_option(NewNationPara *nationPara, int *mpPlayerCount)
 							text_game_menu.str_ai_treasure()); // "Computer's Treasure" );
 						font_bold_black.put_paragraph( 126, 289, option3X-10, 339-1,
 							text_game_menu.str_ai_aggressiveness()); // "Computer's Aggressiveness" );
-#if(defined(GERMAN))
-						font_bold_black.put_paragraph( 126, 348, option3X-10, 389-1,
-							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#else
 						font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
 							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#endif
 						font_bold_black.put_paragraph( 126, 389, option3X-10, 449-1,
 							text_game_menu.str_random_kingdom()); // "Random Kingdoms" );
 
@@ -4446,27 +4429,15 @@ int Game::mp_select_load_option(char *fileName)
 	h = font_thin_black.text_height();
 	cx = 256;
 	cy = 116;
-	//SXM -30
-#if(defined(CHINESE))
-	speciesGroup[0].create( cx-w/2-30, cy-h/2-5, cx+w/2+10, cy+h/2+5,
-		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_humans(), 0 ), 0 );
-#else
 	speciesGroup[0].create( cx-w/2-10, cy-h/2-5, cx+w/2+10, cy+h/2+5,
 		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_humans(), 0 ), 0 );
-#endif
-	//SXM
 
 	w = font_thin_black.text_width( text_game_menu.str_species_fryhtans() );
 	h = font_thin_black.text_height();
 	cx = 532;
 	cy = 116;
-#if(defined(CHINESE))
-	speciesGroup[1].create( cx-w/2-10 -30, cy-h/2-5, cx+w/2+10, cy+h/2+5,
-		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_fryhtans(), 1 ), 0 );
-#else
 	speciesGroup[1].create( cx-w/2-10, cy-h/2-5, cx+w/2+10, cy+h/2+5,
 		i_disp_text_button, ButtonCustomPara( text_game_menu.str_species_fryhtans(), 1 ), 0 );
-#endif
 
 	// load game only : set pushed button
 	speciesGroup.push( tempConfig.race_id >= 0 ? 0 : 1, 0 );
@@ -5210,13 +5181,8 @@ int Game::mp_select_load_option(char *fileName)
 							text_game_menu.str_ai_treasure()); // "Computer's Treasure" );
 						font_bold_black.put_paragraph( 126, 289, option3X-10, 339-1,
 							text_game_menu.str_ai_aggressiveness()); // "Computer's Aggressiveness" );
-#if(defined(GERMAN))
-						font_bold_black.put_paragraph( 126, 348, option3X-10, 389-1,
-							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#else
 						font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
 							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-#endif
 						font_bold_black.put_paragraph( 126, 389, option3X-10, 449-1,
 							text_game_menu.str_random_kingdom()); // "Random Kingdoms" );
 

@@ -67,18 +67,7 @@
 #include <orle.h>
 #include <oc_east.h>
 
-#if(defined(CHINESE) && defined(DEBUG))
-//SXM:Debug
-void DumpBin(char* FileName,char* s,int Length);
-void Dump(char* FileName,char* s);
-void Dump(char* FileName,int i);
-void DumpBin(char* s,int Length);
-void Dump(char* s);
-void Dump(int i);
-//SXM:Debug
-#else
 #define Dump(x)
-#endif
 
 //-------- Define constant ----------//
 

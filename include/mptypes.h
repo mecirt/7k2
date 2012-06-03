@@ -28,7 +28,7 @@
 #ifdef IMAGICMP
 	#define MultiPlayerType MultiPlayerIM
 	#define mp_obj mp_im
-	#define BROADCAST_PID IMMBROADCAST
+	#define BROADCAST_PID imm_broadcast()
 	#define PID_TYPE IMMPID
 	#define ServiceProviderDesc IMServiceProvider
 	#define ServiceIdType DWORD
@@ -38,7 +38,7 @@
 #else
 	#define MultiPlayerType MultiPlayerDP
 	#define mp_obj mp_dp
-	#define BROADCAST_PID DPID_ALLPLAYERS
+	#define BROADCAST_PID broadcastPID()
 	#define PID_TYPE DPID
 	#define ServiceProviderDesc DPServiceProvider
 	#define ServiceIdType GUID

@@ -193,19 +193,7 @@ void Config::default_campaign_setting()
 void Config::default_local_game_setting()
 {
 	race_id = 1;
-#if(defined(ITALIAN))
-	strcpy(player_name, "Nuovo");
-#elif(defined(SPANISH))
-	strcpy(player_name, "Nuevo Jugador");
-#elif(defined(FRENCH))
-	strcpy(player_name, "Nouveau Joueur");
-#elif(defined(GERMAN))
-	strcpy(player_name, "Neuer Spieler" );
-#else
 	strcpy(player_name, "New Player");
-#endif
-	// do not call text_game_menu because text_game_menu may be deinited
-//	strcpy(player_name, text_game_menu.str_default_player_name() );
 
 	player_nation_color = 1;
 	expired_flag = 0;

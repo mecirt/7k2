@@ -101,12 +101,6 @@ void Info::detect_news_log()
 //
 static void put_news_rec(int recNo, int x, int y, int refreshFlag)
 {
-#if(defined(CHINESE))
-	//SXM
-	y+=4;
-	//SXM
-#endif
-
 	News* newsPtr = news_array[ news_array.size()-recNo+1 ]; 	// display in reversed order
 
 	font_bld.put( x+20, y, date.date_str(newsPtr->news_date, 1) );

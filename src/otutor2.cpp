@@ -274,11 +274,7 @@ int Tutor::select_tutor(int actionMode)
 #endif
 				if( browseRecno ) 
 				{
-					#if(defined(GERMAN) || defined(FRENCH) || defined(SPANISH))
-						int lineSpace = 2;
-					#else
-						int lineSpace = 4;
-					#endif
+					int lineSpace = 4;
 
 					font_std.put_paragraph(menuX1+TEXT_AREA_X1, menuY1+TEXT_AREA_Y1, menuX1+TEXT_AREA_X2, menuY1+TEXT_AREA_Y2,
 						get_intro(browseRecno), lineSpace );		// 4 - space between lines

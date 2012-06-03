@@ -604,14 +604,6 @@ void Help::set_unit_help(int unitId, int rankId, int x1, int y1, int x2, int y2)
 
 	static String str;
 
-#if(defined(SPANISH) || defined(FRENCH))
-	str = "";
-	if( rankId==RANK_KING )
-		str = translate.process("King ");
-	else if( rankId==RANK_GENERAL )
-		str = translate.process("General ");
-	str += unit_res[unitId]->name;
-#else
 	str = unit_res[unitId]->name;
 
 	if( rankId==RANK_KING )
@@ -624,7 +616,6 @@ void Help::set_unit_help(int unitId, int rankId, int x1, int y1, int x2, int y2)
 		str += " ";
 		str += translate.process( "General" );
 	}
-#endif
 
 	set_custom_help( x1, y1, x2, y2, str );
 }

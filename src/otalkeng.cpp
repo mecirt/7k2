@@ -21,8 +21,6 @@
 //Filename    : OTALKENG.CPP
 //Description : English version of the talk messages
 
-// #if( !defined(GERMAN) && !defined(FRENCH) && !defined(SPANISH) )
-
 #include <omouse.h>
 #include <osys.h>
 #include <ovga.h>
@@ -1568,5 +1566,3 @@ void TalkMsg::surrender()
 	}
 }
 //------- End of function TalkMsg::surrender ------//
-
-// #endif

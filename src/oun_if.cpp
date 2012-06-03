@@ -586,19 +586,10 @@ void Unit::disp_unit_profile(int dispY1, int refreshFlag)
 					str = text_unit.str_race_soldier( race_id, race_res[race_id]->adjective );
 			}
 
-#if(defined(CHINESE))
-			//SXM:Risk
-			font_whbl.center_put( INFO_X1 +12, INFO_Y1 +3, INFO_X2, INFO_Y1 +21,
-				unitNameStr, 0, 1 );
-			font_zoom.center_put( INFO_X1 +12, INFO_Y1 +18, INFO_X2, INFO_Y1 +33, 
-				text_unit.str_unit_desc( relationStr, str), 0, 0 );
-#else
 			font_whbl.center_put( INFO_X1 +12, INFO_Y1 +9, INFO_X2, INFO_Y1 +21,
 				unitNameStr, 0, 1 );
 			font_zoom.center_put( INFO_X1 +12, INFO_Y1 +21, INFO_X2, INFO_Y1 +33, 
 				text_unit.str_unit_desc( relationStr, str), 0, 0 );
-#endif
-			//SXM
 			break;
 
 		case UNIT_CLASS_CARAVAN:

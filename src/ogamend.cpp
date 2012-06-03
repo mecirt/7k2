@@ -585,17 +585,6 @@ static void disp_ranking()
 
 	int x=20, y=76;
 
-#if(defined(CHINESE))
-	font_scre.put( x+20 +100, y+7, text_unit.str_nation(0)); // "Kingdom" );
-	font_scre.put( x+260 +30 +24, y+7, text_reports.str_population()); // "Population" );
-	font_scre.put( x+370 +15 +16, y+7, text_reports.str_military()); //"Military" );
-	
-	font_scre.put( x+470-15 +18, y+7, text_reports.str_economy()); // "Economy" );
-	font_scre.put(x+562-25 +24, y+7, text_reports.str_reputation()); // "Reputation" );
-
-	font_scre.center_put_paragraph( x+670-32 -7, y +6, x+707, y+28,
-		text_reports.str_fryhtan_battling(), 0, 0, 0 );
-#else
 	font_scre.put( x+20 +100, y+7, text_unit.str_nation(0)); // "Kingdom" );
 	font_scre.put( x+260 +30, y+7, text_reports.str_population()); // "Population" );
 	font_scre.put( x+370 +15, y+7, text_reports.str_military()); //"Military" );
@@ -603,11 +592,8 @@ static void disp_ranking()
 	font_scre.put( x+470-15, y+7, text_reports.str_economy()); // "Economy" );
 	font_scre.put(x+562-25, y+7, text_reports.str_reputation()); // "Reputation" );
 
-//	font_scre.put( x+670-32, y   , "Fryhtan" );
-//	font_scre.put( x+670-32, y+14, "Battling" );
 	font_scre.center_put_paragraph( x+670-32, y, x+707, y+28,
 		text_reports.str_fryhtan_battling(), 0, 0, 0 );
-#endif
 
 	//--------- display rankings -----------//
 

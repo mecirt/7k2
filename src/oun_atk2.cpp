@@ -496,10 +496,6 @@ void Unit::add_attack_effect()
 	// ###### begin Gilbert 24/3 #######//
 	if( attackInfo->effect2_id != 0 )
 	{
-#if( defined(GERMAN) )
-		// german version don't use blood effect
-		effectId = attackInfo->effect2_id;
-#else
 		Unit *targetUnit;
 
 		// has two effect to choose
@@ -513,7 +509,6 @@ void Unit::add_attack_effect()
 		{
 			effectId = attackInfo->effect2_id;
 		}
-#endif
 	}
 	// ###### end Gilbert 24/3 #######//
 

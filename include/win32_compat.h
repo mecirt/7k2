@@ -22,6 +22,7 @@
 #ifndef _WIN32_COMPAT_H
 #define _WIN32_COMPAT_H
 
+#include <platform.h>
 
 #ifdef NEED_WINDOWS 
 
