@@ -21,13 +21,10 @@
 // Filename   : OERRCTRL.H
 // Descrition : Error control
 
-#define NEED_WINDOWS
-
 #include <win32_compat.h>
 #include <oerrctrl.h>
 #include <odynarrb.h>
 #include <odplay.h>
-#include <oimmplay.h>
 #include <crc.h>
 #include <all.h>
 

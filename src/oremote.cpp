@@ -21,8 +21,6 @@
 //Filename    : OREMOTE.CPP
 //Description : Object Remote
 
-#define NEED_WINDOWS
-
 #include <win32_compat.h>
 
 #include <all.h>
@@ -37,7 +35,6 @@
 #include <onation.h>
 #include <oremote.h>
 #include <odplay.h>
-#include <oimmplay.h>
 #include <oerrctrl.h>
 
 //---------- Define static variables ----------//

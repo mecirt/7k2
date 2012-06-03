@@ -40,7 +40,6 @@
 #include <obattle.h>
 #include <ogame.h>
 #include <odplay.h>
-#include <oimmplay.h>
 #include <oerrctrl.h>
 #include <ogfile.h>
 #include <oconfig.h>
