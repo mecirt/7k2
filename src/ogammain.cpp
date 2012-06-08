@@ -21,8 +21,6 @@
 //Filename    : OGAMMAIN.CPP
 //Description : Main Game Object - Main menu
 
-#define NEED_WINDOWS
-
 #include <ogame.h>
 #include <ovga.h>
 #include <omodeid.h>
@@ -150,24 +148,17 @@ void Game::disp_version()
 //
 void Game::disp_gen_game_status(int addStep)
 {
-	// #### begin Gilbert 14/12 ######//
-	{
-		VgaFrontLock vgaLock;
+  // #### begin Gilbert 14/12 ######//
+  {
+    VgaFrontLock vgaLock;
 
-		MSG msg;
-		while (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE) > 0)
-		{
-			// do not get WM_QUIT
-			if (!GetMessage( &msg, NULL, 0, 0))
-			{
-				sys.signal_exit_flag = 1;
-				// BUGHERE : vga_front is unlocked
-				return;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+    int res = ProcessNextEvent();
+    if (res == 0) {
+      sys.signal_exit_flag = 1;
+      // BUGHERE : vga_front is unlocked
+      return;
+    }
+  }
 	// #### end Gilbert 14/12 ######//
 
 	int POPUP_WINDOW_WIDTH;
@@ -300,22 +291,17 @@ void Game::disp_gen_game_status(int addStep)
 int Game::process_messages()
 {
   while (1) {
-    MSG msg;
-    if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
-    {
-      if (!GetMessage( &msg, NULL, 0, 0))
-      {
-        sys.signal_exit_flag = 1;
-        // BUGHERE : vga_front is unlocked
-        return 0;
-      }
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-      continue;
+    int res = ProcessNextEvent ();
+    if (res == 0) {
+      sys.signal_exit_flag = 1;
+      // BUGHERE : vga_front is unlocked
+      return 0;
     }
-    else if( sys.paused_flag || !sys.active_flag )
+    if (res == 1) continue;
+
+    if( sys.paused_flag || !sys.active_flag )
     {
-      WaitMessage();
+      WaitNextEvent();
       continue;
     }
     break;
@@ -748,7 +734,6 @@ void Game::scenario_editor_menu()
 
 		while(1)
 		{
-			MSG msg;
 			if (!process_messages()) return;
 			if( sys.need_redraw_flag )
 			{

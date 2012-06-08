@@ -450,45 +450,7 @@ void Sys::disp_zoom()
 //
 void Sys::blt_virtual_buf()
 {
-//	if( !sys.debug_session )
-	if( !use_true_front )
-		return;
-
-	//--- in a debug sesion, vga_front is not the true front buffer, now copy it to the true one ---//
-
-#ifdef DEBUG
-	unsigned long startTime = m.get_time();
-#endif
-	int frontLocked=0;
-
-	if( vga_front.buf_locked )
-	{
-		vga_front.unlock_buf();
-		frontLocked=1;
-	}
-
-	RECT bltRect;
-
-	bltRect.left   = 0;
-	bltRect.top    = 0;
-	// ##### begin Gilbert 29/1 #######//
-	bltRect.right  = VGA_WIDTH;
-	bltRect.bottom = VGA_HEIGHT;
-	// ##### end Gilbert 29/1 #######//
-
-	int rc = vga_true_front.dd_buf->BltFast(
-						 0, 0,
-						 vga_front.dd_buf,        // src surface
-						 &bltRect,               // src rect (all of it)
-						 DDBLTFAST_WAIT );
-
-	if( frontLocked )
-		vga_front.lock_buf();
-
-#ifdef DEBUG
-	startTime = m.get_time() - startTime;
-	startTime = 0;
-#endif
+  blt_virtual_buf_area(0, 0, VGA_WIDTH - 1, VGA_HEIGHT - 1);
 }
 //--------- End of function Sys::blt_virtual_buf ---------//
 
@@ -604,14 +566,14 @@ int Sys::change_display_mode(int modeId)
 
 	// unlock surface
 
-	if( vga_back.dd_buf && vga_back.buf_locked )
+	if( vga_back.vptr_dd_buf && vga_back.buf_locked )
 	{
 		DEBUG_LOG("Attempt vga_back.unlock_buf()");
 		vga_back.unlock_buf();
 		DEBUG_LOG("vga_back.unlock_buf() finish");
 	}
 
-	if( vga_front.dd_buf && vga_front.buf_locked )
+	if( vga_front.vptr_dd_buf && vga_front.buf_locked )
 	{
 		DEBUG_LOG("Attempt vga_front.unlock_buf()");
 		vga_front.unlock_buf();

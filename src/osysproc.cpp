@@ -21,8 +21,6 @@
 //Filename    : OSYSDET.CPP
 //Description : class Sys - detect functions
 
-#define NEED_WINDOWS
-
 #include <osys.h>
 #include <oinfo.h>
 #include <key.h>
@@ -72,7 +70,7 @@
 #include <otips.h>
 #include <oprofile.h>
 #include <ot_gmenu.h>
-
+#include <unistd.h>
 
 //----------- Define static variables ------------//
 
@@ -179,8 +177,6 @@ void Sys::run(int isLoadedGame)
 //
 void Sys::main_loop(int isLoadedGame)
 {
-	MSG msg;
-
 	//-------- reset day_frame_count -------//
 
 	if( !isLoadedGame )
@@ -254,19 +250,16 @@ void Sys::main_loop(int isLoadedGame)
 
 	while( 1 )
 	{
-		if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
+		int res = ProcessNextEvent();
+		if (res == 0) 
 		{
-			if (!GetMessage( &msg, NULL, 0, 0))
-			{
-				signal_exit_flag = 1;
-				break;
-			}
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			signal_exit_flag = 1;
+			break;
 		}
+
+		if (res == 1) continue;
 		// ####### begin Gilbert 11/5 #######//
-		else if ( !paused_flag && active_flag || use_true_front && remote.is_enable() )	// if switch tasked, still run in multiplay mode
+		if ( !paused_flag && active_flag || use_true_front && remote.is_enable() )	// if switch tasked, still run in multiplay mode
 		// ####### end Gilbert 11/5 #######//
 		{
 #ifdef DEBUG
@@ -513,7 +506,7 @@ void Sys::main_loop(int isLoadedGame)
 		}
 		else
 		{
-			WaitMessage();
+			WaitNextEvent();
 		}
 	}
 
@@ -540,19 +533,6 @@ void Sys::main_loop(int isLoadedGame)
 }
 //--------- End of function Sys::main_loop --------//
 
-
-//-------- Begin of function Sys::pause --------//
-//
-void Sys::pause()
-{
-   if( paused_flag )
-      return;
-
-   InvalidateRect(main_hwnd, NULL, TRUE);
-
-   paused_flag = TRUE;
-}
-//--------- End of function Sys::pause ---------//
 
 
 //-------- Begin of function Sys::unpause --------//
@@ -597,11 +577,11 @@ void Sys::sleep(int time)
 	int time2 = time>>2;
 	for (int i = time2; i > 0; i--)
 	{
-		Sleep(4);
+		usleep(4000);
 		yield();
 	}
 
-	Sleep(time-time2);
+	usleep(1000*(time-time2));
 	yield();
 }
 //-------- End of function Sys::sleep --------//
@@ -967,56 +947,6 @@ int Sys::should_next_frame()
    return 1;
 }
 //--------- End of function Sys::should_next_frame ---------//
-
-
-//-------- Begin of function Sys::main_win_proc --------//
-//
-long Sys::main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-   switch( message )
-   {
-      case WM_CREATE:
-         sys.main_hwnd = hWnd;
-         break;
-
-      case WM_ACTIVATEAPP:
-			active_flag = (BOOL)wParam && !IsIconic(hWnd);
-
-         //--------------------------------------------------------------//
-         // while we were not-active something bad happened that caused us
-         // to pause, like a surface restore failing or we got a palette
-         // changed, now that we are active try to fix things
-         //--------------------------------------------------------------//
-
-         if( active_flag )
-         {
-            unpause();
-            need_redraw_flag = 1;      // for Sys::disp_frame to redraw the screen
-         }
-         else
-            pause();
-         break;
-
-			// ##### begin Gilbert 31/10 #####//
-		case WM_PAINT:
-			need_redraw_flag = 1;
-			break;
-			// ##### end Gilbert 31/10 #####//
-
-       case WM_DESTROY:
-          main_hwnd = NULL;
-			 deinit_directx();
-			 PostQuitMessage( 0 );
-			 break;
-
-		 default:
-			 break;
-	}
-
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
-//--------- End of function Sys::main_win_proc ---------//
-
 
 //-------- Begin of function Sys::process --------//
 //

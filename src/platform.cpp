@@ -54,6 +54,25 @@ void ShowMouseCursor (bool show)
   ShowCursor (show);
 }
 
+// Get next Windows event. Return 0 if the process is to end, 1 if a message was processed, 2 if there was no message
+int ProcessNextEvent()
+{
+    MSG msg;
+    if (PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE))
+    {
+      if (!GetMessage( &msg, NULL, 0, 0)) return 0;
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+      return 1;
+    }
+    return 2;
+}
+
+void WaitNextEvent()
+{
+  WaitMessage();
+}
+
 // the bitmap file structure /////////////////////////////////////////////////
 struct bitmap_file
         {

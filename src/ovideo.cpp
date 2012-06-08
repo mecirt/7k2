@@ -356,17 +356,7 @@ void Video::play_until_end( char *fileName, HINSTANCE hInstance, DWORD t)
 		{
 			if( hwnd )
 			{
-				// message in the message queue
-				MSG msg;
-				// ###### patch begin Gilbert 6/4 #######//
-				while( PeekMessage(&msg, hwnd, 0, 0, PM_NOREMOVE) )
-				{
-					if( !GetMessage(&msg, hwnd, 0, 0) )
-						break;
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-				// ###### patch end Gilbert 6/4 #######//
+				while (ProcessNextEvent() == 1) {};  // process everything we can
 			}
 		}
 		else
