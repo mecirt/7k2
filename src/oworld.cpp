@@ -2738,23 +2738,11 @@ void World::process_visibility()
 			// #### begin Gilbert 8/2 #######//
 			// unsigned char decVisitLevel = EXPLORED_VISIBILITY*2+1;
 			unsigned char decVisitLevel = EXPLORED_VISIBILITY;
-#ifdef ASM_FOR_MSVC
-			_asm
-			{
-				mov	ecx, count
-				mov	ebx, locVisitLevel
-				mov	edx, sizeOfLoc
-				mov	ah, decVisitLevel
-process_visit_level_1:
-				mov	al,[ebx]
-				cmp	ah, al			// if(EXPLORED_VISIBILITY < al) al--;
-				jnb	process_visit_level2
-				dec	byte ptr [ebx]
-process_visit_level2:
-				add	ebx, edx
-				loop	process_visit_level_1
-			}
-#endif
+                        while (count > 0) {
+                          if (EXPLORED_VISIBILITY < locVisitLevel[0]) locVisitLevel[0]--;
+                          locVisitLevel += sizeOfLoc;
+                          count--;
+                        }
 
 #ifdef DEBUG
 			startTime = m.get_time() - startTime;

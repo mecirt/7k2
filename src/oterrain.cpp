@@ -1171,104 +1171,10 @@ char *TerrainRes::mask_texture(char *maskPtr, char *tex1, char *tex2, char *outT
 	*(short *)outTex = 32;
 	*(1 + (short *)outTex) = 32;
 
-#ifdef ASM_FOR_MSVC
-	_asm 
-	{
-		mov	esi, maskPtr
-		mov	edi, outTex
-		mov	ebx, tex1
-		mov	edx, tex2
-		
-		; // skip width, height
-		add	esi, 4
-		add	edi, 4
-		add	ebx, 4
-		add	edx, 4
-
-		cld
-		mov	ecx, 32
-
-mask_texture_l1:
-		push	ecx
-; // 1st dword
-		mov	eax, [esi]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx]
-		and	eax, [ebx]
-		or		ecx, eax
-		mov	[edi], ecx
-; // 2nd dword
-		mov	eax, [esi+1*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+1*4]
-		and	eax, [ebx+1*4]
-		or		ecx, eax
-		mov	[edi+1*4], ecx
-; // 3rd dword
-		mov	eax, [esi+2*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+2*4]
-		and	eax, [ebx+2*4]
-		or		ecx, eax
-		mov	[edi+2*4], ecx
-; // 4th dword
-		mov	eax, [esi+3*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+3*4]
-		and	eax, [ebx+3*4]
-		or		ecx, eax
-		mov	[edi+3*4], ecx
-; // 5th dword
-		mov	eax, [esi+4*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+4*4]
-		and	eax, [ebx+4*4]
-		or		ecx, eax
-		mov	[edi+4*4], ecx
-; // 6th dword
-		mov	eax, [esi+5*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+5*4]
-		and	eax, [ebx+5*4]
-		or		ecx, eax
-		mov	[edi+5*4], ecx
-; // 7th dword
-		mov	eax, [esi+6*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+6*4]
-		and	eax, [ebx+6*4]
-		or		ecx, eax
-		mov	[edi+6*4], ecx
-; // 8th dword
-		mov	eax, [esi+7*4]
-		mov	ecx, eax
-		not	eax
-		and	ecx, [edx+7*4]
-		and	eax, [ebx+7*4]
-		or		ecx, eax
-		mov	[edi+7*4], ecx
-
-		pop	ecx
-		add	esi, 32
-		add	ebx, 32
-		add	edx, 32
-		add	edi, 32
-		dec	ecx
-		jne	mask_texture_l1
-	}
-#else
 	for( int i = 4; i < 32 * 32; ++i )
 	{
 		outTex[i] = (maskPtr[i] == 0x00) ? tex1[i] : tex2[i];
 	}
-#endif
 
 	return outTex;
 }

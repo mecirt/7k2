@@ -1005,40 +1005,19 @@ void VgaBuf::draw_d3_down_border(int x1,int y1,int x2,int y2)
 // copy put whole part of a vgaBuf to (x1,y1) of this VgaBuf
 void VgaBuf::blt_buf( VgaBuf *srcBuf, int x1, int y1 )
 {
-	short *srcPtr = srcBuf->cur_buf_ptr;
+	char *srcPtr = (char *) srcBuf->cur_buf_ptr;
 	int srcWidth = srcBuf->buf_width();
 	int srcPitch = srcBuf->cur_pitch;
 	int srcHeight = srcBuf->buf_height();
-	short *destPtr = cur_buf_ptr;
+	char *destPtr = (char *) cur_buf_ptr;
 	int destPitch = cur_pitch;
 
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		mov	eax, y1
-		imul	destPitch
-		add	eax, x1
-		add	eax, x1
-		mov	edi, eax
-		add	edi, destPtr
-
-		mov	esi, srcPtr
-
-		mov	ecx, srcHeight
-blt_buf_1:
-		push	ecx
-		push	esi
-		push	edi
-		mov	ecx, srcWidth
-		rep movsw
-		pop	edi
-		pop	esi
-		pop	ecx
-		add	edi, destPitch
-		add	esi, srcPitch
-		loop	blt_buf_1
-	}
-#endif
+  destPtr += y1 * destPitch + x1 * 2;
+  for (int idx = 0; idx < srcHeight; ++idx) {
+    memcpy (destPtr, srcPtr, srcWidth * 2);
+    destPtr += destPitch;
+    srcPtr += srcPitch;
+  }
 }
 //------------- End of function VgaBuf::blt_buf ------------//
 

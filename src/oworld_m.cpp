@@ -330,23 +330,6 @@ void MapMatrix::draw()
 		short *temp2 = save_image_buf +2;
 		int temp3 = vga_back.buf_true_pitch() -400;
 		short *temp6 = vga_back.buf_ptr(image_x1, image_y1);
-#ifdef ASM_FOR_MSVC
-		_asm
-		{
-			MOV AX , DS
-			MOV	ES , AX
-			MOV EAX, 200			// store it to ECX for later internal processing
-			MOV EDI, temp2			// [EDI]=pointer of bitmap
-			MOV	EDX, temp3			// EDX = lineDiff
-			MOV	ESI, temp6			// [ESI]=pointer in screen
-			CLD                     // clear direction flag for MOVSB
-PutLine:	MOV ECX, 100
-			REP MOVSD
-			ADD	ESI, EDX			//; EDX = lineDiff
-			DEC	EAX
-			JNZ	PutLine		        //; decrease the remain height and loop
-		}
-#else
 		const int lineDiff = temp3 / 2;
 		for ( int i = 0; i < 200; ++i )
 		{
@@ -358,7 +341,6 @@ PutLine:	MOV ECX, 100
 			}
 			temp6 += lineDiff;
 		}
-#endif
 		// #### end Ban 8/12 #######//
 		just_drawn_flag = 1;
 	}
@@ -389,47 +371,7 @@ void MapMatrix::draw_map()
 	// #### begin Ban 8/12 #######//
 	int temp3 = vga_back.buf_true_pitch() -2;
 	short *temp6 = vga_back.buf_ptr((image_x1 + image_x2)/2, image_y1);
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		MOV AX , DS
-		MOV	ES , AX
-		MOV	EDX, temp3		
-		MOV	EDI, temp6
-		CLD                 
-		MOV	AX, word ptr UNEXPLORED_COLOR
-		MOV	CX, AX				// processing the color for drawing
-		SHL	EAX, 16
-		MOV	AX, CX
-		MOV	EBX, 100
-		XOR ECX, ECX
-PutLineUpper:					// draw upper triangle
-		INC	ECX
-		REP	STOSD
-		MOV ECX, 101			// restore ECX after STOSD for updating EDI
-		SUB ECX, EBX
-		ADD	EDI, EDX			// updating EDI to start point of next line
-		SUB EDI, ECX
-		SUB EDI, ECX
-		SUB EDI, ECX
-		SUB EDI, ECX
-		DEC	EBX					// decrease the remain height
-		JNZ	PutLineUpper		// loop
-		MOV	EBX, 99				// ready parameters for drawing lower triangle
-		ADD EDX, 4
-		ADD EDI, 4
-PutLineLower:					// draw lower triangle
-		MOV ECX, EBX
-		REP	STOSD
-		ADD	EDI, EDX			// updating EDI to start point of next line
-		SUB EDI, EBX
-		SUB EDI, EBX
-		SUB EDI, EBX
-		SUB EDI, EBX
-		DEC	EBX					// decrease the remain height
-		JNZ	PutLineLower		// loop
-	}
-#else
+
 		int lineDiff = temp3 / 2;
 		int lineLength = 2;
 		// Blacken upper half of minimap.
@@ -457,23 +399,7 @@ PutLineLower:					// draw lower triangle
 			temp6 += lineDiff - lineLength;
 			lineLength -= 2;
 		}
-#endif
 	// #### end Ban 8/12 #######//
-//	{	// traversal of location in MapMatrix
-//		int pixelX = (image_x1 + image_x2 + 1) / 2;
-//		int pixelY = image_y1;
-//		int xLoc, yLoc;
-//		int writePtrInc = vga_back.buf_pitch() + 1;
-//		for( yLoc = 0; yLoc < max_y_loc; (yLoc&1?++pixelY:--pixelX) , ++yLoc )
-//		{
-//			short* writePtr  = vga_back.buf_ptr(pixelX, pixelY);
-//			xLoc = 0;
-//			Location *locPtr = get_loc( xLoc, yLoc );
-//			for( xLoc = 0; xLoc < max_x_loc; (xLoc += 2), (writePtr += writePtrInc), (locPtr+=2) )
-//			{
-//			}
-//		}
-//	}
 
 	switch(map_mode)
 	{
@@ -715,55 +641,6 @@ void MapMatrix::disp()
 			short *temp2 = save_image_buf +101;
 			int temp3 = vga_back.buf_true_pitch() -2;
 			short *temp6 = vga_back.buf_ptr((image_x1 +image_x2)/2, image_y1);
-#ifdef ASM_FOR_MSVC
-		_asm
-		{
-			MOV AX , DS
-			MOV	ES , AX
-			MOV EAX, 100		// bitmap height
-			MOV	EDX, temp3		// EDX = lineDiff
-			MOV ESI, temp2		// [ESI]=pointer of bitmap
-			MOV	EDI, temp6		// [EDI]=pointer in screen
-			CLD					// clear direction flag for MOVSB
-			XOR ECX, ECX
-PutLineUpper:
-			INC ECX
-			MOV EBX, ECX
-			REP MOVSD			// each time writes two pixels				
-			ADD	EDI, EDX		// increase EDI
-			SUB EDI, EBX
-			SUB EDI, EBX
-			SUB EDI, EBX
-			SUB EDI, EBX
-			ADD	ESI, 398		// increase ESI
-			SUB ESI, EBX
-			SUB ESI, EBX
-			SUB ESI, EBX
-			SUB ESI, EBX
-			MOV ECX, EBX
-			DEC	EAX				// decrease the remain height
-			JNZ	PutLineUpper	// loop
-			MOV EAX, 99			// bitmap height
-			ADD EDX, 4
-			ADD EDI, 4
-			ADD ESI, 4
-PutLineLower:
-			MOV ECX, EAX
-			REP MOVSD			// each time writes two pixels				
-			ADD	EDI, EDX		// increase EDI
-			SUB EDI, EAX
-			SUB EDI, EAX
-			SUB EDI, EAX
-			SUB EDI, EAX
-			ADD	ESI, 402		// increase ESI
-			SUB ESI, EAX
-			SUB ESI, EAX
-			SUB ESI, EAX
-			SUB ESI, EAX
-			DEC	EAX				// decrease the remain height
-			JNZ	PutLineLower	// loop
-		}
-#else
 			int lineDiff = temp3 / 2;
 			int lineLength = 2;
 			// Draw upper half of minimap.
@@ -796,7 +673,6 @@ PutLineLower:
 				temp2 += 201 - lineLength;
 				lineLength -= 2;
 			}
-#endif
 		// #### end Ban 8/12 #######//
 		}
 		else

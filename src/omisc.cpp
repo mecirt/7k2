@@ -1471,27 +1471,11 @@ char* Misc::roman_number(int inNum)
 
 void Misc::memsetw(short *p, int w, size_t count)
 {
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		mov	ax, word ptr w
-		shl	eax, 16
-		mov	ax, word ptr w
-		mov	ecx, count
-		mov	edi, p
-		shr	ecx, 1
-		rep	stosd				; // even number of word
-		jnc	memsetw_end
-		stosw						; // remaining last word
-memsetw_end:
-	}
-#else
 	for ( size_t i = 0; i < count; ++i )
 	{
 		*p = w;
 		++p;
 	}
-#endif
 }
 //------- End of function Misc::memsetw -------//
 

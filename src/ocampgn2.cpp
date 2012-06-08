@@ -666,7 +666,7 @@ void Campaign::disp_intro()
 	mouse.hide();
 	
 	vga.use_back();
-	vga.disp_image_file("FRWIN01");
+	vga.disp_image_file("Frwin01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
@@ -681,7 +681,7 @@ void Campaign::disp_intro()
 	sys.sleep(500);
 
 	music.stop();
-	play_speech("POEM1.WAV");
+	play_speech("Poem1.wav");
 	
 	while(1)
 	{
@@ -837,7 +837,7 @@ void Campaign::disp_monster_defeated()
 	sys.sleep(500);
 	
 	music.stop();
-	play_speech("POEM2.WAV");
+	play_speech("Poem2.wav");
 	while(1)
 	{
 		int tempCounter = counter;
@@ -984,7 +984,7 @@ void Campaign::disp_final_victory()
 	sys.sleep(500);
 
 	music.stop();
-	play_speech("POEM3.WAV");	
+	play_speech("Poem3.wav");	
 	while(1)
 	{
 		int tempCounter = counter;
@@ -2280,11 +2280,11 @@ void Campaign::disp_nation_info()
 	if (!vga.use_back_buf)
 	{
 		vga.use_back();
-		vga.disp_image_file("CAMPAIGN");
+		vga.disp_image_file("campaign");
 		vga.use_front();
 	}
 	else
-		vga.disp_image_file("CAMPAIGN");
+		vga.disp_image_file("campaign");
 
 //vga_back.adjust_brightness( 0, 0, VGA_WIDTH -1, MAIN_MAP_Y2+10, -6 );
 

@@ -55,6 +55,12 @@ void Vga::disp_image_file(const char* fileName, int x1, int y1)
 	str += fileName;
 	str += ".JPG";
 
+  if (!m.is_file_exist(str)) {
+    str  = DIR_IMAGE;
+    str += fileName;
+    str += ".jpg";
+  }
+
 	if( m.is_file_exist(str) )
 	{
 		Jpeg jpeg;

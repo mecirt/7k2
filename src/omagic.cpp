@@ -495,33 +495,15 @@ short Magic::shading(short *origin, short *point, short ratio, int mode)
 
 short Magic::draw(short R, short G, short B, int mode)
 {
-	short prev_r;
-	short prev_g;
-	short prev_b;
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		mov ax, R  //R = R *31 /255;
-		shr ax, 3
-		mov R, ax
-		mov ax, B  //B = B *31 /255;
-		shr ax, 3
-		mov B, ax
-		cmp mode, 1 // Comparing mode for setting G
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G  //G = G *31 /255;
-		shr ax, 3
-		mov G, ax
-		jmp END
-MODE_ODD:
-		mov ax, G  //G = G *63 /255;
-		shr ax, 2
-		mov G, ax
-END:
-	}
-#endif
+  short prev_r;
+  short prev_g;
+  short prev_b;
+
+  R = R >> 3;
+  B = B >> 3;
+  if ((mode == 1) || (mode == 3)) G = G >> 2;
+  else G = G >> 3;
+
 	prev_r = R; 
 	prev_g = G; 
 	prev_b = B; 
@@ -674,44 +656,19 @@ void Magic::straight_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 	int	y_inc = (x2 - x1) > 0 ? 2 : -2;
 	int mode_offset = mode *12;
 	unsigned short *base = check_table;
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		mov ax, R1  //R1 = R1 *31 /255;
-		shr ax, 3
-		mov R1, ax
-		mov ax, R2	//R2 = R2 *31 /255;
-		shr ax, 3
-		mov R2, ax
-		mov ax, B1  //B1 = B1 *31 /255;
-		shr ax, 3
-		mov B1, ax
-		mov ax, B2	//B2 = B2 *31 /255;
-		shr ax, 3
-		mov B2, ax
-		cmp mode, 1 // Comparing mode for setting G1 and G2
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G1  //G1 = G1 *31 /255;
-		shr ax, 3
-		mov G1, ax
-		mov ax, G2	//G2 = G2 *31 /255;
-		shr ax, 3
-		mov G2, ax
-		jmp END
-MODE_ODD:
-		mov ax, G1  //G1 = G1 *63 /255;
-		shr ax, 2
-		mov G1, ax
-		mov ax, G2	//G2 = G2 *63 /255;
-		shr ax, 2
-		mov G2, ax
-END:	mov eax, thickness
-		sub eax, lightness
-		mov diff, eax
-	}
-#endif
+
+  R1 = R1 >> 3;
+  R2 = R2 >> 3;
+  B1 = B1 >> 3;
+  B2 = B2 >> 3;
+  if ((mode == 1) || (mode == 3)) {
+    G1 = G1 >> 2;
+    G2 = G2 >> 2;
+  } else {
+    G1 = G1 >> 3;
+    G2 = G2 >> 3;
+  }
+  diff = thickness - lightness;
 	if (diff <1)
 		diff =1;
 	if ((d_y == 0) && (d_x == 0))
@@ -1008,44 +965,18 @@ void Magic::straight_light_beam2(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 	int	y_inc = (x2 - x1) > 0 ? 2 : -2;
 	int mode_offset = mode *12;
 	unsigned short *base = check_table;
-#ifdef ASM_FOR_MSVC
-	_asm
-	{
-		mov ax, R1  //R1 = R1 *31 /255;
-		shr ax, 3
-		mov R1, ax
-		mov ax, R2	//R2 = R2 *31 /255;
-		shr ax, 3
-		mov R2, ax
-		mov ax, B1  //B1 = B1 *31 /255;
-		shr ax, 3
-		mov B1, ax
-		mov ax, B2	//B2 = B2 *31 /255;
-		shr ax, 3
-		mov B2, ax
-		cmp mode, 1 // Comparing mode for setting G1 and G2
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G1  //G1 = G1 *31 /255;
-		shr ax, 3
-		mov G1, ax
-		mov ax, G2	//G2 = G2 *31 /255;
-		shr ax, 3
-		mov G2, ax
-		jmp END
-MODE_ODD:
-		mov ax, G1  //G1 = G1 *63 /255;
-		shr ax, 2
-		mov G1, ax
-		mov ax, G2	//G2 = G2 *63 /255;
-		shr ax, 2
-		mov G2, ax
-END:	mov eax, thickness
-		sub eax, lightness
-		mov diff, eax
-	}
-#endif
+  R1 = R1 >> 3;
+  R2 = R2 >> 3;
+  B1 = B1 >> 3;
+  B2 = B2 >> 3;
+  if ((mode == 1) || (mode == 3)) {
+    G1 = G1 >> 2;
+    G2 = G2 >> 2;
+  } else {
+    G1 = G1 >> 3;
+    G2 = G2 >> 3;
+  }
+  diff = thickness - lightness;
 	if (diff <1)
 		diff =1;
 	if ((d_y == 0) && (d_x == 0))
@@ -1895,28 +1826,14 @@ void Magic::draw_circle(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, ch
 	unsigned short *base2 = color_table;
 	unsigned short *base3 = dist_table;
 	up_level = 	(radius * radius);
+
+  R1 = R1 >> 3;
+  B1 = B1 >> 3;
+  if ((mode == 1) || (mode == 3)) G1 = G1 >> 2;
+  else G1 = G1 >> 3;
 #ifdef ASM_FOR_MSVC
 	_asm
 	{
-		mov ax, R1  //R1 = R1 *31 /255;
-		shr ax, 3
-		mov R1, ax
-		mov ax, B1  //B1 = B1 *31 /255;
-		shr ax, 3
-		mov B1, ax
-		cmp mode, 1 // Comparing mode for setting G1 and G2
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G1  //G1 = G1 *31 /255;
-		shr ax, 3
-		mov G1, ax
-		jmp CLIPPING
-MODE_ODD:
-		mov ax, G1  //G1 = G1 *63 /255;
-		shr ax, 2
-		mov G1, ax
-CLIPPING:
 		mov esi, bound_x1	//	start_x = x1 -radius;
 	//	add esi, 1
 		mov edi, bound_x2
@@ -2251,29 +2168,14 @@ void Magic::draw_circle2(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, c
 		r_x = 0;
 	if (r_y < 0)
 		r_y = 0;
-		
+  R1 = R1 >> 3;
+  B1 = B1 >> 3;
+  if ((mode == 1) || (mode == 3)) G1 = G1 >> 2;
+  else G1 = G1 >> 3;
+
 #ifdef ASM_FOR_MSVC
 	_asm
 	{
-		mov ax, R1  //R1 = R1 *31 /255;
-		shr ax, 3
-		mov R1, ax
-		mov ax, B1  //B1 = B1 *31 /255;
-		shr ax, 3
-		mov B1, ax
-		cmp mode, 1 // Comparing mode for setting G1 and G2
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G1  //G1 = G1 *31 /255;
-		shr ax, 3
-		mov G1, ax
-		jmp CLIPPING
-MODE_ODD:
-		mov ax, G1  //G1 = G1 *63 /255;
-		shr ax, 2
-		mov G1, ax
-CLIPPING:
 		mov esi, bound_x1	//	start_x = x1 -radius;
 	//	add esi, 1
 		mov edi, bound_x2
@@ -2558,26 +2460,14 @@ D_MINS:
 			mov dis_state, edi			
 D_PLUS:	
 		}
-		_asm
-		{
-		mov eax, line			//temp_point = temp_point +line;
-		add temp_point, eax
-		mov cl, r_y
-		mov eax, temp_mag		//temp_mag = temp_mag +i +i +1;
-		mov ebx, i
-	//	shl ebx, cl
-		shl ebx, 1
 
-		sar ebx, cl
-		
-		add eax, ebx
-		inc eax
-		mov temp_mag, eax
+                _asm {
 		mov edi, temp_dis_state		//if (temp_mag < *(dist_table +temp_dis_state))
 		mov ebx, base3
 		shl edi,2
 		add ebx, edi
 		shr edi,2
+                mov eax, temp_mag
 		cmp eax, [ebx]		//if (mag > *(color_table +dis_state +1))
 		jl	TD_MINS
 		cmp eax, [ebx+4]	//if (temp_mag > *(dist_table +temp_dis_state +1))
@@ -2589,272 +2479,6 @@ TD_PLUS:
 		}
 #endif
 	}
-/*
-	int mag1, mag2;
-	int level1, level2;
-	int modeOffset = mode *12;
-	short *point, *tempPoint;
-	short x, y, locX, locY;
-	short i, j, stepX, stepY;
-	short temp_r, temp_g, temp_b;
-	short prev_r, prev_g, prev_b;
-	unsigned short *base1 = check_table;
-	unsigned short *base2 = color_table;
-	unsigned short *base3 = dist_table;
-		
-	_asm
-	{
-		// Convert R1, B1 and G1 from 0-255 to 0-31 or 0-63 depending on the pixel format
-		//R1 = R1 *31 /255
-		mov ax, R1  
-		shr ax, 3
-		mov R1, ax
-
-		//B1 = B1 *31 /255
-		mov ax, B1  
-		shr ax, 3
-		mov B1, ax
-
-		// Comparing mode for setting G1 and G2
-		cmp mode, 1 
-		je MODE_ODD
-		cmp mode, 3
-		je MODE_ODD
-		mov ax, G1  
-
-		//G1 = G1 *31 /255
-		shr ax, 3
-		mov G1, ax
-		jmp START
-
-	MODE_ODD:
-
-		//G1 = G1 *63 /255
-		mov ax, G1  
-		shr ax, 2
-		mov G1, ax
-
-	START:
-		// Preparing the 17 entries RGB colour array 
-		mov ebx, 0
-		mov esi, base2		
-		
-		//RED
-		mov ax, R1	
-		mov cx, ax
-		shr cx, 4
-		
-		mov [esi+34], bx
-		mov [esi+32], ax
-		sub ax, cx
-		mov [esi+30], ax
-		sub ax, cx
-		mov [esi+28], ax
-		sub ax, cx
-		mov [esi+26], ax
-		sub ax, cx
-		mov [esi+24], ax
-		sub ax, cx
-		mov [esi+22], ax
-		sub ax, cx
-		mov [esi+20], ax
-		sub ax, cx
-		mov [esi+18], ax
-		sub ax, cx
-		mov [esi+16], ax
-		sub ax, cx
-		mov [esi+14], ax
-		sub ax, cx
-		mov [esi+12], ax
-		sub ax, cx
-		mov [esi+10], ax
-		sub ax, cx
-		mov [esi+8], ax
-		sub ax, cx
-		mov [esi+6], ax
-		sub ax, cx
-		mov [esi+4], ax
-		sub ax, cx
-		mov [esi+2], ax
-		mov [esi], cx
-
-		//GREEN
-		mov ax, G1	
-		mov cx, ax
-		shr cx, 4
-		
-		mov [esi+70], bx
-		mov [esi+68], ax
-		sub ax, cx
-		mov [esi+66], ax
-		sub ax, cx
-		mov [esi+64], ax
-		sub ax, cx
-		mov [esi+62], ax
-		sub ax, cx
-		mov [esi+60], ax
-		sub ax, cx
-		mov [esi+58], ax
-		sub ax, cx
-		mov [esi+56], ax
-		sub ax, cx
-		mov [esi+54], ax
-		sub ax, cx
-		mov [esi+52], ax
-		sub ax, cx
-		mov [esi+50], ax
-		sub ax, cx
-		mov [esi+48], ax
-		sub ax, cx
-		mov [esi+46], ax
-		sub ax, cx
-		mov [esi+44], ax
-		sub ax, cx
-		mov [esi+42], ax
-		sub ax, cx
-		mov [esi+40], ax
-		sub ax, cx
-		mov [esi+38], ax
-		mov [esi+36], cx
-
-		//BLUE
-		mov ax, B1	
-		mov cx, ax
-		shr cx, 4
-		
-		mov [esi+106], bx
-		mov [esi+104], ax
-		sub ax, cx
-		mov [esi+102], ax
-		sub ax, cx
-		mov [esi+100], ax
-		sub ax, cx
-		mov [esi+98], ax
-		sub ax, cx
-		mov [esi+96], ax
-		sub ax, cx
-		mov [esi+94], ax
-		sub ax, cx
-		mov [esi+92], ax
-		sub ax, cx
-		mov [esi+90], ax
-		sub ax, cx
-		mov [esi+88], ax
-		sub ax, cx
-		mov [esi+86], ax
-		sub ax, cx
-		mov [esi+84], ax
-		sub ax, cx
-		mov [esi+82], ax
-		sub ax, cx
-		mov [esi+80], ax
-		sub ax, cx
-		mov [esi+78], ax
-		sub ax, cx
-		mov [esi+76], ax
-		sub ax, cx
-		mov [esi+74], ax
-		mov [esi+72], cx
-	}
-
-	mag1 =512; level1 =16;
-	mag2 =512; level2 =16;
-	locX = (x1 - rX)<<4;	stepX = rX;
-	locY = (y1 - rY)<<4;	stepY = rY;
-	for(y =-16; y <17; y++)
-	{
-		for(x =-16; x <17; x++)
-		{
-			_asm
-			{
-				mov esi, level2
-				shl esi, 1
-				add esi, base2
-				mov ax, [esi+ 2]		//temp_r = *(color_table + 7 +dis_state +1);
-				mov temp_r, ax
-				mov ax, [esi+38]		//temp_g = *(color_table +14 +dis_state +1);
-				mov temp_g, ax
-				mov ax, [esi+74]		//temp_b = *(color_table +21 +dis_state +1);
-				mov temp_b, ax
-			}
-			//draw one pixel
-			tempPoint = vgabuf->buf_ptr(locX >>4, locY >>4);
-			point = tempPoint;
-			for(j =0; j <(rY>>4); j++)
-			{
-				for(i =0; i <(rX>>4); i++)
-				{
-					_asm
-					{
-						mov edi, base1
-						add edi, modeOffset
-						mov esi, point
-						mov dx, [esi]
-					//RED:		
-						mov cl, [edi +8]
-						mov bx, [edi]
-						mov prev_r, bx			// assign R_OVER value
-						mov ax, dx
-						and ax, bx
-						shr ax, cl
-						add ax, temp_r
-						cmp ax, 001fh
-						jg  GREEN
-						shl ax, cl				// assign R_UNDER value
-						mov prev_r, ax
-					GREEN:
-						mov bx, [edi +2]
-						mov prev_g, bx			// assign G_OVER value
-						mov ax, dx
-						and ax, bx
-						shr ax, 5
-						add ax, temp_g
-						cmp ax, [edi +6]
-						jg  BLUE
-						shl ax, 5				// assign G_UNDER value
-						mov prev_g, ax
-					BLUE:
-						mov cl, [edi +10]
-						mov bx, [edi +4]
-						mov prev_b, bx			// assign B_OVER value
-						mov ax, dx
-						and ax, bx
-						shr ax, cl
-						add ax, temp_b
-						cmp ax, 001fh
-						jg  END
-						shl ax, cl				// assign B_UNDER value
-						mov prev_b, ax
-					END:		
-						mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
-						or  ax, prev_g			
-						or  ax, prev_b
-						mov [esi], ax
-					}
-					point ++;
-				}
-				tempPoint = tempPoint + vgabuf->buf_pitch();
-				point = tempPoint;
-			}
-			locX = locX + rX;
-			mag2 = mag2 +x +x +1;
-			if (mag2 > dist_table[level2 +1])
-				level2 ++;
-			else
-			if (mag2 < dist_table[level2])
-				level2 --;
-		}
-		mag1 = mag1 +y +y +1;
-		if (mag1 > dist_table[level1 +1])
-			level1 ++;
-		else
-		if (mag1 < dist_table[level1])
-			level1 --;
-		mag2 = mag1;
-		level2 = level1;
-		locX = (x1 - rX)<<4;
-		locY = locY + rY;
-	}*/
 }
 // ----------- End of function Magic::draw_circle2 ----------//
 
