@@ -21,19 +21,6 @@
 //Filename    : OMOUSE.CPP
 //Description : Mouse handling Object
 
-#define NEED_WINDOWS
-#define INITGUID
-
-// define DIRECTINPUT_VERSION before include dinput.h for directx 3 emulation
-#define DIRECTINPUT_VERSION 0x0300
-#include <dinput.h>
-// these three are here because we can't define INITGUID in more files
-#include <dplay.h>
-#include <dplobby.h>
-#include <strmif.h>
-#include <uuids.h>
-#include <control.h>
-
 #include <all.h>
 
 #include <omouse.h>
@@ -60,23 +47,14 @@
 //
 //--------------------------------------------//
 
-static DWORD click_threshold = (LONG)(0.3 * 1000);
-
-//------- Define static functions -----------//
-
-LRESULT CALLBACK key_hook_proc(int nCode, WORD wParam, LONG lParam);
-// static unsigned translate_key(unsigned scanCode, unsigned short skeyState);
+static DWORD click_threshold = (int)(0.3 * 1000);
 
 //------- define constant --------//
 
-#define MOUSE_BUFFER_SIZE 200
-#define KEYB_BUFFER_SIZE 16
 #define DOUBLE_SPEED_THREHOLD 8
 
 //------- define static storage -----------//
 
-static DIDEVICEOBJECTDATA mouse_data[MOUSE_BUFFER_SIZE];
-static DIDEVICEOBJECTDATA keyb_data[KEYB_BUFFER_SIZE];
 static int update_x1, update_y1, update_x2, update_y2;		// coordination of the last double-buffer update area
 
 //--------- Start of Mouse::Mouse ---------//
@@ -105,121 +83,28 @@ Mouse::~Mouse()
 
 //------------ Start of Mouse::init ------------//
 //
-void Mouse::init(void *i, LPDIRECTINPUT createdDirectInput)
+void Mouse::init(void *i)
 {
+  //-------- set starting position ---------//
+  GetMousePos(&cur_x, &cur_y);
+
+  InitInputDevices (i);
   HINSTANCE hinst = (HINSTANCE) i;
-	//-------- set starting position ---------//
 
-	POINT pt;
+  init_keyboard();
 
-	GetCursorPos(&pt);
+  //------- initialize VGA update buffer -------//
+  vga_update_buf = (short *)mem_add( VGA_UPDATE_BUF_SIZE );
 
-	cur_x = pt.x;
-	cur_y = pt.y;
+  // ------ initialize mouse boundary ---------//
+  reset_boundary();
 
-	HRESULT hr;
-	if( createdDirectInput )
-	{
-		direct_input = createdDirectInput;
-		hr = direct_input->AddRef();
-	}
-	else
-	{
-		hr = DirectInputCreate(hinst, DIRECTINPUT_VERSION, &direct_input, NULL);
-	}
-	if(hr)
-		err.run( "Failed creating DirectInput");
+  // ------- initialize event queue ---------//
+  head_ptr = tail_ptr = 0;
 
-	{
-		VgaFrontLock vgaLock;
-		hr = direct_input->CreateDevice(GUID_SysMouse,&di_mouse_device,NULL);
-	}
+  //--------------------------------------------//
 
-	if(hr)
-		err.run( "Failed creating mouse interface from DirectInput");
-
-	// ------- set cooperative level --------//
-	hr = di_mouse_device->SetCooperativeLevel((HWND)get_main_hwnd(), DISCL_FOREGROUND | DISCL_EXCLUSIVE);
-
-	// ------- set data format ---------//
-	if(!hr)
-		hr = di_mouse_device->SetDataFormat(&c_dfDIMouse);
-
-	// ------- set relative coordinate mode --------//
-// DirectInput default is relative
-	if(!hr)
-	{
-		DIPROPDWORD propDword;
-		propDword.diph.dwSize = sizeof(DIPROPDWORD);
-		propDword.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		propDword.diph.dwHow = DIPH_DEVICE;			// Entire device
-		propDword.diph.dwObj =  0;						// Entire device, so zero
-		propDword.dwData = DIPROPAXISMODE_REL;
-		hr = di_mouse_device->SetProperty(DIPROP_AXISMODE, &propDword.diph);
-	}
-
-	// ------- set buffer size --------//
-	if(!hr)
-	{
-		DIPROPDWORD propDword;
-		propDword.diph.dwSize = sizeof(DIPROPDWORD);
-		propDword.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		propDword.diph.dwHow = DIPH_DEVICE;			// Entire device
-		propDword.diph.dwObj =  0;						// Entire device, so zero
-		propDword.dwData = MOUSE_BUFFER_SIZE; // * sizeof(DIDEVICEOBJECTDATA);
-		hr = di_mouse_device->SetProperty(DIPROP_BUFFERSIZE, &propDword.diph);
-	}
-
-	if(hr)
-		err.run( "Failed initializing mouse interface");
-
-
-	// ------- create direct input keyboard interface --------- //
-	{
-		VgaFrontLock vgaLock;
-		hr = direct_input->CreateDevice(GUID_SysKeyboard,&di_keyb_device,NULL);
-	}
-
-	if(hr)
-		err.run( "Failed creating keyboard interface from DirectInput");
-
-	// ------- set cooperative level --------//
-	hr = di_keyb_device->SetCooperativeLevel((HWND)get_main_hwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-
-	// ------- set data format ---------//
-	if(!hr)
-		hr = di_keyb_device->SetDataFormat(&c_dfDIKeyboard);
-
-	// ------- set buffer size --------//
-	if(!hr)
-	{
-		DIPROPDWORD propDword;
-		propDword.diph.dwSize = sizeof(DIPROPDWORD);
-		propDword.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		propDword.diph.dwHow = DIPH_DEVICE;			// Entire device
-		propDword.diph.dwObj =  0;						// Entire device, so zero
-		propDword.dwData = KEYB_BUFFER_SIZE; // * sizeof(DIDEVICEOBJECTDATA);
-		hr = di_keyb_device->SetProperty(DIPROP_BUFFERSIZE, &propDword.diph);
-	}
-
-	if(hr)
-		err.run( "Failed initializing keyboard interface");
-
-	init_keyboard();
-
-	//------- initialize VGA update buffer -------//
-
-	vga_update_buf = (short *)mem_add( VGA_UPDATE_BUF_SIZE );
-
-	// ------ initialize mouse boundary ---------//
-	reset_boundary();
-
-	// ------- initialize event queue ---------//
-	head_ptr = tail_ptr = 0;
-
-	//--------------------------------------------//
-
-	init_flag = 1;
+  init_flag = 1;
 }
 //------------- End of Mouse::init -------------//
 
@@ -228,13 +113,7 @@ void Mouse::init(void *i, LPDIRECTINPUT createdDirectInput)
 //
 void Mouse::deinit()
 {
-	if( init_flag )
-	{
-		// UnhookWindowsHookEx(key_hook_handle);
-
-		// DMouseClose(direct_mouse_handle);
-		init_flag = 0;
-	}
+	init_flag = 0;
 
 	if( vga_update_buf )
 	{
@@ -242,23 +121,7 @@ void Mouse::deinit()
 		vga_update_buf = NULL;
 	}
 
-	if( di_keyb_device )
-	{
-		di_keyb_device->Unacquire();
-		di_keyb_device->Release();
-		di_keyb_device = NULL;
-	}
-	if( di_mouse_device )
-	{
-		di_mouse_device->Unacquire();
-		di_mouse_device->Release();
-		di_mouse_device = NULL;
-	}
-	if( direct_input )
-	{
-		direct_input->Release();
-		direct_input = NULL;
-	}
+  UninitInputDevices ();
 }
 //------------- End of Mouse::deinit -------------//
 
@@ -1084,237 +947,15 @@ int Mouse::release_click(int buttonId)
 //--------- End of Mouse::release_click --------------//
 
 
-//------- Begin of function key_hook_proc --------//
-
-LRESULT CALLBACK key_hook_proc(int nCode, WORD wParam, LONG lParam)
-{
-	if (nCode >= 0)
-		mouse.add_key_event(wParam, m.get_time());
-
-	return CallNextHookEx(mouse.key_hook_handle, nCode, wParam, lParam);
-}
-//-------- End of function key_hook_proc --------//
-
-
 //--------- Begin of Mouse::poll_event ----------//
 //
 // Poll mouse events from the direct mouse VXD.
 //
 int Mouse::poll_event()
 {
-	if(!init_flag)
-		return 0;
+  if (!init_flag) return 0;
 
-	// ---- acquire mouse device and count the message queued ----//
-	HRESULT hr;
-	bool mouseAcquired = true;
-	bool keybAcquired = true;
-
-	if( (hr = di_mouse_device->Acquire()) != DI_OK && hr != S_FALSE)
-	{
-		mouseAcquired = false;
-	}
-
-	if( (hr = di_keyb_device->Acquire()) != DI_OK && hr != S_FALSE)
-	{
-		keybAcquired = false;
-	}
-
-	// HRESULT hr;
-	DWORD mouseLen, keybLen;
-
-	int moveFlag = 0;
-	int rc = 0;
-
-	int maxGetDataTry = 2;
-	while( --maxGetDataTry >= 0 )
-	{
-		mouseLen = MOUSE_BUFFER_SIZE;
-		keybLen = KEYB_BUFFER_SIZE;
-
-		if( !mouseAcquired
-			||	(hr = di_mouse_device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),
-				mouse_data, &mouseLen, 0)) != DI_OK && hr != S_FALSE )
-			mouseLen = 0;
-		if( !keybAcquired
-			|| (hr = di_keyb_device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),
-				keyb_data, &keybLen, 0)) != DI_OK && hr != S_FALSE)
-			keybLen = 0;
-
-		if( !mouseLen && !keybLen )
-			break;
-
-		DIDEVICEOBJECTDATA *mouseMsg = mouse_data, *keybMsg = keyb_data;
-
-		while( mouseLen > 0 || keybLen > 0)
-		{
-			// merge mouse event and keyboard event
-			MouseEvent ev;
-			int earlyDevice = 0;			// 1 = mouse, 2 = keyboard
-			if( mouseLen > 0 && keybLen > 0 )
-			{
-				if( DISEQUENCE_COMPARE(mouseMsg->dwSequence, <=, keybMsg->dwSequence) )
-					earlyDevice = 1;
-				else
-					earlyDevice = 2;
-			}
-			else if( mouseLen > 0)
-			{
-				earlyDevice = 1;
-			}
-			else if( keybLen > 0)
-			{
-				earlyDevice = 2;
-			}
-
-			if( earlyDevice == 1 )
-			{
-				if (mouseMsg->dwOfs == DIMOFS_BUTTON0)
-				{
-					if( mouseMsg->dwData & 0x80)
-					{
-						// mouse button pressed
-						//ev.state = left_press = LEFT_BUTTON_MASK;
-						left_press = LEFT_BUTTON_MASK;
-						ev.event_type = LEFT_BUTTON;
-						ev.x = cur_x;
-						ev.y = cur_y;
-						ev.time = mouseMsg->dwTimeStamp;
-						ev.scan_code = 0;
-						ev.skey_state = skey_state;
-						add_event(&ev);
-						rc = 1;
-					}
-					else
-					{
-						// mouse button released
-						left_press = 0;
-						ev.event_type = LEFT_BUTTON_RELEASE;
-						ev.x = cur_x;
-						ev.y = cur_y;
-						ev.time = mouseMsg->dwTimeStamp;
-						ev.scan_code = 0;
-						ev.skey_state = skey_state;
-						add_event(&ev);
-						reset_boundary();			// reset_boundary whenever left button is released
-						rc = 1;
-					}
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_BUTTON1)
-                                {
-					if( mouseMsg->dwData & 0x80)
-					{
-						// mouse button pressed
-						right_press = RIGHT_BUTTON_MASK;
-						ev.event_type = RIGHT_BUTTON;
-						ev.x = cur_x;
-						ev.y = cur_y;
-						ev.time = mouseMsg->dwTimeStamp;
-						ev.scan_code = 0;
-						ev.skey_state = skey_state;
-						add_event(&ev);
-						rc = 1;
-					}
-					else
-					{
-						// mouse button released
-						right_press = 0;
-						ev.event_type = RIGHT_BUTTON_RELEASE;
-						ev.x = cur_x;
-						ev.y = cur_y;
-						ev.time = mouseMsg->dwTimeStamp;
-						ev.scan_code = 0;
-						ev.skey_state = skey_state;
-						add_event(&ev);
-						rc = 1;
-					}
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_BUTTON2)
-                                {
-					// not interested
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_BUTTON3)
-                                {
-					// not interested
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_X)
-                                {
-					cur_x += micky_to_displacement(mouseMsg->dwData);
-					// ##### begin Gilbert 9/10 ######//
-					switch( bound_type )
-					{
-					case 0:		// rectangular boundary
-						if(cur_x < bound_x1)
-							cur_x = bound_x1;
-						if(cur_x > bound_x2)
-							cur_x = bound_x2;
-						break;
-					case 1:		// rhombus boundary
-						{
-							int boundMargin = abs(cur_y - (bound_y1+bound_y2)/2);
-							if( cur_x < bound_x1+boundMargin )
-								cur_x = bound_x1+boundMargin;
-							if( cur_x > bound_x2-boundMargin )
-								cur_x = bound_x2-boundMargin;
-						}
-						break;
-					default:
-						err_here();
-					}
-					// ##### end Gilbert 9/10 ######//
-					moveFlag = 1;
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_Y)
-                                {
-					cur_y += micky_to_displacement(mouseMsg->dwData);
-					// ##### begin Gilbert 9/10 ######//
-					switch( bound_type )
-					{
-					case 0:		// rectangular boundary
-						if(cur_y < bound_y1)
-							cur_y = bound_y1;
-						if(cur_y > bound_y2)
-							cur_y = bound_y2;
-						break;
-					case 1:		// rhombus boundary
-						{
-							int boundMargin = abs(cur_x - (bound_x1+bound_x2)/2);
-							if( cur_y < bound_y1+boundMargin )
-								cur_y = bound_y1+boundMargin;
-							if( cur_y > bound_y2-boundMargin )
-								cur_y = bound_y2-boundMargin;
-						}
-						break;
-					default:
-						err_here();
-					}
-					// ##### end Gilbert 9/10 ######//
-					moveFlag = 1;
-                                }
-                                else if (mouseMsg->dwOfs == DIMOFS_Z)
-                                {
-					// not interested
-				}
-				--mouseLen;
-				++mouseMsg;
-			}
-			else if( earlyDevice == 2 )
-			{
-				if( process_key_message( keybMsg->dwOfs, keybMsg->dwData, keybMsg->dwTimeStamp) )
-					rc = 1;
-				--keybLen;
-				++keybMsg;
-			}
-		}
-	}
-
-	if(moveFlag)
-	{
-		mouse_cursor.process(cur_x, cur_y);     // repaint mouse cursor
-		power.mouse_handler();
-	}
-
-	return rc;
+  return PollInputDevices ();
 }
 //--------- End of Mouse::poll_event --------------//
 
@@ -1452,8 +1093,6 @@ void Mouse::reset_click()
 long Mouse::micky_to_displacement(DWORD w)
 {
 	long d = (long)w ;
-	// long a = abs(d);
-	// return a >= double_speed_threshold ? (a >= triple_speed_threshold ? 3 * d : 2 * d) : d;
 	return abs(d) >= double_speed_threshold ? d+d : d;
 }
 // ------ End of Mouse::mickey_to_displacment -------//
@@ -1494,7 +1133,7 @@ int Mouse::key_auto_repeat_count()
 MouseDispCount::MouseDispCount()
 {
 	// set cursor position
-	SetCursorPos( mouse.cur_x, mouse.cur_y);
+	SetMousePos( mouse.cur_x, mouse.cur_y);
 
 	// show cursor
 	mouse.hide();
@@ -1508,10 +1147,7 @@ MouseDispCount::MouseDispCount()
 MouseDispCount::~MouseDispCount()
 {
 	// set cursor position
-	POINT winMousePos;
-	GetCursorPos(&winMousePos);
-	mouse.cur_x = winMousePos.x;
-	mouse.cur_y = winMousePos.y;
+	GetMousePos(&mouse.cur_x, &mouse.cur_y);
 
 	// hide cursor
 	ShowMouseCursor(false);

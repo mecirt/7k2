@@ -26,7 +26,6 @@
 
 #define NEED_WINDOWS
 
-// #define INITGUID for dplay.h to define IID_IDirectPlay3A
 #include <dplay.h>
 #include <dplobby.h>
 #include <odynarrb.h>

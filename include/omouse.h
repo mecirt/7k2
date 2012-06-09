@@ -143,9 +143,6 @@ public:
 	short*  vga_update_buf;
 
 	HHOOK  key_hook_handle;
-	// HANDLE direct_mouse_handle;
-	LPDIRECTINPUT direct_input;
-	LPDIRECTINPUTDEVICE di_mouse_device, di_keyb_device;
 
 	//------- real-time mouse state -------//
 
@@ -205,7 +202,7 @@ public:
 	Mouse();
 	~Mouse();
 
-	void	init(void *, LPDIRECTINPUT createdDirectInput=0);
+	void	init(void *);
 	void	deinit();
 
 	void 	add_event(MouseEvent *);
@@ -264,12 +261,13 @@ public:
 
 	static int is_key(unsigned keyCode, unsigned short skeyState, unsigned short charValue, unsigned flags = 0 );
 	static int is_key(unsigned keyCode, unsigned short skeyState, char *keyStr, unsigned flags = 0 );
+	long	micky_to_displacement(DWORD);
+	int	process_key_message(DWORD keyOfs, DWORD keyData, DWORD keyTimeStamp);	// called by poll_event to handle language specific keyboard
+
 	// see omouse2.h for flags
 
 private:
-	long	micky_to_displacement(DWORD);
 	void	init_keyboard();
-	int	process_key_message(DWORD keyOfs, DWORD keyData, DWORD keyTimeStamp);	// called by poll_event to handle language specific keyboard
 };
 //---------- End of define class ---------------//
 

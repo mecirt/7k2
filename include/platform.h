@@ -71,4 +71,12 @@ void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2
 
 int WriteBitmapFile (const VgaBuf *buf, const char *name);
 
+// mouse
+void InitInputDevices (void *hinstance);
+void UninitInputDevices ();
+int PollInputDevices ();
+
+void GetMousePos (int *x, int *y);
+void SetMousePos (int x, int y);
+
 #endif

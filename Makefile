@@ -33,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 jpeg SDL SDL_mixer SDL_image
+7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 dxguid jpeg SDL SDL_mixer SDL_image
 
 
 
@@ -467,7 +467,6 @@ LIBRARIES             =
 			src/otownai.cpp \
 			src/of_campa.cpp \
 			src/ou_godi.cpp \
-			src/ovideo.cpp \
 			src/ou_carai.cpp \
 			src/of_basei.cpp \
 			src/omatrix2.cpp \

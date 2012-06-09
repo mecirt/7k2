@@ -27,7 +27,6 @@
 #include <odplay.h>
 #include <oanline.h>
 #include <oaudio.h>
-#include <ovideo.h>
 #include <obaseobj.h>
 #include <obattle.h> 
 #include <obox.h>
@@ -420,7 +419,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	{
 		if( !m.is_file_exist("SKIPAVI.SYS") )
 		{
-			play_video(hInstance, 0);
+//			play_video(hInstance, 0);
 		}
 	}
 

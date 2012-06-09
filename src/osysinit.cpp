@@ -298,7 +298,7 @@ int Sys::init_objects()
    mouse_cursor.init();
    mouse_cursor.set_frame_border(ZOOM_X1,ZOOM_Y1,ZOOM_X2,ZOOM_Y2);
 
-   mouse.init( app_hinstance, NULL);
+   mouse.init (app_hinstance);
    FocusMainWindow();
 
    //------- init resource class ----------//
