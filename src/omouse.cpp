@@ -1109,6 +1109,40 @@ int Mouse::is_holding(int buttonId)
 	return holding_button[buttonId];
 }
 
+void Mouse::init_keyboard()
+{
+  update_skey_state();
+}
+// ------- end of Mouse::update_skey_state --------//
+
+
+//--------- Begin of Mouse::update_skey_state ----------//
+// called after task switch to get the lastest state of ctrl/alt/shift key
+void Mouse::update_skey_state()
+{
+  UpdateSkeyState();
+}
+//--------- End of Mouse::update_skey_state ----------//
+
+
+// ------ Begin of Mouse::is_key -------//
+// compare key with key code
+// e.g. to test a key is alt-a,
+// call mouse.is_key(mouse.scan_code, mouse.event_skey_state, 'a', K_CHAR_KEY | K_IS_ALT)
+//
+// pass 0 as charValue to disable checking in charValue
+// e.g pressed key is 'a'
+// mouse.is_key(mouse.scan_code, mouse.event_skey_state, (WORD) 0, K_CHAR_KEY) returns 'a'
+// but if key pressed is alt-a
+// the same function call returns 0
+// use mouse.is_key(mouse.scan_code, mouse.event_skey_state, (WORD) 0, K_CHAR_KEY | K_IS_ALT ) instead
+//
+int Mouse::is_key(unsigned scanCode, unsigned short skeyState, unsigned short charValue, unsigned flags)
+{
+  return IsKey (scanCode, skeyState, charValue, flags);
+}
+// ------ End of Mouse::is_key -------//
+
 
 // return number of keystrokes made by auto repeat
 // return 0 if no key is pressed

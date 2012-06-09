@@ -75,6 +75,8 @@ int WriteBitmapFile (const VgaBuf *buf, const char *name);
 void InitInputDevices (void *hinstance);
 void UninitInputDevices ();
 int PollInputDevices ();
+void UpdateSkeyState ();
+int IsKey(unsigned scanCode, unsigned short skeyState, unsigned short charValue, unsigned flags);
 
 void GetMousePos (int *x, int *y);
 void SetMousePos (int x, int y);

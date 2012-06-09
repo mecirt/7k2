@@ -326,7 +326,6 @@ LIBRARIES             =
 			src/onewseng.cpp \
 			src/oc_pla5.cpp \
 			src/owarpt.cpp \
-			src/omouseng.cpp \
 			src/olightn.cpp \
 			src/odplay.cpp \
 			src/of_incu.cpp \

@@ -260,9 +260,7 @@ public:
 	int	key_auto_repeat_count();
 
 	static int is_key(unsigned keyCode, unsigned short skeyState, unsigned short charValue, unsigned flags = 0 );
-	static int is_key(unsigned keyCode, unsigned short skeyState, char *keyStr, unsigned flags = 0 );
 	long	micky_to_displacement(DWORD);
-	int	process_key_message(DWORD keyOfs, DWORD keyData, DWORD keyTimeStamp);	// called by poll_event to handle language specific keyboard
 
 	// see omouse2.h for flags
 

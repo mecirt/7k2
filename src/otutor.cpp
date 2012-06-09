@@ -139,13 +139,6 @@ void Tutor::init()
 
 	res_tutor_text.init(str, 0);  	// 0-don't read all into buffer
 
-/*	//----- open tutorial introduction resource file -------//
-
-	str  = DIR_RES;
-	str += TUTOR_INTRO_RES;
-
-	res_tutor_intro.init(str, 0);  	// 0-don't read all into buffer*/
-
 	//------- load database information --------//
 
 	load_tutor_info();

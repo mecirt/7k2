@@ -52,21 +52,16 @@ class Audio
 public:
 	char  init_flag;
 
-	char  mid_init_flag;   // whether the midi driver has been installed
 	char  wav_init_flag;   // whether the wave driver has been installed
 	char	cd_init_flag;
 
-	char  mid_flag;        // flag determing whether MIDI music should be playing
 	char  wav_flag;		  // flag determing whether WAV sound effects should be playing
 	char  cd_flag;			  // flag determing whether Audio CD track should be playing
 
-	char* mid_buf;
 	char* wav_buf;
 
-	int	mid_buf_size;
 	int	wav_buf_size;
 
-	ResourceIdx mid_res;
 	ResourceIdx wav_res;
 
 public:
@@ -77,8 +72,6 @@ public:
 	void 	deinit();
 
 	void  yield();		// called by sys every some time
-
-	int  	play_mid(char*);
 
 	// functions on short wave
 	int  	play_wav(const char*, DsVolume);
@@ -104,29 +97,23 @@ public:
 
 	int   play_cd(int, int retVolume);
 
-	void 	stop_mid();
 	void 	stop_wav();		// and stop also long wav
 	void	stop_cd();
 	void	stop_long_wav();
 
-	int  	is_mid_playing();
 	int  	is_wav_playing();
 	int	is_cd_playing();
 
-	void 	toggle_mid(int);
 	void 	toggle_wav(int);
 	void 	toggle_cd(int);
 
-	void 	set_mid_volume(int);
 	void 	set_wav_volume(int);			// 0 to 100
 	void 	set_cd_volume(int);
 
 private:
-	int  	init_mid();
 	int  	init_wav();
 	int	init_cd();
 
-	void	deinit_mid();
 	void	deinit_wav();
 	void	deinit_cd();
 

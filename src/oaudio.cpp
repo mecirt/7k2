@@ -122,18 +122,14 @@ int Audio::init()
 	//-------- init vars -----------//
 
 	run_yield = 0;
-	mid_init_flag = 0;     // the init flag is on when the driver is initialized successfully
 	wav_init_flag = 0;
 	cd_init_flag  = 0;
 
-	mid_flag = 1;
 	wav_flag = 1;
 	cd_flag  = 1;
 
-	mid_buf = NULL;
 	wav_buf = NULL;
 
-	mid_buf_size = 0;
 	wav_buf_size = 0;
 
 	int i;
@@ -169,14 +165,6 @@ int Audio::init()
 		wav_buf 		 = mem_add(DEFAULT_WAV_BUF_SIZE);
 		wav_buf_size = DEFAULT_WAV_BUF_SIZE;
 	}
-/*
-	if( init_mid() )
-	{
-		mid_res.init( DIR_RES"A_MIDI.RES", 0, 0 );      // 2nd 0-don't read all, 3rd 0-don't use vga buffer
-		mid_buf 		 = mem_add(DEFAULT_MID_BUF_SIZE);
-		mid_buf_size = DEFAULT_MID_BUF_SIZE;
-	}
-*/
 	init_cd();
 
 	//----------------------------------//
@@ -202,7 +190,6 @@ void Audio::deinit()
 		//------- deinit devices -------//
 
 		deinit_wav();
-		deinit_mid();
 		deinit_cd();
 	}
 }
@@ -236,29 +223,6 @@ int Audio::init_wav()
 	return wav_init_flag;
 }
 //--------- End of function Audio::init_wav ----------//
-
-
-//--------- Begin of function Audio::init_mid ----------//
-//
-// Initialize MIDI mid driver
-//
-// return : <int> 1 - initialized successfully
-//                0 - init fail
-//
-int Audio::init_mid()
-{
-	if( mid_init_flag )
-		return 1;
-
-
-	//.. insert code here ...//
-
-
-	mid_init_flag=1;
-
-	return 1;
-}
-//--------- End of function Audio::init_mid ----------//
 
 
 //--------- Begin of function Audio::init_cd ----------//
@@ -330,82 +294,6 @@ void Audio::deinit_wav()
 //--------- End of function Audio::deinit_wav ----------//
 
 
-//--------- Begin of function Audio::deinit_mid ----------//
-
-void Audio::deinit_mid()
-{
-	if( !mid_init_flag )
-		return;
-
-	stop_mid();
-
-	//.. insert code here ...//
-	mem_del(mid_buf);
-	mid_buf = NULL;
-
-	mid_init_flag = 0;
-}
-//--------- End of function Audio::deinit_mid ----------//
-
-
-//------- Begin of function Audio::play_mid -------//
-//
-// Play a midi mid from the mid resource file
-//
-// <char*> midName = name of the mid in the resource file
-//
-// return : <int> 1 - mid loaded and is playing
-//                0 - mid not played
-//
-int Audio::play_mid(char* midName)
-{
-	if( !mid_init_flag || !mid_flag )   // a initialized and workable midi device can be disabled by user setting
-		return 0;
-
-	stop_mid();	    // stop currently playing mid if any
-
-	//------ Load mid file -------//
-
-	int   dataSize;
-
-	File* filePtr = mid_res.get_file(midName, dataSize);
-
-	if( !filePtr )
-		return 0;
-
-	if( dataSize > mid_buf_size )
-	{
-		mid_buf_size = dataSize;
-		mid_buf = mem_resize( mid_buf, mid_buf_size );
-	}
-
-	if( !filePtr->file_read( mid_buf, dataSize ) )
-		return 0;
-
-	//-------- Play mid file --------//
-
-	//.. insert code here ...//
-
-
-	return 1;
-}
-//------- End of function Audio::play_mid -------//
-
-
-//------- Begin of function Audio::stop_mid -------//
-//
-void Audio::stop_mid()
-{
-	if( !mid_init_flag || !mid_flag )
-		return;
-
-	//.. insert code here ...//
-
-	mciSendCommand(mci_open.wDeviceID, MCI_STOP, NULL, NULL);
-}
-//------- End of function Audio::stop_mid -------//
-
-
 //------- Begin of function Audio::play_wav -------//
 //
 // Play digitized wav from the wav resource file
@@ -419,22 +307,6 @@ void Audio::stop_mid()
 //
 int Audio::play_wav(const char* wavName, DsVolume dsVolume)
 {
-/*
-	//---- redirect to play_long_wav -------//
-
-	String str;
-
-   str  = DIR_SOUND;
-	str += wavName;
-	str += ".WAV";
-
-	if( m.is_file_exist(str) )
-		return play_long_wav(str);
-	else
-		return 0;
-
-	//------------------------------------//
-*/
 	if( !wav_init_flag || !wav_flag )   // a initialized and workable midi device can be disabled by user setting
 		return 0;
 
@@ -1841,20 +1713,6 @@ void Audio::stop_cd()
 //------- End of function Audio::stop_cd -------//
 
 
-//------- Begin of function Audio::is_mid_playing -------//
-//
-int Audio::is_mid_playing()
-{
-	if( !mid_init_flag || !mid_flag )   // a initialized and workable midi device can be disabled by user setting
-		return 0;
-
-	//... insert code here ...//
-
-	return 0;
-}
-//------- End of function Audio::is_mid_playing -------//
-
-
 //------- Begin of function Audio::is_wav_playing -------//
 //
 int Audio::is_wav_playing()
@@ -1911,19 +1769,6 @@ int Audio::is_cd_playing()
 }
 //------- End of function Audio::is_cd_playing -------//
 
-
-//----------------- Begin of Audio::toggle_mid -----------------//
-//
-void Audio::toggle_mid(int midFlag)
-{
-	if( !midFlag )
-		stop_mid();
-
-	mid_flag = midFlag;
-}
-//------------------- End of Audio::toggle_mid ------------------//
-
-
 //----------------- Begin of Audio::toggle_wav -----------------//
 //
 void Audio::toggle_wav(int wavFlag)
@@ -1946,23 +1791,6 @@ void Audio::toggle_cd(int cdFlag)
 	cd_flag = cdFlag;
 }
 //------------------- End of Audio::toggle_cd ------------------//
-
-
-//-------------- Begin of Audio::set_mid_volume -------------//
-//
-// Set mid volume
-//
-// <int> midVolume = mid volume, 0-100
-//
-void Audio::set_mid_volume(int midVolume)
-{
-	if( !mid_init_flag )
-		return;
-
-	//.. insert code here ...//
-
-}
-//--------------- End of Audio::set_mid_volume --------------//
 
 
 //-------------- Begin of Audio::set_wav_volume -------------//

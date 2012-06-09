@@ -266,39 +266,6 @@ void Sys::detect_letter_key(unsigned scanCode, unsigned skeyState)
 
 			if(unitPtr->team_info)
 			{
-				// ######## begin Gilbert 25/2 ########//
-//				switch(keyCode)
-//				{
-//					case '9':
-//						unitPtr->team_info->formation_direction = LEADER_AT_TOP;
-//						break;
-//					case '8':
-//						unitPtr->team_info->formation_direction = LEADER_AT_TOP_LEFT;
-//						break;
-//					case '7':
-//						unitPtr->team_info->formation_direction = LEADER_AT_LEFT;
-//						break;
-//					case '6':
-//						unitPtr->team_info->formation_direction = LEADER_AT_TOP_RIGHT;
-//						break;
-//					case '4':
-//						unitPtr->team_info->formation_direction = LEADER_AT_BOTTOM_LEFT;
-//						break;
-//					case '3':
-//						unitPtr->team_info->formation_direction = LEADER_AT_RIGHT;
-//						break;
-//					case '2':
-//						unitPtr->team_info->formation_direction = LEADER_AT_BOTTOM_RIGHT;
-//						break;
-//					case '1':
-//						unitPtr->team_info->formation_direction = LEADER_AT_BOTTOM;
-//						break;
-//					default:
-//						return;
-//				}
-//				unit_group.set(unitPtr->team_info->member_unit_array, unitPtr->team_info->member_count );
-//				unit_group.formation_turn(unitPtr->team_info->formation_direction, COMMAND_PLAYER);
-
 				int newFormationDirection = 0;
 				switch(keyCode)
 				{
@@ -333,10 +300,8 @@ void Sys::detect_letter_key(unsigned scanCode, unsigned skeyState)
 					unit_group.formation_turn(newFormationDirection, COMMAND_PLAYER);
 					return;
 				}
-				// ######## end Gilbert 25/2 ########//
 			}
 		}
-		// return;
 	}
 
 	//----- key for recalling group -------//

@@ -902,7 +902,6 @@ void ZoomMatrix::draw_weather_effects()
 			{
 				if( config.sound_effect_flag && config.rain_audio)
                                 {
-				//	rain_channel_id = audio.play_loop_wav(DIR_SOUND"RAIN.WAV",11008*2, RelVolume(relVolume,0));
                                         RelVolume r(relVolume,0);
                                         rain_channel_id = audio.play_loop_wav(DIR_SOUND"RAIN.WAV",0, DsVolume(r));
                                 }
@@ -1062,8 +1061,6 @@ void ZoomMatrix::draw_weather_effects()
 			if( config.sound_effect_flag && config.wind_audio )
                         {
 				// ###### begin Gilbert 6/8 #######//
-				// wind_channel_id = audio.play_loop_wav(DIR_SOUND"WIND.WAV",0, relVolume);
-				// wind_channel_id = audio.play_loop_wav(DIR_SOUND"WIND.WAV",25088*2, RelVolume(relVolume,0));  // 25088 samples, 8-bit stereo, so *2
                                 RelVolume r(relVolume,0);
                                 wind_channel_id = audio.play_loop_wav(DIR_SOUND"WIND.WAV",0, DsVolume(r));
 				// ###### end Gilbert 6/8 #######//
@@ -2748,7 +2745,6 @@ void ZoomMatrix::draw_objects()
 		if( fire_channel_id == 0)
 		{
 			last_fire_vol = relVolume;
-		//	fire_channel_id = audio.play_loop_wav( DIR_SOUND"FIRE.WAV",8447 *2, RelVolume(relVolume,0));
                         RelVolume r(relVolume,0);
                         fire_channel_id = audio.play_loop_wav( DIR_SOUND"FIRE.WAV",0, DsVolume(r));
 		}
