@@ -15,7 +15,7 @@ EXES                  = 7k2
 ### Common settings
 
 CEXTRA                = -g -O2 -Wall -m32
-CXXEXTRA              = -g -O2 -Wall -m32
+CXXEXTRA              = -g -O2 -Wall -m32 -DUSE_FLIP
 ASMFLAGS              = -elf -Zg -zt1
 RCEXTRA               =
 DEFINES               =

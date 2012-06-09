@@ -297,10 +297,6 @@ void GetA::paint(int paintCursor)
 	}
 	else
 	{
-// ##### begin Gilbert 22/2 ########//
-//		if( !Vga::use_back_buf )
-//		{
-// ##### begin Gilbert 22/2 ########//
 			// get from the back buffer
 			switch(align_flag)
 			{
@@ -319,14 +315,6 @@ void GetA::paint(int paintCursor)
 			default:
 				err_here();
 			}
-// ##### begin Gilbert 22/2 ########//
-//		}
-//		else
-//		{
-//			// fill temp buffer with transparent color
-//			IMGbar( bitmap->get_ptr(), bitmap->get_true_pitch(), 0, 0, textWidth-1, textHeight-1, transparent_code_w);
-//		}
-// ##### end Gilbert 22/2 ########//
 	}
 
 	font_ptr->put_to_bufferW(bitmap->get_ptr(), bitmap->get_true_pitch(), 0, 0, input_field);

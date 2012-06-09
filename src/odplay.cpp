@@ -250,6 +250,10 @@ void MultiPlayerDP::init(GUID serviceProviderGUID)
 }
 // ------- end of function MultiPlayerDP::init -------//
 
+void MultiPlayerDP::init( DPServiceProvider *provider)
+{
+  init (provider->guid);
+}
 
 // ------- begin of function MultiPlayerDP::deinit -------//
 void MultiPlayerDP::deinit()
@@ -582,7 +586,6 @@ int MultiPlayerDP::poll_sessions()
 	// ##### patch begin Gilbert 9/1 #########//
 //	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
 	// ##### end begin Gilbert 9/1 #########//
-	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 	return DP_OK == direct_play4->EnumSessions(&sessionDesc , 0, EnumSessionsCallback, this, 
 		DPENUMSESSIONS_AVAILABLE | DPENUMSESSIONS_ASYNC);
 }
@@ -601,6 +604,18 @@ DPSessionDesc *MultiPlayerDP::get_session(int i)
 	return ((DPSessionDesc *) current_sessions.get(i))->before_use();
 }
 // ----- end of function MultiPlayerDP::get_session ------//
+
+GUID MultiPlayerDP::get_session_id(int i)
+{
+  DPSessionDesc *sess = get_session(i);
+  return sess ? sess->session_id() : GUID();
+}
+
+char *MultiPlayerDP::get_session_name(int i)
+{
+  DPSessionDesc *sess = get_session(i);
+  return sess ? sess->name_str() : 0;
+}
 
 
 // ----- begin of function MultiPlayerDP::create_session ----//
@@ -637,7 +652,6 @@ int MultiPlayerDP::create_session(char *sessionName, int maxPlayers)
 	// ##### patch begin Gilbert 9/1 #########//
 //	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
 	// ##### end begin Gilbert 9/1 #########//
-	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 	if( !direct_play4->Open(&d->joined_session, DPOPEN_CREATE) )
 	{
 		host_flag = 1;

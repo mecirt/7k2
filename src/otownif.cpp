@@ -154,9 +154,7 @@ void Town::disp_info(int refreshFlag)
 		}
 	}
 
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	switch( town_menu_mode )
 	{
@@ -184,9 +182,7 @@ void Town::disp_info(int refreshFlag)
 			disp_man_power(refreshFlag);
 			break;
 	}
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //----------- End of function Town::disp_info -----------//
 

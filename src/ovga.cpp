@@ -23,10 +23,6 @@
 
 #define DEBUG_LOG_LOCAL 1
 
-#define NEED_WINDOWS
-
-#include <ddraw.h>
-// include ddraw before ovga.h such that dd_buf is translated
 #include <all.h>
 #include <imgfun.h>
 #include <colcode.h>
@@ -60,9 +56,6 @@ extern "C"
 
 RGBColor log_alpha_func(RGBColor, int, int);
 
-extern const char *dd_err_str( const char *str, HRESULT rc);
-
-
 //-------- Begin of function Vga::Vga ----------//
 
 Vga::Vga()
@@ -91,57 +84,10 @@ Vga::~Vga()
 
 BOOL Vga::init()
 {
-	// size check
-
-	err_when( sizeof(dd_obj) > sizeof(vptr_dd_obj) );
-	err_when( sizeof(dd_pal) > sizeof(vptr_dd_pal) );
-	err_when( sizeof(pal_entry_buf) > sizeof(dw_pal_entry_buf) );
-
-	const char* warnStr = "Warning: Due to the low memory of your display card, "
-						 "you may experience problems when you quit the game or "
-						 "switch tasks during the game. "
-						 "To avoid this problem, set your Windows display "
-						 "to 800x600 16-bit color mode before running the game.";
-
    //--------- Initialize DirectDraw object --------//
 
    if( !init_dd() )
       return FALSE;
-
-
-//	suspected cause of hang in dx6
-
-   // get current display mode
-	DDSURFACEDESC2 ddsd;
-	DDSCAPS2  ddsCaps;
-	DWORD    dwTotal;
-	DWORD    dwFree;
-
-	memset(&ddsd, 0, sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	ddsCaps.dwCaps = DDSCAPS_VIDEOMEMORY;
-
-	if( dd_obj->GetDisplayMode(&ddsd) == DD_OK &&
-		dd_obj->GetAvailableVidMem(&ddsCaps, &dwTotal, &dwFree) == DD_OK )
-	{
-		if( dwFree < (DWORD) VGA_WIDTH*VGA_HEIGHT*VGA_BPP/8 &&
-			!(ddsd.dwWidth==(DWORD)VGA_WIDTH && ddsd.dwHeight==(DWORD)VGA_HEIGHT && (ddsd.ddpfPixelFormat.dwRGBBitCount == (DWORD)VGA_BPP)) )
-		{
-			// not enough memory except same video mode
-
-			ShowMouseCursor(true);
-			// approximation of video memory required, actual video memory used should be calculated from vga_(true)_front->buf_pitch()
-
-			extern char new_config_dat_flag;
-
-			if( new_config_dat_flag )
-			{
-				ShowMessageBox(warnStr);
-			}
-
-			ShowMouseCursor(false);
-		}
-	}
 
    if( !set_mode(VGA_WIDTH, VGA_HEIGHT) )
       return FALSE;
@@ -155,63 +101,7 @@ BOOL Vga::init()
 
 BOOL Vga::init_dd()
 {
-   if(dd_obj)        // the Direct Draw object has been initialized already
-      return TRUE;
-
-   //--------- Create direct draw object --------//
-
-   DEBUG_LOG("Attempt DirectDrawCreate");
-   LPDIRECTDRAW dd1Obj;
-   int rc = DirectDrawCreate( NULL, &dd1Obj, NULL );
-   DEBUG_LOG("DirectDrawCreate finish");
-
-   if( rc != DD_OK )
-   {
-#ifdef DEBUG
-      debug_msg("DirectDrawCreate failed err=%d", rc);
-#endif
-		err.run( dd_err_str("DirectDrawCreate failed!", rc) );
-      return FALSE;
-   }
-
-   //-------- Query DirectDraw4 interface --------//
-
-   DEBUG_LOG("Attempt Query DirectDraw4");
-   rc = dd1Obj->QueryInterface(IID_IDirectDraw4, (void **)&dd_obj);
-   DEBUG_LOG("Query DirectDraw2 finish");
-   if( rc != DD_OK )
-   {
-#ifdef DEBUG
-      debug_msg("Query DirectDraw4 failed err=%d", rc);
-#endif
-		err.run( dd_err_str("Query DirectDraw4(DirectX6) failed", rc) );
-      dd1Obj->Release();
-      return FALSE;
-   }
-
-   dd1Obj->Release();
-
-   //-----------------------------------------------------------//
-   // grab exclusive mode if we are going to run as fullscreen
-   // otherwise grab normal mode.
-   //-----------------------------------------------------------//
-
-   DEBUG_LOG("Attempt DirectDraw SetCooperativeLevel");
-   rc = dd_obj->SetCooperativeLevel( (HWND)get_main_hwnd(),
-                        DDSCL_EXCLUSIVE |
-                        DDSCL_FULLSCREEN );
-   DEBUG_LOG("DirectDraw SetCooperativeLevel finish");
-
-   if( rc != DD_OK )
-   {
-#ifdef DEBUG
-      debug_msg("SetCooperativeLevel failed err=%d", rc);
-#endif
-		err.run( dd_err_str("SetCooperativeLevel failed", rc) );
-      return FALSE;
-   }
-
-   return TRUE;
+  return InitGraphics();
 }
 //-------- End of function Vga::init_dd ----------//
 
@@ -220,117 +110,13 @@ BOOL Vga::init_dd()
 
 BOOL Vga::set_mode(int w, int h)
 {
-   HRESULT rc;
+  if (!SetDisplayMode (w, h)) return false;
 
-   //-------------- set Direct Draw mode ---------------//
+  // assembly functions to initalize effect processing
+  INITeffect(pixel_format_flag);
+  INITbright(pixel_format_flag);
 
-   DEBUG_LOG("Attempt DirectDraw SetDisplayMode");
-   // IDirectDraw2::SetDisplayMode requires 5 parameters
-   rc = dd_obj->SetDisplayMode( w, h, VGA_BPP, 0, 0);
-   DEBUG_LOG("DirectDraw SetDisplayMode finish");
-
-   if( rc != DD_OK )
-   {
-#ifdef DEBUG
-      debug_msg("SetMode failed err=%d", rc);
-#endif
-		// ######## begin Gilbert 2/6 ########//
-		// err.run( dd_err_str("SetMode failed ", rc) );
-		err.msg( dd_err_str("SetMode failed ", rc) );
-		// ######## end Gilbert 2/6 ########//
-      return FALSE;
-   }
-
-	//----------- get the pixel format flag -----------//
-
-   DDSURFACEDESC2 ddsd;
-	memset(&ddsd, 0, sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-
-	pixel_format_flag = -1;
-
-	if( dd_obj->GetDisplayMode(&ddsd) == DD_OK && ddsd.dwFlags & DDSD_PIXELFORMAT )
-	{
-		if( ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB 
-			&& ddsd.ddpfPixelFormat.dwRGBBitCount == (DWORD)VGA_BPP )
-		{
-			if( ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL
-				&& ddsd.ddpfPixelFormat.dwGBitMask == 0x001fL << 5
-				&& ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL << 10 )
-			{
-				pixel_format_flag = PIXFORM_RGB_555;
-			}
-			else if( ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL
-				&& ddsd.ddpfPixelFormat.dwGBitMask == 0x003fL << 5
-				&& ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL << 11 )
-			{
-				pixel_format_flag = PIXFORM_RGB_565;
-			}
-			else if( ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL
-				&& ddsd.ddpfPixelFormat.dwGBitMask == 0x001fL << 5
-				&& ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL << 10 )
-			{
-				pixel_format_flag = PIXFORM_BGR_555;
-			}
-			else if( ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL
-				&& ddsd.ddpfPixelFormat.dwGBitMask == 0x003fL << 5
-				&& ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL << 11 )
-			{
-				pixel_format_flag = PIXFORM_BGR_565;
-			}
-		}
-	}
-	
-	// allow forcing display mode
-
-	if( m.is_file_exist( "PIXMODE.SYS" ) )
-	{
-		File pixModeFile;
-		pixModeFile.file_open( "PIXMODE.SYS" );
-
-		char readBuffer[8];
-		memset( readBuffer, 0, sizeof(readBuffer) );
-		long readLen = 6;
-
-		pixModeFile.file_read( readBuffer, readLen );
-
-		if( strncmp( readBuffer, "RGB555", readLen ) == 0 )
-		{
-			pixel_format_flag = PIXFORM_RGB_555;
-		}
-		else if( strncmp( readBuffer, "RGB565", readLen ) == 0 )
-		{
-			pixel_format_flag = PIXFORM_RGB_565;
-		}
-		else if( strncmp( readBuffer, "BGR555", readLen ) == 0 )
-		{
-			pixel_format_flag = PIXFORM_BGR_555;
-		}
-		else if( strncmp( readBuffer, "BGR565", readLen ) == 0 )
-		{
-			pixel_format_flag = PIXFORM_BGR_565;
-		}
-
-		pixModeFile.file_close();
-	}
-
-	if( pixel_format_flag == -1 )
-	{
-		ShowMessageBox("Cannot determine the pixel format of this display mode.");
-
-		pixel_format_flag = PIXFORM_BGR_565;
-	}
-
-	// assembly functions to initalize effect processing
-
-	INITeffect(pixel_format_flag);
-	INITbright(pixel_format_flag);
-
-   //----------- display the system cursor -------------//
-
-   SetCursor(NULL);
-
-   return TRUE;
+  return true;
 }
 //-------- End of function Vga::set_mode ----------//
 
@@ -339,157 +125,18 @@ BOOL Vga::set_mode(int w, int h)
 
 void Vga::deinit()
 {
-   release_pal();
-
-   if( dd_obj )
-   {
-      //DEBUG_LOG("Attempt vga.dd_obj->RestoreDisplayMode()");
-      // dd_obj->RestoreDisplayMode();
-      //DEBUG_LOG("vga.dd_obj->RestoreDisplayMode() finish");
-
-      DEBUG_LOG("Attempt vga.dd_obj->Release()");
-      dd_obj->Release();
-      DEBUG_LOG("vga.dd_obj->Release() finish");
-      dd_obj = NULL;
-   }
+  DeinitGraphics();
 }
 //-------- End of function Vga::deinit ----------//
-
-
-// ------- begin of function Vga::is_inited --------//
-//
-BOOL Vga::is_inited()
-{
-	return vptr_dd_obj != NULL;
-}
-// ------- end of function Vga::is_inited --------//
-
-
-//--------- Start of function Vga::load_pal ----------//
-//
-// Load the palette from a file and set it to the front buf.
-//
-BOOL Vga::load_pal(const char* fileName)
-{
-   char palBuf[256][3];
-   File palFile;
-
-   palFile.file_open(fileName);
-   palFile.file_seek(8);               // bypass the header info
-   palFile.file_read(palBuf, 256*3);
-   palFile.file_close();
-
-    //--- Create a Direct Draw Palette and associate it with the front buffer ---//
-
-   if( dd_pal == NULL )
-   {
-      for(int i=0; i<256; i++)
-      {
-         pal_entry_buf[i].peRed   = palBuf[i][0];
-         pal_entry_buf[i].peGreen = palBuf[i][1];
-         pal_entry_buf[i].peBlue  = palBuf[i][2];
-      }
-
-      HRESULT rc = dd_obj->CreatePalette( DDPCAPS_8BIT, pal_entry_buf, &dd_pal, NULL );
-
-      if( rc != DD_OK )
-         return FALSE;
-   }
-
-   init_color_table();
-   init_gray_remap_table();
-
-	// set global variable
-	transparent_code_w = translate_color(TRANSPARENT_CODE);
-
-   return TRUE;
-}
-//----------- End of function Vga::load_pal ----------//
-
 
 //--------- Start of function Vga::init_color_table ----------//
 
 void Vga::init_color_table()
 {
-   //----- initialize interface color table -----//
-
-	PalDesc palDesc( (unsigned char*) pal_entry_buf, sizeof(PALETTEENTRY), 256, 8);
-	vga_color_table->generate_table_fast( MAX_BRIGHTNESS_ADJUST_DEGREE, palDesc, ColorTable::bright_func );
-
-	default_remap_table = (short *)vga_color_table->get_table(0);
-
-   //----- initialize interface color table for blending -----//
-
-	vga_blend_table->generate_table_fast( 8, palDesc, log_alpha_func );
-	default_blend_table = (short *)vga_blend_table->get_table(0);
+  default_remap_table = 0;
+  default_blend_table = 0;
 }
 //----------- End of function Vga::init_color_table ----------//
-
-
-//--------- Start of function Vga::release_pal ----------//
-
-void Vga::release_pal()
-{
-   // ##### begin Gilbert 16/9 #######//
-   if( dd_pal )
-   {
-      while( dd_pal->Release() );
-      dd_pal = NULL;
-   }
-   // ##### end Gilbert 16/9 #######//
-}
-//----------- End of function Vga::release_pal ----------//
-
-
-//-------- Begin of function Vga::activate_pal ----------//
-//
-// we are getting the palette focus, select our palette
-//
-void Vga::activate_pal(VgaBuf* vgaBufPtr)
-{
-   vgaBufPtr->activate_pal(dd_pal);
-}
-//--------- End of function Vga::activate_pal ----------//
-
-
-//-------- Begin of function Vga::adjust_brightness ----------//
-//
-// <int> changeValue - the value to add to the RGB values of
-//                     all the colors in the palette.
-//                     the value can be from -255 to 255.
-//
-// <int> preserveContrast - whether preserve the constrast or not
-//
-void Vga::adjust_brightness(int changeValue)
-{
-   //---- find out the maximum rgb value can change without affecting the contrast ---//
-
-   int          i;
-   int          newRed, newGreen, newBlue;
-   PALETTEENTRY palBuf[256];
-
-   //------------ change palette now -------------//
-
-   for( i=0 ; i<256 ; i++ )
-   {
-      newRed   = (int)pal_entry_buf[i].peRed   + changeValue;
-      newGreen = (int)pal_entry_buf[i].peGreen + changeValue;
-      newBlue  = (int)pal_entry_buf[i].peBlue  + changeValue;
-
-      palBuf[i].peRed   = min(255, max(newRed,0) );
-      palBuf[i].peGreen = min(255, max(newGreen,0) );
-      palBuf[i].peBlue  = min(255, max(newBlue,0) );
-   }
-
-   //------------ set palette ------------//
-
-   vga_front.temp_unlock();
-
-   dd_pal->SetEntries( 0, 0, 256, palBuf );
-
-   vga_front.temp_restore_lock();
-}
-//--------- End of function Vga::adjust_brightness ----------//
 
 
 //--------- Begin of function Vga::blt_buf ----------//
@@ -562,7 +209,7 @@ void Vga::flip()
 	vga_front.temp_unlock();
 	vga_back.temp_unlock();
 
-	vga_front.dd_buf->Flip(NULL, DDFLIP_WAIT );
+  FlipBuffer (&vga_front);
 
 	vga_back.temp_restore_lock();
 	vga_front.temp_restore_lock();
@@ -712,7 +359,6 @@ void Vga::d3_panel2_up(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBord
       vgaBuf = &vga_back;
 
    if( !drawBorderOnly )
-      // vgaBuf->adjust_brightness(x1+2, y1+2, x2-3, y2-3, IF_UP_BRIGHTNESS_ADJUST);
       vgaBuf->bar_alpha(x1+2, y1+2, x2-3, y2-3, IF_UP_BRIGHTNESS_ADJUST/2-1, V_WHITE);
 
    mouse.hide_area( x1,y1,x2,y2 );
@@ -773,7 +419,6 @@ void Vga::d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBo
       vgaBuf = &vga_back;
 
    if( !drawBorderOnly )
-      // vgaBuf->adjust_brightness(x1+2, y1+2, x2-3, y2-3, IF_DOWN_BRIGHTNESS_ADJUST);
       vgaBuf->bar_alpha(x1+2, y1+2, x2-3, y2-3, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
 
    mouse.hide_area( x1,y1,x2,y2 );
@@ -827,58 +472,16 @@ void Vga::separator(int x1, int y1, int x2, int y2)
 
    if( y1+1==y2 )       // horizontal line
    {
-      // vga_front.adjust_brightness(x1, y1, x2, y1, IF_UP_BRIGHTNESS_ADJUST);
       vga_front.bar_alpha(x1, y1, x2, y1, IF_UP_BRIGHTNESS_ADJUST/2-1, V_WHITE);
-      // vga_front.adjust_brightness(x1, y2, x2, y2, IF_DOWN_BRIGHTNESS_ADJUST);
       vga_front.bar_alpha(x1, y2, x2, y2, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
    }
    else
    {
-      // vga_front.adjust_brightness(x1, y1, x1, y2, IF_UP_BRIGHTNESS_ADJUST);
       vga_front.bar_alpha(x1, y1, x1, y2, IF_UP_BRIGHTNESS_ADJUST/2-1, V_WHITE);
-      // vga_front.adjust_brightness(x2, y1, x2, y2, IF_DOWN_BRIGHTNESS_ADJUST);
       vga_front.bar_alpha(x2, y1, x2, y2, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
    }
 }
 //--------------- End of function Vga::separator --------------//
-
-
-//----------- Begin of function Vga::init_gray_remap_table ----------//
-//
-// Initialize a gray remap table for VgaBuf::convert_gray to use.
-//
-void Vga::init_gray_remap_table()
-{
-   //------ create a color to gray-scale remap table ------//
-
-   #define FIRST_GRAY_COLOR   0x90
-   #define GRAY_SCALE_COUNT   16    // no. of gray colors
-
-// #define FIRST_GRAY_COLOR   0x96
-// #define GRAY_SCALE_COUNT   10    // no. of gray colors
-
-   PALETTEENTRY* palEntry = vga.pal_entry_buf;
-   int i, grayIndex;
-
-   for( i=0 ; i<256 ; i++, palEntry++ )
-   {
-      //--------------------------------------------------------//
-      //
-      // How to calculate the gray index (0-31)
-      //
-      // formula is : grey = red * 0.3 + green * 0.59 + blue * 0.11
-      //              the range of the result value is 0-255
-      //              this value is then divided by 8 to 0-31
-      //
-      //--------------------------------------------------------//
-
-      grayIndex = ((int)palEntry->peRed * 30 + (int)palEntry->peGreen * 59 +
-                   (int)palEntry->peBlue * 11) / 100 / (256/GRAY_SCALE_COUNT);
-
-      gray_remap_table[i] = FIRST_GRAY_COLOR + grayIndex;
-   }
-}
-//--------- End of function Vga::init_gray_remap_table -----------//
 
 
 int Vga::make_pixel(BYTE red, BYTE green, BYTE blue)
@@ -925,68 +528,5 @@ RGBColor log_alpha_func(RGBColor i, int scale, int absScale)
 
 	return r;
 }
-
-VgaCustomPalette::VgaCustomPalette(const char *fileName)
-{
-	backup_pal = NULL;
-	if( save_palette() && fileName)
-		set_custom_palette(fileName);
-}
-
-VgaCustomPalette::~VgaCustomPalette()
-{
-	restore_palette();
-	if( backup_pal)
-		mem_del(backup_pal);
-}
-
-int VgaCustomPalette::save_palette()
-{
-	// ------ allocate space --------//
-	if( !backup_pal )
-		backup_pal = mem_add( sizeof(PALETTEENTRY) * 256);
-
-	// ------- get current palette --------//
-	if( vga.dd_pal->GetEntries(0, 0, 256, (PALETTEENTRY *)backup_pal) )
-	{
-		// get palette fail, free backup_pal to indicate save_palette failed
-		mem_del(backup_pal);
-		backup_pal = NULL;
-		return 0;
-	}
-	else
-		return 1;
-}
-
-int VgaCustomPalette::set_custom_palette(const char *fileName)
-{
-	PALETTEENTRY palEntry[256];
-	char palBuf[256][3];
-	File palFile;
-
-	palFile.file_open(fileName);
-	palFile.file_seek(8);     				// bypass the header info
-	palFile.file_read(palBuf, 256*3);
-	palFile.file_close();
-
-	for(int i=0; i<256; i++)
-	{
-		palEntry[i].peRed   = palBuf[i][0];
-		palEntry[i].peGreen = palBuf[i][1];
-		palEntry[i].peBlue  = palBuf[i][2];
-		palEntry[i].peFlags = 0;
-	}
-
-	return !vga.dd_pal->SetEntries(0, 0, 256, palEntry);
-}
-
-int VgaCustomPalette::restore_palette()
-{
-	if( backup_pal)
-		return !vga.dd_pal->SetEntries(0, 0, 256, (PALETTEENTRY *)backup_pal);
-	else
-		return 1;
-}
-
 
 

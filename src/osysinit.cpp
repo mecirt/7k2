@@ -187,11 +187,14 @@ int Sys::init_directx()
       return FALSE;
    DEBUG_LOG("vga.init() ok");
 
-   DEBUG_LOG("Attempt vga.load_pal()");
-   vga.load_pal(DIR_RES"pal_std.res");
-   DEBUG_LOG("vga.load_pal() finish");
+  init_display();
 
-	// update Sys::deinit and Sys::change_display_mode
+   return TRUE;
+}
+//-------- End of function Sys::init_directx --------//
+
+int Sys::init_display()
+{
 
 //   if( sys.debug_session )                // if we are currently in a debug session, don't lock the front buffer otherwise the system will hang up
    if( use_true_front )                // if we are currently in triple buffer mode, don't lock the front buffer otherwise the system will hang up
@@ -201,8 +204,6 @@ int Sys::init_directx()
       DEBUG_LOG("Attempt vga_front.init_back()");
       vga_front.init_back();		// create in video memory
       vga_front.is_front = 1;       // set it to 1, overriding the setting in init_back()
-      DEBUG_LOG("Attempt vga.activate_pal()");
-      vga.activate_pal(&vga_true_front);
 		DEBUG_LOG("Attempt vga_back.init_back()");
 		vga_back.init_back();
 		DEBUG_LOG("vga_back.init_back() finish");
@@ -210,7 +211,6 @@ int Sys::init_directx()
    else
    {
       vga_front.init_front();
-      vga.activate_pal(&vga_front);
 #if(!defined(USE_FLIP))
 		vga_back.init_back();		// create in system memory
 #else
@@ -230,10 +230,8 @@ int Sys::init_directx()
    vga_back.lock_buf();
    DEBUG_LOG("vga_back.lock_buf() finish");
 
-   return TRUE;
+   return 1;
 }
-//-------- End of function Sys::init_directx --------//
-
 
 //-------- Begin of function Sys::deinit_directx --------//
 //

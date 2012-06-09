@@ -65,33 +65,8 @@ class Vga
 {
 public:
 
-			union
-			{
-#ifdef __DDRAW_INCLUDED__
-				LPDIRECTDRAW4		dd_obj;
-#endif
-				LPVOID				vptr_dd_obj;
-			};
-
-			union
-			{
-#ifdef __DDRAW_INCLUDED__
-				LPDIRECTDRAWPALETTE	dd_pal;
-#endif
-				LPVOID					vptr_dd_pal;
-			};
-
-			union
-			{
-#ifdef __DDRAW_INCLUDED__
-				PALETTEENTRY			pal_entry_buf[256];
-#endif
-				DWORD						dw_pal_entry_buf[256];
-			};
-
 		  ColorTable*				vga_color_table;
 		  ColorTable*				vga_blend_table;
-		  unsigned char			gray_remap_table[256];
 		  int							pixel_format_flag;				// see IMGFUN.H	// new for 16-bit
 		  short *					default_remap_table;				// new for 16-bit
 		  short *					default_blend_table;				// new for 16-bit
@@ -109,24 +84,22 @@ public:
 		  BOOL   set_mode(int width, int height);
 		  void   deinit();
 
-		  BOOL	is_inited();
-
-		  BOOL   load_pal(const char* fileName);
-		  void	init_gray_remap_table();
-
-		  void   activate_pal(VgaBuf*);
-		  void   release_pal();
-
 		  void 	d3_panel_up(int x1,int y1,int x2,int y2,int vgaFrontOnly=0,int drawBorderOnly=0);
 		  void 	d3_panel_down(int x1,int y1,int x2,int y2,int vgaFrontOnly=0,int drawBorderOnly=0);
 		  void	d3_panel2_up(int x1,int y1,int x2,int y2,int vgaFrontOnly=0,int drawBorderOnly=0);
 		  void	d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly=0,int drawBorderOnly=0);
 		  void 	separator(int x1, int y1, int x2, int y2);
 
-		  void	adjust_brightness(int changeValue);
-
-		  void 	use_front()	{ use_back_buf=0; active_buf = &vga_front; }
-		  void 	use_back()	{ use_back_buf=1; active_buf = &vga_back;  }
+                  void 	use_front() {
+#ifdef USE_FLIP
+                    use_back_buf=0; active_buf = &vga_front;
+#endif
+                  }
+                  void 	use_back() {
+#ifdef USE_FLIP
+                    use_back_buf=1; active_buf = &vga_back;  
+#endif
+                  }
 
 		  BOOL   blt_buf(int x1, int y1, int x2, int y2, int putMouseCursor=1);
 		  void	flip();
@@ -150,22 +123,6 @@ extern "C"
 {
 	extern short transparent_code_w __asmsym__("_transparent_code_w");
 }
-
-class VgaCustomPalette
-{
-private:
-	void *backup_pal;
-
-public:
-	VgaCustomPalette( const char * );
-	~VgaCustomPalette();
-
-	static int set_custom_palette(const char *);
-
-private:
-	int save_palette();
-	int restore_palette();
-};
 
 
 //--------------------------------------------//

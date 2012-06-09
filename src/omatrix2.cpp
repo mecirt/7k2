@@ -241,7 +241,6 @@ void LocationCorners::render(Blob2DW *blob, char *texturePtr, BYTE drawState)
 		last_draw_state = drawState;
 	}
 
-	// remapTables = vga.vga_color_table->get_table();
 	remapTables = terrain_res.vga_color_table->get_table();
 
 	short *bufPtr = blob->ptr->bitmap
@@ -1148,7 +1147,6 @@ void LocationCorners::render(BitmapW *bitmapPtr, char *texturePtr, int offsetX, 
 		last_draw_state = drawState;
 	}
 
-	// remapTables = vga.vga_color_table->get_table();
 	remapTables = terrain_res.vga_color_table->get_table();
 
 	short *bufPtr = bitmapPtr->get_ptr( offsetX, offsetY );

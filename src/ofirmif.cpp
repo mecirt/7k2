@@ -68,9 +68,7 @@ static short edit_hp_x1, edit_hp_y1, edit_hp_x2, edit_hp_y2, edit_hp_enable;
 //
 void Firm::disp_info_both(int refreshFlag)
 {
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	disp_basic_info(INFO_Y1, refreshFlag);
 
@@ -121,20 +119,7 @@ void Firm::disp_info_both(int refreshFlag)
 	else
 		put_info(refreshFlag);			// virtual function
 
-	#ifdef DEBUG
-//		if(debug2_enable_flag)
-//		{
-//			font_san.d3_put( INFO_X1, INFO_Y2-30, INFO_X2, INFO_Y2, "" );
-//			font_san.field( INFO_X1+10, INFO_Y2-20, " ", INFO_X1+20, firm_recno, 1, INFO_X2-10, refreshFlag);
-//			font_san.field( INFO_X1+40, INFO_Y2-20, " ", INFO_X1+50, loc_x1, 1, INFO_X2-10, refreshFlag);
-//			font_san.field( INFO_X1+70, INFO_Y2-20, " ", INFO_X1+80, loc_y1, 1, INFO_X2-10, refreshFlag);
-//			font_san.field( INFO_X1+100, INFO_Y2-20, " ", INFO_X1+110, ai_link_checked, 1, INFO_X2-10, refreshFlag);
-//		}
-	#endif
-
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //----------- End of function Firm::disp_info_both -----------//
 

@@ -21,10 +21,7 @@
 //Filename    : OGAMEMP.CPP
 //Description : Main Game Object - Multiplayer Game (using Imagic multiplayer SDK)
 
-#define NEED_WINDOWS
-
 #include <osys.h>
-#include <dplay.h>
 #include <omouse.h>
 #include <omousecr.h>
 #include <obox.h>
@@ -69,23 +66,6 @@ enum
 	OPTION_GOAL,
 	OPTION_CHAT_LOG,
 };
-
-struct DPSessionDesc : public DPSESSIONDESC2
-{
-  char session_name[MP_SESSION_NAME_LEN+1];
-  char pass_word[MP_SESSION_NAME_LEN+1];
-
-  DPSessionDesc();
-  DPSessionDesc(const DPSESSIONDESC2 &);
-  DPSessionDesc(const DPSessionDesc &);
-  DPSessionDesc& operator= (const DPSessionDesc &);
-  void after_copy();
-  DPSessionDesc *before_use();
-
-  char *name_str() { return session_name; };
-  GUID session_id() { return guidInstance; }
-};
-
 
 
 // --------- Define constant --------//
@@ -481,7 +461,7 @@ void Game::multi_player_game(char *cmdLine)
 				return;
 			}
 
-			mp_obj.init(mp_obj.get_service_provider(choice)->service_id());
+			mp_obj.init(mp_obj.get_service_provider(choice));
 		}
 	}
 
@@ -670,7 +650,7 @@ void Game::load_mp_game(char *fileName, char *cmdLine)
 				return;
 			}
 
-			mp_obj.init(mp_obj.get_service_provider(choice)->service_id());
+			mp_obj.init(mp_obj.get_service_provider(choice));
 		}
 	}
 
@@ -1274,7 +1254,7 @@ int Game::mp_select_session()
 				choice = 0;
 				for( s = 1; mp_obj.get_session(s); ++s )
 				{
-					if( sessionGuid == mp_obj.get_session(s)->session_id() )
+					if( sessionGuid == mp_obj.get_session_id(s) )
 						choice = s;
 				}
 
@@ -1307,7 +1287,7 @@ int Game::mp_select_session()
 					if( mp_obj.get_session(s) )
 					{
 						// display session description
-						font_bld.center_put( x1, y1, x2, y2, mp_obj.get_session(s)->name_str() );
+						font_bld.center_put( x1, y1, x2, y2, mp_obj.get_session_name(s) );
 
 						// display cursor 
 						if( s == choice )
@@ -1390,14 +1370,14 @@ int Game::mp_select_session()
 			if( mouse.double_click( x1, y1, x2, y2 ) )
 			{
 				choice = s;
-				sessionGuid = mp_obj.get_session(s)->session_id();
+				sessionGuid = mp_obj.get_session_id(s);
 				doubleClickReturn = 1;
 				break;
 			}
 			else if( mouse.single_click( x1, y1, x2, y2 ) )
 			{
 				choice = s;
-				sessionGuid = mp_obj.get_session(s)->session_id();
+				sessionGuid = mp_obj.get_session_id(s);
 				refreshFlag |= SSOPTION_DISP_SESSION;
 
 				// suspend the refreshTime, so session list won't update immediate after release dragging

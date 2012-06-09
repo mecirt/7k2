@@ -144,11 +144,6 @@ int Tutor::select_tutor(int actionMode)
 	int menuX1 = TUTOR_MENU_X1;
 	int menuY1 = TUTOR_MENU_Y1;
 
-	// int x=menuX1, y=menuY1+17;
-
-	// vga_back.adjust_brightness( x, y, x+menuX1-1, y+menuY1-1, -6 );
-	// vga.blt_buf( x, y, x+menuX1-1, y+menuY1-1, 0 );
-
 	mouse_cursor.set_icon(CURSOR_NORMAL);
 
 	power.win_opened = 1;
@@ -321,9 +316,6 @@ int Tutor::select_tutor(int actionMode)
 							if( rec == browseRecno )
 							{
 								vga_front.adjust_brightness(browseSlotX1, browseSlotY1, browseSlotX2, browseSlotY2, -2);
-
-								//vga_front.put_bitmap_trans_decompress( menuX1+BROWSE_X1, menuY1+BROWSE_Y1+slot*BROWSE_REC_HEIGHT,
-								//	image_button.read("LS-DWN"));
 							}
 						}
 					}

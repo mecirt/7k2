@@ -261,17 +261,11 @@ int GameFileArray::menu(int actionMode, int *recno)
 
 	//-------------------------------------//
 
-//	int x=menu_x1, y=menu_y1+17;
-
-	// vga_back.adjust_brightness( x, y, x+menu_x1-1, y+menu_y1-1, -6 );
-//	vga.blt_buf( x, y, x+menu_x1-1, y+menu_y1-1, 0 );
-
 	mouse_cursor.set_icon(CURSOR_NORMAL);
 	mouse_cursor.set_frame(0);
 
 	power.win_opened = 1;
 
-//	int minRecno = action_mode == 1 ? 0 : 1;
 	int minRecno = 1;
 
 	//------ set current record no. -------//
@@ -731,30 +725,7 @@ int GameFileArray::menu(int actionMode, int *recno)
 //
 void GameFileArray::disp_browse()
 {
-/*
-	int lastRec = min(browse_top_recno+MAX_BROWSE_DISP_REC-1, size());
 
-	int x = menu_x1 + BROWSE_X1;
-	int y = menu_y1 + BROWSE_Y1;
-
-	for( int i=browse_top_recno ; i<=lastRec ; i++, y+=BROWSE_REC_HEIGHT )
-	{
-		if( i==0 )
-		{
-			err_when( action_mode!=1 );
-			font_bible.center_put( x, y, x+BROWSE_REC_WIDTH-1, y+BROWSE_REC_HEIGHT-1, "Empty Game Slot" );
-		}
-		else
-		{
-			game_file_array[i]->disp_info(x, y);
-		}
-		if( i == browse_recno )
-		{
-			vga_front.adjust_brightness(x,y,x+BROWSE_REC_WIDTH-1,y+BROWSE_REC_HEIGHT-1,-2);
-			vga_front.put_bitmap_trans_decompress( x, y, image_button.read("LS-DWN"));
-		}
-	}
-*/
 }
 //--------- End of function GameFileArray::disp_browse --------//
 

@@ -358,7 +358,6 @@ int News::put(int y, int detectAction, int& newsHeight)
 
 	//---- brighten the area for display in non-standard terrain set ---//
 
-	// vga.active_buf->adjust_brightness(ZOOM_X1, y-3, NEWS_X2+1, y+newsHeight-4, 6);
 	vga.active_buf->bar_alpha(ZOOM_X1, y-3, NEWS_X2+1, y+newsHeight-4, 1, V_BLACK);
 
 	//------ if it's a detect action --------//

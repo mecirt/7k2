@@ -21,9 +21,6 @@
 //Filename    : OVGABUF.CPP
 //Description : OVGABUF direct draw surface class
 
-#define NEED_WINDOWS
-
-#include <ddraw.h>
 #include <ovgabuf.h>
 #include <ovga.h>
 #include <omodeid.h>
@@ -40,16 +37,12 @@
 short *VgaBuf::default_remap_table;
 short *VgaBuf::default_blend_table;
 
-const char *dd_err_str( const char *str, HRESULT rc);
-
-
-
 // ------- pass inline function ------//
 
-int VgaBuf::buf_size()					{ return buf_des.dwWidth * buf_des.dwHeight * sizeof(short); }
-int VgaBuf::buf_width()					{ return buf_des.dwWidth; }
-int VgaBuf::buf_height()            { return buf_des.dwHeight; }
-void VgaBuf::set_default_buf_ptr()	{ cur_buf_ptr = (short*)buf_des.lpSurface; cur_pitch = buf_des.lPitch; }
+int VgaBuf::buf_size() const { return BufferSize (this); }
+int VgaBuf::buf_width()	const { return BufferWidth (this); }
+int VgaBuf::buf_height() const { return BufferHeight (this); }
+void VgaBuf::set_default_buf_ptr()	{ RestoreBufferPointers (this); }
 
 
 //-------- Begin of function VgaBuf::VgaBuf ----------//
@@ -74,59 +67,12 @@ VgaBuf::~VgaBuf()
 //
 // Create a direct draw front buffer.
 //
-// <LPVOID> vdd4Ptr     LPDIRECTDRAW4 of vga
-//
 void VgaBuf::init_front()
 {
-	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vga.dd_obj;
-
-	DDSURFACEDESC2       ddsd;
-	HRESULT             rc;
-
-	// check size of union structure
-	err_when( sizeof(dd_buf) > sizeof(vptr_dd_buf) );
-	err_when( sizeof(buf_des) > sizeof(c_buf_des) );
-
-	// ##### begin Gilbert 4/11 ######//
-	//------ Get Direct Draw capacity info --------//
-//	DDCAPS              ddcaps;
-//	memset( &ddcaps, 0, sizeof(ddcaps) );
-//	ddcaps.dwSize = sizeof( ddcaps );
-//	if( ddPtr->GetCaps( &ddcaps, NULL ) != DD_OK )
-//		err.run( "Error creating Direct Draw front surface!" );
-	// ##### end Gilbert 4/11 ######//
-
-	//---------------------------------------------//
-	// Create the Front Buffer
-	//---------------------------------------------//
-
-	memset( &ddsd, 0, sizeof(ddsd) );
-	ddsd.dwSize = sizeof( ddsd );
-
-	ddsd.dwFlags = DDSD_CAPS;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-//	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_VIDEOMEMORY;
-
-//	LPDIRECTDRAWSURFACE dd1Buf;
-//	rc = ddPtr->CreateSurface( &ddsd, &dd1Buf, NULL );
-	// no createSurface can direct create direct draw surface 4 interface
-	rc = ddPtr->CreateSurface( &ddsd, &dd_buf, NULL );
-	if( rc != DD_OK )
-	{
-		err.run( dd_err_str("Error creating Direct Draw front surface!" ,rc) );
-	}
-
-//	rc = dd1Buf->QueryInterface(IID_IDirectDrawSurface2, (void **)&dd_buf);
-//	if( rc != DD_OK )
-//	{
-//		dd1Buf->Release();
-//		err.run ( dd_err_str("Error creating Direct Draw front surface!!", rc) );
-//	}
-//	dd1Buf->Release();
+  if (!InitSurface (this, false)) return;
 
 	lock_bit_stack = 0;
 	lock_stack_count = 0;
-
 	default_remap_table = vga.default_remap_table;	// new for 16-bit
 	default_blend_table = vga.default_blend_table;	// new for 16-bit
 
@@ -139,52 +85,13 @@ void VgaBuf::init_front()
 //
 // Create a direct draw back buffer.
 //
-// <LPVOID> vdd4Ptr     LPDIRECTDRAW4 of vga
 // [DWORD] w      : width of the surface [default 0 : VGA_WIDTH]
 // [DWORD] h      : height of the surface [default 0 : VGA_HEIGHT]
 // [int] videoMemoryFlag : 1 for create surface in video memory [default 0 : in system memory]
 //
 void VgaBuf::init_back(DWORD w, DWORD h, int videoMemoryFlag )
 {
-	LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) vga.dd_obj;
-
-	DDSURFACEDESC2       ddsd;
-	HRESULT             rc;
-
-	// check size of union structure
-	err_when( sizeof(dd_buf) > sizeof(vptr_dd_buf) );
-	err_when( sizeof(buf_des) > sizeof(c_buf_des) );
-
-	//--------- fill in surface desc -----------//
-
-	memset( &ddsd, 0, sizeof( ddsd ) );
-	ddsd.dwSize = sizeof( ddsd );
-	ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT |DDSD_WIDTH;
-
-	// create back buffer
-	if( videoMemoryFlag & 1)
-		ddsd.ddsCaps.dwCaps = 0; 
-	//	ddsd.ddsCaps.dwCaps = DDSCAPS_VIDEOMEMORY;
-	else
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-
-	ddsd.dwWidth  = w ? w : VGA_WIDTH;
-	ddsd.dwHeight = h ? h : VGA_HEIGHT;
-
-//	LPDIRECTDRAWSURFACE dd1Buf;
-//	rc = ddPtr->CreateSurface( &ddsd, &dd1Buf, NULL );
-	// CreateSurface can now create DIRECTDRAWSURFACE4
-	rc = ddPtr->CreateSurface( &ddsd, &dd_buf, NULL );
-	if( rc != DD_OK )
-		err.run( dd_err_str("Error creating direct draw back surface!", rc) );
-
-//	rc = dd1Buf->QueryInterface(IID_IDirectDrawSurface2, (void **)&dd_buf);
-//	if( rc != DD_OK )
-//	{
-//		dd1Buf->Release();
-//		err.run( dd_err_str("Error creating direct draw back surface!!", rc) );
-//	}
-//	dd1Buf->Release();
+  if (!InitSurface (this, true, w, h, videoMemoryFlag)) return;
 
 	lock_bit_stack = 0;
 	lock_stack_count = 0;
@@ -197,16 +104,7 @@ void VgaBuf::init_back(DWORD w, DWORD h, int videoMemoryFlag )
 //------ Begin of function VgaBuf::attach_surface --------//
 void VgaBuf::attach_surface(VgaBuf *backBuf)
 {
-	HRESULT rc;
-	if( dd_buf && backBuf->dd_buf )
-	{
-		rc = dd_buf->AddAttachedSurface(backBuf->dd_buf);
-		// ##### begin Gilbert 4/11 #####//
-		// err_when( rc != DD_OK );
-		if( rc != DD_OK )
-			err.run( dd_err_str("Cannot attach flipping surface", rc) );
-		// ##### end Gilbert 4/11 #####//
-	}
+  AttachSurface (this, backBuf);
 }
 //------ End of function VgaBuf::attach_surface --------//
 
@@ -214,12 +112,7 @@ void VgaBuf::attach_surface(VgaBuf *backBuf)
 //------ Begin of function VgaBuf::detach_surface --------//
 void VgaBuf::detach_surface(VgaBuf *backBuf)
 {
-	HRESULT rc;
-	if( dd_buf && backBuf->dd_buf )
-	{
-		rc = dd_buf->DeleteAttachedSurface(0, backBuf->dd_buf);
-		err_when( rc != DD_OK );
-	}
+  DetachSurface (this, backBuf);
 }
 //------ End of function VgaBuf::detach_surface --------//
 
@@ -228,48 +121,16 @@ void VgaBuf::detach_surface(VgaBuf *backBuf)
 
 void VgaBuf::deinit()
 {
-	if( dd_buf )
-	{
-		dd_buf->Release();
-		dd_buf = NULL;
-	}
+  DeinitSurface (this);
 }
 //-------- End of function VgaBuf::deinit ----------//
-
-
-//-------- Begin of function VgaBuf::activate_pal ----------//
-//
-// Activate a palette to the current direct draw surface buffer.
-//
-void VgaBuf::activate_pal(LPVOID vddPalPtr)
-{
-	LPDIRECTDRAWPALETTE ddPalPtr = (LPDIRECTDRAWPALETTE) vddPalPtr;
-
-	return;			// no need for 16-bit
-
-	err_when(!ddPalPtr || !dd_buf);
-
-	HRESULT rc = dd_buf->SetPalette(ddPalPtr);
-
-	if( rc == DDERR_SURFACELOST )
-	{
-		dd_buf->Restore();
-		rc = dd_buf->SetPalette(ddPalPtr);
-	}
-
-#ifdef DEBUG
-	if( rc != DD_OK )
-		debug_msg( "VgaBuf::activate_pal(), failed activating the palette" );
-#endif
-}
-//--------- End of function VgaBuf::activate_pal ----------//
 
 
 //-------- Begin of function VgaBuf::is_buf_lost ----------//
 //
 BOOL VgaBuf::is_buf_lost()
 {
-	return dd_buf && dd_buf->IsLost() == DDERR_SURFACELOST;
+  return IsBufferLost (this);
 }
 //--------- End of function VgaBuf::is_buf_lost ----------//
 
@@ -280,15 +141,15 @@ BOOL VgaBuf::is_buf_lost()
 //
 BOOL VgaBuf::restore_buf()
 {
-	if( dd_buf == NULL || dd_buf->Restore() != DD_OK )
-	{
+  if (!RestoreBuffer (this)) 
+  {
 #ifdef DEBUG
-		 debug_msg("Error restoring direct draw buffer");
+    debug_msg("Error restoring direct draw buffer");
 #endif
-		 return FALSE;
-	}
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 //--------- End of function VgaBuf::restore_buf ----------//
 
@@ -297,33 +158,17 @@ BOOL VgaBuf::restore_buf()
 
 void VgaBuf::lock_buf()
 {
-	err_if( buf_locked )
-		err_now( "VgaBuf::lock_buf() error, buffer already locked." );
+  err_if( buf_locked )
+    err_now( "VgaBuf::lock_buf() error, buffer already locked." );
 
-	memset( &buf_des, 0, sizeof(buf_des) );
-
-	buf_des.dwSize = sizeof(buf_des);
-
-	int rc = dd_buf->Lock(NULL, &buf_des, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, NULL);
-
-	cur_buf_ptr = (short *) buf_des.lpSurface;
-	cur_pitch = buf_des.lPitch;
-
-	//--------------------------------------//
-
-	if( rc==DD_OK )
-		buf_locked = TRUE;
-	else
-	{
-		if( is_front )
-			err_now( dd_err_str("VgaBuf::lock_buf() locking front buffer failed.", rc) );
-		else
-			err_now( dd_err_str("VgaBuf::lock_buf() locking back buffer failed.", rc) );
-
+  if (LockBuffer (this))
+    buf_locked = TRUE;
+  else
+  {
 #ifdef DEBUG
-		debug_msg( "Failed to lock the buffer." );
+    debug_msg( "Failed to lock the buffer." );
 #endif
-	}
+  }
 }
 //--------------- End of function VgaBuf::lock_buf --------------//
 
@@ -332,27 +177,18 @@ void VgaBuf::lock_buf()
 
 void VgaBuf::unlock_buf()
 {
-	// ####### begin Gilbert 16/9 #####//
-	if( !dd_buf )
-		return;
-	// ####### end Gilbert 16/9 #####//
-	err_when( !buf_locked );
+  if( !vptr_dd_buf )
+    return;
+  err_when( !buf_locked );
 
-	int rc = dd_buf->Unlock(NULL);
-
-	if( rc==DD_OK )
-		buf_locked = FALSE;
-	else
-	{
-		if( is_front )
-			err_now( dd_err_str("VgaBuf::unlock_buf() unlocking front buffer failed.", rc) );
-		else
-			err_now( dd_err_str("VgaBuf::unlock_buf() unlocking back buffer failed.", rc) );
-
+  if (UnlockBuffer (this))
+    buf_locked = FALSE;
+  else
+  {
 #ifdef DEBUG
-		debug_msg( "Failed to unlock the buffer." );
+    debug_msg( "Failed to unlock the buffer." );
 #endif
-	}
+  }
 }
 //--------------- End of function VgaBuf::unlock_buf --------------//
 
@@ -647,109 +483,7 @@ void VgaBuf::rest_area(short* saveScr, int releaseFlag)
 //
 int VgaBuf::write_bmp_file(char* fileName)
 {
-	 File				bmpFile;
-	 BITMAPINFO*	bmpInfoPtr = NULL;
-	 char*			bitmapPtr = NULL;
-
-	 int				hasPaletteFlag = 0;
-
-	 bmpFile.file_create(fileName, 1, 0);		// 1-handle error, 0-disable variable file size
-
-	 //------------ Write the file header ------------//
-
-	 BITMAPFILEHEADER bmpFileHdr;
-
-	 bmpFileHdr.bfType 		= 0x4D42;			// set the type to "BM"
-	 bmpFileHdr.bfSize 		= buf_size();
-	 bmpFileHdr.bfReserved1 = 0;
-	 bmpFileHdr.bfReserved2 = 0;
-	 bmpFileHdr.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-	 if( hasPaletteFlag )
-		bmpFileHdr.bfOffBits += sizeof(RGBQUAD)*256;
-
-	 bmpFile.file_write(&bmpFileHdr, sizeof(bmpFileHdr));
-
-	 //------------ Write in the info header -----------//
-
-	 BITMAPINFOHEADER bmpInfoHdr;
-
-	 bmpInfoHdr.biSize			 = sizeof(BITMAPINFOHEADER);
-	 bmpInfoHdr.biWidth			 = buf_des.dwWidth;
-	 bmpInfoHdr.biHeight			 = buf_des.dwHeight;
-	 bmpInfoHdr.biPlanes			 = 1; 
-	 bmpInfoHdr.biBitCount		 = 24;
-    bmpInfoHdr.biCompression	 = BI_RGB; 
-	 bmpInfoHdr.biSizeImage	    = bmpInfoHdr.biWidth * bmpInfoHdr.biHeight * bmpInfoHdr.biBitCount / 8;
-	 bmpInfoHdr.biXPelsPerMeter = 0;
-    bmpInfoHdr.biYPelsPerMeter = 0; 
-	 bmpInfoHdr.biClrUsed		 = 0; 
-    bmpInfoHdr.biClrImportant  = 0; 
-
-	 bmpFile.file_write(&bmpInfoHdr, sizeof(bmpInfoHdr));
-
-	 //------------ write the color table -----------//
-
-	 if( hasPaletteFlag )
-	 {
-		 LPDIRECTDRAWPALETTE ddPalettePtr;				// get the direct draw surface's palette
-		 dd_buf->GetPalette(&ddPalettePtr);
-
-		 PALETTEENTRY *palEntries = (PALETTEENTRY*) mem_add( sizeof(PALETTEENTRY)*256 );
-		 ddPalettePtr->GetEntries(0, 0, 256, palEntries);
-		
-		 RGBQUAD *colorTable = (RGBQUAD*) mem_add( sizeof(RGBQUAD)*256 );		// allocate a color table with 256 entries 
-			
-		 for( int i=0 ; i<256 ; i++ )
-		 {
-			 colorTable[i].rgbBlue  = palEntries[i].peBlue;
-			 colorTable[i].rgbGreen = palEntries[i].peGreen;
-			 colorTable[i].rgbRed   = palEntries[i].peRed; 
-			 colorTable[i].rgbReserved = 0;
-		 }
-			 
-		 bmpFile.file_write(colorTable, sizeof(RGBQUAD)*256);
-
-		 mem_del(palEntries);
-		 mem_del(colorTable);
-	 }
-
-	 //----------- write the bitmap ----------//
-
-	 if( bmpInfoHdr.biBitCount == 8 )
-	 {
-		 for( int y=buf_height()-1 ; y>=0 ; y-- )					// write in reversed order as DIB's vertical order is reversed
-			 bmpFile.file_write(buf_ptr(0,y), buf_width());
-	 }
-	 else if( bmpInfoHdr.biBitCount == 24 )
-	 {
-		 int lineBufferSize = sizeof(RGBColor) * bmpInfoHdr.biWidth;
-		 RGBColor *lineBuffer = (RGBColor *)mem_add( lineBufferSize );
-		 for( int y = buf_height()-1; y>=0 ; --y )
-		 {
-			 register short *pixelPtr = buf_ptr( 0, y );
-			 register RGBColor *lineBufPtr = lineBuffer;
-			 for( int x = buf_width()-1; x >= 0; --x, ++pixelPtr, ++lineBufPtr)
-			 {
-				 vga.decode_pixel( *pixelPtr, lineBufPtr );
-				 // exchange Red and blue
-				 BYTE r = lineBufPtr->red;
-				 lineBufPtr->red = lineBufPtr->blue;
-				 lineBufPtr->blue = r;
-			 }
-			 bmpFile.file_write(lineBuffer, lineBufferSize );
-		 }
-		 mem_del(lineBuffer);
-	 }
-	 else
-	 {
-		 err_here();
-	 }
-
-	 //------------ close the file -----------//
-
-	 bmpFile.file_close();
-
-	 return 1;
+  return WriteBitmapFile(this, fileName);
 }
 //------------ End of function VgaBuf::write_bmp_file --------------//
 
@@ -782,7 +516,6 @@ void VgaBuf::put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTa
 		colorRemapTable = default_remap_table;
 
 	int pictWidth = filePtr->file_get_short();
-	int hasPalette=0;
 
 	//------ read in bitmap and display it --------//
 
@@ -869,7 +602,6 @@ void VgaBuf::put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorR
 		colorRemapTable = default_remap_table;
 
 	int pictWidth = filePtr->file_get_short();
-	int hasPalette=0;
 
 	//------ read in bitmap and display it --------//
 
@@ -928,47 +660,4 @@ void VgaBuf::put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorR
 //----------- End of function VgaBuf::put_large_bitmap_trans --------//
 
 
-//---------- Begin of function VgaBuf::put_large_bitmapW ---------//
-//
-// Put a picture on the screen, when a picture's size is > 64K
-// Pass a file pointer to put_large_bitmap() for continously reading the file
-//
-// Syntax
-//
-// <int>   x, y    = the location of the picture on the screen
-// <FILE*> filePtr = pointer to the
-//
-//--------- Format of Picture buffer -------//
-//
-// <int> = picture width
-// <int> = picture height
-//
-// short[...]    = non-compressed flat picture bitmap
-//
-//---------------------------------------------//
 
-void VgaBuf::put_large_bitmapW(int x1, int y1, File* filePtr)
-{
-  // not used
-}
-//----------- End of function VgaBuf::put_large_bitmapW --------//
-
-
-//----------- Begin of function VgaBuf::convert_gray ----------//
-//
-// Convert an specified area of the bitmap from color to gray-scale.
-//
-void VgaBuf::convert_gray(int x1, int y1, int x2, int y2)
-{
-	// remap_bar(x1, y1, x2, y2, vga.gray_remap_table);
-}
-//--------- End of function VgaBuf::convert_gray -----------//
-
-
-
-const char *dd_err_str( const char *s, HRESULT rc)
-{
-	static char retStr[200];
-	sprintf( retStr, "%s (%x)", s, rc );
-	return retStr;
-}

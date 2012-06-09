@@ -698,41 +698,6 @@ void MapMatrix::draw_square()
 {
 	//-------- draw the map-to-zoom highlight box --------//
 
-	///static int squareFrameCount=0, squareFrameStep=1;
-
-/*
-	int x0 = image_x1+world.zoom_matrix->calc_cur_x(
-		world.zoom_matrix->get_base_x(), world.zoom_matrix->get_base_y())
-		/ LOCATE_WIDTH * loc_width;
-	int y0 = image_y1+world.zoom_matrix->calc_cur_y(
-		world.zoom_matrix->get_base_x(), world.zoom_matrix->get_base_y())
-		/ LOCATE_HEIGHT * loc_height;
-	int x1 = image_x1+world.zoom_matrix->calc_cur_x(
-		world.zoom_matrix->get_base_x() + world.zoom_matrix->image_width,
-		world.zoom_matrix->get_base_y())
-		/ LOCATE_WIDTH * loc_width;
-	int y1 = image_y1+world.zoom_matrix->calc_cur_y(
-		world.zoom_matrix->get_base_x() + world.zoom_matrix->image_height,
-		world.zoom_matrix->get_base_y())
-		/ LOCATE_HEIGHT * loc_height;
-	int x2 = image_x1+world.zoom_matrix->calc_cur_x(
-		world.zoom_matrix->get_base_x() + world.zoom_matrix->image_width,
-		world.zoom_matrix->get_base_y() + world.zoom_matrix->image_height)
-		/ LOCATE_WIDTH * loc_width;
-	int y2 = image_y1+world.zoom_matrix->calc_cur_y(
-		world.zoom_matrix->get_base_x() + world.zoom_matrix->image_height,
-		world.zoom_matrix->get_base_y() + world.zoom_matrix->image_height)
-		/ LOCATE_HEIGHT * loc_height;
-	int x3 = image_x1+world.zoom_matrix->calc_cur_x(
-		world.zoom_matrix->get_base_x(),
-		world.zoom_matrix->get_base_y() + world.zoom_matrix->image_height)
-		/ LOCATE_WIDTH * loc_width;
-	int y3 = image_y1+world.zoom_matrix->calc_cur_y(
-		world.zoom_matrix->get_base_x(),
-		world.zoom_matrix->get_base_y() + world.zoom_matrix->image_height)
-		/ LOCATE_HEIGHT * loc_height;
-*/
-
 	int x0, y0, x1, y1, x2, y2, x3, y3;
 
 	if( !cur_cargo_rect_type )

@@ -206,9 +206,7 @@ void Unit::disp_info(int refreshFlag)
 		}
 	}
 
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
@@ -263,9 +261,7 @@ void Unit::disp_info(int refreshFlag)
 			break;
 	}
 
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 
 }
 //----------- End of function Unit::disp_info -----------//
@@ -2291,13 +2287,11 @@ static void disp_firm_button(ButtonCustom *button, int)
 	{
 		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDUP") );
 		font_bld.center_put(button->x1, button->y1-2, button->x2, button->y2-2, firmBuildName );
-		//vga_back.adjust_brightness( button->x1+1, button->y1+1, button->x2-1, button->y2-1, -5 );
 		vga.active_buf->bar_alpha(button->x1+1, button->y1+1, button->x2-1, button->y2-1, 1, 0);
 	}
 	else if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDDWN") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_bld.center_put(button->x1+1, button->y1-1, button->x2+1, button->y2-1, firmBuildName );
 	}
 	else if (mouse.in_area(button->x1, button->y1, button->x2, button->y2))

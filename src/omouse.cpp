@@ -378,7 +378,7 @@ void Mouse::show_area()
 
 			//--- restore the VGA front buffer's buf ptr ---//
 
-			vga_front.set_default_buf_ptr();
+			RestoreBufferPointers(&vga_front);
 		}
 	}
 }

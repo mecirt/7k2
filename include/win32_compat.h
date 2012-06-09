@@ -22,8 +22,6 @@
 #ifndef _WIN32_COMPAT_H
 #define _WIN32_COMPAT_H
 
-#include <platform.h>
-
 #ifdef NEED_WINDOWS 
 
 #include <windows.h>
@@ -33,6 +31,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef uint8_t  BYTE;
 typedef uint8_t  UCHAR;
@@ -111,9 +110,14 @@ typedef struct GUID {
   unsigned short Data2;
   unsigned short Data3;
   unsigned char  Data4[ 8 ];
+  bool operator==(const GUID &g2) {
+    return (memcmp(this, &g2, sizeof(GUID) ) == 0);
+  }
 } GUID;
 
 
 #endif
+
+#include <platform.h>
 
 #endif // _WIN32_COMPAT_H

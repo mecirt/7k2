@@ -248,7 +248,6 @@ int MultiPlayerIM::poll_sessions()
 	current_sessions.zap();
 
 	MouseDispCount showMouse;
-	VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 	IMMRET rc = imm_ptr->EnumSessions(imSessionCallBack, this, 0);
 	return rc == IM_OK || rc == IMERR_NOSESSIONS;
 }
@@ -358,14 +357,12 @@ int MultiPlayerIM::create_player(char *friendlyName, char *formalName,
 		{
 			MouseDispCount showMouse;
 			//	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
-			VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 			rc = imm_ptr->CreateAndJoin(&joined_session, &playerInfo);
 		}
 		else	// join session
 		{
 			MouseDispCount showMouse;
 			//	VgaFrontLock vgaLock;		// MouseDispCount unlock vga_front
-			VgaCustomPalette vgaCPal(DIR_RES"pal_win.res");
 			// #### begin Gilbert 13/2 ######//
 			// if session is selected from the lobby, pass 0 as the session Id
 			if( is_lobbied() == 2 )

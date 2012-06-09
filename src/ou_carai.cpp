@@ -76,9 +76,7 @@ void UnitCaravan::disp_info(int refreshFlag)
 //			return;
 //	}
 
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
@@ -117,9 +115,7 @@ void UnitCaravan::disp_info(int refreshFlag)
 
 	disp_goods(INFO_Y1+235, refreshFlag);
 
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //---------- End of function UnitCaravan::disp_info ----------//
 

@@ -378,9 +378,7 @@ void Info::disp()
 	if( option_menu.is_active() )
 		return;
 	
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	// ######## begin Gilbert 23/12 #######//
 	help.hide_area(INFO_X1, INFO_Y1, INFO_X2, INFO_Y2);
@@ -388,20 +386,9 @@ void Info::disp()
 
 	vga.active_buf->put_bitmapW( INFO_X1, INFO_Y1, info_background_bitmap );
 
-//	char *nationPict = image_gameif.get_ptr("REMSCR");
-//	vga.active_buf->put_bitmap_trans_remap(INFO_X1+5, INFO_Y1-255, nationPict, game.get_color_remap_table(nation_array.player_recno, 0) );
-
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
 
-//	if (spy_execute)
-//	{
-//		vga.active_buf->put_bitmap( INFO_X1+17, INFO_Y1+96, image_gameif.read("EXECUTE") );
-//		font_whbl.center_put( INFO_X1 +11, INFO_Y1 +100, INFO_X1 +219, INFO_Y1 +130, "You have just executed a spy");
-//	}
-		
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 
 	//------- use front buffer -------//
 
@@ -488,15 +475,9 @@ void Info::update()
 
 	vga.use_front();
 
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
-
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
-
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 
 	//-------------------------------------------//
 
@@ -570,10 +551,8 @@ void Info::disp_heading()
 {
 #ifdef USE_FLIP
 	vga_back.put_bitmapW(TOP_MENU_X1, TOP_MENU_Y1, heading_background_bitmap);
-//	if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-//		vga_back.put_bitmapW(REPU_BUTTON_X1, REPU_BUTTON_Y1, heading_background_bitmap2);
-	vga.use_back();
 #endif
+	vga.use_back();
 
 	//---- display info on the top menu area ----//
 
@@ -1005,9 +984,7 @@ void Info::disp_heading()
 		}
 	}
 
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //-------- End of function Info::disp_heading --------//
 

@@ -1046,7 +1046,7 @@ void ZoomMatrix::draw_weather_effects()
 	}
 	if( newBrightness != last_brightness )
 	{
-		vga.adjust_brightness(newBrightness);
+//		vga.adjust_brightness(newBrightness);
 		last_brightness = newBrightness;
 	}
 	

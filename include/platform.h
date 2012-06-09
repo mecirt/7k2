@@ -48,6 +48,27 @@ void ShowMainWindow();
 // temporary
 void *get_main_hwnd();
 
+bool InitGraphics ();
+bool SetDisplayMode (int w, int h);
+void DeinitGraphics ();
+
+// Init the surface. w/h/flag only valid for the back one.
+bool InitSurface (VgaBuf *buf, bool back, DWORD w = 0, DWORD h = 0, int videoMemoryFlag = 0);
+void DeinitSurface (VgaBuf *buf);
+bool AttachSurface (VgaBuf *to, VgaBuf *surface);
+bool DetachSurface (VgaBuf *to, VgaBuf *surface);
+bool LockBuffer (VgaBuf *buf);
+bool UnlockBuffer (VgaBuf *buf);
+void FlipBuffer (VgaBuf *buf);
+bool IsBufferLost (VgaBuf *buf);
+bool RestoreBuffer (VgaBuf *buf);
+void RestoreBufferPointers (VgaBuf *buf);
+int BufferSize (const VgaBuf *buf);
+int BufferWidth (const VgaBuf *buf);
+int BufferHeight (const VgaBuf *buf);
+
 void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2, int y2, int mode);
+
+int WriteBitmapFile (const VgaBuf *buf, const char *name);
 
 #endif

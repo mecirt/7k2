@@ -213,6 +213,7 @@ private:
 	int		init_win();
 	int		init_directx();
 	int 		init_objects();
+	int 		init_display();
 
 	void		main_loop(int);
 	void		detect();

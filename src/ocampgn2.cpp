@@ -2136,11 +2136,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 			if( mouse.in_area( LETTER_REPLY_X1, text_block_array[i].y1, LETTER_REPLY_X2,
 				 text_block_array[i].y2 ) )
 			{
-		//		int textWidth = font_cmpa.text_width(text_block_array[i].text_ptr );
-		//
-		//		vga_back.adjust_brightness( text_block_array[i].x1-3, text_block_array[i].y1-3,
-		//			text_block_array[i].x2+3, text_block_array[i].y2+3, -3 );
-
 				lastReplyChoice = i+1;
 			}
 		}
@@ -2283,8 +2278,6 @@ void Campaign::disp_nation_info()
 	}
 	else
 		vga.disp_image_file("campaign");
-
-//vga_back.adjust_brightness( 0, 0, VGA_WIDTH -1, MAIN_MAP_Y2+10, -6 );
 
 	image_menu.put_back(0, RELATION_Y1, "CAMP");
 

@@ -66,8 +66,8 @@ public:
 
 	//--------- back buffer ----------//
 
-	short* buf_ptr()					{ return cur_buf_ptr; }
-	short* buf_ptr(int x, int y)	{ return (short *)((char *)cur_buf_ptr + cur_pitch*y) + x; }
+	short* buf_ptr() const  { return cur_buf_ptr; }
+	short* buf_ptr(int x, int y) const { return (short *)((char *)cur_buf_ptr + cur_pitch*y) + x; }
 
 	// pitch in pixel
 	int 	buf_pitch()					{ return cur_pitch >> 1; }		// in no. of pixel
@@ -75,9 +75,9 @@ public:
 	// pitch in byte
 	int 	buf_true_pitch()			{ return cur_pitch; }
 
-	int	buf_size();
-	int   buf_width();
-	int   buf_height();
+	int	buf_size() const;
+	int   buf_width() const;
+	int   buf_height() const;
 
 	//---- GUI colors -----//
 
@@ -105,8 +105,6 @@ public:
 
 	BOOL		is_buf_lost();
 	BOOL		restore_buf();
-
-	void		activate_pal(LPVOID ddPalPtr);	// LPDIRECTDRAWPALETTE ddPalPtr
 
 	void		lock_buf();
 	void		unlock_buf();
@@ -159,8 +157,6 @@ public:
 	void 		draw_d3_up_border(int x1,int y1,int x2,int y2);
 	void 		draw_d3_down_border(int x1,int y1,int x2,int y2);
 
-	void 		convert_gray(int x1, int y1, int x2, int y2);
-
 	//-------- buffer saving functions --------//
 
 	short* 	save_area(int,int,int,int,short* =0L);
@@ -173,8 +169,6 @@ public:
 
 	void 		put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTable=0);
 	void 		put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorRemapTable=0);
-	void 		put_large_bitmapW(int x1, int y1, File* filePtr);
-
 
 	//---------- assembly bitmap manipulation functions ----------//
 

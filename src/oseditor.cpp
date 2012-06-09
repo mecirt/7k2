@@ -180,10 +180,8 @@ void ScenarioEditor::disable()
 void ScenarioEditor::disp_menu_bar(int refreshFlag)
 {
 
-#ifdef USE_FLIP
 	char useBack = vga.use_back_buf;
 	vga.use_back();
-#endif
 
 	if( refreshFlag == INFO_REPAINT || last_enable_flag != enable_flag )
 	{
@@ -250,10 +248,8 @@ void ScenarioEditor::disp_menu_bar(int refreshFlag)
 
 	button_menu_on.paint();
 
-#ifdef USE_FLIP
 	if( !useBack )
 		vga.use_front();
-#endif
 }
 // ------ end of function ScenarioEditor::disp_menu_bar -------//
 
@@ -309,10 +305,8 @@ void ScenarioEditor::disp( int refreshFlag )
 		last_edit_sub_menu_mode = edit_sub_menu_mode[edit_mode];
 	}
 
-#ifdef USE_FLIP
 	char useBack = vga.use_back_buf;
 	vga.use_back();
-#endif
 
 	if( edit_mode != SEDIT_MODE_NONE )
 		vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("SCEN-ED") );
@@ -366,10 +360,8 @@ void ScenarioEditor::disp( int refreshFlag )
 		err_here();
 	}
 
-#ifdef USE_FLIP
 	if( !useBack )
 		vga.use_front();
-#endif
 }
 // ------ end of function ScenarioEditor::disp -------//
 

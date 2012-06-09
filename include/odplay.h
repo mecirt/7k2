@@ -104,6 +104,7 @@ public:
 	MultiPlayerDP();
 	~MultiPlayerDP();
 	void pre_init();
+	void init(DPServiceProvider *provider);
 	void init(GUID serviceProviderGuid);
 	void deinit();
 
@@ -122,6 +123,8 @@ public:
 	int	poll_sessions();
 	void	sort_sessions(int sortType);
 	DPSessionDesc *get_session(int i);
+	GUID get_session_id(int i);
+	char *get_session_name(int i);
 	int	create_session(char *sessionName, int maxPlayers);
 	int	join_session(DPSessionDesc* sessionDesc);
 	int	join_session(int currentSessionIndex );

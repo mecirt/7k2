@@ -49,9 +49,7 @@ static Button3D button_cast;
 //
 void UnitGod::disp_info(int refreshFlag)
 {
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
@@ -103,9 +101,7 @@ void UnitGod::disp_info(int refreshFlag)
 	}
 	// ####### end Gilbert 26/2 #######//
 
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //---------- End of function UnitGod::disp_info ----------//
 

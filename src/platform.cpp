@@ -30,10 +30,13 @@
 #include <platform.h>
 #include <all.h>
 #include <osys.h>
+#include <ovga.h>
 #include <ovgalock.h>
 #include <ovgabuf.h>
 #include <resource.h>
-
+#include <ocoltbl.h>
+#include <olog.h>
+#include <omodeid.h>
 
 #include <unistd.h>
 
@@ -209,6 +212,114 @@ void read_bitmap_palette(bitmap_file *bitmap, int idx, int *red, int *green, int
   *blue = bitmap->palette[idx].peBlue;
 }
 
+int WriteBitmapFile (const VgaBuf *buf, const char *fileName)
+{
+
+	 File				bmpFile;
+	 BITMAPINFO*	bmpInfoPtr = NULL;
+	 char*			bitmapPtr = NULL;
+
+	 int				hasPaletteFlag = 0;
+
+	 bmpFile.file_create(fileName, 1, 0);		// 1-handle error, 0-disable variable file size
+
+	 //------------ Write the file header ------------//
+
+	 BITMAPFILEHEADER bmpFileHdr;
+
+	 bmpFileHdr.bfType 		= 0x4D42;			// set the type to "BM"
+	 bmpFileHdr.bfSize 		= buf->buf_size();
+	 bmpFileHdr.bfReserved1 = 0;
+	 bmpFileHdr.bfReserved2 = 0;
+	 bmpFileHdr.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+	 if( hasPaletteFlag )
+		bmpFileHdr.bfOffBits += sizeof(RGBQUAD)*256;
+
+	 bmpFile.file_write(&bmpFileHdr, sizeof(bmpFileHdr));
+
+	 //------------ Write in the info header -----------//
+
+	 BITMAPINFOHEADER bmpInfoHdr;
+
+	 bmpInfoHdr.biSize			 = sizeof(BITMAPINFOHEADER);
+	 bmpInfoHdr.biWidth			 = buf->buf_des.dwWidth;
+	 bmpInfoHdr.biHeight			 = buf->buf_des.dwHeight;
+	 bmpInfoHdr.biPlanes			 = 1; 
+	 bmpInfoHdr.biBitCount		 = 24;
+    bmpInfoHdr.biCompression	 = BI_RGB; 
+	 bmpInfoHdr.biSizeImage	    = bmpInfoHdr.biWidth * bmpInfoHdr.biHeight * bmpInfoHdr.biBitCount / 8;
+	 bmpInfoHdr.biXPelsPerMeter = 0;
+    bmpInfoHdr.biYPelsPerMeter = 0; 
+	 bmpInfoHdr.biClrUsed		 = 0; 
+    bmpInfoHdr.biClrImportant  = 0; 
+
+	 bmpFile.file_write(&bmpInfoHdr, sizeof(bmpInfoHdr));
+
+	 //------------ write the color table -----------//
+
+	 if( hasPaletteFlag )
+	 {
+		 LPDIRECTDRAWPALETTE ddPalettePtr;				// get the direct draw surface's palette
+		 buf->dd_buf->GetPalette(&ddPalettePtr);
+
+		 PALETTEENTRY *palEntries = (PALETTEENTRY*) mem_add( sizeof(PALETTEENTRY)*256 );
+		 ddPalettePtr->GetEntries(0, 0, 256, palEntries);
+
+		 RGBQUAD *colorTable = (RGBQUAD*) mem_add( sizeof(RGBQUAD)*256 );		// allocate a color table with 256 entries 
+			
+		 for( int i=0 ; i<256 ; i++ )
+		 {
+			 colorTable[i].rgbBlue  = palEntries[i].peBlue;
+			 colorTable[i].rgbGreen = palEntries[i].peGreen;
+			 colorTable[i].rgbRed   = palEntries[i].peRed; 
+			 colorTable[i].rgbReserved = 0;
+		 }
+			 
+		 bmpFile.file_write(colorTable, sizeof(RGBQUAD)*256);
+
+		 mem_del(palEntries);
+		 mem_del(colorTable);
+	 }
+
+	 //----------- write the bitmap ----------//
+
+	 if( bmpInfoHdr.biBitCount == 8 )
+	 {
+		 for( int y=buf->buf_height()-1 ; y>=0 ; y-- )					// write in reversed order as DIB's vertical order is reversed
+			 bmpFile.file_write(buf->buf_ptr(0,y), buf->buf_width());
+	 }
+	 else if( bmpInfoHdr.biBitCount == 24 )
+	 {
+		 int lineBufferSize = sizeof(RGBColor) * bmpInfoHdr.biWidth;
+		 RGBColor *lineBuffer = (RGBColor *)mem_add( lineBufferSize );
+		 for( int y = buf->buf_height()-1; y>=0 ; --y )
+		 {
+			 register short *pixelPtr = buf->buf_ptr( 0, y );
+			 register RGBColor *lineBufPtr = lineBuffer;
+			 for( int x = buf->buf_width()-1; x >= 0; --x, ++pixelPtr, ++lineBufPtr)
+			 {
+				 vga.decode_pixel( *pixelPtr, lineBufPtr );
+				 // exchange Red and blue
+				 BYTE r = lineBufPtr->red;
+				 lineBufPtr->red = lineBufPtr->blue;
+				 lineBufPtr->blue = r;
+			 }
+			 bmpFile.file_write(lineBuffer, lineBufferSize );
+		 }
+		 mem_del(lineBuffer);
+	 }
+	 else
+	 {
+		 err_here();
+	 }
+
+	 //------------ close the file -----------//
+
+	 bmpFile.file_close();
+
+	 return 1;
+}
+
 
 // ****** Window and DirectX initialisation ******
 
@@ -345,7 +456,331 @@ void *get_main_hwnd() {
   return (void *) main_hwnd;
 }
 
+const char *dd_err_str( const char *s, HRESULT rc)
+{
+  static char retStr[200];
+  sprintf( retStr, "%s (%x)", s, rc );
+  return retStr;
+}
+
+LPDIRECTDRAW4 dd_obj = NULL;
+
+bool InitGraphics ()
+{
+  if (dd_obj) return true;
+
+  err_when( sizeof(vga.dd_pal) > sizeof(vga.vptr_dd_pal) );
+  err_when( sizeof(vga.pal_entry_buf) > sizeof(vga.dw_pal_entry_buf) );
+
+  //--------- Create direct draw object --------//
+
+  DEBUG_LOG("Attempt DirectDrawCreate");
+  LPDIRECTDRAW dd1Obj;
+  int rc = DirectDrawCreate( NULL, &dd1Obj, NULL );
+  DEBUG_LOG("DirectDrawCreate finish");
+
+  if( rc != DD_OK )
+  {
+#ifdef DEBUG
+    debug_msg("DirectDrawCreate failed err=%d", rc);
+#endif
+    err.run( dd_err_str("DirectDrawCreate failed!", rc) );
+    return FALSE;
+  }
+
+  //-------- Query DirectDraw4 interface --------//
+
+  DEBUG_LOG("Attempt Query DirectDraw4");
+  rc = dd1Obj->QueryInterface(IID_IDirectDraw4, (void **)&dd_obj);
+  DEBUG_LOG("Query DirectDraw2 finish");
+  if( rc != DD_OK )
+  {
+#ifdef DEBUG
+    debug_msg("Query DirectDraw4 failed err=%d", rc);
+#endif
+    err.run( dd_err_str("Query DirectDraw4(DirectX6) failed", rc) );
+    dd1Obj->Release();
+    return false;
+  }
+
+  dd1Obj->Release();
+
+  //-----------------------------------------------------------//
+  // grab exclusive mode if we are going to run as fullscreen
+  // otherwise grab normal mode.
+  //-----------------------------------------------------------//
+
+  DEBUG_LOG("Attempt DirectDraw SetCooperativeLevel");
+  rc = dd_obj->SetCooperativeLevel(main_hwnd,
+      DDSCL_EXCLUSIVE |
+      DDSCL_FULLSCREEN );
+  DEBUG_LOG("DirectDraw SetCooperativeLevel finish");
+
+  if( rc != DD_OK )
+  {
+#ifdef DEBUG
+    debug_msg("SetCooperativeLevel failed err=%d", rc);
+#endif
+    err.run( dd_err_str("SetCooperativeLevel failed", rc) );
+    return false;
+  }
+
+  return true;
+}
+
+bool SetDisplayMode (int w, int h)
+{
+  HRESULT rc;
+
+  //-------------- set Direct Draw mode ---------------//
+
+  DEBUG_LOG("Attempt DirectDraw SetDisplayMode");
+  // IDirectDraw2::SetDisplayMode requires 5 parameters
+  rc = dd_obj->SetDisplayMode( w, h, VGA_BPP, 0, 0);
+  DEBUG_LOG("DirectDraw SetDisplayMode finish");
+
+  if( rc != DD_OK )
+  {
+#ifdef DEBUG
+    debug_msg("SetMode failed err=%d", rc);
+#endif
+    // ######## begin Gilbert 2/6 ########//
+    // err.run( dd_err_str("SetMode failed ", rc) );
+    err.msg( dd_err_str("SetMode failed ", rc) );
+    // ######## end Gilbert 2/6 ########//
+    return FALSE;
+  }
+
+  //----------- get the pixel format flag -----------//
+
+  DDSURFACEDESC2 ddsd;
+  memset(&ddsd, 0, sizeof(ddsd) );
+  ddsd.dwSize = sizeof(ddsd);
+
+  vga.pixel_format_flag = -1;
+
+  if( dd_obj->GetDisplayMode(&ddsd) == DD_OK && ddsd.dwFlags & DDSD_PIXELFORMAT )
+  {
+    if( ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB 
+        && ddsd.ddpfPixelFormat.dwRGBBitCount == (DWORD)VGA_BPP )
+    {
+      if( ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL
+          && ddsd.ddpfPixelFormat.dwGBitMask == 0x001fL << 5
+          && ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL << 10 )
+      {
+        vga.pixel_format_flag = PIXFORM_RGB_555;
+      }
+      else if( ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL
+          && ddsd.ddpfPixelFormat.dwGBitMask == 0x003fL << 5
+          && ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL << 11 )
+      {
+        vga.pixel_format_flag = PIXFORM_RGB_565;
+      }
+      else if( ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL
+          && ddsd.ddpfPixelFormat.dwGBitMask == 0x001fL << 5
+          && ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL << 10 )
+      {
+        vga.pixel_format_flag = PIXFORM_BGR_555;
+      }
+      else if( ddsd.ddpfPixelFormat.dwBBitMask == 0x001fL
+          && ddsd.ddpfPixelFormat.dwGBitMask == 0x003fL << 5
+          && ddsd.ddpfPixelFormat.dwRBitMask == 0x001fL << 11 )
+      {
+        vga.pixel_format_flag = PIXFORM_BGR_565;
+      }
+    }
+  }
+
+  // allow forcing display mode
+
+  if( m.is_file_exist( "PIXMODE.SYS" ) )
+  {
+    File pixModeFile;
+    pixModeFile.file_open( "PIXMODE.SYS" );
+
+    char readBuffer[8];
+    memset( readBuffer, 0, sizeof(readBuffer) );
+    long readLen = 6;
+
+    pixModeFile.file_read( readBuffer, readLen );
+
+    if( strncmp( readBuffer, "RGB555", readLen ) == 0 )
+    {
+      vga.pixel_format_flag = PIXFORM_RGB_555;
+    }
+    else if( strncmp( readBuffer, "RGB565", readLen ) == 0 )
+    {
+      vga.pixel_format_flag = PIXFORM_RGB_565;
+    }
+    else if( strncmp( readBuffer, "BGR555", readLen ) == 0 )
+    {
+      vga.pixel_format_flag = PIXFORM_BGR_555;
+    }
+    else if( strncmp( readBuffer, "BGR565", readLen ) == 0 )
+    {
+      vga.pixel_format_flag = PIXFORM_BGR_565;
+    }
+
+    pixModeFile.file_close();
+  }
+
+  if( vga.pixel_format_flag == -1 )
+  {
+    ShowMessageBox("Cannot determine the pixel format of this display mode.");
+
+    vga.pixel_format_flag = PIXFORM_BGR_565;
+  }
+
+  //----------- display the system cursor -------------//
+  SetCursor(NULL);
+
+  return TRUE;
+}
+
+void DeinitGraphics ()
+{
+  if (!dd_obj) return;
+  dd_obj->Release();
+  dd_obj = NULL;
+}
+
 // ****** End of Window and DirectX initialisation ******
+
+
+// Surfaces
+
+bool InitSurface (VgaBuf *buf, bool back, DWORD w, DWORD h, int videoMemoryFlag)
+{
+  LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) dd_obj;
+
+  DDSURFACEDESC2       ddsd;
+  HRESULT             rc;
+
+  // check size of union structure
+  err_when( sizeof(buf->dd_buf) > sizeof(buf->vptr_dd_buf) );
+  err_when( sizeof(buf->buf_des) > sizeof(buf->c_buf_des) );
+
+  memset( &ddsd, 0, sizeof(ddsd) );
+  ddsd.dwSize = sizeof( ddsd );
+
+  if (back) {
+    ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT |DDSD_WIDTH;
+
+    // create back buffer
+    ddsd.ddsCaps.dwCaps = (videoMemoryFlag & 1) ? 0 : DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+
+    ddsd.dwWidth  = w ? w : VGA_WIDTH;
+    ddsd.dwHeight = h ? h : VGA_HEIGHT;
+
+  } else {
+    ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+  }
+	
+  rc = ddPtr->CreateSurface (&ddsd, &buf->dd_buf, NULL);
+  if( rc != DD_OK )
+  {
+    err.run( dd_err_str("Error creating Direct Draw surface!" ,rc) );
+    return false;
+  }
+
+  return true;
+}
+
+void DeinitSurface (VgaBuf *buf)
+{
+  if (buf->dd_buf)
+    buf->dd_buf->Release();
+  buf->dd_buf = NULL;
+}
+
+bool AttachSurface (VgaBuf *to, VgaBuf *surface)
+{
+  HRESULT rc;
+  if (to->dd_buf && surface->dd_buf)
+  {
+    rc = to->dd_buf->AddAttachedSurface(surface->dd_buf);
+    if( rc != DD_OK ) {
+      err.run( dd_err_str("Cannot attach flipping surface", rc) );
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+bool DetachSurface (VgaBuf *to, VgaBuf *surface)
+{
+  HRESULT rc;
+  if (to->dd_buf && surface->dd_buf)
+  {
+    rc = to->dd_buf->DeleteAttachedSurface(0, surface->dd_buf);
+    if( rc != DD_OK ) {
+      err.run( dd_err_str("Cannot detach surface", rc) );
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+bool LockBuffer (VgaBuf *buf)
+{
+  memset(&buf->buf_des, 0, sizeof(buf->buf_des));
+  buf->buf_des.dwSize = sizeof(buf->buf_des);
+
+  int rc = buf->dd_buf->Lock(NULL, &buf->buf_des, DDLOCK_WAIT | DDLOCK_NOSYSLOCK , NULL);
+
+  RestoreBufferPointers (buf);
+
+  if (rc != DD_OK)
+    err_now( dd_err_str("Locking buffer failed.", rc) );
+  return (rc == DD_OK);
+}
+
+bool UnlockBuffer (VgaBuf *buf)
+{
+  int rc = buf->dd_buf->Unlock(NULL);
+  if (rc != DD_OK)
+    err_now( dd_err_str("Unlocking buffer failed.", rc) );
+  return (rc == DD_OK);
+}
+
+void FlipBuffer (VgaBuf *buf)
+{
+  buf->dd_buf->Flip(NULL, DDFLIP_WAIT );
+}
+
+bool IsBufferLost (VgaBuf *buf)
+{
+  return buf->dd_buf && buf->dd_buf->IsLost() == DDERR_SURFACELOST;
+}
+
+bool RestoreBuffer (VgaBuf *buf)
+{
+  if (buf->dd_buf && buf->dd_buf->Restore() == DD_OK) return true;
+  return false;
+}
+
+void RestoreBufferPointers (VgaBuf *buf)
+{
+  buf->cur_buf_ptr = (short *) buf->buf_des.lpSurface;
+  buf->cur_pitch = buf->buf_des.lPitch;
+}
+
+int BufferSize (const VgaBuf *buf)
+{
+  return buf->buf_des.dwWidth * buf->buf_des.dwHeight * sizeof(short);
+}
+
+int BufferWidth (const VgaBuf *buf)
+{
+  return buf->buf_des.dwWidth;
+}
+
+int BufferHeight (const VgaBuf *buf)
+{
+  return buf->buf_des.dwHeight;
+}
 
 
 void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2, int y2, int mode)

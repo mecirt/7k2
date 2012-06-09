@@ -50,9 +50,7 @@ static short edit_res_x1, edit_res_y1, edit_res_x2, edit_res_y2, edit_res_enable
 //
 void Site::disp_info(int refreshFlag)
 {
-#ifdef USE_FLIP
 	vga.use_back();
-#endif
 
 #define LINE1_Y (INFO_Y1+20)
 #define LINE2_Y (INFO_Y1+40)
@@ -170,9 +168,7 @@ void Site::disp_info(int refreshFlag)
 	}
 	// #### end Gilbert 21/10 #######//
 
-#ifdef USE_FLIP
 	vga.use_front();
-#endif
 }
 //----------- End of function Site::disp_info -----------//
 

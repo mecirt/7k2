@@ -1008,7 +1008,6 @@ void TalkRes::disp_talk()
 	for( int i=0 ; i<talk_choice_count ; i++, y+=TALK_LINE_HEIGHT )
 	{
 		if( i+1 == cur_choice_id )		// this is the one the mouse cursor is currently on
-			// vga_back.adjust_brightness( TALK_X1, y, TALK_X2, y+TALK_LINE_HEIGHT-1, -3 );
 			vga_back.bar_alpha( TALK_X1, y, TALK_X2, y+TALK_LINE_HEIGHT-1, 1, VGA_GRAY+8 );
 
 		if( choice_question )
@@ -1020,7 +1019,6 @@ void TalkRes::disp_talk()
 			str = talk_choice_array[i].str;
 
 		// ###### begin Gilbert 4/1 ########//
-//		font_san.put_paragraph( TALK_X1+3, y+2, TALK_X2-3, y+font_san.height()+1, str );
 		font_bld.put_paragraph( TALK_X1+3, y+2, TALK_X2-3, y+font_bld.height()+1, str );
 		// ###### end Gilbert 4/1 ########//
 	}
