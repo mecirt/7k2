@@ -528,12 +528,11 @@ BOOL Vga::blt_buf(int x1, int y1, int x2, int y2, int putBackCursor)
    //--------------------------------------//
 
 	// ###### end Gilbert 12/9 #######//
-//	vga_front.blt_buf_fast( &vga_back, x1, y1, x2, y2 );
-	// use directx blt function
+	// use blt function
 	vga_front.temp_unlock();
 	vga_back.temp_unlock();
-	RECT rect = { x1, y1, x2+1, y2+1 };
-	vga_front.dd_buf->BltFast( x1, y1, vga_back.dd_buf, &rect, DDBLTFAST_NOCOLORKEY );
+
+  BltFast (&vga_front, &vga_back, x1, y1, x2, y2, 2);
 	vga_back.temp_restore_lock();
 	vga_front.temp_restore_lock();
 	// ###### end Gilbert 12/10 #######//

@@ -203,17 +203,8 @@ int GameFileArray::menu(int actionMode, int *recno)
 
 		mouse.hide_area( scrnX1, scrnY1, scrnX2, scrnY2);
 
-		if( actionMode == -2 )
-		{
-			// save to back buffer
-			// vga_back.blt_buf_fast( &vga_front, scrnX1, scrnY1, scrnX2, scrnY2);
-		}
-		else
-		{
-			// restore from back buffer
-			// vga_front.blt_buf_fast( &vga_back, scrnX1, scrnY1, scrnX2, scrnY2);
+		if( actionMode != -2 )
 			sys.need_redraw_flag = 1;
-		}
 
 		mouse.show_area();
 

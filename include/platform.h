@@ -25,6 +25,7 @@
 #define __PLATFORM_H
 
 #include <win32_compat.h>
+class VgaBuf;
 
 struct bitmap_file;
 
@@ -46,5 +47,7 @@ void ShowMainWindow();
 
 // temporary
 void *get_main_hwnd();
+
+void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2, int y2, int mode);
 
 #endif
