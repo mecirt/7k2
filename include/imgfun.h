@@ -55,8 +55,6 @@ extern "C"
 
 	void IMGcall IMGbltRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		short *colorTable ) __asmsym__("_IMGbltRemap");
-	void IMGcall IMGbltRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltRemapHMirror");
 	void IMGcall IMGbltAreaRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltAreaRemap");
 	void IMGcall IMGbltAreaRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,

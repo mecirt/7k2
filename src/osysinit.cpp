@@ -21,9 +21,6 @@
 //Filename    : OSYSINIT.CPP
 //Description : class Sys - initialization functions
 
-#define NEED_WINDOWS
-
-#include <ddraw.h>
 #include <resource.h>
 #include <osys.h>
 #include <omodeid.h>
@@ -67,10 +64,6 @@
 // -------- define constant -----//
 
 #define USE_TRUE_FRONT_BUFFER 1
-
-//--------- Define static functions ---------//
-
-static long FAR PASCAL static_main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 //----------- Begin of function Sys::Sys -----------//
 
@@ -156,39 +149,8 @@ void Sys::deinit()
    if( vga_front.buf_locked )
       vga_front.unlock_buf();
 
-   //-------------------------------------//
-/*
-   extern char low_video_memory_flag;
-
-   if( low_video_memory_flag )
-   {
-      ShowWindow(sys.main_hwnd, SW_MINIMIZE );
-
-      unsigned curTime = m.get_time();
-      while( m.get_time() < curTime + 4000 );
-   }
-*/
-   //---------------------------------------//
-
-	// ####### begin Gilbert 19/2 ######//
-	if( main_hwnd )
-	{
-	   PostMessage(main_hwnd, WM_CLOSE, 0, 0);
-	}
-
    init_flag = 0;
-
-   MSG msg;
-
-	if( main_hwnd )		// different from while( main_hwnd && GetMessage(...)) as wnd_proc may clear main_hwnd
-	{
-		while( GetMessage(&msg, NULL, 0, 0) )
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-	// ####### end Gilbert 19/2 ######//
+   CloseMainWindow();
 }
 //--------- End of function Sys::deinit ---------//
 
@@ -197,51 +159,7 @@ void Sys::deinit()
 //
 int Sys::init_win()
 {
-   //--------- register window class --------//
-
-   WNDCLASS    wc;
-   BOOL        rc;
-
-   wc.style          = CS_DBLCLKS;
-   wc.lpfnWndProc    = static_main_win_proc;
-   wc.cbClsExtra     = 0;
-   wc.cbWndExtra     = 0;
-   wc.hInstance      = (HINSTANCE__ *) app_hinstance;
-   wc.hIcon          = LoadIcon( (HINSTANCE__ *) app_hinstance, MAKEINTATOM(IDI_ICON1));
-   wc.hbrBackground  = (HBRUSH__ *) GetStockObject(BLACK_BRUSH);
-   wc.hCursor        = LoadCursor( NULL, IDC_ARROW );
-   wc.lpszMenuName   = NULL;
-   wc.lpszClassName  = WIN_CLASS_NAME;
-
-   rc = RegisterClass( &wc );
-
-   if( !rc )
-      return FALSE;
-
-   //--------- create window -----------//
-
-   main_hwnd = CreateWindowEx(
-       WS_EX_APPWINDOW | WS_EX_TOPMOST,
-       WIN_CLASS_NAME,
-       WIN_TITLE,
-       WS_VISIBLE |    // so we dont have to call ShowWindow
-       WS_POPUP,
-       0,
-       0,
-       GetSystemMetrics(SM_CXSCREEN),
-       GetSystemMetrics(SM_CYSCREEN),
-       NULL,
-       NULL,
-       (HINSTANCE__ *) app_hinstance,
-       NULL );
-
-   if( !main_hwnd )
-      return FALSE;
-
-   UpdateWindow( main_hwnd );
-   SetFocus( main_hwnd );
-
-   return TRUE;
+  return CreateMainWindow();
 }
 //-------- End of function Sys::init_win --------//
 
@@ -382,8 +300,8 @@ int Sys::init_objects()
    mouse_cursor.init();
    mouse_cursor.set_frame_border(ZOOM_X1,ZOOM_Y1,ZOOM_X2,ZOOM_Y2);
 
-   mouse.init( (HINSTANCE__ *)app_hinstance, main_hwnd, NULL);
-	SetFocus( main_hwnd );
+   mouse.init( app_hinstance, NULL);
+   FocusMainWindow();
 
    //------- init resource class ----------//
 
@@ -623,24 +541,6 @@ void Sys::set_game_dir()
 
    get_cdrom_drive();
 
-	if( cdrom_drive )
-	{
-		char driveStr[] = "D:\\";
-		char checkFileName[] = "D:\\DATA1.CAB";
-		driveStr[0] = checkFileName[0] = cdrom_drive;
-
-		if( GetDriveType(driveStr) != DRIVE_CDROM )
-		{
-			// check cdrom_drive again
-			cdrom_drive = '\0';
-		}
-		else if( !m.is_file_exist( checkFileName) )
-		{
-			// check cdrom_drive again
-			cdrom_drive = '\0';
-		}
-	}
-
 	set_one_dir( "Image/Halfame1.jpg"       , "Image/" , dir_image );
 	set_one_dir( "movie/intro.mpg"          , "movie/" , dir_movie );
 	set_one_dir( "Campaign/EAST.TXR"	     , "Campaign/", dir_campaign );
@@ -697,30 +597,7 @@ int Sys::set_one_dir( const char* checkFileName, const char* defaultDir, char* t
 //
 void Sys::get_cdrom_drive()
 {
-   unsigned char  i;
-   char  driveStr[4];
-   static char checkFileName[30] = "D:\\7K2.EXE";        // check this file to identify the disc
-
-   cdrom_drive = 0;
-
-   driveStr[1] = ':';
-   driveStr[2] = '/';
-   driveStr[3] = 0;
-
-	for(i='C'; i<='Z'; i++)
-   {
-      checkFileName[0] = i;
-      driveStr[0] = i;
-
-      if(GetDriveType(driveStr) == DRIVE_CDROM)
-      {
-         if( m.is_file_exist(checkFileName) )
-         {
-            cdrom_drive = i;
-            break;
-         }
-      }
-   }
+  cdrom_drive = 0;  // no CD
 }
 //--------- End of function Sys::get_cdrom_drive ---------------//
 
@@ -731,69 +608,11 @@ void Sys::pause()
    if( paused_flag )
       return;
 
-   InvalidateRect(main_hwnd, NULL, TRUE);
+   InvalidateMainWindow();
 
    paused_flag = TRUE;
 }
 //--------- End of function Sys::pause ---------//
 
 
-//-------- Begin of function Sys::main_win_proc --------//
-//
-long Sys::main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-   switch( message )
-   {
-      case WM_CREATE:
-         sys.main_hwnd = hWnd;
-         break;
-
-      case WM_ACTIVATEAPP:
-			active_flag = (BOOL)wParam && !IsIconic(hWnd);
-
-         //--------------------------------------------------------------//
-         // while we were not-active something bad happened that caused us
-         // to pause, like a surface restore failing or we got a palette
-         // changed, now that we are active try to fix things
-         //--------------------------------------------------------------//
-
-         if( active_flag )
-         {
-            unpause();
-            need_redraw_flag = 1;      // for Sys::disp_frame to redraw the screen
-         }
-         else
-            pause();
-         break;
-
-			// ##### begin Gilbert 31/10 #####//
-		case WM_PAINT:
-			need_redraw_flag = 1;
-			break;
-			// ##### end Gilbert 31/10 #####//
-
-       case WM_DESTROY:
-          main_hwnd = NULL;
-			 deinit_directx();
-			 PostQuitMessage( 0 );
-			 break;
-
-		 default:
-			 break;
-	}
-
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
-//--------- End of function Sys::main_win_proc ---------//
-
-
-//--------- Begin of static function static_main_win_proc --------//
-//
-// Callback for all Windows messages
-//
-static long FAR PASCAL static_main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-   return sys.main_win_proc(hWnd, message, wParam, lParam);
-}
-//--------- End of static function static_main_win_proc --------//
 

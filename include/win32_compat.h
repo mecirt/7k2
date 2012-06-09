@@ -116,5 +116,4 @@ typedef struct GUID {
 
 #endif
 
-
 #endif // _WIN32_COMPAT_H

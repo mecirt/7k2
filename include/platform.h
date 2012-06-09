@@ -24,6 +24,8 @@
 #ifndef __PLATFORM_H
 #define __PLATFORM_H
 
+#include <win32_compat.h>
+
 struct bitmap_file;
 
 void ShowMessageBox (const char *text);
@@ -35,5 +37,14 @@ void WaitNextEvent();
 bitmap_file *load_bitmap_file(const char *filename);
 int unload_bitmap_file(bitmap_file *bitmap);
 void read_bitmap_palette(bitmap_file *bitmap, int idx, int *red, int *green, int *blue);
+
+bool CreateMainWindow();
+void CloseMainWindow();
+void FocusMainWindow();
+void InvalidateMainWindow();
+void ShowMainWindow();
+
+// temporary
+void *get_main_hwnd();
 
 #endif

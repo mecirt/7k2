@@ -3063,9 +3063,6 @@ void ZoomMatrix::draw_objects_now(DynArray* unitArray, int displayLayer, char fl
 					put_bitmap_offset( x1, y1, world.interpolate_z(x1, y1), (char *)flame[f].bitmap,
 						Flame::offset_x(f), Flame::offset_y(f),
 						flame[f].color_remap_table, 0 , 0);
-				//	put_bitmap_offset( x1, y1, world.interpolate_z(x1, y1), (char *)flame[f].bitmap,
-				//		Flame::offset_x(f), Flame::offset_y(f),
-				//		NULL, 0 , 0);
 				}
 				break;
 
@@ -3875,7 +3872,6 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 				if( !colorRemapTable )
 					vga_back.put_bitmap_trans_hmirror(x1, y1, bitmapPtr);
 				else
-					// vga_back.put_bitmap_trans_remap_hmirror(x1, y1, bitmapPtr, colorRemapTable);
 					vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			break;

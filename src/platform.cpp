@@ -28,8 +28,13 @@
 #include <osys.h>
 #include <ovgalock.h>
 #include <ovgabuf.h>
+#include <resource.h>
+
+#include <windowsx.h>
 
 #include <unistd.h>
+
+HWND main_hwnd = NULL;
 
 void ShowMessageBox (const char *text) {
   OutputDebugString(text);
@@ -38,13 +43,13 @@ void ShowMessageBox (const char *text) {
     VgaFrontLock vgaLock;
 
     ShowMouseCursor(true);
-    MessageBox(sys.main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
+    MessageBox(main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
     ShowMouseCursor(false);
   }
   else
   {
     ShowMouseCursor(true);
-    MessageBox(sys.main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
+    MessageBox(main_hwnd, text, WIN_TITLE, MB_OK | MB_ICONERROR);
     ShowMouseCursor(false);
   }
 }
@@ -180,21 +185,15 @@ return bitmap;
 
 int unload_bitmap_file(bitmap_file *bitmap)
 {
-// this function releases all memory associated with "bitmap"
-if (bitmap->buffer)
-   {
-   // release memory
-   delete [] bitmap->buffer;
-
-   // reset pointer
-   bitmap->buffer = NULL;
-
-   } // end if
-
+  // this function releases all memory associated with "bitmap"
+  if (bitmap->buffer)
+  {
+    delete [] bitmap->buffer;
+    bitmap->buffer = NULL;
+  }
   delete bitmap;
 
-// return success
-return(1);
+  return 1;
 
 } // end Unload_Bitmap_File
 
@@ -206,5 +205,145 @@ void read_bitmap_palette(bitmap_file *bitmap, int idx, int *red, int *green, int
   *green = bitmap->palette[idx].peGreen;
   *blue = bitmap->palette[idx].peBlue;
 }
+
+
+// ****** Window and DirectX initialisation ******
+
+static long FAR PASCAL static_main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+   switch( message )
+   {
+      case WM_CREATE:
+         main_hwnd = hWnd;
+         break;
+
+      case WM_ACTIVATEAPP:
+			sys.active_flag = (BOOL)wParam && !IsIconic(hWnd);
+
+         //--------------------------------------------------------------//
+         // while we were not-active something bad happened that caused us
+         // to pause, like a surface restore failing or we got a palette
+         // changed, now that we are active try to fix things
+         //--------------------------------------------------------------//
+
+         if( sys.active_flag )
+         {
+            sys.unpause();
+            sys.need_redraw_flag = 1;      // for Sys::disp_frame to redraw the screen
+         }
+         else
+            sys.pause();
+         break;
+
+			// ##### begin Gilbert 31/10 #####//
+		case WM_PAINT:
+			sys.need_redraw_flag = 1;
+			break;
+			// ##### end Gilbert 31/10 #####//
+
+       case WM_DESTROY:
+          main_hwnd = NULL;
+			 sys.deinit_directx();
+			 PostQuitMessage( 0 );
+			 break;
+
+		 default:
+			 break;
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+bool CreateMainWindow()
+{
+   //--------- register window class --------//
+
+   WNDCLASS    wc;
+   BOOL        rc;
+
+   wc.style          = CS_DBLCLKS;
+   wc.lpfnWndProc    = static_main_win_proc;
+   wc.cbClsExtra     = 0;
+   wc.cbWndExtra     = 0;
+   wc.hInstance      = (HINSTANCE__ *) sys.app_hinstance;
+   wc.hIcon          = LoadIcon( (HINSTANCE__ *) sys.app_hinstance, MAKEINTATOM(IDI_ICON1));
+   wc.hbrBackground  = (HBRUSH__ *) GetStockObject(BLACK_BRUSH);
+   wc.hCursor        = LoadCursor( NULL, IDC_ARROW );
+   wc.lpszMenuName   = NULL;
+   wc.lpszClassName  = WIN_CLASS_NAME;
+
+   rc = RegisterClass( &wc );
+
+   if( !rc )
+      return false;
+
+   //--------- create window -----------//
+
+   main_hwnd = CreateWindowEx(
+       WS_EX_APPWINDOW | WS_EX_TOPMOST,
+       WIN_CLASS_NAME,
+       WIN_TITLE,
+       WS_VISIBLE |    // so we dont have to call ShowWindow
+       WS_POPUP,
+       0,
+       0,
+       GetSystemMetrics(SM_CXSCREEN),
+       GetSystemMetrics(SM_CYSCREEN),
+       NULL,
+       NULL,
+       (HINSTANCE__ *) sys.app_hinstance,
+       NULL );
+
+   if( !main_hwnd )
+      return false;
+
+   UpdateWindow( main_hwnd );
+   SetFocus( main_hwnd );
+
+   // Convert it to a plain window
+   DWORD   dwStyle;
+   dwStyle = GetWindowStyle(main_hwnd);
+   dwStyle |= WS_POPUP;
+   dwStyle &= ~(WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX);
+   SetWindowLong(main_hwnd, GWL_STYLE, dwStyle);
+
+
+   return true;
+}
+
+void CloseMainWindow()
+{
+  if( main_hwnd )
+  {
+    PostMessage(main_hwnd, WM_CLOSE, 0, 0);
+    while (ProcessNextEvent() == 1) {};
+  }
+}
+
+void FocusMainWindow()
+{
+  if (main_hwnd)
+    SetFocus(main_hwnd);
+}
+
+void ShowMainWindow()
+{
+  if (main_hwnd)
+    ShowWindow (main_hwnd, SW_RESTORE);
+}
+
+void InvalidateMainWindow()
+{
+  if (main_hwnd)
+    InvalidateRect(main_hwnd, NULL, true);
+}
+
+void *get_main_hwnd() {
+  return (void *) main_hwnd;
+}
+
+// ****** End of Window and DirectX initialisation ******
+
+
 
 

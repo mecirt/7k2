@@ -89,7 +89,6 @@ class Sys
 {
 public:
 	HANDLE	app_hinstance;			// handle of the application running
-	HWND		main_hwnd;
 
 	char		game_version;			// VERSION_???
 
@@ -190,7 +189,6 @@ public:
 	void 		blt_virtual_buf_area(int x1, int y1, int x2, int y2);
 	void		capture_screen();
 
-	long		main_win_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void		pause();
 	void		unpause();
 	void		sleep(int time);

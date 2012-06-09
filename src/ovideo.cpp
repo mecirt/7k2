@@ -372,10 +372,10 @@ void Video::play_until_end( char *fileName, HINSTANCE hInstance, DWORD t)
 	hwnd = NULL;
 
 	// after video end, go back to the game
-	if( sys.init_flag && sys.main_hwnd )
+	if( sys.init_flag )
 	{
-		ShowWindow( sys.main_hwnd, SW_RESTORE );
-	   SetFocus( sys.main_hwnd );
+          ShowMainWindow();
+	  FocusMainWindow();
 	}
 }
 
@@ -582,12 +582,6 @@ void play_video(HINSTANCE hInstance, int videoId)
 		if( video.init_success )
 		{
 			video.play_until_end( movieFileStr, hInstance, 60 );
-		}
-		else
-		{
-			// display a message box (note:sys.main_hwnd is not valid)
-			// MessageBox( NULL, "Cannot initialize ActiveMovie",
-			//   "Seven Kingdoms", MB_OK | MB_ICONWARNING | MB_DEFBUTTON1 | MB_TASKMODAL );
 		}
 
 		video.deinit();

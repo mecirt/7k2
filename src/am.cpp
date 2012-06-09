@@ -413,9 +413,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	static char lobbyLaunchCmdLine[] = "-!lobby!";
 #endif
 
-//	if( !sys.init(hInstance) )
-//		return FALSE;
-
 	//----------- play movie ---------------//
 
 	sys.set_game_dir();

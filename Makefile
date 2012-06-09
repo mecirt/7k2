@@ -33,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 jpeg
+7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 jpeg SDL SDL_mixer SDL_image
 
 
 
@@ -502,7 +502,6 @@ LIBRARIES             =
 			src/asm/ib_brm.asm \
 			src/asm/ib_hrdm.asm \
 			src/asm/i_bright.asm \
-			src/asm/ib_rm.asm \
 			src/asm/ib_t.asm \
 			src/asm/ib_tk.asm \
 			src/asm/ib_trd.asm \
@@ -517,7 +516,6 @@ LIBRARIES             =
 			src/asm/i_effect.asm \
 			src/asm/ij_tr.asm \
 			src/asm/i_line.asm \
-			src/asm/ip_td.asm \
 			src/asm/i_read.asm \
 			src/asm/ib_ahrd.asm \
 			src/asm/ib_ahrdm.asm \

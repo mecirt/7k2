@@ -208,9 +208,6 @@ public:
 	void		put_bitmap_trans_remap( int x, int y, char *bitmapBuf, short *colorRemapTable )
 				{ IMGbltTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
 
-	void		put_bitmap_trans_remap_hmirror( int x, int y, char *bitmapBuf, short *colorRemapTable )
-				{ IMGbltTransRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
 	void		put_bitmap_area_trans_remap( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable )
 				{ IMGbltAreaTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
 

@@ -82,8 +82,6 @@
 #include <signal.h>
 #include <float.h>
 
-//#include <ddraw.h>          // include DirectDraw stuff
-
 // defines for screen parameters
 #define SCREEN_WIDTH     800     // the width of the viewing surface
 #define SCREEN_HEIGHT    525   // the height of the viewing surface
@@ -5127,7 +5125,6 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
 							if( (n = state_array[map[xr][yr]]->campaign_nation_recno) )
 							{
 								short bufPtr = VgaBuf::translate_color(get_nation(n)->nation_color);
-							//	*dest_column_ptr = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
 								state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
 								short temp = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
 								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity, vga.pixel_format_flag);
@@ -5135,7 +5132,6 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
 							else			
 							{
 								short bufPtr = VgaBuf::translate_color(game.color_remap_array[0].main_color);
-							//	*dest_column_ptr = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
 								state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
 								short temp = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
 								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity, vga.pixel_format_flag);

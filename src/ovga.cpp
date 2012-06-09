@@ -26,7 +26,6 @@
 #define NEED_WINDOWS
 
 #include <ddraw.h>
-#include <windowsx.h>
 // include ddraw before ovga.h such that dd_buf is translated
 #include <all.h>
 #include <imgfun.h>
@@ -52,7 +51,6 @@ char    Vga::use_back_buf = 0;
 char    Vga::opaque_flag  = 0;
 VgaBuf* Vga::active_buf   = &vga_front;      // default: front buffer
 
-char    low_video_memory_flag = 0;
 extern "C"
 {
 	short transparent_code_w;
@@ -141,8 +139,6 @@ BOOL Vga::init()
 				ShowMessageBox(warnStr);
 			}
 
-			low_video_memory_flag = 1;
-
 			ShowMouseCursor(false);
 		}
 	}
@@ -196,22 +192,12 @@ BOOL Vga::init_dd()
    dd1Obj->Release();
 
    //-----------------------------------------------------------//
-   // Convert it to a plain window
-   //-----------------------------------------------------------//
-
-   DWORD   dwStyle;
-   dwStyle = GetWindowStyle(sys.main_hwnd);
-   dwStyle |= WS_POPUP;
-   dwStyle &= ~(WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX);
-   SetWindowLong(sys.main_hwnd, GWL_STYLE, dwStyle);
-
-   //-----------------------------------------------------------//
    // grab exclusive mode if we are going to run as fullscreen
    // otherwise grab normal mode.
    //-----------------------------------------------------------//
 
    DEBUG_LOG("Attempt DirectDraw SetCooperativeLevel");
-   rc = dd_obj->SetCooperativeLevel( sys.main_hwnd,
+   rc = dd_obj->SetCooperativeLevel( (HWND)get_main_hwnd(),
                         DDSCL_EXCLUSIVE |
                         DDSCL_FULLSCREEN );
    DEBUG_LOG("DirectDraw SetCooperativeLevel finish");

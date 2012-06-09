@@ -2659,27 +2659,11 @@ void Magic::draw_magic_two(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int d
 	}
 	if ((count >0) && (count <4))
 	{
-//		draw_light_beam(&vga_back, x1, y1, x1, y1-count*15,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1+count*15, y1,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1, y1+count*15,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1-count*15, y1,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
 		draw_circle(vgabuf, x1, y1, (10 *count), 1, 1, 255, 255, 255, mode, 0);
 		draw_circle(vgabuf, x1, y1 +5 -(10 *count), (12 *count), 1, 1, 255, 255, 255, mode, 1);
 	}
 	if ((count >3) && (count <10))
 	{
-//		draw_light_beam(&vga_back, x1, y1, x1, y1-45,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1+45, y1,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1, y1+45,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-//		draw_light_beam(&vga_back, x1, y1, x1-45, y1,
-//						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
 		draw_circle(vgabuf, x1, y1, 50, 1, 1, 255, 255, 255, mode, 0);
 		draw_circle(vgabuf, x1, y1 -35, 50, 1, 1, 255, 255, 255, mode, 1);
 	}

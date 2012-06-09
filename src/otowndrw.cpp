@@ -286,9 +286,6 @@ void Town::draw_flag(int curX, int curY)
 
 	short* colorRemapTable = game.get_color_remap_table(nation_recno, 0);
 
-//	int drawX = absBaseX - world.view_top_x + ZOOM_X1 - 9;
-//	int drawY = absBaseY - world.view_top_y + ZOOM_Y1 - 97;
-//	world.zoom_matrix->put_bitmap_remap_clip(drawX, drawY, image_spict.get_ptr(flagName), colorRemapTable, 1);	// 1-the bitmap is compressed
 	char *flagBitmap = image_spict.get_ptr(flagName);
 	world.zoom_matrix->put_bitmap_offset(curX, curY, altitude, flagBitmap, -9, -97,
 		colorRemapTable, 0, 1);

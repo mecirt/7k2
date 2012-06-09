@@ -229,7 +229,7 @@ int Audio::init_wav()
 
 	if( rc==DS_OK )		// Create succeeded
 	{
-		lp_direct_sound->SetCooperativeLevel(sys.main_hwnd, DSSCL_NORMAL);
+		lp_direct_sound->SetCooperativeLevel((HWND)get_main_hwnd(), DSSCL_NORMAL);
 		wav_init_flag=1;
 	}
 

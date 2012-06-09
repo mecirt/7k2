@@ -30,7 +30,6 @@
 // these three are here because we can't define INITGUID in more files
 #include <dplay.h>
 #include <dplobby.h>
-#include <ddraw.h>
 #include <strmif.h>
 #include <uuids.h>
 #include <control.h>
@@ -106,8 +105,9 @@ Mouse::~Mouse()
 
 //------------ Start of Mouse::init ------------//
 //
-void Mouse::init(HINSTANCE hinst, HWND hwnd, LPDIRECTINPUT createdDirectInput)
+void Mouse::init(void *i, LPDIRECTINPUT createdDirectInput)
 {
+  HINSTANCE hinst = (HINSTANCE) i;
 	//-------- set starting position ---------//
 
 	POINT pt;
@@ -117,21 +117,6 @@ void Mouse::init(HINSTANCE hinst, HWND hwnd, LPDIRECTINPUT createdDirectInput)
 	cur_x = pt.x;
 	cur_y = pt.y;
 
-/*
-	//------ install keyboard hook ---------//
-
-	key_hook_handle = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) key_hook_proc, sys.app_hinstance, NULL);
-
-	if( !key_hook_handle )
-		err.run( "Failed installing keyboard hook." );
-*/
-	//-------- initialize DirectInput Mouse device--------//
-/*
-	direct_mouse_handle = DMouseOpen();
-
-	if( !direct_mouse_handle )
-		err.run( "Failed installing direct mouse." );
-*/
 	HRESULT hr;
 	if( createdDirectInput )
 	{
@@ -154,7 +139,7 @@ void Mouse::init(HINSTANCE hinst, HWND hwnd, LPDIRECTINPUT createdDirectInput)
 		err.run( "Failed creating mouse interface from DirectInput");
 
 	// ------- set cooperative level --------//
-	hr = di_mouse_device->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
+	hr = di_mouse_device->SetCooperativeLevel((HWND)get_main_hwnd(), DISCL_FOREGROUND | DISCL_EXCLUSIVE);
 
 	// ------- set data format ---------//
 	if(!hr)
@@ -199,7 +184,7 @@ void Mouse::init(HINSTANCE hinst, HWND hwnd, LPDIRECTINPUT createdDirectInput)
 		err.run( "Failed creating keyboard interface from DirectInput");
 
 	// ------- set cooperative level --------//
-	hr = di_keyb_device->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	hr = di_keyb_device->SetCooperativeLevel((HWND)get_main_hwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 
 	// ------- set data format ---------//
 	if(!hr)

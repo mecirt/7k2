@@ -355,16 +355,10 @@ void Unit::disp_main_menu(int refreshFlag)
 					char* bitmapPtr = image_icon.get_ptr("U_SPY");
 					vga.active_buf->put_bitmap_trans( INFO_X1 +offsetX[i] -((Bitmap *)bitmapPtr)->get_width()/2,
 						INFO_Y1 +offsetY[i] -((Bitmap *)bitmapPtr)->get_height()/2 -8, bitmapPtr );
-
-				//	world.zoom_matrix->put_bitmap_offset( cur_x, cur_y, get_z(), iconPtr,
-				//		-maxHitBarWidth/2 - ((Bitmap *)iconPtr)->get_width(), 
-				//		spriteInfo->max_height + (spriteInfo->loc_width + spriteInfo->loc_height) * 6 + yOffset,
-				//		NULL, 0, 0);
 				}
 			}
 		}
 		vga.active_buf->put_bitmap_trans( INFO_X1+ 37, INFO_Y1 +148, image_gameif.read("MASK") );
-	//	vga.active_buf->put_bitmap_half_decompress( INFO_X1, INFO_Y1, image_gameif.read("WAGBASE") );
 	} 
 	else
 		vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("UNITBASE") );
