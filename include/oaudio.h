@@ -53,10 +53,8 @@ public:
 	char  init_flag;
 
 	char  wav_init_flag;   // whether the wave driver has been installed
-	char	cd_init_flag;
 
 	char  wav_flag;		  // flag determing whether WAV sound effects should be playing
-	char  cd_flag;			  // flag determing whether Audio CD track should be playing
 
 	char* wav_buf;
 
@@ -74,10 +72,10 @@ public:
 	void  yield();		// called by sys every some time
 
 	// functions on short wave
-	int  	play_wav(const char*, DsVolume);
 	int  	play_wav(short resIdx, DsVolume);
 	int	play_resided_wav(const char *, DsVolume);
 	int	get_free_wav_ch();
+	int	get_free_wav_channel();
 	int	stop_wav(int);
 	int	is_wav_playing(int);
 
@@ -95,27 +93,20 @@ public:
 	DsVolume get_loop_wav_volume(int ch);
 	int	is_loop_wav_fading(int ch);
 
-	int   play_cd(int, int retVolume);
 
 	void 	stop_wav();		// and stop also long wav
-	void	stop_cd();
 	void	stop_long_wav();
 
 	int  	is_wav_playing();
-	int	is_cd_playing();
 
 	void 	toggle_wav(int);
-	void 	toggle_cd(int);
 
 	void 	set_wav_volume(int);			// 0 to 100
-	void 	set_cd_volume(int);
 
 private:
 	int  	init_wav();
-	int	init_cd();
 
 	void	deinit_wav();
-	void	deinit_cd();
 
 	LPDIRECTSOUND 		  lp_direct_sound;		// DirectSound object
 	LPDIRECTSOUNDBUFFER lp_wav_ch_dsb[MAX_WAV_CHANNEL];

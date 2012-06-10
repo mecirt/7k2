@@ -98,17 +98,10 @@ int Music::stop()
 	{
 		if(music_channel)
 		{
-			if( play_type & MUSIC_PLAY_CD )
-			{
-				audio.stop_cd();
-			}
+			if( play_type & MUSIC_PLAY_LOOPED )
+				audio.stop_loop_wav(music_channel);
 			else
-			{
-				if( play_type & MUSIC_PLAY_LOOPED )
-					audio.stop_loop_wav(music_channel);
-				else
-					audio.stop_long_wav(music_channel);
-			}
+				audio.stop_long_wav(music_channel);
 			music_channel = 0;
 			song_id = 0;
 		}
@@ -131,24 +124,6 @@ int Music::play(int songId, int playType)
 		return 0;
 
 	stop();
-	if( playType & MUSIC_CD_THEN_WAV )
-	{
-		return play(songId, playType & ~MUSIC_CD_THEN_WAV | MUSIC_PLAY_CD) 
-			|| play(songId, playType & ~MUSIC_CD_THEN_WAV & ~MUSIC_PLAY_CD);
-	}
-	else if( playType & MUSIC_PLAY_CD )
-	{
-		if( audio.cd_init_flag && audio.play_cd(songId +1, config.cd_music_volume) ) // skip the first data track
-		{
-			play_type = playType;
-			song_id = songId;
-			music_channel = 1;
-			return 1;
-		}
-		return 0;
-	}
-	else 
-	{
 		if( audio.wav_init_flag )
 		{
 			String waveFileStr(DIR_MUSIC);
@@ -170,7 +145,6 @@ int Music::play(int songId, int playType)
 			return music_channel != 0;
 		}
 		return 0;
-	}
 }
 // -------- end of function Music::play ---------//
 
@@ -185,20 +159,13 @@ int Music::is_playing(int songId)
 	if( !music_channel )
 		return 0;
 
-	if( play_type & MUSIC_PLAY_CD )
+	if( play_type & MUSIC_PLAY_LOOPED )
 	{
-		return audio.is_cd_playing() && (!songId || songId == song_id);
+		return (!songId || songId == song_id);		// loop wav always playing
 	}
 	else
 	{
-		if( play_type & MUSIC_PLAY_LOOPED )
-		{
-			return (!songId || songId == song_id);		// loop wav always playing
-		}
-		else
-		{
-			return audio.is_long_wav_playing(music_channel) && (!songId || songId == song_id);
-		}
+		return audio.is_long_wav_playing(music_channel) && (!songId || songId == song_id);
 	}
 
 	return 0;
@@ -239,15 +206,8 @@ void Music::change_volume(int vol)
 
 	if( is_playing() )
 	{
-		if( play_type & MUSIC_PLAY_CD )
-		{
-			audio.set_cd_volume(vol);
-		}
-		else
-		{
-                        AbsVolume absv(vol,0);
-                        audio.volume_long_wav(music_channel, DsVolume(absv));
-		}
+                AbsVolume absv(vol,0);
+                audio.volume_long_wav(music_channel, DsVolume(absv));
 	}
 }
 //-------- end of function Music::change_volume --------//

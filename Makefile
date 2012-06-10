@@ -33,7 +33,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = ole32 winmm ddraw dsound dinput gdi32 dxguid jpeg SDL SDL_mixer SDL_image
+7k2_LIBRARIES = ole32 ddraw dsound dinput gdi32 dxguid jpeg SDL SDL_mixer SDL_image
 
 
 

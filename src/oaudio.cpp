@@ -56,12 +56,6 @@
 #endif
 
 
-//---------- Define static variables ---------//
-
-static MCI_PLAY_PARMS mci_play;
-static MCI_OPEN_PARMS mci_open;
-static MCI_SET_PARMS  mci_set;
-
 //--------- Begin of function wavefile_offset -------//
 //
 // find the "data" tag in a wave file
@@ -123,10 +117,8 @@ int Audio::init()
 
 	run_yield = 0;
 	wav_init_flag = 0;
-	cd_init_flag  = 0;
 
 	wav_flag = 1;
-	cd_flag  = 1;
 
 	wav_buf = NULL;
 
@@ -165,11 +157,10 @@ int Audio::init()
 		wav_buf 		 = mem_add(DEFAULT_WAV_BUF_SIZE);
 		wav_buf_size = DEFAULT_WAV_BUF_SIZE;
 	}
-	init_cd();
 
 	//----------------------------------//
 
-	init_flag = wav_init_flag || cd_init_flag;
+	init_flag = wav_init_flag;
 
 	return 1;
 }
@@ -190,7 +181,6 @@ void Audio::deinit()
 		//------- deinit devices -------//
 
 		deinit_wav();
-		deinit_cd();
 	}
 }
 //--------- End of function Audio::deinit ----------//
@@ -224,55 +214,6 @@ int Audio::init_wav()
 }
 //--------- End of function Audio::init_wav ----------//
 
-
-//--------- Begin of function Audio::init_cd ----------//
-//
-// Initialize the audio CD player
-//
-// return : <int> 1 - initialized successfully
-//                0 - init fail
-//
-int Audio::init_cd()
-{
-	mci_open.lpstrDeviceType = (LPCSTR) MCI_DEVTYPE_CD_AUDIO;
-
-	if( mciSendCommand( NULL, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID,
-							  (DWORD) (LPVOID) &mci_open) == 0 ||
-		mciSendCommand( NULL, MCI_OPEN, MCI_OPEN_TYPE |
-								  MCI_OPEN_TYPE_ID | MCI_OPEN_SHAREABLE,
-								  (DWORD) (LPVOID) &mci_open)== 0 )
-	{
-		mci_set.dwTimeFormat = MCI_FORMAT_TMSF;
-
-		mciSendCommand( mci_open.wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT,
-			(DWORD) (LPVOID) &mci_set);
-
-		cd_init_flag = 1;
-		return 1;
-	}
-
-	cd_init_flag = 0;
-	return 0;
-}
-//--------- End of function Audio::init_cd ----------//
-
-
-//--------- Begin of function Audio::deinit_cd ----------//
-
-void Audio::deinit_cd()
-{
-	if( cd_init_flag )
-	{
-		stop_cd();
-
-		mciSendString ("close cdaudio", NULL, 0, NULL);
-
-		cd_init_flag = 0;
-	}
-}
-//--------- End of function Audio::deinit_cd ----------//
-
-
 //--------- Begin of function Audio::deinit_wav ----------//
 
 void Audio::deinit_wav()
@@ -292,167 +233,6 @@ void Audio::deinit_wav()
 	}
 }
 //--------- End of function Audio::deinit_wav ----------//
-
-
-//------- Begin of function Audio::play_wav -------//
-//
-// Play digitized wav from the wav resource file
-//
-// <char*>        wavName = name of the wav in the resource file
-// long vol = volume (0 to 100)
-// long pan = pan (-10000 to 10000)
-//
-// return : <int> non-zero - wav loaded and is playing, return a serial no. to be referred in stop_wav and is_wav_playing
-//                0 - wav not played
-//
-int Audio::play_wav(const char* wavName, DsVolume dsVolume)
-{
-	if( !wav_init_flag || !wav_flag )   // a initialized and workable midi device can be disabled by user setting
-		return 0;
-
-	//-------- Load wav file header-------//
-	int   dataSize;
-	DWORD wavDataOffset, wavDataLength;
-
-	File* filePtr = wav_res.get_file(wavName, dataSize);
-
-	if( !filePtr )
-		return 0;
-
-	// load small part of the wave file (first 128 bytes) enough to hold
-	// the hold header
-//#define LOAD_FULL_WAVE
-#ifdef LOAD_FULL_WAVE
-	if( dataSize > wav_buf_size )
-	{
-		wav_buf_size = dataSize;
-		wav_buf = mem_resize( wav_buf, wav_buf_size );
-	}
-	if( !filePtr->file_read( wav_buf, dataSize))
-#else
-	if( !filePtr->file_read( wav_buf, 128 ) )
-#endif
-		return 0;
-
-// short-cut to test play_resided_wave()
-#ifdef LOAD_FULL_WAVE
-	return play_resided_wav(wav_buf);
-#endif
-
-	// determine the wave data offset and length
-	const char * dataTag = wavefile_data(wav_buf);
-	if (!dataTag)
-	{
-		err_now("Invalid wave file format");
-		return 0;		// invalid RIFF WAVE format
-	}
-
-	wavDataOffset = (dataTag - wav_buf) + 4 + sizeof(DWORD);
-	wavDataLength = *(DWORD *)(dataTag+4);
-
-#ifndef LOAD_FULL_WAVE
-	// seek to the start of wave data
-	filePtr->file_seek(wavDataOffset-128,false);
-#endif
-
-	//------- Create DirectSoundBuffer to store a wave ------//
-	LPDIRECTSOUNDBUFFER lpDsb;
-	DSBUFFERDESC dsbDesc;
-	HRESULT hr;
-	DWORD dsbStatus;
-
-		// set up DSBUFFERDESC structure
-	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
-	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
-	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
-	dsbDesc.dwBufferBytes = wavDataLength;
-	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
-	// ------- assign buffer to a channel number ----------//
-	lpDsb = NULL;
-	int chanNum;
-	for( chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
-		if(lp_wav_ch_dsb[chanNum] == NULL || (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)))
-		{
-			if(lp_wav_ch_dsb[chanNum])
-			{
-				lp_wav_ch_dsb[chanNum]->Release();
-				lp_wav_ch_dsb[chanNum] = NULL;
-			}
-			// found an idle channel, create DirectSoundBuffer
-			hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-			if (DS_OK != hr)
-			{
-				// failed!
-				err_now("Cannot create DirectSoundBuffer");
-				return 0;
-			}
-			lp_wav_ch_dsb[chanNum] = lpDsb;
-			break;
-		}
-	if( chanNum >= MAX_WAV_CHANNEL)
-	{
-		return 0;
-	}
-	// Note : if not found, just play the sound, don't play the sound
-	// increase MAX_WAV_CHANNEL
-
-	//------- copy sound data to DirectSoundBuffer--------//
-	// unlock vga_front
-	VgaFrontLock vgaLock;
-
-	// lock the buffer first
-	LPVOID lpvPtr1;
-	DWORD dwBytes1;
-	LPVOID lpvPtr2;
-	DWORD dwBytes2;
-
-	hr = lpDsb->Lock(0, wavDataLength, &lpvPtr1, &dwBytes1, &lpvPtr2, &dwBytes2, 0);
-	if(DS_OK != hr)
-	{
-		// fail to lock
-		err_now("Cannot lock DirectSoundBuffer");
-		return 0;
-	}
-
-	// write to pointers
-#ifdef LOAD_FULL_WAVE
-	memcpy(lpvPtr1, wav_buf+wavDataOffset, dwBytes1);
-#else
-	filePtr->file_read(lpvPtr1, dwBytes1);
-#endif
-	if(lpvPtr2)
-	{
-#ifdef LOAD_FULL_WAVE
-		memcpy(lpvPtr2, wav_buf+wavDataOffset+dwBytes1, dwBytes2);
-#else
-		filePtr->file_read(lpvPtr2, dwBytes2);
-#endif
-	}
-	// unlock data back
-	hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-	if(DS_OK != hr)
-	{
-		// fail to unlock
-		err_now("Cannot unlock DirectSoundBuffer");
-		return 0;
-	}
-
-	//------- Set volume and pan -----------//
-	lpDsb->SetVolume(dsVolume.ds_vol);
-	lpDsb->SetPan(dsVolume.ds_pan);
-
-	//------- Play wav file --------//
-	if(lpDsb->Play(0, 0, 0) != DS_OK)
-	{
-		// fail to play
-		err_now("Cannot play DirectSoundBuffer");
-		return 0;
-	}
-
-	return wav_serial_no[chanNum] = assign_serial(max_wav_serial_no);
-}
-//------- End of function Audio::play_wav -------//
 
 
 //------- Begin of function Audio::play_wav -------//
@@ -521,7 +301,7 @@ int Audio::play_wav(short resIdx, DsVolume dsVolume)
 	HRESULT hr;
 	DWORD dsbStatus;
 
-		// set up DSBUFFERDESC structure
+	// set up DSBUFFERDESC structure
 	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
 	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
 	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
@@ -529,31 +309,18 @@ int Audio::play_wav(short resIdx, DsVolume dsVolume)
 	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
 	// ------- assign buffer to a channel number ----------//
 	lpDsb = NULL;
-	int chanNum;
-	for( chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
-		if(lp_wav_ch_dsb[chanNum] == NULL || (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)))
-		{
-			if(lp_wav_ch_dsb[chanNum])
-			{
-				lp_wav_ch_dsb[chanNum]->Release();
-				lp_wav_ch_dsb[chanNum] = NULL;
-			}
-			// found an idle channel, create DirectSoundBuffer
-			hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-			if (DS_OK != hr)
-			{
-				// failed!
-				err_now("Cannot create DirectSoundBuffer");
-				return 0;
-			}
-			lp_wav_ch_dsb[chanNum] = lpDsb;
-			break;
-		}
-	if( chanNum >= MAX_WAV_CHANNEL)
+	int chanNum = get_free_wav_channel();
+	if( chanNum == -1) return 0;
+	// found an idle channel, create DirectSoundBuffer
+	hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
+	if (DS_OK != hr)
 	{
+		// failed!
+		err_now("Cannot create DirectSoundBuffer");
 		return 0;
 	}
+	lp_wav_ch_dsb[chanNum] = lpDsb;
+
 	// Note : if not found, just play the sound, don't play the sound
 	// increase MAX_WAV_CHANNEL
 	
@@ -659,31 +426,18 @@ int Audio::play_resided_wav(const char* wavBuf, DsVolume dsVolume)
 	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wavBuf+0x14);
 	// ------- assign buffer to a channel number ----------//
 	lpDsb = NULL;
-	int chanNum;
-	for( chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
-		if(lp_wav_ch_dsb[chanNum] == NULL || (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)))
-		{
-			if(lp_wav_ch_dsb[chanNum])
-			{
-				lp_wav_ch_dsb[chanNum]->Release();
-				lp_wav_ch_dsb[chanNum] = NULL;
-			}
-			// found an idle channel, create DirectSoundBuffer
-			hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-			if (DS_OK != hr)
-			{
-				// failed!
-				err_now("Cannot create DirectSoundBuffer");
-				return 0;
-			}
-			lp_wav_ch_dsb[chanNum] = lpDsb;
-			break;
-		}
-	if( chanNum >= MAX_WAV_CHANNEL)
+	int chanNum = get_free_wav_channel();
+	if( chanNum == -1) return 0;
+	// found an idle channel, create DirectSoundBuffer
+	hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
+	if (DS_OK != hr)
 	{
+		// failed!
+		err_now("Cannot create DirectSoundBuffer");
 		return 0;
 	}
+	lp_wav_ch_dsb[chanNum] = lpDsb;
+
 	// Note : if not found, just play the sound, don't play the sound
 	// increase MAX_WAV_CHANNEL
 	
@@ -759,6 +513,24 @@ int Audio::get_free_wav_ch()
 }
 //------- End of function Audio::get_free_wav_ch --------//
 // ###### end Gilbert 6/12 ########//
+
+int Audio::get_free_wav_channel()
+{
+	DWORD dsbStatus;
+	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
+	{
+		if( lp_wav_ch_dsb[chanNum] != NULL && (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
+			!(dsbStatus & DSBSTATUS_PLAYING)) )
+		{
+			lp_wav_ch_dsb[chanNum]->Release();
+			lp_wav_ch_dsb[chanNum] = NULL;
+		}
+
+		if( !lp_wav_ch_dsb[chanNum] ) return chanNum;
+	}
+	
+	return -1;
+}
 
 //------- Begin of function Audio::stop_wav ------------//
 //
@@ -1656,63 +1428,6 @@ void	Audio::stop_loop_wav(int ch)
 //------- End of function Audio::stop_loop_wav ---------//
 
 
-//------- Begin of function Audio::play_cd -------//
-//
-// <int> trackId - the id. of the CD track to play.
-//
-int Audio::play_cd(int trackId, int volume)
-{
-	if( !cd_init_flag || !cd_flag )
-		return 0;
-
-	// ###### begin Gilbert 3/10 ########//
-	MCIERROR mciError;
-	DWORD maxTrack = 99;
-
-	// Get the number of tracks; 
-	// limit to number that can be displayed (20).
-	MCI_STATUS_PARMS mciStatusParms;
-	mciStatusParms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
-	mciError = mciSendCommand(mci_open.wDeviceID, MCI_STATUS, 
-		MCI_STATUS_ITEM, (DWORD)(LPVOID) &mciStatusParms);
-	if( !mciError )
-		maxTrack = mciStatusParms.dwReturn;
-
-	//--- Send an MCI_PLAY command to the CD Audio driver ---//
-
-	mci_open.lpstrDeviceType = (LPCSTR) MCI_DEVTYPE_CD_AUDIO;
-
-	mci_play.dwFrom = MCI_MAKE_TMSF(trackId , 0, 0, 0);
-	mci_play.dwTo 	= MCI_MAKE_TMSF(trackId+1, 0, 0, 0);
-
-	DWORD cmdFlag = MCI_FROM;
-	if( (DWORD) trackId < maxTrack )
-		cmdFlag |= MCI_TO;				// if MCI_TO is missing, play until the end
-	mciError = mciSendCommand( mci_open.wDeviceID, MCI_PLAY, cmdFlag,
-		(DWORD) (LPVOID) &mci_play);
-	if( mciError )
-		return 0;
-
-	return 1;
-	// ###### end Gilbert 3/10 ########//
-}
-//------- End of function Audio::play_cd -------//
-
-
-//------- Begin of function Audio::stop_cd -------//
-//
-void Audio::stop_cd()
-{
-	if( !cd_init_flag || !cd_flag )
-		return;
-
-	DWORD dwResult;
-	dwResult = mciSendCommand(mci_open.wDeviceID, MCI_STOP,
-		MCI_WAIT, (DWORD)(LPVOID)NULL);
-}
-//------- End of function Audio::stop_cd -------//
-
-
 //------- Begin of function Audio::is_wav_playing -------//
 //
 int Audio::is_wav_playing()
@@ -1746,29 +1461,6 @@ int Audio::is_wav_playing()
 //------- End of function Audio::is_wav_playing -------//
 
 
-//------- Begin of function Audio::is_cd_playing -------//
-//
-int Audio::is_cd_playing()
-{
-	if( !cd_init_flag || !cd_flag )   // a initialized and workable midi device can be disabled by user setting
-		return 0;
-
-	MCI_STATUS_PARMS status;
-	DWORD dwResult;
-
-	//
-	// get the current status
-	//
-
-	status.dwItem = MCI_STATUS_MODE;
-	dwResult = mciSendCommand(mci_open.wDeviceID,	MCI_STATUS,	
-		MCI_WAIT | MCI_STATUS_ITEM, (DWORD)(LPVOID)&status);
-	if (dwResult == 0)
-		return status.dwReturn == MCI_MODE_PLAY;
-	return 0;
-}
-//------- End of function Audio::is_cd_playing -------//
-
 //----------------- Begin of Audio::toggle_wav -----------------//
 //
 void Audio::toggle_wav(int wavFlag)
@@ -1779,18 +1471,6 @@ void Audio::toggle_wav(int wavFlag)
 	wav_flag = wavFlag;
 }
 //------------------- End of Audio::toggle_wav ------------------//
-
-
-//----------------- Begin of Audio::toggle_cd -----------------//
-//
-void Audio::toggle_cd(int cdFlag)
-{
-	if( !cdFlag )
-		stop_cd();
-
-	cd_flag = cdFlag;
-}
-//------------------- End of Audio::toggle_cd ------------------//
 
 
 //-------------- Begin of Audio::set_wav_volume -------------//
@@ -1854,23 +1534,6 @@ void Audio::set_wav_volume(int wavVolume)
 	wav_volume = wavVolume;
 }
 //--------------- End of Audio::set_wav_volume --------------//
-
-
-//-------------- Begin of Audio::set_cd_volume -------------//
-//
-// Set cd volume
-//
-// <int> cdVolume = cd volume, 0-100
-//
-void Audio::set_cd_volume(int cdVolume)
-{
-	if( !cd_init_flag )
-		return;
-
-	//.. insert code here ...//
-
-}
-//--------------- End of Audio::set_cd_volume --------------//
 
 
 //-------------- Begin of function Audio::assign_serial ----------//
