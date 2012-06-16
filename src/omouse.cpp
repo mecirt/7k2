@@ -1008,9 +1008,6 @@ int Mouse::wait_press(int timeOutSecond)
 		sys.yield();
 		mouse.get_event();
 
-//		if( sys.debug_session )
-			sys.blt_virtual_buf();
-
 		if( right_press || mouse.key_code==KEY_ESC )
 		{
 			rc = 2;
@@ -1053,9 +1050,6 @@ int Mouse::get_key()
 	{
 		sys.yield();
 		mouse.get_event();
-
-//		if( sys.debug_session )
-			sys.blt_virtual_buf();
 
 		if( mouse.key_code )
 		{

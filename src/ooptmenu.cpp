@@ -381,7 +381,6 @@ void OptionMenu::enter(char untilExitFlag)
 				music.stop();
 
 			disp();
-			sys.blt_virtual_buf();
 			music.yield();
 			detect();
 		}
@@ -415,8 +414,6 @@ void OptionMenu::disp(int needRepaint)
 			// image_interface.put_to_buf( &vga_back, "OPTIONS");
 			vga_back.put_bitmap_trans_remap( bx, by, background_bitmap, color_remap_table );
 
-			vga.use_back();
-
 			font_bold_black.put( bx+124, by+98,  text_game_menu.str_se_vol()); // "Sound Effects Volume" );
 //			font_bold_black.put( bx+124, by+153, "Music Volume" );
 			font_bold_black.put( bx+124, by+153, text_game_menu.str_music()); // "Music" );
@@ -433,10 +430,6 @@ void OptionMenu::disp(int needRepaint)
 
 			start_button.paint();
 			cancel_button.paint();
-
-			vga.use_front();
-
-			vga.blt_buf(0,0,VGA_WIDTH-1,VGA_HEIGHT-1,0);
 		}
 
 		if( refresh_flag & IGOPTION_SE_VOL )
@@ -690,11 +683,7 @@ void OptionMenu::abort()
 static void disp_text_button(ButtonCustom *button, int)
 {
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
-//	fontPtr->space_width -= 8;	
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	fontPtr->put( button->x1, button->y1, (char *)button->custom_para.ptr, 1, button->x2 );
-//	fontPtr->space_width += 8;	
 }
 // ---------- end of static function disp_text_button -----//
 

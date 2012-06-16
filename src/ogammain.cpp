@@ -281,7 +281,6 @@ void Game::disp_gen_game_status(int addStep)
 			fileName[4] = '0' + (char) ((((genGameProgress) /5) +1) %10);
 			image_menu.put_front(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, fileName);
 		}
-		sys.blt_virtual_buf();
 	}
 	// ####### end Gilbert 10/3 #########//
 }
@@ -343,7 +342,7 @@ void Game::main_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag || m.get_time() - lastRedrawTime > 8000 )
+			if( sys.need_redraw_flag || m.get_time() - lastRedrawTime > 50 )
 			{
 				refreshFlag = MMOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -367,12 +366,7 @@ void Game::main_menu()
 			{
 				if( refreshFlag & MMOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("M_main");
-
-				//	// ------ display copyright message --------//
-
-				//	font_zoom.right_put( 755, 62, "(c) Copyright 1999 by Enlight Software and Trevor Chan" );
 
 					// ------ display button -------//
 
@@ -408,8 +402,6 @@ void Game::main_menu()
 					font_thin_black.center_put_paragraph(
 						BUTTONA_X1, BUTTONA_Y1, BUTTONA_X2, BUTTONA_Y2, 
 						text_game_menu.str_web_site(), 0);
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-					vga.use_front();
 
 					disp_version();
 				}
@@ -432,9 +424,9 @@ void Game::main_menu()
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
 
-			sys.blt_virtual_buf();		// blt the virtual front buffer to the screen
 			sys.yield();
 			mouse.get_event();
 			if( config.music_flag )
@@ -587,7 +579,7 @@ void Game::single_player_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SPOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -601,7 +593,6 @@ void Game::single_player_menu()
 			{
 				if( refreshFlag & SPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
@@ -629,15 +620,12 @@ void Game::single_player_menu()
 					font_thin_black.center_put_paragraph(
 						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
 						text_game_menu.str_cancel(), 0 );
-
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-					vga.use_front();
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
 
-			sys.blt_virtual_buf();		// blt the virtual front buffer to the screen
 			sys.yield();
 			mouse.get_event();
 			if( config.music_flag )
@@ -735,7 +723,7 @@ void Game::scenario_editor_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SPOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -749,7 +737,6 @@ void Game::scenario_editor_menu()
 			{
 				if( refreshFlag & SPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
@@ -763,15 +750,12 @@ void Game::scenario_editor_menu()
 					font_thin_black.center_put_paragraph(
 						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
 						text_game_menu.str_cancel(), 0 );
-
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-					vga.use_front();
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
 
-			sys.blt_virtual_buf();		// blt the virtual front buffer to the screen
 			sys.yield();
 			mouse.get_event();
 			if( config.music_flag )
@@ -928,7 +912,7 @@ void Game::multi_player_menu(char *cmdLine)
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SPOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -942,7 +926,6 @@ void Game::multi_player_menu(char *cmdLine)
 			{
 				if( refreshFlag & SPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("M_main");
 
 					// ------ display button ------//
@@ -970,15 +953,12 @@ void Game::multi_player_menu(char *cmdLine)
 						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
 						!launchMode ? text_game_menu.str_cancel() : text_game_menu.str_quit(),
 						0 );
-
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-					vga.use_front();
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
 
-			sys.blt_virtual_buf();		// blt the virtual front buffer to the screen
 			sys.yield();
 			mouse.get_event();
 			if( config.music_flag )

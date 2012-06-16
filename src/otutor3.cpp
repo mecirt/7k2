@@ -255,7 +255,7 @@ int Tutor::select_learning_campaign_menu()
 		{
 			if (!game.process_messages()) return 0;
 
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SGOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -282,7 +282,6 @@ int Tutor::select_learning_campaign_menu()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						font_bold_black.put( 230, 406, text_game_menu.str_building_set() );
@@ -352,21 +351,15 @@ int Tutor::select_learning_campaign_menu()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
-				//	if( refreshFlag & SGOPTION_RACE )
-				//		speciesGroup.paint( tempConfig.race_id < 0 );
 
 					if( refreshFlag & SGOPTION_BUILDING_SIZE )
 						buildingSizeGroup.paint(building_size-1);
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
-
-			sys.blt_virtual_buf();
 
 			if( config.music_flag )
 			{
@@ -457,8 +450,6 @@ int Tutor::select_learning_campaign_menu()
 //
 static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,
@@ -474,8 +465,6 @@ static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 static void i_disp_race_button(ButtonCustom *button, int repaintBody)
 {
 	int raceId = button->custom_para.value;
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,

@@ -176,12 +176,10 @@ void MouseCursor::set_icon(int cursorId)
 
 	if( !hideAllFlag )     // if the mouse has been hiden before, don't hide and show it
 	{
-#ifndef NO_REAL_TIME_UPDATE
 		oldX1 = cur_x1;
 		oldY1 = cur_y1;
 		oldX2 = cur_x2;
 		oldY2 = cur_y2;
-#endif
 		mouse.hide();
 	}
 
@@ -237,13 +235,6 @@ void MouseCursor::set_icon(int cursorId)
 		if( vga_front.vptr_dd_buf )
 		{
 			mouse.show();
-#ifndef NO_REAL_TIME_UPDATE
-			newX1 = min(cur_x1, oldX1);
-			newY1 = min(cur_y1, oldY1);
-			newX2 = max(cur_x2, oldX2);
-			newY2 = max(cur_y2, oldY2);
-			sys.blt_virtual_buf_area( newX1, newY1, newX2, newY2 );
-#endif
 		}
 		// ####### end Gilbert 10/3 #######//
 	}
@@ -397,20 +388,6 @@ void MouseCursor::process(int curX, int curY)
 	//------------------------------------------//
 
 	processing_flag = 0;     // cancel prevention of nested call
-
-	// ##### begin Gilbert 29/1 #######//
-#ifndef NO_REAL_TIME_UPDATE
-	// update the area immediately
-	if( showOldRect && showNewRect
-		&& (oldX1 != newX1 || oldY1 != newY1 || oldX2 != newX2 || oldY2 != newY2 ) )
-	{
-		// try not to blt to true front in show cursor
-		// when show cursor, position is not moved
-		sys.blt_virtual_buf_area( oldX1, oldY1, oldX2, oldY2 );
-		sys.blt_virtual_buf_area( newX1, newY1, newX2, newY2 );
-	}
-#endif
-	// ##### end Gilbert 29/1 #######//
 }
 //----------- End of function MouseCursor::process -------//
 
@@ -501,23 +478,6 @@ void MouseCursor::process_frame(int curX, int curY)
 	//------- save the screen area and display the frame ------//
 
 	disp_frame(&vga_front);
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( showOldRect )
-	{
-		sys.blt_virtual_buf_area( oldX1, oldY1, oldX2, oldY1 );
-		sys.blt_virtual_buf_area( oldX1, oldY2, oldX2, oldY2 );
-		sys.blt_virtual_buf_area( oldX1, oldY1, oldX1, oldY2 );
-		sys.blt_virtual_buf_area( oldX2, oldY1, oldX2, oldY2 );
-	}
-	if( showNewRect )
-	{
-		sys.blt_virtual_buf_area( newX1, newY1, newX2, newY1 );
-		sys.blt_virtual_buf_area( newX1, newY2, newX2, newY2 );
-		sys.blt_virtual_buf_area( newX1, newY1, newX1, newY2 );
-		sys.blt_virtual_buf_area( newX2, newY1, newX2, newY2 );
-	}
-#endif
 }
 //----------- End of function MouseCursor::process_frame -------//
 

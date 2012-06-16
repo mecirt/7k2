@@ -109,21 +109,6 @@ void Vga::disp_image_file(const char* fileName, int x1, int y1)
 			pictFile.file_close();
 		}
 	}
-
-	//-------- hide and change mouse cursor --------//
-	// mouse.hide();
-
-	//------ turn screen dark and blt the buffer ---------//
-
-	if( !use_back_buf )
-	{
-		vga_front.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-
-		//------- bilt the back buffer to the front ---------//
-
-		vga.blt_buf( 0,0, vga_back.buf_width()-1, vga_back.buf_height()-1, 0 );
-	}
 }
 //----------- End of function Vga::disp_image_file ---------//
 
@@ -135,8 +120,5 @@ void Vga::finish_disp_image_file()
 	//------- exiting: turn dark --------//
 
 	vga_front.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
-
-	// mouse.show();
 }
 //----------- End of function Vga::finish_disp_image_file ---------//

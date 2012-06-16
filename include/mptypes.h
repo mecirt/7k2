@@ -39,7 +39,7 @@
 	#define MultiPlayerType MultiPlayerDP
 	#define mp_obj mp_dp
 	#define BROADCAST_PID broadcastPID()
-	#define PID_TYPE DPID
+	#define PID_TYPE DWORD
 	#define ServiceProviderDesc DPServiceProvider
 	#define ServiceIdType GUID
 	#define SessionDesc DPSessionDesc

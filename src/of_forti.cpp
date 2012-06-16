@@ -141,12 +141,8 @@ void FirmFort::disp_camp_info(int dispY1, int refreshFlag)
 			int subTowerHeight = train_archer_progress * towerHeight / MAX_TRAIN_ARCHER_PROGRESS;
 			if( subTowerHeight > 0 )
 			{
-				if( vga.active_buf->is_front )
-					mouse.hide_area( towerX, towerY, towerX+towerWidth-1, towerY+towerHeight-1 );
 				vga.active_buf->put_bitmap_area( towerX, towerY, towerBuilding, 
 					0, towerHeight-subTowerHeight, towerWidth-1, towerHeight-1 );
-				if( vga.active_buf->is_front )
-					mouse.show_area();
 			}
 		}
 		else

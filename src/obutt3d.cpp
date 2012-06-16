@@ -184,9 +184,6 @@ void Button3D::paint(int defIsPushed)
 	}
 	// #### end Gilbert 11/9 ########//
 
-	if( !vga.use_back_buf )
-		mouse.hide_area(x1, y1, x2, y2 );
-
 	//------ display the button button -------//
 
 	if( button_type == BUTTON_TYPE_SHELL && icon_ptr )
@@ -199,34 +196,8 @@ void Button3D::paint(int defIsPushed)
 			Vga::active_buf->put_bitmap_trans_decompress( tx, ty, (char*) icon_ptr );   // 0 means not clear background
 		else         // button disabled
 		{
-			// ##### begin Gilbert 24/12 #######//
-			/*
-			//--- put it on the back buffer, darken it and blt it back to the front buffer ---//
-
-			if( !vga.use_back_buf )
-				vga_back.read_bitmapW( x1, y1, x1+BUTTON_ACTION_WIDTH-1, y1+BUTTON_ACTION_HEIGHT-1, save_back_buf );
-
-			//------ display and darken ----//
-
-			vga_back.put_bitmap_trans_decompress( tx, ty, (char*) icon_ptr );   // 0 means not clear background
-
-			vga_back.adjust_brightness( x1, y1, x1+BUTTON_ACTION_WIDTH-1, y1+BUTTON_ACTION_HEIGHT-1, -5 );
-
-			//--- blt the button from the back to the front and restore the back buf ---//
-
-			if( !vga.use_back_buf )
-			{
-				vga.blt_buf( x1, y1, x1+BUTTON_ACTION_WIDTH-1, y1+BUTTON_ACTION_HEIGHT-1, 0 );
-				vga_back.put_bitmapW( x1, y1, save_back_buf );
-			}
-			*/
-
-			// ##### begin Gilbert 2/1 #######//
-
 			Vga::active_buf->put_bitmap_trans_remap_decompress( tx, ty, (char*) icon_ptr,
 				(short *)vga.vga_color_table->get_table(-MAX_BRIGHTNESS_ADJUST_DEGREE*3/4) );
-
-			// ##### end Gilbert 2/1 #######//
 		}
 	}
 	else if( button_type == BUTTON_TYPE_BITMAP )
@@ -239,17 +210,7 @@ void Button3D::paint(int defIsPushed)
 
 	//--------------------------------------//
 
-	if( !vga.use_back_buf )
-		mouse.show_area();
-
-	// #### begin Gilbert 11/9 ########//
 	painted_flag = 1;
-	// #### end Gilbert 11/9 ########//
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-		sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 }
 //---------- End of function Button3D::paint -----------//
 

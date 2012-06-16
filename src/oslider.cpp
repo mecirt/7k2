@@ -142,8 +142,7 @@ void Slider::refresh()
 	}
 
 	// ##### begin Gilbert 14/10 ######//
-	if( !vga.use_back_buf )
-		vga_back.bar( slider_x1, slider_y1, slider_x2, slider_y2, V_RED );
+	vga_back.bar( slider_x1, slider_y1, slider_x2, slider_y2, V_RED );
 	// ##### end Gilbert 14/10 ######//
 
 	mouse.show_area();

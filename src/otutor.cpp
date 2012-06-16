@@ -859,8 +859,6 @@ void Tutor::disp_msg(char dispFlag, char darkness, char* gameMsg, ...)
 	int i, j;
 	unsigned level;
 
-	vga.use_back();
-
 	//------- get text substitution arguments -----//
 
 	va_list argPtr;        // the argument list structure
@@ -993,8 +991,6 @@ void Tutor::disp_msg(char dispFlag, char darkness, char* gameMsg, ...)
 
 	mem_del(strBuf);
 
-	vga.use_front();
-
 	if (!dispFlag)
 	{
 		vga.flip();
@@ -1008,7 +1004,6 @@ void Tutor::disp_msg(char dispFlag, char darkness, char* gameMsg, ...)
 void Tutor::disp_guideline()
 {
 	TutorTextBlock* tutorTextBlock;
-	vga.use_back();
 
 	if (!text_disable_flag)
 	{	
@@ -1046,9 +1041,6 @@ void Tutor::disp_guideline()
 				}
 			}
 		}
-	/*	Vga::opaque_flag = config.opaque_report;
-		vga.d3_panel_down( TUTOR_X1, TUTOR_Y1, TUTOR_X2, TUTOR_Y2 );
-		Vga::opaque_flag = 0;*/
 
 		tutorTextBlock = text_block_array+cur_text_block_id-1;
 
@@ -1088,7 +1080,6 @@ void Tutor::disp_guideline()
 
 	if (text_disable_flag)
 	{
-		vga.use_front();
 		return;
 	}
 
@@ -1096,9 +1087,6 @@ void Tutor::disp_guideline()
 
 	font_tut.put_paragraph( TUTOR_X1+10, y1, TUTOR_X2-10, TUTOR_Y2-10,
 		tutorTextBlock->text_ptr, 4 );
-
-//	font_tut.center_put_paragraph( TUTOR_X1+10, TUTOR_Y1+10, TUTOR_X2-10, TUTOR_Y2-10,
-//									tutorTextBlock->text_ptr, 4, 0 ,0 );
 
 	//--------- display controls ---------//
 
@@ -1109,11 +1097,6 @@ void Tutor::disp_guideline()
 
 	x += 360;
 
-//	String str;
-//	str  = cur_text_block_id;
-//	str += " of ";
-//	str += text_block_count;
-
 	font_tut.put( TUTOR_BAR_X2 -50, TUTOR_BAR_Y1 +8, 
 		text_tutorial.str_task_of_total(cur_text_block_id, text_block_count) );
 
@@ -1121,25 +1104,12 @@ void Tutor::disp_guideline()
 
 	//------- display other controls --------//
 
-//	button_restart.paint_text( x, y, "|<<" );
- 
 	if( cur_text_block_id > 1 )
-//		button_prev.paint_text( x+45, y, " < " );
 		button_prev.paint();
 
 	if( cur_text_block_id < text_block_count )
-//		button_next.paint_text( x+88, y, " > " );
 		button_next.paint();
 
-	vga.use_front();
-
-/*	//------ play speech of the tutorial -------//
-
-	if( last_text_block_id != cur_text_block_id )
-	{
-		last_text_block_id = cur_text_block_id;
-		play_speech();
-   }*/
 }
 //------------ End of function Tutor::disp_guideline ------------//
 
@@ -1156,8 +1126,6 @@ void Tutor::disp_hints()
 
 	if (close_box_pressed)
 		return;
-
-	vga.use_back();
 
 	TutorTextBlock* tutorTextBlock2 = text_block_array+text_block_count+current_objective-1;
 
@@ -1472,15 +1440,6 @@ void Tutor::disp_hints()
 	if (close_box && i == text_block_count)
 		button_close.paint();
 
-	vga.use_front();
-
-/*	//------ play speech of the tutorial -------//
-
-	if( last_text_block_id != cur_text_block_id )
-	{
-		last_text_block_id = cur_text_block_id;
-		play_speech();
-   }*/
 }
 //------------ End of function Tutor::disp_hints ------------//
 

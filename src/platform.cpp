@@ -665,7 +665,7 @@ void DeinitGraphics ()
 
 // Surfaces
 
-bool InitSurface (VgaBuf *buf, bool back, DWORD w, DWORD h, int videoMemoryFlag)
+bool InitSurface (VgaBuf *buf, DWORD w, DWORD h)
 {
   LPDIRECTDRAW4 ddPtr = (LPDIRECTDRAW4) dd_obj;
 
@@ -679,23 +679,25 @@ bool InitSurface (VgaBuf *buf, bool back, DWORD w, DWORD h, int videoMemoryFlag)
   memset( &ddsd, 0, sizeof(ddsd) );
   ddsd.dwSize = sizeof( ddsd );
 
-  if (back) {
-    ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT |DDSD_WIDTH;
+  ddsd.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+  ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
+  ddsd.dwBackBufferCount = 1;
 
-    // create back buffer
-    ddsd.ddsCaps.dwCaps = (videoMemoryFlag & 1) ? 0 : DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+  ddsd.dwWidth  = w ? w : VGA_WIDTH;
+  ddsd.dwHeight = h ? h : VGA_HEIGHT;
 
-    ddsd.dwWidth  = w ? w : VGA_WIDTH;
-    ddsd.dwHeight = h ? h : VGA_HEIGHT;
-
-  } else {
-    ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-  }
-	
-  rc = ddPtr->CreateSurface (&ddsd, &buf->dd_buf, NULL);
+  rc = ddPtr->CreateSurface (&ddsd, &buf->dd_front_buf, NULL);
   if( rc != DD_OK )
   {
     err.run( dd_err_str("Error creating Direct Draw surface!" ,rc) );
+    return false;
+  }
+
+  ddsd.ddsCaps.dwCaps = DDSCAPS_BACKBUFFER;
+  rc = buf->dd_front_buf->GetAttachedSurface(&ddsd.ddsCaps, &buf->dd_buf);
+  if( rc != DD_OK )
+  {
+    err.run( dd_err_str("Error creating Direct Draw back surface!" ,rc) );
     return false;
   }
 
@@ -707,36 +709,6 @@ void DeinitSurface (VgaBuf *buf)
   if (buf->dd_buf)
     buf->dd_buf->Release();
   buf->dd_buf = NULL;
-}
-
-bool AttachSurface (VgaBuf *to, VgaBuf *surface)
-{
-  HRESULT rc;
-  if (to->dd_buf && surface->dd_buf)
-  {
-    rc = to->dd_buf->AddAttachedSurface(surface->dd_buf);
-    if( rc != DD_OK ) {
-      err.run( dd_err_str("Cannot attach flipping surface", rc) );
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
-
-bool DetachSurface (VgaBuf *to, VgaBuf *surface)
-{
-  HRESULT rc;
-  if (to->dd_buf && surface->dd_buf)
-  {
-    rc = to->dd_buf->DeleteAttachedSurface(0, surface->dd_buf);
-    if( rc != DD_OK ) {
-      err.run( dd_err_str("Cannot detach surface", rc) );
-      return false;
-    }
-    return true;
-  }
-  return false;
 }
 
 bool LockBuffer (VgaBuf *buf)
@@ -763,7 +735,8 @@ bool UnlockBuffer (VgaBuf *buf)
 
 void FlipBuffer (VgaBuf *buf)
 {
-  buf->dd_buf->Flip(NULL, DDFLIP_WAIT );
+  buf->dd_front_buf->Flip(NULL, DDFLIP_WAIT );
+  usleep(20 * 1000);
 }
 
 bool IsBufferLost (VgaBuf *buf)

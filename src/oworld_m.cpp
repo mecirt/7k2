@@ -161,15 +161,9 @@ void MapMatrix::disp_mode_button(int putFront)
 			vga_front.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+30, MAP_MODE_BUTTON_Y1+7,
 				image_button.read("N-LOCK") );
 
-		char backupUseBackBuf = vga.use_back_buf;		// save use_back_buf
-		vga.use_front();
 		button_filter_object.paint( filter_object_flag );
 		button_filter_nation.paint( filter_nation_flag );
-		if( backupUseBackBuf )				// restore use_back_buf
-			vga.use_back();
-		else
-			vga.use_front();
-				
+
 		help.short_front_buf.show_area();
 		mouse.show_area();
 		
@@ -183,7 +177,7 @@ void MapMatrix::disp_mode_button(int putFront)
 	}
 	else
 	{
-		help.short_back_buf.hide_area( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, 
+		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, 
 			MAP_MODE_BUTTON_X1+84-1, MAP_MODE_BUTTON_Y1+86-1 );
 		image_button.put_back( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, iconName, 1 );
 		
@@ -195,16 +189,10 @@ void MapMatrix::disp_mode_button(int putFront)
 			vga_back.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+30, MAP_MODE_BUTTON_Y1+7,
 				image_button.read("N-LOCK") );
 
-		char backupUseBackBuf = vga.use_back_buf;		// save use_back_buf
-		vga.use_back();
 		button_filter_object.paint( filter_object_flag );
 		button_filter_nation.paint( filter_nation_flag );
-		if( backupUseBackBuf )				// restore use_back_buf
-			vga.use_back();
-		else
-			vga.use_front();
 
-		help.short_back_buf.show_area();
+		help.short_front_buf.show_area();
 	
 		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1-97, MAP_MODE_BUTTON_Y1+10, 
 			MAP_MODE_BUTTON_X1-97+34-1, MAP_MODE_BUTTON_Y1+10+34-1 );

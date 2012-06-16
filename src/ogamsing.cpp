@@ -606,7 +606,7 @@ static int select_option2()
 		while(1)
 		{
 			if (!game.process_messages()) return 0;
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SGOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -632,7 +632,6 @@ static int select_option2()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						// ------- display option Mode ------//
@@ -654,20 +653,10 @@ static int select_option2()
 						const int pictureXoffset = 35;
 						const int pictureYoffset = 20;
 
-						if( !vga.use_back_buf )
-						{
-							image_interface.put_front( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2-pictureWidth-pictureXoffset, 
-								SCROLL_SHEET_Y2-300+pictureYoffset, "HUMANS" );
-							image_interface.put_front( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+pictureXoffset, 
-								SCROLL_SHEET_Y2-300+pictureYoffset, "FRYHTANS" );
-						}
-						else
-						{
-							image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2-pictureWidth-pictureXoffset, 
-								SCROLL_SHEET_Y2-300+pictureYoffset, "HUMANS" );
-							image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+pictureXoffset, 
-								SCROLL_SHEET_Y2-300+pictureYoffset, "FRYHTANS" );
-						}
+						image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2-pictureWidth-pictureXoffset, 
+							SCROLL_SHEET_Y2-300+pictureYoffset, "HUMANS" );
+						image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+pictureXoffset, 
+							SCROLL_SHEET_Y2-300+pictureYoffset, "FRYHTANS" );
 
 						// ----- display start, cancel button ------//
 
@@ -676,8 +665,6 @@ static int select_option2()
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
 
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 					if( refreshFlag & SGOPTION_RACE )
 						speciesGroup.paint( tempConfig.race_id < 0 );
@@ -690,7 +677,6 @@ static int select_option2()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 						// BUGHERE : option menu column and finger
 
@@ -729,9 +715,6 @@ static int select_option2()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 
 					if( refreshFlag & SGOPTION_RACE )
@@ -752,16 +735,7 @@ static int select_option2()
 								const int picHeight = 121;
 								const int picX = 220-picWidth/2;
 								const int picY = 370-picHeight/2;
-								if( !vga.use_back_buf )
-								{
-									mouse.hide_area(picX, picY, picX+picWidth-1, picY+picHeight-1 );
-									vga.active_buf->join_trans( &vga_back, picX, picY, bitmapPtr );
-									mouse.show_area();
-								}
-								else
-								{
-									vga.active_buf->put_bitmap_trans( picX, picY, bitmapPtr );
-								}
+								vga.active_buf->put_bitmap_trans( picX, picY, bitmapPtr );
 							}
 							else
 							{
@@ -771,20 +745,12 @@ static int select_option2()
 					}
 					if( refreshFlag & SGOPTION_COLOR )
 					{
-						vga.use_back();		// to avoid flickering
-
 						// ------ put color box ------ //
 						char *bitmapPtr = image_button.read("F-COLOR");
 						vga.active_buf->put_bitmap_trans_remap_decompress(
 							colorButtonFrameX, colorButtonFrameY, bitmapPtr,
 							game.color_remap_array[tempConfig.player_nation_color].color_table );
 						colorGroup.paint(tempConfig.player_nation_color-1);
-
-						vga.use_front();
-
-						vga.blt_buf( colorButtonFrameX, colorButtonFrameY,
-							colorButtonFrameX + ((Bitmap *)bitmapPtr)->get_width() - 1,
-							colorButtonFrameY + ((Bitmap *)bitmapPtr)->get_height() - 1, 0 );
 					}
 					if( refreshFlag & SGOPTION_AI_NATION )
 					{
@@ -811,7 +777,6 @@ static int select_option2()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						font_bold_black.put_paragraph( 126, 99, option3X-10, 143-1,
@@ -848,9 +813,6 @@ static int select_option2()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 					if( refreshFlag & SGOPTION_EXPLORED )
 						exploreGroup.paint(tempConfig.explore_whole_map);
@@ -875,7 +837,6 @@ static int select_option2()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						font_bold_black.put_paragraph( 126, 100, option4X-10, 152-1,
@@ -911,9 +872,6 @@ static int select_option2()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 					if( refreshFlag & SGOPTION_RAW )
 						rawSiteGroup.paint(tempConfig.start_up_raw_site-1);
@@ -939,7 +897,6 @@ static int select_option2()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						font_bold_black.put( option5X, 112, text_game_menu.str_goal() );	// You will be victorious when you have:
@@ -977,9 +934,6 @@ static int select_option2()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 
 					font_bold_black.use_max_height();
@@ -1036,9 +990,8 @@ static int select_option2()
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
-
-			sys.blt_virtual_buf();
 
 			if( config.music_flag )
 			{
@@ -1447,14 +1400,9 @@ static int select_option2()
 //
 static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
-//	fontPtr->space_width -= 8;	
-	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,
 		(char *)button->custom_para.ptr );
-//	fontPtr->space_width += 8;	
 }
 // ------ end of static function i_disp_text_button ------//
 
@@ -1466,8 +1414,6 @@ static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 static void i_disp_race_button(ButtonCustom *button, int repaintBody)
 {
 	int raceId = button->custom_para.value;
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,
@@ -1482,8 +1428,6 @@ static void i_disp_race_button(ButtonCustom *button, int repaintBody)
 //
 static void i_disp_int_button(ButtonCustom *button, int repaintBody)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,

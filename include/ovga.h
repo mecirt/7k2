@@ -72,7 +72,6 @@ public:
 		  short *					default_blend_table;				// new for 16-bit
 
 		  static VgaBuf*			active_buf;
-		  static char				use_back_buf;
 		  static char				opaque_flag;
 
 public:
@@ -91,14 +90,8 @@ public:
 		  void 	separator(int x1, int y1, int x2, int y2);
 
                   void 	use_front() {
-#ifdef USE_FLIP
-                    use_back_buf=0; active_buf = &vga_front;
-#endif
                   }
                   void 	use_back() {
-#ifdef USE_FLIP
-                    use_back_buf=1; active_buf = &vga_back;  
-#endif
                   }
 
 		  BOOL   blt_buf(int x1, int y1, int x2, int y2, int putMouseCursor=1);
@@ -113,9 +106,6 @@ public:
 		  int		make_pixel(BYTE red, BYTE green, BYTE blue);
 		  int		make_pixel(RGBColor *);
 		  void	decode_pixel(int, RGBColor *);
-
-private:
-		  void	init_color_table();
 };
 
 extern Vga vga;

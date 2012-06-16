@@ -304,7 +304,7 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 	while(1)
 	{
 		if (!game.process_messages()) return 0;
-		if( sys.need_redraw_flag )
+		if( sys.need_redraw_flag || 1 )
 		{
 			refreshFlag = TUOPTION_ALL;
 			sys.need_redraw_flag = 0;
@@ -332,7 +332,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 		{
 			if( refreshFlag & TUOPTION_PAGE )
 			{
-				vga.use_back();
 				vga.disp_image_file("CHOOSE");
 
 				font_bold_black.right_put( playerNameField.x, playerNameField.y,
@@ -349,9 +348,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 				font_bld.center_put( TITLE_TEXT_X2-100, TITLE_TEXT_Y1-25, TITLE_TEXT_X2-50, TITLE_TEXT_Y2-8, text_game_menu.str_level_in_score() );
 				font_bld.center_put( TITLE_TEXT_X2-50, TITLE_TEXT_Y1-25, TITLE_TEXT_X2, TITLE_TEXT_Y2-8, text_game_menu.str_bonus() );
-
-				vga.use_front();
-				vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 
 				for(j = 0; j < MAX_SCENARIO_PATH; ++j )
 				{
@@ -427,11 +423,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 				{
 					jpeg.put_to_buf( &vga_front, PIC_AREA_X1, PIC_AREA_Y1, str );
 				}
-				else
-				{
-					// draw the background
-					vga.blt_buf( PIC_AREA_X1, PIC_AREA_Y1, PIC_AREA_X2, PIC_AREA_Y2, 0 );
-				}
 			}
 
 			if( refreshFlag & TUOPTION_TEXT_BUFFER )
@@ -484,7 +475,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 			if( refreshFlag & TUOPTION_TEXT_AREA )
 			{
-				vga.blt_buf( TEXT_AREA_X1, TEXT_AREA_Y1, TEXT_AREA_X2, TEXT_AREA_Y2, 0 );
 				if( textBuffer.queue_buf[0] != '\0' )
 				{
 					textFont.put_paragraph(TEXT_AREA_X1, TEXT_AREA_Y1, TEXT_AREA_X2, TEXT_AREA_Y2,
@@ -497,9 +487,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 				// display scroll bar
 				if( textScrollBar.max_recno > ESTIMATED_LINE_IN_TEXT_AREA )
 					textScrollBar.paint();
-				else
-					vga.blt_buf( textScrollBar.scrn_x1, textScrollBar.scrn_y1,
-						textScrollBar.scrn_x2, textScrollBar.scrn_y2, 0 );
 			}
 
 			if( refreshFlag & TUOPTION_SCROLL )
@@ -519,8 +506,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 				for( i = itemPerPage[briefMode]; i > 0; --i, ++rec, (y1+=rowHeight), (y2+=rowHeight) )
 				{
-					vga.blt_buf( x1, y1, x2, y2, 0 );
-
 					if( rec >= 1 && rec <= currentScenCount )
 					{
 						ScenInfo *scenInfo = &scenInfoArray[scenIndex[rec-1]];
@@ -557,27 +542,15 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 			if( page > 0 )
 			{
-				mouse.hide_area( pageUpX1, pageUpY1, pageUpX2, pageUpY2 );
-			//	vga.active_buf->put_bitmap_trans_decompress_hmirror( pageUpX1, pageUpY1, arrowBitmap );
 				vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
-				mouse.show_area();
 			}
-			else
-				vga.blt_buf( pageUpX1, pageUpY1, pageUpX2, pageUpY2, 0 );
 
 			if( page < maxPage-1)
-			{
-				mouse.hide_area( pageDownX1, pageDownY1, pageDownX2, pageDownY2 );
 				vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
-				mouse.show_area();
-			}
-			else
-				vga.blt_buf( pageDownX1, pageDownY1, pageDownX2, pageDownY2, 0 );
 
 			refreshFlag = 0;
+                        vga.flip();
 		}
-
-		sys.blt_virtual_buf();
 
 		if( mouse.any_click(LSCROLL_X1, LSCROLL_Y1, LSCROLL_X2, LSCROLL_Y2) )
 		{

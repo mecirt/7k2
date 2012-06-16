@@ -112,9 +112,6 @@ void VBrowseIF2::update(int totalRec)
 //
 void VBrowseIF2::refresh(int newRecNo, int newTotalRec)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( x1, y1, x2, y2, 0 );  // the list content box
-
 	VBrowse::refresh(newRecNo, newTotalRec);
 }
 //--------- End of function VBrowseIF::refresh ---------//
@@ -238,9 +235,6 @@ void VBrowseIF2::disp_all()
 {
 	int recNo;
 
-	if( !vga.use_back_buf )
-		vga.blt_buf( ix1, iy1, ix2, iy2, 0 ); // clear background
-
 	Vga::active_buf->put_bitmap_trans_decompress( x1+2, y1-20, image_button.read("ARROWUP") );
 	Vga::active_buf->put_bitmap_trans_decompress( x1+2, y2-11, image_button.read("ARROWDN") );
 	
@@ -279,20 +273,11 @@ void VBrowseIF2::disp_one(int recNo, int dispType)
 
 	//---- put a outline rect around the record if it is highlight ---//
 
-	if( disp_frame && dispType == CLEAR_HIGH && !vga.use_back_buf )
-	{
-		vga.blt_buf( x-2, y-2			  , x+rec_width+1, y-2				, 0 );	// top
-		vga.blt_buf( x-2, y+rec_height+1, x+rec_width+1, y+rec_height+1, 0 );	// bottom
-		vga.blt_buf( x-2, y-2			  , x-2		     , y+rec_height+1, 0 );	// left
-		vga.blt_buf( x+rec_width+1, y-2 , x+rec_width+1, y+rec_height+1, 0 );	// right
-	}
-
 	if( dispType == DISP_REC )
 		disp_rec( recNo, x, y, INFO_REPAINT );  // call user defined function
 
 	if( disp_frame && dispType == DISP_HIGH )
 	{
-	//	vga_back.rect( x-2, y-2, x+rec_width+1, y+rec_height+1, 2, VGA_LIGHT_BLUE);
 		Vga::active_buf->rect( x-2, y-11, x+rec_width+1, y+rec_height-7, 2, VGA_LIGHT_BLUE);
 	}
 }

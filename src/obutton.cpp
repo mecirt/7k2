@@ -439,14 +439,7 @@ void Button::paint(int defIsPushed, int repaintBody)
 			(*((ButtonFP*)body_ptr))(x1+3,x2+3,y1-3,y2-3);
 	}
 
-	// #### begin Gilbert 29/6 ########//
 	painted_flag = 1;
-	// #### end Gilbert 29/6 ########//
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-		sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 }
 //---------- End of function Button::paint -----------//
 

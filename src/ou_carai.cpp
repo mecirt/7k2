@@ -68,16 +68,6 @@ static int 				carv_gdd_x[MAX_PRODUCT+MAX_RAW+1] = {0, 26, 47, 77, 101, 127, 151
 //
 void UnitCaravan::disp_info(int refreshFlag)
 {
-	//----- for multiplayer game, skip displaying information for the first frame --------//
-//	if(remote.is_enable())
-//	{
-//		if(unit_array.mp_first_frame_to_select_caravan && // first frame
-//			unit_array.mp_pre_selected_caravan_recno==sprite_recno) // is selected
-//			return;
-//	}
-
-	vga.use_back();
-
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
 
@@ -114,8 +104,6 @@ void UnitCaravan::disp_info(int refreshFlag)
 	button_duplicate_caravan.paint();
 
 	disp_goods(INFO_Y1+235, refreshFlag);
-
-	vga.use_front();
 }
 //---------- End of function UnitCaravan::disp_info ----------//
 

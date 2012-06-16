@@ -262,9 +262,6 @@ int Font::put(int x,int y,const char* textPtr, char clearBack, int x2, int cap )
 
 	x2 = min( x2, VGA_WIDTH-1 );
 
-	if( !Vga::use_back_buf )
-		mouse.hide_area( x, y, x2, y+font_height );
-
 	int y2 = y+font_height-1;
 
 	//-------------------------------------//
@@ -288,9 +285,6 @@ int Font::put(int x,int y,const char* textPtr, char clearBack, int x2, int cap )
 		{
 			if( x+space_width > x2 )
 				break;
-
-			if( clearBack && !Vga::use_back_buf )	// copy texture from the back buffer as the background color
-				vga.blt_buf( x, y, x+space_width-1, y+font_height-1, 0 );
 
 			x += space_width;
 		}
@@ -323,22 +317,7 @@ int Font::put(int x,int y,const char* textPtr, char clearBack, int x2, int cap )
 
 			if( fontInfo->width > 0 )
 			{
-				if( clearBack && !Vga::use_back_buf )
-				{
-					if( fontInfo->offset_y > 0 )			// clear the upper space areas of the character
-						vga_front.blt_buf_fast( &vga_back, x, y, x+fontInfo->width-1, y+fontInfo->offset_y-1 );
-
-					vga_front.join_trans( &vga_back, x, y+fontInfo->offset_y, font_bitmap_buf + fontInfo->bitmap_offset );
-
-					int ty = y+fontInfo->offset_y+fontInfo->height-1;
-
-					if( ty < y2 )			// clear the lower space areas of the character
-						vga_front.blt_buf_fast( &vga_back, x, ty+1, x+fontInfo->width-1, y2 );
-				}
-				else
-				{
-					Vga::active_buf->put_bitmap_trans_fast(x, y+fontInfo->offset_y, font_bitmap_buf + fontInfo->bitmap_offset);
-				}
+				Vga::active_buf->put_bitmap_trans_fast(x, y+fontInfo->offset_y, font_bitmap_buf + fontInfo->bitmap_offset);
 
 				x += fontInfo->width;		// inter-character space
 			}
@@ -355,19 +334,8 @@ int Font::put(int x,int y,const char* textPtr, char clearBack, int x2, int cap )
 
 		//--------- inter-character space ---------//
 
-		if( clearBack && !Vga::use_back_buf )	// copy texture from the back buffer as the background color
-			vga.blt_buf( x, y, x+inter_char_space-1, y+font_height-1, 0 );
-	
 		x+=inter_char_space;
 	}
-
-	//------ clear remaining area -------//
-
-	if( clearBack && !Vga::use_back_buf )	// copy texture from the back buffer as the background color
-		vga.blt_buf( x, y, x2, y+font_height-1, 0 );
-
-	if( !Vga::use_back_buf )
-		mouse.show_area();
 
 	return x-1;
 }
@@ -620,16 +588,6 @@ void Font::put_paragraph(int x1, int y1, int x2, int y2, const char *textPtr,
 
 	hyper_field_count = 0;
 
-   //---------- prepare for display font ----------//
-
-	if( dispFlag )
-   {
-      err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-      if( !Vga::use_back_buf )     // if not say word by word, turn off mouse one time, otherwise turn off mouse one word at a time
-			mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-	}
-
 	//--------- loop for displaying textPtr ----------//
 
 	while(1)
@@ -814,15 +772,6 @@ void Font::put_paragraph(int x1, int y1, int x2, int y2, const char *textPtr,
 	}
 
 	//------------ finish displaying ----------------//
-
-	if( dispFlag )
-	{
-		if( !Vga::use_back_buf )
-			mouse.show_area();
-	}
-
-//   while( *textPtr == '\n' || *textPtr == '\r' )
-//      textPtr++;
 
 	next_text_ptr = textPtr;    // the current pointer in the textPtr
 	next_text_y   = y + font_height + lineSpace;
@@ -1090,9 +1039,6 @@ int Font::center_put(int x1, int y1, int x2, int y2, const char* desStr, char cl
 
 	if( tx<0 )
 		tx=0;
-
-	if( clearBack && !Vga::use_back_buf && tx>x1 )	// copy texture from the back buffer as the background color
-		vga.blt_buf( x1, y1, tx-1, y2, 0 );
 
 	return put( tx, ty, desStr, clearBack, x2, cap );
 }

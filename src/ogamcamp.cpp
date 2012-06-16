@@ -523,7 +523,7 @@ int Game::select_campaign_menu()
 		{
 			if (!game.process_messages()) return 0;
 
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = SGOPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -551,7 +551,6 @@ int Game::select_campaign_menu()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						// ------- display option Mode ------//
@@ -572,9 +571,6 @@ int Game::select_campaign_menu()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 
 					if( refreshFlag & SGOPTION_CAMPAIGN )
@@ -587,7 +583,6 @@ int Game::select_campaign_menu()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 						// BUGHERE : option menu column and finger
 
@@ -616,29 +611,18 @@ int Game::select_campaign_menu()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 
 					if( refreshFlag & SGOPTION_RACE )
 						raceGroup.paint( tempConfig.race_id-1 );
 					if( refreshFlag & SGOPTION_COLOR )
 					{
-						vga.use_back();		// to avoid flickering
-
 						// ------ put color box ------ //
 						char *bitmapPtr = image_button.read("F-COLOR");
 						vga.active_buf->put_bitmap_trans_remap_decompress(
 							colorButtonFrameX, colorButtonFrameY, bitmapPtr,
 							game.color_remap_array[tempConfig.player_nation_color].color_table );
 						colorGroup.paint(tempConfig.player_nation_color-1);
-
-						vga.use_front();
-
-						vga.blt_buf( colorButtonFrameX, colorButtonFrameY,
-							colorButtonFrameX + ((Bitmap *)bitmapPtr)->get_width() - 1,
-							colorButtonFrameY + ((Bitmap *)bitmapPtr)->get_height() - 1, 0 );
 					}
 					if( refreshFlag & SGOPTION_DIFFICULTY )
 						campDiffGroup.paint(tempConfig.campaign_difficulty-1);
@@ -653,14 +637,10 @@ int Game::select_campaign_menu()
 				{
 					if( refreshFlag & SGOPTION_PAGE )
 					{
-						vga.use_back();
 						vga.disp_image_file("CHOOSE");
 
 						font_bold_black.put_paragraph( 126, 173, option3X-10, 213-1,
 							text_game_menu.str_fog_of_war() );
-
-//						font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
-//							text_game_menu.str_spy_methodology() );
 
 						font_bold_black.put_paragraph( 126, 314, option3X-10, 364-1,
 							text_game_menu.str_random_events() );
@@ -683,9 +663,6 @@ int Game::select_campaign_menu()
 							text_game_menu.str_start() );
 						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
 							text_game_menu.str_cancel() );
-
-						vga.use_front();
-						vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 					}
 					if( refreshFlag & SGOPTION_FOG )
 						fogGroup.paint(tempConfig.fog_of_war);
@@ -698,9 +675,8 @@ int Game::select_campaign_menu()
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
-
-			sys.blt_virtual_buf();
 
 			if( config.music_flag )
 			{
@@ -821,8 +797,6 @@ int Game::select_campaign_menu()
 //
 static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,
@@ -838,8 +812,6 @@ static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 static void i_disp_race_button(ButtonCustom *button, int repaintBody)
 {
 	int raceId = button->custom_para.value;
-	if( !vga.use_back_buf )
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
 	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
 	// top center align
 	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,

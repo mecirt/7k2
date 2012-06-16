@@ -117,9 +117,7 @@ static void put_news_rec(int recNo, int x, int y, int refreshFlag)
 
 		if( mouse.single_click(x+2, y+1, x+17, y+16) )
 		{
-			vga.use_front();
 			world.go_loc( newsPtr->loc_x, newsPtr->loc_y, 1 );		// 1-select object on the location if there is any
-			vga.use_back();
 		}
 	}
 }

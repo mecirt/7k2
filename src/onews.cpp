@@ -190,8 +190,6 @@ int NewsArray::put(int detectAction)
 	int 		i, y;
 	News*	newsPtr;
 
-	vga.use_back();
-
 	//--- count the no. of recent news which should be displayed ---//
 
 	int dispCount=0;
@@ -308,8 +306,6 @@ int NewsArray::put(int detectAction)
 
 	//-------------------------------//
 
-	vga.use_front();
-
 	return 0;
 }
 //------- End of function NewsArray::put -----//
@@ -386,7 +382,6 @@ int News::put(int y, int detectAction, int& newsHeight)
 				{
 					if( rc==1 )		// left click to go to the reply screen
 					{
-						vga.use_front();
 						talk_res.player_reply(short_para1);
 					}
 					else		// right click to accept now
@@ -405,14 +400,12 @@ int News::put(int y, int detectAction, int& newsHeight)
 
 				if( !nation_array.is_deleted(fromNationRecno) )
 				{
-					vga.use_front();
 					info.player_reply_chat(fromNationRecno);
 					return 1;
 				}
 			}
 			else if( is_loc_valid() )
 			{
-				vga.use_front();
 				world.go_loc( loc_x, loc_y, 1 );		// 1-select object on the location if there is any
 				return 1;
 			}

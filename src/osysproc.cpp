@@ -255,7 +255,7 @@ void Sys::main_loop(int isLoadedGame)
 
 		if (res == 1) continue;
 		// ####### begin Gilbert 11/5 #######//
-		if ( !paused_flag && active_flag || use_true_front && remote.is_enable() )	// if switch tasked, still run in multiplay mode
+		if ( !paused_flag && active_flag)	// if switch tasked, still run in multiplay mode
 		// ####### end Gilbert 11/5 #######//
 		{
 #ifdef DEBUG
@@ -434,8 +434,7 @@ void Sys::main_loop(int isLoadedGame)
 									colorCodeStr[1] = FIRST_NATION_COLOR_CODE_IN_TEXT + nation_array[nationRecno]->color_scheme_id;
 									//x2 = font_news.put( x2, y, colorCodeStr );
 
-									int x2 = font_news.put( x, y, text_game_menu.str_mp_wait_player( nation_array[nationRecno]->nation_name(), colorCodeStr) );
-									blt_virtual_buf_area( x, y, x2, y+font_news.max_font_height );
+									font_news.put( x, y, text_game_menu.str_mp_wait_player( nation_array[nationRecno]->nation_name(), colorCodeStr) );
 									y += font_news.height() + 5;
 								}
 							}
@@ -586,18 +585,8 @@ void Sys::sleep(int time)
 //
 int Sys::restore()
 {
-   if( !vga_front.restore_buf() )
+   if( !vga_buffer.restore_buf() )
       return 0;
-
-   if( !vga_back.restore_buf() )
-      return 0;
-
-//   if( sys.debug_session )
-   if( sys.use_true_front )
-   {
-      if( !vga_true_front.restore_buf() )
-         return 0;
-   }
 
    return 1;
 }
@@ -1106,21 +1095,6 @@ void Sys::process()
 
 		day_frame_count = 0;
 	}
-
-	// moved to sys.main_loop
-//#ifdef DEBUG
-//	unsigned long dispFrameTime = m.get_time();
-//#endif
-	//------ display the current frame ------//
-//	LOG_MSG("begin sys.disp_frame");
-//	m.lock_seed();
-//	disp_frame();
-//	m.unlock_seed();
-//	LOG_MSG("end sys.disp_frame");
-//	LOG_MSG(m.get_random_seed() );
-//#ifdef DEBUG
-//	dispFrameTime = m.get_time() - dispFrameTime;
-//#endif
 }
 //--------- End of function Sys::process ---------//
 

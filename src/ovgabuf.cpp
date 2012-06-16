@@ -63,58 +63,18 @@ VgaBuf::~VgaBuf()
 //-------- End of function VgaBuf::~VgaBuf ----------//
 
 
-//-------- Begin of function VgaBuf::init_front ----------//
 //
 // Create a direct draw front buffer.
 //
-void VgaBuf::init_front()
+void VgaBuf::init_surface()
 {
-  if (!InitSurface (this, false)) return;
+  if (!InitSurface (this)) return;
 
 	lock_bit_stack = 0;
 	lock_stack_count = 0;
 	default_remap_table = vga.default_remap_table;	// new for 16-bit
 	default_blend_table = vga.default_blend_table;	// new for 16-bit
-
-	is_front = 1;
 }
-//-------- End of function VgaBuf::init_front ----------//
-
-
-//-------- Begin of function VgaBuf::init_back ----------//
-//
-// Create a direct draw back buffer.
-//
-// [DWORD] w      : width of the surface [default 0 : VGA_WIDTH]
-// [DWORD] h      : height of the surface [default 0 : VGA_HEIGHT]
-// [int] videoMemoryFlag : 1 for create surface in video memory [default 0 : in system memory]
-//
-void VgaBuf::init_back(DWORD w, DWORD h, int videoMemoryFlag )
-{
-  if (!InitSurface (this, true, w, h, videoMemoryFlag)) return;
-
-	lock_bit_stack = 0;
-	lock_stack_count = 0;
-
-	default_remap_table = vga.default_remap_table;	// new for 16-bit
-}
-//-------- End of function VgaBuf::init_back ----------//
-
-
-//------ Begin of function VgaBuf::attach_surface --------//
-void VgaBuf::attach_surface(VgaBuf *backBuf)
-{
-  AttachSurface (this, backBuf);
-}
-//------ End of function VgaBuf::attach_surface --------//
-
-
-//------ Begin of function VgaBuf::detach_surface --------//
-void VgaBuf::detach_surface(VgaBuf *backBuf)
-{
-  DetachSurface (this, backBuf);
-}
-//------ End of function VgaBuf::detach_surface --------//
 
 
 //------ Begin of function VgaBuf::deinit --------//
@@ -280,13 +240,7 @@ void VgaBuf::put_bitmap(int x,int y,char* bitmapPtr)
 { 
 	err_when( !buf_locked );
 
-	if( is_front )
-		mouse.hide_area( x, y, x+*((short*)bitmapPtr)-1, y+*(((short*)bitmapPtr)+1)-1 );
-
 	IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, default_remap_table);
-
-	if( is_front )
-		mouse.show_area();
 }
 //--------------- End of function VgaBuf::put_bitmap --------------//
 
@@ -299,13 +253,7 @@ void VgaBuf::put_bitmap_trans(int x,int y,char* bitmapPtr)
 {
 	err_when( !buf_locked );
 
-	if( is_front )
-		mouse.hide_area( x, y, x+*((short*)bitmapPtr)-1, y+*(((short*)bitmapPtr)+1)-1 );
-
 	IMGbltTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, default_remap_table);
-
-	if( is_front )
-		mouse.show_area();
 }
 //--------- End of function VgaBuf::put_bitmap_trans --------//
 
@@ -318,13 +266,7 @@ void VgaBuf::put_bitmap_remap(int x,int y,char* bitmapPtr,short *colorTable)
 {
 	err_when( !buf_locked );
 
-	if( is_front )
-		mouse.hide_area( x, y, x+((Bitmap *)bitmapPtr)->get_width()-1, y+((Bitmap*)bitmapPtr)->get_height()-1 );
-
 	IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, colorTable);
-
-	if( is_front )
-		mouse.show_area();
 }
 //--------- End of function VgaBuf::put_bitmap_remap --------//
 
@@ -335,13 +277,7 @@ void VgaBuf::put_bitmapW(int x, int y, short *bitmapWBuf )
 {
 	err_when( !buf_locked );
 
-	if( is_front )
-		mouse.hide_area( x, y, x+((BitmapW *)bitmapWBuf)->get_width()-1, y+((BitmapW *)bitmapWBuf)->get_height()-1 );
-
 	IMGbltW( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf );
-
-	if( is_front )
-		mouse.show_area();
 }
 //------- End of function VgaBuf::put_bitmapW --------//
 
@@ -368,13 +304,7 @@ void VgaBuf::save_area_common_buf(int x1, int y1, int x2, int y2)
 
 	//-------- read screen ---------//
 
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-
 	read_bitmapW( x1,y1,x2,y2, shortPtr );
-
-	if( is_front )
-		mouse.show_area();
 }
 //------------ End of function VgaBuf::save_area_common_buf ----------//
 
@@ -426,13 +356,7 @@ short* VgaBuf::save_area(int x1, int y1, int x2, int y2, short* saveScr )
 	*shortPtr++ = x2;
 	*shortPtr++ = y2;
 
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-
 	read_bitmapW( x1,y1,x2,y2, shortPtr );
-
-	if( is_front )
-		mouse.show_area();
 
    return saveScr;
 }
@@ -535,13 +459,7 @@ void VgaBuf::put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTa
 
 		filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, pictSize );
 
-		if( is_front )
-			mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-
 		put_bitmap_remap_fast( x1, y1, (char *)sys.common_data_buf, colorRemapTable );
-
-		if( is_front )
-			mouse.show_area();
 	}
 	else //----- if the picture size > 64K, read in line by line -----//
 	{
@@ -556,13 +474,7 @@ void VgaBuf::put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTa
 			((Bitmap *)sys.common_data_buf)->init( pictWidth, (ty-y1+1) );
 			filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, (unsigned)pictWidth * (ty-y1+1) );
 
-			if( is_front )
-				mouse.hide_area( x1,y1,x2,ty );  // if the mouse cursor is in that area, hide it
-
 			put_bitmap_remap_fast( x1, y1, sys.common_data_buf, colorRemapTable );
-
-			if( is_front )
-				mouse.show_area();
 
 			y1 += bufferLine;
 
@@ -621,13 +533,7 @@ void VgaBuf::put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorR
 
 		filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, pictSize );
 
-		if( is_front )
-			mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-
 		put_bitmap_trans_remap( x1, y1, (char *)sys.common_data_buf, colorRemapTable );
-
-		if( is_front )
-			mouse.show_area();
 	}
 	else //----- if the picture size > 64K, read in line by line -----//
 	{
@@ -642,13 +548,7 @@ void VgaBuf::put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorR
 			((Bitmap *)sys.common_data_buf)->init( pictWidth, (ty-y1+1) );
 			filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, (unsigned)pictWidth * (ty-y1+1) );
 
-			if( is_front )
-				mouse.hide_area( x1,y1,x2,ty );  // if the mouse cursor is in that area, hide it
-
 			put_bitmap_trans_remap( x1, y1, sys.common_data_buf, colorRemapTable );
-
-			if( is_front )
-				mouse.show_area();
 
 			y1 += bufferLine;
 

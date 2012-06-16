@@ -271,8 +271,6 @@ void ScenarioEditor::detect_players_main()
 
 			if( rc )
 				nation_name_field.paint(1);
-
-			sys.blt_virtual_buf();
 		}
 	}
 

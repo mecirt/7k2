@@ -256,9 +256,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 		// ##### end Gilbert 30/10 ######//
 	}
 
-	char useBack = vga.use_back_buf;
-	vga.use_front();
-
 	//-------------------------------------//
 
 	mouse_cursor.set_icon(CURSOR_NORMAL);
@@ -541,8 +538,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 			refreshFlag = 0;
 		}
 
-		sys.blt_virtual_buf();
-
 		// ------ detect slots -------//
 
 		int breakWhileFlag = 0;
@@ -690,9 +685,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 		if( breakWhileFlag )
 			break;
 	}
-
-	if( useBack )
-		vga.use_back();
 
 	power.win_opened = 0;
 	if( retFlag <= 0 )
@@ -1141,9 +1133,6 @@ int GameFile::ask_desc()
 	int boxY1 = (VGA_HEIGHT - boxHeight) / 2;
 	int boxY2 = boxY1 + boxHeight - 1;
 
-	char useBack = vga.use_back_buf;
-	vga.use_front();
-
 	// ------ capture save area -------//
 
 	mouse.hide_area( boxX1, boxY1, boxX2, boxY2 );
@@ -1214,8 +1203,6 @@ int GameFile::ask_desc()
 			refreshFlag = 0;
 		}
 
-		sys.blt_virtual_buf();
-
 		// ------- detect --------//
 
 		if( descTextBox.detect() )
@@ -1246,13 +1233,6 @@ int GameFile::ask_desc()
 	{
 		strcpy( game_desc, gameDesc );
 	}
-
-	if(useBack)
-		vga.use_back();
-
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf();
-#endif
 
 	return retFlag;
 }

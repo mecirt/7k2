@@ -45,6 +45,13 @@ public:
 #endif
 		LPVOID					vptr_dd_buf;
 	};
+	union
+	{
+#ifdef __DDRAW_INCLUDED__
+		LPDIRECTDRAWSURFACE4  dd_front_buf;
+#endif
+		LPVOID					vptr_dd_front_buf;
+	};
 
 	union
 	{
@@ -57,10 +64,8 @@ public:
 	BOOL						buf_locked;			// whether the and back buffers have been locked or not.
    short*					cur_buf_ptr;
 	long						cur_pitch;			// buf_des.lPitch
-	char						is_front;			// whether it's the front buffer or not
 
 	// ------- temp_unlock --------- //
-	// char						save_locked_flag;
 	UCHAR						lock_stack_count;
 	WORD						lock_bit_stack;
 
@@ -97,10 +102,7 @@ public:
 
 	//---------- system functions ----------//
 
-	void 		init_front();		// LPDIRECTDRAW4 dd4Ptr
-	void 		init_back(DWORD =0, DWORD =0, int videoMemoryFlag=0 );	// LPDIRECTDRAW4 dd4Ptr
-	void		attach_surface(VgaBuf *);
-	void		detach_surface(VgaBuf *);
+	void 		init_surface();
 	void		deinit();
 
 	BOOL		is_buf_lost();
@@ -344,7 +346,10 @@ public:
 				{ IMGjoinTransRemap( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, x, y, bitmapBuf, default_remap_table ); }
 };
 
-extern VgaBuf vga_front, vga_back, vga_true_front;
+extern VgaBuf vga_buffer;
+// for compatibility with existing code:
+#define vga_back vga_buffer
+#define vga_front vga_buffer
 
 //--------------------------------------------//
 

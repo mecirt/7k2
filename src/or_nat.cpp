@@ -993,67 +993,6 @@ static void put_talk_msg_rec(int recNo, int x1, int y, int refreshFlag)
 //
 static void disp_nation_chat(int refreshFlag)
 {
-/*
-	int nationRecno = info.nation_filter(info.browse_nation_recno);
-
-	//----- if the selected nation is the viewing nation ----//
-
-	if( !(sys.debug_session || nation_array[nationRecno]->nation_type == NATION_REMOTE &&
-		 info.viewing_nation_recno == nation_array.player_recno ) )
-	{
-		return;
-	}
-
-	//-------- display the chat get control -------//
-
-	vga.d3_panel_down( REPORT_DET_X1, REPORT_DET_Y1, REPORT_DET_X2, REPORT_TALK_Y2 );
-
-	font_bld.put( REPORT_DET_X1+10, REPORT_DET_Y1+10,
-					  // "Please enter your chat message and press <Enter> to send." );
-		text_reports.str_chat_inst() );
-
-	// ###### begin Gilbert 22/2 #######//
-	if( !init_get_chat || get_chat.x != REPORT_DET_X1+10 || get_chat.y != REPORT_DET_Y1+30 )		// re-init after resolution change
-	// ###### end Gilbert 22/2 #######//
-	{
-		get_chat.init( REPORT_DET_X1+10, REPORT_DET_Y1+30, REPORT_DET_X2-10,
-			info.player_chat_str, CHAT_STR_LEN, &font_san, 0, 0 );
-		get_chat.clear();
-
-		button_hide_nation_browse.create_text( REPORT_DET_X2-100, REPORT_TALK_Y2-24,
-			REPORT_DET_X2-8, REPORT_TALK_Y2-8, "Hide Kingdoms' Detail" );
-
-		init_get_chat = 1;
-	}
-
-	int vgaUseBack = vga.use_back_buf;
-
-	vga.use_back();
-	get_chat.paint(1);			// 1-paint cursor
-
-	if( !vgaUseBack )
-		vga.use_front();
-
-	//-------- display receiver type buttons ---------//
-
-	int y=REPORT_TALK_Y2-70;
-
-	for( int i=1 ; i<=MAX_CHAT_RECEIVER_TYPE ; i++, y+=22 )
-	{
-		if( info.chat_receiver_type == i )
-			vga.d3_panel_down( REPORT_DET_X1+10, y, REPORT_DET_X2-10, y+20 );
-		else
-			vga.d3_panel_up( REPORT_DET_X1+10, y, REPORT_DET_X2-10, y+20 );
-
-		// font_bld.center_put( REPORT_DET_X1+10, y, REPORT_DET_X2-10, y+20, chat_receiver_str_array[i-1] );
-		font_bld.center_put( REPORT_DET_X1+10, y, REPORT_DET_X2-10, y+20, 
-			text_reports.str_chat_recipient(i) );
-	}
-*/
-
-	int vgaUseBack = vga.use_back_buf;
-	vga.use_back();
-
 	// init button
 
 	if( !init_get_chat || get_chat.x != REPORT_DET_X1+10 || get_chat.y != REPORT_TALK_Y2 - 26 )		// re-init after resolution change
@@ -1162,9 +1101,6 @@ static void disp_nation_chat(int refreshFlag)
 			msgY -= font_cara_w.max_font_height;
 		}
 	}
-
-	if( !vgaUseBack )
-		vga.use_front();
 }
 //----------- End of static function disp_nation_chat -----------//
 
@@ -1173,78 +1109,6 @@ static void disp_nation_chat(int refreshFlag)
 //
 static void detect_nation_chat()
 {
-/*	int nationRecno = info.nation_filter(info.browse_nation_recno);
-
-	//----- if the selected nation is the viewing nation ----//
-
-	if( sys.debug_session || nation_array[nationRecno]->nation_type == NATION_REMOTE &&
-		 info.viewing_nation_recno == nation_array.player_recno )
-	{
-		// ###### begin Gilbert 22/2 #######//
-		if( !init_get_chat || get_chat.x != REPORT_DET_X1+10 || get_chat.y != REPORT_DET_Y1+30 )		// re-init after resolution change
-		{
-			get_chat.init( REPORT_DET_X1+10, REPORT_DET_Y1+30, REPORT_DET_X2-10,
-				info.player_chat_str, CHAT_STR_LEN, &font_san, 0, 0 );
-			get_chat.clear();
-			init_get_chat = 1;
-		}
-		// ###### end Gilbert 22/2 #######//
-
-		for( int i=0 ; i<5 ; i++ )
-		{
-			int keyCode = get_chat.detect();
-
-			if( !keyCode )
-				break;
-
-			//---- press <Enter> to send the chat message ----//
-
-			if( keyCode == KEY_RETURN && info.player_chat_str[0] != '\0')
-			{
-				if( remote.is_enable() )
-				{
-					// packet structure : <to nation recno> <from nation recno> <char[CHAT_STR_LEN+1]>
-					short *shortPtr = (short *)remote.new_send_queue_msg(MSG_CHAT, 2*sizeof(short) + strlen(info.player_chat_str)+1 );
-
-					switch( info.chat_receiver_type )
-					{
-					case 1:		// selected
-						shortPtr[0] = nationRecno;
-						break;
-					case 2:		// all allies
-						shortPtr[0] = -1;
-						break;
-					case 3:		// all human
-						shortPtr[0] = 0;
-						break;
-					}
-					shortPtr[1] = info.viewing_nation_recno;
-
-					strcpy(2*sizeof(short)+(char *)shortPtr, info.player_chat_str);
-				}
-
-				get_chat.clear();
-				break;
-			}
-
-			mouse.get_event();
-		}
-	}
-
-	//-------- detect receiver type buttons ---------//
-
-	int y=REPORT_TALK_Y2-70;
-
-	for( int i=1 ; i<=MAX_CHAT_RECEIVER_TYPE ; i++, y+=22 )
-	{
-		if( mouse.single_click( REPORT_DET_X1+10, y, REPORT_DET_X2-50, y+20 ) )
-		{
-			info.chat_receiver_type = i;
-			return;
-		}
-	}
-*/
-
 	// init button
 
 	if( !init_get_chat || get_chat.x != REPORT_DET_X1+10 || get_chat.y != REPORT_TALK_Y2 - 26 )		// re-init after resolution change

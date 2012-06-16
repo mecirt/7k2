@@ -280,7 +280,7 @@ int PlayerProfile::register_menu()
 	while(1)
 	{
 		if (!game.process_messages()) return 0;
-		if( sys.need_redraw_flag )
+		if( sys.need_redraw_flag || 1)
 		{
 			refreshFlag = PPOPTION_ALL;
 			sys.need_redraw_flag = 0;
@@ -348,7 +348,6 @@ int PlayerProfile::register_menu()
 			case PROFILE_MENU_MAIN:
 				if( refreshFlag & PPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("CHOOSE");
 					fontBlack.center_put( 119, 95, 678, 118, text_game_menu.str_profile_s1() );
 					// fontBlack.center_put( 113, 392, 663, 414, "If your name is not here, click on \"New Player\" below");
@@ -357,8 +356,6 @@ int PlayerProfile::register_menu()
 					fontThin.center_put_paragraph( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_new_profile() );	// new button
 					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_delete_profile() );		// delete button
 					fontThin.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, text_game_menu.str_cancel() );		// cancel button
-					vga.use_front();
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 				}
 
 				if( refreshFlag & PPOPTION_SCROLL_BAR )
@@ -412,13 +409,10 @@ int PlayerProfile::register_menu()
 			case PROFILE_MENU_NEW:		// ask new player
 				if( refreshFlag & PPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("CHOOSE");
 					fontBlack.center_put( 136, 187, 672, 217, text_game_menu.str_profile_new() );
 					fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_finish_select_profile() );
 					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_cancel() );
-					vga.use_front();
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 				}
 
 				if( refreshFlag & PPOPTION_GET_FIELDS )
@@ -448,7 +442,6 @@ int PlayerProfile::register_menu()
 			case PROFILE_MENU_DEL:
 				if( refreshFlag & PPOPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("CHOOSE");
 					fontBlack.center_put_paragraph( 136, 187, 672, 287, text_game_menu.str_profile_del() );
 					if( profileArray[selectedProfile-1].login_name[0] )
@@ -457,17 +450,14 @@ int PlayerProfile::register_menu()
 					}
 					fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_profile_del_yes() );
 					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_profile_del_no() );
-					vga.use_front();
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 				}
 				break;
 			default:
 				err_here();
 			}
 			refreshFlag = 0;
+                        vga.flip();
 		}
-
-		sys.blt_virtual_buf();
 
 		// ------- detect ---------//
 

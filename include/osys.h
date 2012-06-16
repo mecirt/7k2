@@ -161,7 +161,6 @@ public:
 
 	char*		common_data_buf;
 
-	char		use_true_front;				// use vga_true_front
 	char		debug_session;				// for debugging games
 	char		testing_session;			// for testing games (kings never die)
 	char		scenario_cheat_flag;		// for creating scenarios
@@ -184,8 +183,6 @@ public:
 	void		disp_view_mode(int observeMode=0);
 
 	void 		disp_frame(int dispCampaignMsg=0);
-	void 		blt_virtual_buf();
-	void 		blt_virtual_buf_area(int x1, int y1, int x2, int y2);
 	void		capture_screen();
 
 	void		pause();

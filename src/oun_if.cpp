@@ -206,8 +206,6 @@ void Unit::disp_info(int refreshFlag)
 		}
 	}
 
-	vga.use_back();
-
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
 	
@@ -260,9 +258,6 @@ void Unit::disp_info(int refreshFlag)
 			disp_hire_result(refreshFlag);
 			break;
 	}
-
-	vga.use_front();
-
 }
 //----------- End of function Unit::disp_info -----------//
 

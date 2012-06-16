@@ -61,10 +61,6 @@
 #include <ot_sedit.h>
 
 
-// -------- define constant -----//
-
-#define USE_TRUE_FRONT_BUFFER 1
-
 //----------- Begin of function Sys::Sys -----------//
 
 Sys::Sys()
@@ -97,14 +93,6 @@ int Sys::init( HANDLE hInstance )
    //------- initialize basic vars --------//
 
    app_hinstance = hInstance;
-
-	// ##### begin Gilbert 15/2 ########//
-#ifdef USE_FLIP
-	use_true_front         = USE_TRUE_FRONT_BUFFER;
-#else
-	use_true_front         = debug_session;
-#endif
-	// ##### begin Gilbert 15/2 ########//
 
 	set_game_dir();      // set game directories names and game version
 
@@ -196,39 +184,11 @@ int Sys::init_directx()
 int Sys::init_display()
 {
 
-//   if( sys.debug_session )                // if we are currently in a debug session, don't lock the front buffer otherwise the system will hang up
-   if( use_true_front )                // if we are currently in triple buffer mode, don't lock the front buffer otherwise the system will hang up
-   {
-      DEBUG_LOG("Attempt vga_true_front.init_front()");
-      vga_true_front.init_front();
-      DEBUG_LOG("Attempt vga_front.init_back()");
-      vga_front.init_back();		// create in video memory
-      vga_front.is_front = 1;       // set it to 1, overriding the setting in init_back()
-		DEBUG_LOG("Attempt vga_back.init_back()");
-		vga_back.init_back();
-		DEBUG_LOG("vga_back.init_back() finish");
-   }
-   else
-   {
-      vga_front.init_front();
-#if(!defined(USE_FLIP))
-		vga_back.init_back();		// create in system memory
-#else
-		vga_back.init_back( 0, 0, 1 );		// create in video memory
-#endif
-   }
+   vga_buffer.init_surface();
 
-#if(defined(USE_FLIP))
-	vga_front.attach_surface( &vga_back );
-#endif
-
-   DEBUG_LOG("Attempt vga_front.lock_buf()");
-   vga_front.lock_buf();
-   DEBUG_LOG("vga_front.lock_buf() finish");
-
-   DEBUG_LOG("Attempt vga_back.lock_buf()");
-   vga_back.lock_buf();
-   DEBUG_LOG("vga_back.lock_buf() finish");
+   DEBUG_LOG("Attempt vga_buffer.lock_buf()");
+   vga_buffer.lock_buf();
+   DEBUG_LOG("vga_buffer.lock_buf() finish");
 
    return 1;
 }
@@ -237,38 +197,16 @@ int Sys::init_display()
 //
 void Sys::deinit_directx()
 {
-   if( vga_back.vptr_dd_buf && vga_back.buf_locked )
+   if( vga_buffer.vptr_dd_buf && vga_buffer.buf_locked )
    {
-      DEBUG_LOG("Attempt vga_back.unlock_buf()");
-      vga_back.unlock_buf();
-      DEBUG_LOG("vga_back.unlock_buf() finish");
+      DEBUG_LOG("Attempt vga_buffer.unlock_buf()");
+      vga_buffer.unlock_buf();
+      DEBUG_LOG("vga_buffer.unlock_buf() finish");
    }
 
-   if( vga_front.vptr_dd_buf && vga_front.buf_locked )
-   {
-      DEBUG_LOG("Attempt vga_front.unlock_buf()");
-      vga_front.unlock_buf();
-      DEBUG_LOG("vga_front.unlock_buf() finish");
-   }
-
-	// usually get surface lost error
-	//vga_front.detach_surface( &vga_back );
-
-   DEBUG_LOG("Attempt vga_back.deinit()");
-   vga_back.deinit();
-   DEBUG_LOG("vga_back.deinit() finish");
-
-//   if( sys.debug_session )
-   if( use_true_front )
-   {
-      DEBUG_LOG("Attempt vga_true_front.deinit()");
-      vga_true_front.deinit();
-      DEBUG_LOG("vga_true_front.deinit() finish");
-   }
-
-   DEBUG_LOG("Attempt vga_front.deinit()");
-   vga_front.deinit();
-   DEBUG_LOG("Attempt vga_front.deinit() finish");
+   DEBUG_LOG("Attempt vga_buffer.deinit()");
+   vga_buffer.deinit();
+   DEBUG_LOG("Attempt vga_buffer.deinit() finish");
 
    DEBUG_LOG("Attempt vga.deinit()");
    vga.deinit();

@@ -219,13 +219,9 @@ static void disp_slide_bar(SlideBar *slideBar, int)
 	workerNumberName[4] = '0' + slide.view_recno / 10;
 	workerNumberName[5] = '0' + slide.view_recno % 10;
 
-	if (vga.active_buf->is_front)
-		mouse.hide_area(INFO_X1, INFO_Y1+213, INFO_X2, INFO_Y1+257 );
 	char *nationPict = image_spict.get_ptr(workerNumberName);
 	short nationRecno = firm_array[firm_array.selected_recno]->nation_recno;
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1, INFO_Y1+213, nationPict, game.get_color_remap_table(nationRecno, 0) );
-	if (vga.active_buf->is_front)
-		mouse.show_area();
 }
 // ---------- end of static function disp_slide_bar  -----//
 

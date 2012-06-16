@@ -84,9 +84,6 @@ void VBrowseIF::paint()
 //
 void VBrowseIF::refresh(int newRecNo, int newTotalRec)
 {
-	if( !vga.use_back_buf )
-		vga.blt_buf( x1, y1, x2-SCROLL_BAR_WIDTH-3, y2, 0 );  // the list content box
-
 	VBrowse::refresh(newRecNo, newTotalRec);
 }
 //--------- End of function VBrowseIF::refresh ---------//
@@ -99,9 +96,6 @@ void VBrowseIF::refresh(int newRecNo, int newTotalRec)
 void VBrowseIF::disp_all()
 {
 	int recNo;
-
-	if( !vga.use_back_buf )
-		vga.blt_buf( ix1, iy1, ix2, iy2, 0 ); // clear background
 
 	int scrollRecno = (disp_frame && x_max_rec==1) ? rec_no : top_rec_no;
 
@@ -141,14 +135,6 @@ void VBrowseIF::disp_one(int recNo, int dispType)
 		return;
 
 	//---- put a outline rect around the record if it is highlight ---//
-
-	if( disp_frame && dispType == CLEAR_HIGH && !vga.use_back_buf )
-	{
-		vga.blt_buf( x-2, y-2			  , x+rec_width+1, y-2				, 0 );	// top
-		vga.blt_buf( x-2, y+rec_height+1, x+rec_width+1, y+rec_height+1, 0 );	// bottom
-		vga.blt_buf( x-2, y-2			  , x-2		     , y+rec_height+1, 0 );	// left
-		vga.blt_buf( x+rec_width+1, y-2 , x+rec_width+1, y+rec_height+1, 0 );	// right
-	}
 
 	if( dispType == DISP_REC )
 		disp_rec( recNo, x, y, INFO_REPAINT );  // call user defined function

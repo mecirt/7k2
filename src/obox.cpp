@@ -159,10 +159,6 @@ void Box::close()
 
 	mouse.get_event();   // post the click, prevent effect on other windows
 
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf();
-#endif
-
 	opened_flag = 0;
 }
 //------------ End of function Box::close -----------//
@@ -212,9 +208,6 @@ void Box::ok_button(int timeOut)
 	char* okStr = text_basic.is_inited() ? text_basic.str_box_ok() : (char*)"Ok";
    button.paint_text( box_x1+(box_x2-box_x1+1)/2-10, box_y2-BOX_BUTTON_MARGIN, okStr );
 	
-//	if( sys.debug_session )
-	sys.blt_virtual_buf();
-
    button.wait_press(timeOut);
 }
 //------------ End of function Box::ok_button ---------//
@@ -259,18 +252,12 @@ int Box::ask_button(const char* buttonDes1, const char* buttonDes2, int rightCli
    buttonOk.paint();      // paint button
    buttonCancel.paint();
 
-//	if( sys.debug_session )
-	sys.blt_virtual_buf();
-
    //..........................................//
 
    while( 1 )
 	{
 		sys.yield();
 		mouse.get_event();
-
-//		if( sys.debug_session )
-		sys.blt_virtual_buf();
 
       if( buttonOk.detect(buttonOk.str_buf[0], KEY_RETURN) )
 		
@@ -321,9 +308,6 @@ void Box::ask_button(Button& buttonOk, Button& buttonCancel, const char* strOk, 
 
    buttonOk.paint();      // paint button
    buttonCancel.paint();
-
-//	if( sys.debug_session )
-	sys.blt_virtual_buf();
 }
 //--------- End of function Box::ask_button ---------//
 
@@ -378,10 +362,6 @@ int Box::ask(char* msgStr, char* buttonDes1, char* buttonDes2, int x1, int y1)
 //
 void Box::msg(const char* msgStr, int enableTimeOut, int x1, int y1)
 {
-	int savedUseBack = vga.use_back_buf;
-
-	vga.use_front();
-
 	calc_size(msgStr,BOX_TOP_MARGIN+BOX_BOTTOM_MARGIN,x1,y1);   // calculate x1, y1, x2, y2 depended on the msgStr
 
 	paint(1);
@@ -389,13 +369,8 @@ void Box::msg(const char* msgStr, int enableTimeOut, int x1, int y1)
 	font_bld.put_paragraph( box_x1+BOX_X_MARGIN, box_y1+BOX_TOP_MARGIN, box_x2-BOX_X_MARGIN,
 				box_y2-BOX_BOTTOM_MARGIN, msgStr, BOX_LINE_SPACE );
 
-	sys.blt_virtual_buf();		// blt tihe vrtual front buffer to the screen
-
 	ok_button(enableTimeOut);
 	close();
-
-	if( savedUseBack )
-		vga.use_back();
 }
 //---------- End of function Box::msg ----------//
 
@@ -448,8 +423,6 @@ void Box::tell(char* tellStr, int x1, int y1)
 
 	font_bld.put_paragraph( box_x1+BOX_X_MARGIN, box_y1+BOX_TOP_MARGIN, box_x2-BOX_X_MARGIN,
 			   box_y2-BOX_BOTTOM_MARGIN, tellStr, BOX_LINE_SPACE );
-
-	sys.blt_virtual_buf();
 }
 //---------- End of function Box::tell ----------//
 

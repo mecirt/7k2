@@ -62,14 +62,11 @@ static Button3D  button_menu;
 //
 void Sys::disp_button()
 {
-	vga.use_back();
 	if (current_display_mode.mode_id == MODE_ID_800x600x16)
 		button_menu.paint( MENU_BUTTON_X1, MENU_BUTTON_Y1, "MENU-U", "MENU-D" );
 	else
 		button_menu.paint( MENU_BUTTON_X1, MENU_BUTTON_Y1, "MU_1024", "MD_1024" );
 	button_menu.set_help_code( "GAMEMENU" );
-
-	vga.use_front();
 }
 //--------- End of function Sys::disp_button ---------//
 
@@ -166,10 +163,7 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 	if( option_menu.is_active() )
 	{
-		// ##### begin Gilbert 3/11 ######//
 		option_menu.disp(need_redraw_flag);
-		// ##### end Gilbert 3/11 ######//
-		blt_virtual_buf();
 	}
 	else
 	{
@@ -179,7 +173,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 		{
 			// ###### begin Gilbert 4/1 ######//
 			help.short_front_buf.clear();
-			help.short_back_buf.clear();
 			// ###### end Gilbert 4/1 ######//
 			info.disp_panel();
 			world.paint();
@@ -189,15 +182,7 @@ void Sys::disp_frame(int dispCampaignMsg)
 			disp_map();
 
 			if( in_game_menu.is_active() )
-			{
-				vga.use_back();
 				in_game_menu.disp();
-				vga.use_front();
-			}
-
-			//------------ blt buffer --------------//
-
-			vga.blt_buf(0,0, VGA_WIDTH-1, VGA_HEIGHT-1, 0);
 
 			//------ if this is a campaign game -------//
 
@@ -265,17 +250,10 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 		//--------- display the map and info area --------//
 
-		// ##### begin Gilbert 9/11 #####//
 		help.disp_short_help(&vga_back);
-		// both surface has its own save buffer (short_front_buf and short_back_buf)
-		// disp_short_help saves to short_back_buf
-		// ##### end Gilbert 9/11 #####//
 
-		// skip flipping when in odd frame of report mode
-		// report mode has not been drawn in back buffer
 		if( !report_disp_frame_no )
 		{
-#if(defined(USE_FLIP) )
 	#ifdef DEBUG
 			flipTime = m.get_time();
 	#endif
@@ -283,16 +261,9 @@ void Sys::disp_frame(int dispCampaignMsg)
 	#ifdef DEBUG
 			flipTime = m.get_time() - flipTime;
 	#endif
-			help.flip();			// exchange short_front_buf and short_back_buf
-#endif
 		}
 
-		// ##### begin Gilbert 9/11 #####//
 		help.hide_short_help(&vga_back);
-		// restore short_back_buf which was short_front_buf before flipping
-		// ##### end Gilbert 9/11 #####//
-
-		blt_virtual_buf();
 
 		//---------- display help ----------//
 
@@ -436,43 +407,6 @@ void Sys::disp_zoom()
 //-------- End of function Sys::disp_zoom --------//
 
 
-//-------- Begin of function Sys::blt_virtual_buf --------//
-//
-void Sys::blt_virtual_buf()
-{
-  blt_virtual_buf_area(0, 0, VGA_WIDTH - 1, VGA_HEIGHT - 1);
-}
-//--------- End of function Sys::blt_virtual_buf ---------//
-
-
-//-------- Begin of function Sys::blt_virtual_buf_area --------//
-//
-void Sys::blt_virtual_buf_area(int x1, int y1, int x2, int y2)
-{
-//	if( !sys.debug_session )
-	if( !use_true_front )
-		return;
-
-	if( x1 < 0 )
-		x1 = 0;
-	if( x2 >= VGA_WIDTH )
-		x2 = VGA_WIDTH-1;
-	if( y1 < 0 )
-		y1 = 0;
-	if( y2 >= VGA_HEIGHT )
-		y2 = VGA_HEIGHT-1;
-
-	//--- in a debug sesion, vga_front is not the true front buffer, now copy it to the true one ---//
-
-	vga_front.temp_unlock();
-
-  BltFast (&vga_true_front, &vga_front, x1, y1, x2, y2, 1);
-
-	vga_front.temp_restore_lock();
-}
-//--------- End of function Sys::blt_virtual_area ---------//
-
-
 //-------- Begin of function Sys::disp_frames_per_second --------//
 //
 void Sys::disp_frames_per_second()
@@ -515,11 +449,7 @@ void Sys::disp_frames_per_second()
 	str  = "Frames per second: ";
 	str += frames_per_second;
 
-	vga.use_back();
-
 	font_news.disp( ZOOM_X1+10, ZOOM_Y1+10, str, MAP_X2);
-
-	vga.use_front();
 }
 //--------- End of function Sys::disp_frames_per_second ---------//
 
@@ -559,11 +489,6 @@ int Sys::change_display_mode(int modeId)
 		DEBUG_LOG("vga_front.unlock_buf() finish");
 	}
 
-#if(defined(USE_FLIP))
-	// detach back buffer
-	vga_front.detach_surface( &vga_back );
-#endif
-
 	// deinit surface
 
 	DEBUG_LOG("Attempt vga_back.deinit()");
@@ -573,14 +498,6 @@ int Sys::change_display_mode(int modeId)
    DEBUG_LOG("Attempt vga_front.deinit()");
    vga_front.deinit();
    DEBUG_LOG("Attempt vga_front.deinit() finish");
-
-//   if( sys.debug_session )
-   if( use_true_front )
-   {
-      DEBUG_LOG("Attempt vga_true_front.deinit()");
-      vga_true_front.deinit();
-      DEBUG_LOG("vga_true_front.deinit() finish");
-   }
 
 	// ##### begin Gilbert 30/10 ######//
 	// show mouse
@@ -678,17 +595,7 @@ void Sys::capture_screen()
    if( i>99 )        // all file names from DWORLD00 to DWORLD99 have been occupied
       return;
 
-//   if( sys.debug_session )    // in debug session, the buffer is not locked, we need to lock it for capturing the screen
-   if( use_true_front )    // in triple buffer , the buffer is not locked, we need to lock it for capturing the screen
-   {
-      vga_true_front.lock_buf();
-      vga_true_front.write_bmp_file(str);
-      vga_true_front.unlock_buf();
-   }
-   else
-   {
-      vga_front.write_bmp_file(str);
-   }
+   vga_front.write_bmp_file(str);
 
    //------ display msg --------//
 

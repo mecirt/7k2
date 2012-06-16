@@ -54,10 +54,8 @@ bool SetDisplayMode (int w, int h);
 void DeinitGraphics ();
 
 // Init the surface. w/h/flag only valid for the back one.
-bool InitSurface (VgaBuf *buf, bool back, DWORD w = 0, DWORD h = 0, int videoMemoryFlag = 0);
+bool InitSurface (VgaBuf *buf, DWORD w = 0, DWORD h = 0);
 void DeinitSurface (VgaBuf *buf);
-bool AttachSurface (VgaBuf *to, VgaBuf *surface);
-bool DetachSurface (VgaBuf *to, VgaBuf *surface);
 bool LockBuffer (VgaBuf *buf);
 bool UnlockBuffer (VgaBuf *buf);
 void FlipBuffer (VgaBuf *buf);

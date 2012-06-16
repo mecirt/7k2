@@ -154,7 +154,7 @@ Music             music;
 SECtrl            se_ctrl(&audio);
 DisplayModeInfo	current_display_mode;
 Vga               vga;
-VgaBuf            vga_front, vga_back, vga_true_front;
+VgaBuf            vga_buffer;
 
 //--------- objects initalized in Sys::init_objects --------//
 

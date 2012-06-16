@@ -94,13 +94,7 @@ void VgaBuf::bar(int x1,int y1,int x2,int y2,int colorCode)
 {
 	err_when( !buf_locked );
 
-	if( is_front )
-		mouse.hide_area(x1,y1,x2,y2);
-
 	IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, translate_color(colorCode) );
-
-	if( is_front )
-		mouse.show_area();
 }
 //--------------- End of function VgaBuf::bar --------------//
 
@@ -194,9 +188,6 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
 
 	if( cutPoint > x1 )
 	{
-		if( is_front )
-			mouse.hide_area( x1, y1, cutPoint, y2 );
-
 		int cutHeight = (y1 * 5 + y2 * 3) / 8;		// cut at 3/8 of between y1 and y2
 		err_when( y2 - y1 - 1 < 4 );
 
@@ -213,9 +204,6 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
 		{
 			barW_fast( x1, y, cutPoint, y, vga.vga_color_table->get_table(brightness.y)[indiColor]);
 		}
-
-		if( is_front )
-			mouse.show_area();
 	}
 
 	if( cutPoint <= x2 )
@@ -235,13 +223,7 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
 //
 void VgaBuf::line(int x1,int y1,int x2,int y2,int lineColor)
 {
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
-
 	IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1, x2, y2, translate_color(lineColor));
-
-	if( is_front )
-		mouse.show_area();
 }
 //------------ End of function VgaBuf::line -------------//
 
@@ -256,9 +238,6 @@ void VgaBuf::line(int x1,int y1,int x2,int y2,int lineColor)
 void VgaBuf::thick_line(int x1,int y1,int x2,int y2,int lineColor)
 {
 	err_when( x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );  // if the mouse cursor is in that area, hide it
 
 	if( y1-y2 > abs(x2-x1) )   // keep thickness of the line to 3
 	{
@@ -282,9 +261,6 @@ void VgaBuf::thick_line(int x1,int y1,int x2,int y2,int lineColor)
 		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1  , x2, y2  , lineColor );
 		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1+1, x2, y2+1, lineColor );
 	}
-
-	if( is_front )
-      mouse.show_area();
 }
 //------------ End of function VgaBuf::thick_line -------------//
 
@@ -307,9 +283,6 @@ void VgaBuf::d3_panel_up(int x1,int y1,int x2,int y2,int t,int paintCentre)
 	// int i,x,y;
 
 	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );
 
 	//------------------------------------------------//
 
@@ -455,9 +428,6 @@ void VgaBuf::d3_panel_up(int x1,int y1,int x2,int y2,int t,int paintCentre)
 	}
 
 	// ####### begin Gilbert 17/10 ##########//
-
-	if( is_front )
-		mouse.show_area();
 }
 //------------- End of function VgaBuf::d3_panel_up ------------//
 
@@ -476,9 +446,6 @@ void VgaBuf::d3_panel_up(int x1,int y1,int x2,int y2,int t,int paintCentre)
 void VgaBuf::d3_panel_down(int x1,int y1,int x2,int y2,int t,int paintCentre)
 {
 	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );
 
 	//---------- main center area -----------//
 
@@ -622,9 +589,6 @@ void VgaBuf::d3_panel_down(int x1,int y1,int x2,int y2,int t,int paintCentre)
 	// ####### end Gilbert 17/10 ##########//
 
 	//----------- show mouse ----------//
-
-	if( is_front )
-		mouse.show_area();
 }
 //------------- End of function VgaBuf::d3_panel_down ------------//
 
@@ -673,8 +637,6 @@ void VgaBuf::d3_panel_down_clear(int x1,int y1,int x2,int y2,int t)
 //
 void VgaBuf::adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree)
 {
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );
 #if( MAX_BRIGHTNESS_ADJUST_DEGREE > 10 )
 	adjustDegree *= MAX_BRIGHTNESS_ADJUST_DEGREE / 10;
 #endif
@@ -682,12 +644,7 @@ void VgaBuf::adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree)
 	err_when( adjustDegree < -MAX_BRIGHTNESS_ADJUST_DEGREE ||
 				 adjustDegree >  MAX_BRIGHTNESS_ADJUST_DEGREE );
 
-//	unsigned char* colorRemapTable = vga.vga_color_table->get_table(adjustDegree);
-//	remap_bar(x1, y1, x2, y2, colorRemapTable);
 	IMGbrightBar( cur_buf_ptr, cur_pitch, x1, y1, x2, y2, adjustDegree);
-
-	if( is_front )
-		mouse.show_area();
 }
 //------------- End of function VgaBuf::adjust_brightness ------------//
 
@@ -716,32 +673,7 @@ void VgaBuf::blt_buf_bright( VgaBuf *srcBuf, int srcX1, int srcY1, int srcX2, in
 //
 void VgaBuf::draw_d3_up_border(int x1,int y1,int x2,int y2)
 {
-	// ##### begin Gilbert 19/10 #######//
-/*
-	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );
-
-	//--------- white border on top and left sides -----------//
-
-	bar_fast( x1+1,y1,x2,y1, IF_LIGHT_BORDER_COLOR );    // top side
-	bar_fast( x1,y1,x1,y2  , IF_LIGHT_BORDER_COLOR );    // left side
-
-	//--------- black border on bottom and right sides -----------//
-
-	bar_fast( x1+1,y2,x2,y2, IF_DARK_BORDER_COLOR );     // bottom side
-	bar_fast( x2,y1+1,x2,y2, IF_DARK_BORDER_COLOR );		 // right side
-
-	//-------------------------------------------//
-
-	if( is_front )
-		mouse.show_area();
-
-*/
 	d3_panel_up( x1, y1, x2, y2, 4, 0 );
-
-	// ##### end Gilbert 19/10 #######//
 }
 //------------- End of function VgaBuf::draw_d3_up_border ------------//
 
@@ -752,32 +684,7 @@ void VgaBuf::draw_d3_up_border(int x1,int y1,int x2,int y2)
 //
 void VgaBuf::draw_d3_down_border(int x1,int y1,int x2,int y2)
 {
-	// #### begin Gilbert 19/10 #######//
-/*
-	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( is_front )
-		mouse.hide_area( x1,y1,x2,y2 );
-
-	//--------- white border on top and left sides -----------//
-
-
-	bar_fast( x1+1,y1,x2,y1, IF_DARK_BORDER_COLOR );    // top side
-	bar_fast( x1,y1,x1,y2  , IF_DARK_BORDER_COLOR );    // left side
-
-	//--------- black border on bottom and right sides -----------//
-
-	bar_fast( x1+1,y2,x2,y2, IF_LIGHT_BORDER_COLOR );     // bottom side
-	bar_fast( x2,y1+1,x2,y2, IF_LIGHT_BORDER_COLOR );		 // right side
-
-	//-------------------------------------------//
-
-	if( is_front )
-		mouse.show_area();
-*/
-
 	d3_panel_down( x1, y1, x2, y2, 4, 0 );
-	// ##### end Gilbert 19/10 ######//
 }
 //------------- End of function VgaBuf::draw_d3_down_border ------------//
 
@@ -827,19 +734,11 @@ void VgaBuf::bar_alpha(int x1,int y1,int x2,int y2,int logAlpha, int colorCode)
 	}
 	else if( logAlpha < 5 )
 	{
-		if( is_front )
-			mouse.hide_area(x1,y1,x2,y2);
 		IMGbarAlpha(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, logAlpha, translate_color(colorCode) );
-		if( is_front )
-			mouse.show_area();
 	}
 	else	// logAlpha >= 5, equivalence to VgaBuf::bar
 	{
-		if( is_front )
-			mouse.hide_area(x1,y1,x2,y2);
 		IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, translate_color(colorCode) );
-		if( is_front )
-			mouse.show_area();
 	}
 }
 //--------------- End of function VgaBuf::bar_alpha --------------//

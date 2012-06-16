@@ -261,10 +261,7 @@ void GetA::paint(int paintCursor)
 
 	bitmap->init(textWidth, textHeight);
 
-	// ##### begin Gilbert 22/2 ########//
-	// if( back_ground_bitmap && !Vga::use_back_buf )
 	if( back_ground_bitmap )
-	// ##### end Gilbert 22/2 ########//
 	{
 		short backGroundWidth = back_ground_bitmap->get_width();
 		short backGroundHeight = back_ground_bitmap->get_height();
@@ -333,124 +330,35 @@ void GetA::paint(int paintCursor)
 			IMGbar( bitmap->get_ptr(), bitmap->get_true_pitch(), cursorX, 0, cursorX, font_ptr->height()-1, 0);
 	}
 
-	if( !Vga::use_back_buf)
+	switch( align_flag )
 	{
-		mouse.hide_area(x,y, x_limit, y+font_ptr->max_font_height-1 );
-		switch( align_flag )
+	case 0:		// left justified
+		// ##### begin Gilbert 22/2 ########//
+		// Vga::active_buf->put_bitmapW_trans(x, y, bitmap );
+		Vga::active_buf->put_bitmapW(x, y, bitmap );
+		// ##### end Gilbert 22/2 ########//
+		break;
+
+	case 1:		// center justified
 		{
-		case 0:		// left justified
-			if( !back_ground_bitmap )
-			{
-				if( x+textWidth <= x_limit )		// fill right
-					vga.blt_buf( x+textWidth, y, x_limit, y + font_ptr->max_font_height-1, 0);
-				Vga::active_buf->put_bitmapW( x, y, bitmap );
-			}
-			else
-			{
-				short backGroundWidth = back_ground_bitmap->get_width();
-				short backGroundHeight = back_ground_bitmap->get_height();
-				if( textWidth < backGroundWidth && x+textWidth <= x_limit )		// fill right
-					Vga::active_buf->put_bitmapW_area(x, y, back_ground_bitmap,
-					textWidth, 0, min(x_limit-x, backGroundWidth-1), backGroundHeight-1 );
-				Vga::active_buf->put_bitmapW( x, y, bitmap );
-			}
-			break;
-
-		case 1:		// center justified
-			if( !back_ground_bitmap )
-			{
-				int l = x + (x_limit - x + 1 - textWidth ) / 2;
-				if( x < l )
-				{
-					vga.blt_buf( x, y, l-1, y + font_ptr->max_font_height-1, 0);
-				}
-				if( l+textWidth <= x_limit )
-				{
-					vga.blt_buf( l+textWidth, y, x_limit, y + font_ptr->max_font_height-1, 0);
-				}
-				Vga::active_buf->put_bitmapW( l, y, bitmap );
-			}
-			else
-			{
-				int l = x + (x_limit - x + 1 - textWidth ) / 2;
-				short backGroundWidth = back_ground_bitmap->get_width();
-				short backGroundHeight = back_ground_bitmap->get_height();
-				if( x < l && l-x <= backGroundWidth)
-				{
-					Vga::active_buf->put_bitmapW_area(x, y, back_ground_bitmap, 
-						0, 0, min(l-x, backGroundWidth)-1, backGroundHeight-1);
-				}
-				if( l+textWidth <= x_limit && l+textWidth-x < backGroundWidth)
-				{
-					Vga::active_buf->put_bitmapW_area(x, y, back_ground_bitmap,
-						l+textWidth-x, 0, min(x_limit-x+1, backGroundWidth)-1, backGroundHeight-1);
-				}
-				Vga::active_buf->put_bitmapW( l, y, bitmap );
-			}
-			break;
-
-		case -1:		// right justified
-			if( !back_ground_bitmap )
-			{
-				int l = x_limit - textWidth + 1;
-				if( x < l )		// fill left
-					vga.blt_buf( x, y, l-1, y + font_ptr->max_font_height-1, 0);
-				Vga::active_buf->put_bitmapW( l, y, bitmap );
-			}
-			else
-			{
-				short backGroundWidth = back_ground_bitmap->get_width();
-				short backGroundHeight = back_ground_bitmap->get_height();
-				int l = x_limit - textWidth + 1;
-				if( x < l )
-					Vga::active_buf->put_bitmapW_area(x, y, back_ground_bitmap,
-					0, 0, min(l-x, backGroundWidth)-1, backGroundHeight-1 );
-				Vga::active_buf->put_bitmapW(l, y, bitmap );
-			}
-			break;
-		
-		default:
-			err_here();
-		}
-		mouse.show_area();
-	}
-	else
-	{
-		switch( align_flag )
-		{
-		case 0:		// left justified
+			int l = x + (x_limit - x + 1 - textWidth ) / 2;
 			// ##### begin Gilbert 22/2 ########//
-			// Vga::active_buf->put_bitmapW_trans(x, y, bitmap );
-			Vga::active_buf->put_bitmapW(x, y, bitmap );
+			// Vga::active_buf->put_bitmapW_trans(l, y, bitmap );
+			Vga::active_buf->put_bitmapW(l, y, bitmap );
 			// ##### end Gilbert 22/2 ########//
-			break;
-
-		case 1:		// center justified
-			{
-				int l = x + (x_limit - x + 1 - textWidth ) / 2;
-				// ##### begin Gilbert 22/2 ########//
-				// Vga::active_buf->put_bitmapW_trans(l, y, bitmap );
-				Vga::active_buf->put_bitmapW(l, y, bitmap );
-				// ##### end Gilbert 22/2 ########//
-			}
-			break;
-
-		case -1:		// right justified
-			// ##### begin Gilbert 22/2 ########//
-			// Vga::active_buf->put_bitmapW_trans(x_limit-textWidth+1, y, bitmap );
-			Vga::active_buf->put_bitmapW(x_limit-textWidth+1, y, bitmap );
-			// ##### end Gilbert 22/2 ########//
-			break;
-		
-		default:
-			err_here();
 		}
-	}
+		break;
 
-#ifndef NO_REAL_TIME_UPDATE
-	if( !Vga::use_back_buf )
-		sys.blt_virtual_buf_area( x, y, x_limit, y+font_ptr->max_font_height-1 );
-#endif
+	case -1:		// right justified
+		// ##### begin Gilbert 22/2 ########//
+		// Vga::active_buf->put_bitmapW_trans(x_limit-textWidth+1, y, bitmap );
+		Vga::active_buf->put_bitmapW(x_limit-textWidth+1, y, bitmap );
+		// ##### end Gilbert 22/2 ########//
+		break;
+	
+	default:
+		err_here();
+	}
 }
 
 int GetA::cursor_x(int curPos)

@@ -480,24 +480,17 @@ void Game::init_remap_table()
 	//-------- initialize color remap table -------//
 
 	int         i, j;
-	ColorRemap *colorRemap = color_remap_array;
-
-	for( i=0 ; i<=MAX_COLOR_SCHEME ; i++, colorRemap++ )    // MAX_COLOR_SCHEME+1, +1 for independent units
+	for( i=0 ; i<=MAX_COLOR_SCHEME ; i++)    // MAX_COLOR_SCHEME+1, +1 for independent units
 	{
-      colorRemap->main_color = main_color_array[i];
-		colorRemap->main_color_w = vga.translate_color(colorRemap->main_color);
+      color_remap_array[i].main_color = main_color_array[i];
+		color_remap_array[i].main_color_w = vga.translate_color(color_remap_array[i].main_color);
 
       for( j=0 ; j<256 ; j++ )
-			colorRemap->color_table[j] = vga.translate_color(j);
+			color_remap_array[i].color_table[j] = vga.translate_color(j);
 
 		for( j=0 ; j<8 ; j++ )
-			colorRemap->color_table[FIRST_REMAP_KEY+j] = (short) vga.make_pixel(customized_color_code[i*24+j*3], customized_color_code[i*24+j*3+1], customized_color_code[i*24+j*3+2]);
+			color_remap_array[i].color_table[FIRST_REMAP_KEY+j] = (short) vga.make_pixel(customized_color_code[i*24+j*3], customized_color_code[i*24+j*3+1], customized_color_code[i*24+j*3+2]);
 
-//      for( j=0 ; j<4 ; j++ )
-//			colorRemap->color_table[FIRST_REMAP_KEY+j] = vga.translate_color( (remap_method_array[i].primary_color+j) );
-
-//      for( j=0 ; j<4 ; j++ )
-//			colorRemap->color_table[FIRST_REMAP_KEY+4+j] = vga.translate_color( (remap_method_array[i].secondary_color+j) );
    }
 }
 //---------- End of function Game::init_remap_table --------//

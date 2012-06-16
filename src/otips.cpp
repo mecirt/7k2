@@ -410,11 +410,8 @@ void TipsRes::disp(int x, int y )
 		boxHeight = textHeight + TIPS_BORDER_HEIGHT*2;
 	}
 
-	char backupUseBack = vga.use_back_buf;
-
 	// put panel
 
-	vga.use_back();
 	Vga::opaque_flag = config.opaque_report;
 	vga.d3_panel_down( x, y, x+TIPS_TEXT_WIDTH-1, y+boxHeight-1);
 
@@ -477,8 +474,6 @@ void TipsRes::disp(int x, int y )
 		text_game_menu.str_tips_close() ); // "Close" );
 
 	Vga::opaque_flag = 0;
-	if( !backupUseBack )
-		vga.use_front();
 }
 
 int TipsRes::detect()

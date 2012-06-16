@@ -263,10 +263,6 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 
 	sys.change_display_mode(MODE_ID_DEFAULT);
 
-	int useBackBuf = vga.use_back_buf;
-
-	vga.use_front();
-
 	//------- display the winning/losing picture -------//
 
 	int songId = 4;
@@ -404,16 +400,12 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 	if( sys.signal_exit_flag )
 	{
 		info.free_game_scr();
-
-		vga.use_back_buf = useBackBuf;
 	}
 	else
 	{
 		//---- otherwise restore the screen and continue to play ----//
 
 		info.rest_game_scr();
-
-		vga.use_back_buf = useBackBuf;
 
 		//---- reveal the whole world for staying in the game after being destroyed ----//
 

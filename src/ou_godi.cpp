@@ -49,8 +49,6 @@ static Button3D button_cast;
 //
 void UnitGod::disp_info(int refreshFlag)
 {
-	vga.use_back();
-
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
 	vga.active_buf->put_bitmap_trans_remap_decompress(INFO_X1+16, INFO_Y1-28, nationPict, game.get_color_remap_table(nation_recno, 0) );
 
@@ -61,7 +59,6 @@ void UnitGod::disp_info(int refreshFlag)
 	disp_unit_profile( 1, refreshFlag );
 
 	err_when( god_id <= 0 || god_id > MAX_GOD );
-//	font_snds.center_put_paragraph( INFO_X1+33, INFO_Y1, INFO_X2-22, INFO_Y1+115, str, -2, 0, 0 );
 	font_snds.center_put_paragraph( INFO_X1+33, INFO_Y1, INFO_X2-22, INFO_Y1+180, 
 		text_unit.str_god_desc(god_id), // str,
 		-2, 0, 0 );
@@ -78,8 +75,6 @@ void UnitGod::disp_info(int refreshFlag)
 
 	if( is_own() )
 	{
-//		if( game.game_mode != GAME_TEST )
-//		{
 			if( god_res[god_id]->can_cast_power )
 			{
 				x2 += BUTTON_DISTANCE;
@@ -97,11 +92,8 @@ void UnitGod::disp_info(int refreshFlag)
 					button_cast.paint();
 				}
 			}
-//		}
 	}
 	// ####### end Gilbert 26/2 #######//
-
-	vga.use_front();
 }
 //---------- End of function UnitGod::disp_info ----------//
 

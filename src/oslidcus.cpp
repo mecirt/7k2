@@ -183,10 +183,6 @@ int SlideBar::detect()
 void SlideBar::paint()
 {
 	(*disp_func)(this, 1);
-
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf_area( scrn_x1, scrn_y1, scrn_x2, scrn_y2 );
-#endif
 }
 
 
@@ -400,10 +396,6 @@ int SlideVBar::detect()
 void SlideVBar::paint()
 {
 	(*disp_func)(this, 1);
-
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf_area( scrn_x1, scrn_y1, scrn_x2, scrn_y2 );
-#endif
 }
 
 
@@ -411,8 +403,6 @@ void SlideVBar::paint(int newViewRecno)
 {
 	set_view_recno(newViewRecno);
 	paint();
-	//view_recno = bound(newViewRecno, min_recno, max_recno);
-	//(*disp_func)(this, 1);
 }
 
 // instruction for disp_func

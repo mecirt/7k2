@@ -142,10 +142,6 @@ void ScrollBar::paint(int topRecNo)
 		image_icon.put_front( x1+4 , y1+4, "SCROLL_L" );
 		image_icon.put_front( x2-11, y1+4, "SCROLL_R" );
 	}
-
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 }
 //--------- End of function ScrollBar::paint ------------//
 
@@ -204,15 +200,13 @@ void ScrollBar::refresh(int topRecNo, int forceRefresh, int pageSkipRec, int dis
 		{
 			if( type == VERTICAL )
 			{
-				if( !vga.use_back_buf )
-					vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
+				vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
 
 				Vga::active_buf->draw_d3_up_border( x1+2, indicator_y, x2-2, indicator_y+indicator_height-1 );
 			}
 			else
 			{
-				if( !vga.use_back_buf )
-					vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
+				vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
 
 				Vga::active_buf->draw_d3_up_border( indicator_y, y1+2, indicator_y+indicator_height-1, y2-2 );
 			}
@@ -233,10 +227,6 @@ void ScrollBar::refresh(int topRecNo, int forceRefresh, int pageSkipRec, int dis
 
       top_rec_no = topRecNo;
    }
-
-#ifndef NO_REAL_TIME_UPDATE
-//	sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 }
 //--------- End of function ScrollBar::refresh ------------//
 
@@ -372,8 +362,7 @@ int ScrollBar::detect()
 
 					if( if_flag )
 					{
-						if( !vga.use_back_buf )
-							vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
+						vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
 
 						Vga::active_buf->draw_d3_up_border( x1+2, indicator_y, x2-2, indicator_y+indicator_height-1 );
 					}
@@ -400,8 +389,7 @@ int ScrollBar::detect()
 
 					if( if_flag )
 					{
-						if( !vga.use_back_buf )
-							vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
+						vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
 
 						Vga::active_buf->draw_d3_up_border( indicator_y, y1+2, indicator_y+indicator_height-1, y2-2 );
 					}
@@ -414,11 +402,6 @@ int ScrollBar::detect()
 					lastMouseY = mouse.cur_x;
 				}
 			}
-
-#ifndef NO_REAL_TIME_UPDATE
-			if( !Vga::use_back_buf )
-				sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 		}
 
 		refresh(y_to_rec(indicator_y),1);

@@ -154,8 +154,6 @@ void Town::disp_info(int refreshFlag)
 		}
 	}
 
-	vga.use_back();
-
 	switch( town_menu_mode )
 	{
 		case TOWN_MENU_MAIN:
@@ -182,7 +180,6 @@ void Town::disp_info(int refreshFlag)
 			disp_man_power(refreshFlag);
 			break;
 	}
-	vga.use_front();
 }
 //----------- End of function Town::disp_info -----------//
 
@@ -1446,9 +1443,6 @@ int Town::input_town_name()
 	int boxY1 = INFO_Y1;
 	int boxY2 = boxY1 + boxHeight - 1 + 15;
 
-	char useBack = vga.use_back_buf;
-	vga.use_front();
-
 	// ------ capture save area -------//
 
 	mouse.hide_area( boxX1, boxY1, boxX2, boxY2 );
@@ -1498,8 +1492,6 @@ int Town::input_town_name()
 			refreshFlag = 0;
 		}
 
-		sys.blt_virtual_buf();
-
 		// ------- detect --------//
 
 		if( descTextBox.detect() )
@@ -1530,9 +1522,6 @@ int Town::input_town_name()
 	{
 		town_res.change_town_name( town_name_id, gameDesc );		
 	}
-
-	if(useBack)
-		vga.use_back();
 
 	return retFlag;
 }

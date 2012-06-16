@@ -50,14 +50,10 @@ static short edit_res_x1, edit_res_y1, edit_res_x2, edit_res_y2, edit_res_enable
 //
 void Site::disp_info(int refreshFlag)
 {
-	vga.use_back();
-
 #define LINE1_Y (INFO_Y1+20)
 #define LINE2_Y (INFO_Y1+40)
 #define LINE3_Y (INFO_Y1+60)
 #define LINE4_Y (INFO_Y1+80)
-//	if( refreshFlag != INFO_REPAINT )
-//		return;
 
    //------- natural resource site ------//
 
@@ -167,8 +163,6 @@ void Site::disp_info(int refreshFlag)
 		font_snds.put( INFO_X1+100, LINE2_Y, techInfo->tech_des(), 0, -1, 1 );
 	}
 	// #### end Gilbert 21/10 #######//
-
-	vga.use_front();
 }
 //----------- End of function Site::disp_info -----------//
 

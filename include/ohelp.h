@@ -130,7 +130,6 @@ public:
 
 	HelpSaveScreen	long_save_buf;
 	HelpSaveScreen	short_front_buf;
-	HelpSaveScreen	short_back_buf;
 
 	short			last_mouse_x;
 	short			last_mouse_y;

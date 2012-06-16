@@ -102,7 +102,6 @@ void Help::init(const char* resName)
 
 	long_save_buf.init();
 	short_front_buf.init();
-	short_back_buf.init();
 }
 //------- Begin of function Help::init ----------//
 
@@ -113,7 +112,6 @@ void Help::deinit()
 {
 	long_save_buf.deinit();
 	short_front_buf.deinit();
-	short_back_buf.deinit();
 
    if( help_info_array )
    {
@@ -503,9 +501,6 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 		font_san.put_paragraph( x1+X_MARGIN, y+4, x2-X_MARGIN, y2-Y_MARGIN, helpDetail, MSG_LINE_SPACE );
 	}
 
-//	if( sys.debug_session )
-		sys.blt_virtual_buf();
-
 	//--- in a single player game, pause the game when a help message is disp_helplayed ---//
 
 	// ##### begin Gilbert 30/6 #########//
@@ -534,8 +529,6 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 	// ##### end Gilbert 21/12 #######//
 
 	mouse.show();
-
-	sys.blt_virtual_buf();
 }
 //--------- End of function Help::disp_help ----------//
 
@@ -752,8 +745,6 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 			helpInfo = NULL;
 	}
 
-	// ------ backup active_buf, use_back_buf ------//
-
 	char *titleStr = NULL;
 
 	if( helpInfo )
@@ -791,7 +782,7 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 
 		// save buffer
 
-		(vgaBuf->is_front ? short_front_buf : short_back_buf).save_scr( x1, y1, x2, y2, vgaBuf );
+		short_front_buf.save_scr( x1, y1, x2, y2, vgaBuf );
 
 		if( config.help_mode >= BRIEF_HELP )
 		{
@@ -807,16 +798,7 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 			vgaBuf->bar_alpha( x2-2, y1+2, x2, y2-3, 1, V_BLACK );
 			vgaBuf->bar_alpha( x1+2, y2-2, x2, y2, 1, V_BLACK );
 
-			char useBackFlag = vga.use_back_buf;	//save use_back_buf
-			VgaBuf *activeBuf = vga.active_buf;
-
-			vga.use_back_buf = !vgaBuf->is_front;
-			vga.active_buf = vgaBuf;
-
 			font_san.center_put( x1, y1, x2-3, y2-3, titleStr );
-
-			vga.use_back_buf = useBackFlag;	// restore use_back_buf
-			vga.active_buf = activeBuf;
 		}
 	}
 	// ###### end Gilbert 9/9 #######//
@@ -828,16 +810,6 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 //
 void Help::flip()
 {
-#if(defined(USE_FLIP))
-
-	// ------ called when flip page ------//
-
-	// exchange front and back save buf
-
-	short_front_buf.swap(short_back_buf);
-
-#endif
-
 }
 //--------- End of function Help::flip --------//
 
@@ -846,7 +818,7 @@ void Help::flip()
 //
 void Help::hide_short_help(VgaBuf *vgaBuf)
 {
-	(vgaBuf->is_front ? short_front_buf : short_back_buf).rest_scr(vgaBuf);
+	short_front_buf.rest_scr(vgaBuf);
 }
 //--------- End of function Help::hide_short_help --------//
 
@@ -961,15 +933,9 @@ void HelpSaveScreen::save_scr(int x1, int y1, int x2, int y2, VgaBuf* vgaBuf )
 	save_scr_x2 = x2;
 	save_scr_y2 = y2;
 
-	if( vgaBuf->is_front )
-		mouse.hide_area( x1, y1, x2, y2 );
-
 	save_scr_buf->clear();
 	save_scr_buf->resize( x1, y1, x2-x1+1, y2-y1+1 );
 	vgaBuf->read_bitmapW( x1, y1, x2, y2, save_scr_buf->bitmap_ptr() );
-
-	if( vgaBuf->is_front )
-		mouse.show_area();
 
 	unclear();
 }

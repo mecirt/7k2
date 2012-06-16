@@ -111,26 +111,13 @@ void ButtonCustom::paint(int defIsPushed, int repaintBody)
 	}
 	// ####### end Gilbert 11/9 ######//
 
-	if( !vga.use_back_buf )
-		mouse.hide_area(x1, y1, x2, y2 );
-
 	//------ display the button button -------//
 
 	(*body_fp)(this, repaintBody);
 
 	//--------------------------------------//
 
-	if( !vga.use_back_buf )
-		mouse.show_area();
-
-	// #### begin Gilbert 11/9 ########//
 	painted_flag = 1;
-	// #### end Gilbert 11/9 ########//
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-		sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 }
 //---------- End of function ButtonCustom::paint -----------//
 

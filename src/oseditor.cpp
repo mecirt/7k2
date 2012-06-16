@@ -179,10 +179,6 @@ void ScenarioEditor::disable()
 //
 void ScenarioEditor::disp_menu_bar(int refreshFlag)
 {
-
-	char useBack = vga.use_back_buf;
-	vga.use_back();
-
 	if( refreshFlag == INFO_REPAINT || last_enable_flag != enable_flag )
 	{
 		refreshFlag = INFO_REPAINT;
@@ -247,9 +243,6 @@ void ScenarioEditor::disp_menu_bar(int refreshFlag)
 	}
 
 	button_menu_on.paint();
-
-	if( !useBack )
-		vga.use_front();
 }
 // ------ end of function ScenarioEditor::disp_menu_bar -------//
 
@@ -305,9 +298,6 @@ void ScenarioEditor::disp( int refreshFlag )
 		last_edit_sub_menu_mode = edit_sub_menu_mode[edit_mode];
 	}
 
-	char useBack = vga.use_back_buf;
-	vga.use_back();
-
 	if( edit_mode != SEDIT_MODE_NONE )
 		vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("SCEN-ED") );
 
@@ -359,9 +349,6 @@ void ScenarioEditor::disp( int refreshFlag )
 	default:
 		err_here();
 	}
-
-	if( !useBack )
-		vga.use_front();
 }
 // ------ end of function ScenarioEditor::disp -------//
 
@@ -431,9 +418,6 @@ void ScenarioEditor::detect()
 //
 void ScenarioEditor::disp_view()
 {
-	char useBack = vga.use_back_buf;
-	vga.use_back();
-
 	switch( edit_mode )
 	{
 	case SEDIT_MODE_NONE:
@@ -482,9 +466,6 @@ void ScenarioEditor::disp_view()
 	default:
 		err_here();
 	}
-
-	if( !useBack )
-		vga.use_front();
 }
 // ------ end of function ScenarioEditor::disp_view -------//
 

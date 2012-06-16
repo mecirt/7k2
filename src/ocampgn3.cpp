@@ -569,7 +569,7 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 		while(1)
 		{
 			if (!game.process_messages()) return;
-			if( sys.need_redraw_flag )
+			if( sys.need_redraw_flag || 1)
 			{
 				refreshFlag = DROPTION_ALL;
 				sys.need_redraw_flag = 0;
@@ -594,7 +594,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 			{
 				if( refreshFlag & DROPTION_PAGE )
 				{
-					vga.use_back();
 					vga.disp_image_file("CHOOSE");
 
 					// ----- display "Royal Units" --------//
@@ -629,9 +628,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 						text_campaign.str_deselect_all() ); // "Deselect All" );
 					font_thin_black.center_put_paragraph( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2,
 						text_campaign.str_delete_royal() ); // "Delete" );
-
-					vga.use_front();
-					vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 				}
 
 				if( refreshFlag & DROPTION_UNITS )
@@ -660,10 +656,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 						y2 = y1 + UNIT_ICON_HEIGHT-1;
 
 						// ------ clear page from back buffer ------//
-
-						mouse.hide_area( x1, y1, x2, y2 );
-
-						vga.blt_buf( x1, y1, x2, y2, 0 );
 
 						if( unit )
 						{
@@ -717,8 +709,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 								vga.active_buf->rect( x1, y1, x2, y2, 1, VGA_DARK_BLUE );
 							}
 						}
-
-						mouse.show_area();
 					}
 				}	// end for r
 
@@ -767,7 +757,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 				{
 					if( needSelectFryhtan )
 					{
-						vga.blt_buf( BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2, 0 );
 						font_thin_black.center_put_paragraph( BUTTON3_X1+1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2,
 							this_battle_use_fryhtan ? text_campaign.str_fryhtan_force() : text_campaign.str_human_force() );
 						// fryhtanForceStr : humanForceStr );
@@ -775,9 +764,8 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 				}
 
 				refreshFlag = 0;
+                                vga.flip();
 			}
-
-			sys.blt_virtual_buf();
 
 			// ------ detect ---------//
 

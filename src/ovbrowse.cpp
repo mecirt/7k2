@@ -280,13 +280,6 @@ void VBrowse::refresh(int newRecNo, int newTotalRec)
    }
 
    disp_all();
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-	{
-		sys.blt_virtual_buf_area( x1,y1,x2,y2 );
-	}
-#endif
 }
 //---------- End of function VBrowse::refresh ----------//
 
@@ -309,13 +302,6 @@ void VBrowse::update()
 
 		disp_rec( recNo, x, y, INFO_UPDATE );        // call user defined function
 	}
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-	{
-		sys.blt_virtual_buf_area( x1,y1,x2,y2 );
-	}
-#endif
 }
 //---------- End of function VBrowse::update ----------//
 
@@ -382,10 +368,6 @@ int VBrowse::detect()
 				disp_one(rec_no, CLEAR_HIGH);
 				disp_one(recNo , DISP_HIGH );    // 2 means display record content only
 
-#ifndef NO_REAL_TIME_UPDATE
-				if( !vga.use_back_buf )
-					sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 				rec_no = recNo;
 				return rec_no;
 			}
@@ -411,10 +393,6 @@ int VBrowse::detect()
 
 				rec_no = top_rec_no = newTopRec;
 				disp_all();
-#ifndef NO_REAL_TIME_UPDATE
-				if( !vga.use_back_buf )
-					sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 
 				return rec_no;
 			}
@@ -453,10 +431,6 @@ int VBrowse::detect()
 			disp_all();
 		}
 
-#ifndef NO_REAL_TIME_UPDATE
-		if( !vga.use_back_buf )
-			sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 		return rec_no;
 	}
 
@@ -498,13 +472,6 @@ int VBrowse::detect_pull()
          if( rec_no < top_rec_no )
             top_rec_no--;
 
-         // disp_all();
-
-#ifndef NO_REAL_TIME_UPDATE
-			if( !vga.use_back_buf )
-				sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
-
          return 1;
       }
    }
@@ -521,13 +488,6 @@ int VBrowse::detect_pull()
          rec_no++;
          if( rec_no >= top_rec_no+disp_max_rec )
             top_rec_no++;
-
-         // disp_all();
-
-#ifndef NO_REAL_TIME_UPDATE
-			if( !vga.use_back_buf )
-				sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
 
          return 1;
       }
@@ -563,10 +523,6 @@ int VBrowse::detect_right()
          disp_one(rec_no,CLEAR_HIGH);
          disp_one(recNo, DISP_HIGH);    // 2 means display record content only
 
-#ifndef NO_REAL_TIME_UPDATE
-			if( !vga.use_back_buf )
-				sys.blt_virtual_buf_area( x1, y1, x2, y2 );
-#endif
          rec_no = recNo;
          return recNo;
       }

@@ -587,8 +587,6 @@ void Get::display_get( GetFld *getPtr,int getting)
 
    if( getting || getPtr->data )
 		font_ptr->disp( getPtr->x, getPtr->y, buf, getPtr->x2 );
-
-	sys.blt_virtual_buf();
 }
 //-------- END OF FUNCTION Get::display_get ------------//
 
@@ -1409,8 +1407,6 @@ int Get::get_next_key( char* dataBuf, char* pictBuf, GetFld* getPtr,
 				sys.yield();
 				mouse.get_event();
 
-				sys.blt_virtual_buf();
-
 				//----- if the mouse is press outside the field, exit ----//
 
 				if( mouse.any_click() )
@@ -1426,8 +1422,6 @@ int Get::get_next_key( char* dataBuf, char* pictBuf, GetFld* getPtr,
 
 			if( !cursorDisplay )    // last time is display, then erase it
 				vga.active_buf->bar_down( cursorX-1, getPtr->y, cursorX, getPtr->y+font_ptr->height()-1 );
-
-			sys.blt_virtual_buf();
 		}
 
 		if ( (getPtr->upper_convert ||  pictBuf[bufPos] == '!')  &&  keyCode >= 0x20  &&  keyCode <= 0xFF )

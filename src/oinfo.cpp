@@ -74,13 +74,9 @@
 //------ define static vars --------//
 
 static	short *save_buf_1 = NULL;
-static	short *save_buf_1b = NULL;
 static	short *save_buf_2 = NULL;
-static	short *save_buf_2b = NULL;
 static	short *save_buf_3 = NULL;
-static	short *save_buf_3b = NULL;
 static	short *save_buf_4 = NULL;
-static	short *save_buf_4b = NULL;
 
 //---- define the customized color code for overriding the STD.COL ----//
 //---- such table also exists in ogame.cpp ----------------------------//
@@ -378,8 +374,6 @@ void Info::disp()
 	if( option_menu.is_active() )
 		return;
 	
-	vga.use_back();
-
 	// ######## begin Gilbert 23/12 #######//
 	help.hide_area(INFO_X1, INFO_Y1, INFO_X2, INFO_Y2);
 	// ######## end Gilbert 23/12 #######//
@@ -388,13 +382,6 @@ void Info::disp()
 
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
 
-	vga.use_front();
-
-	//------- use front buffer -------//
-
-	int saveUseBackBuf = vga.use_back_buf;
-
-	vga.use_front();
 	//------ if units/firm selected, display info --------//
 
 	// ##### begin Gilbert 1/2 ######//
@@ -439,18 +426,9 @@ void Info::disp()
 	}
 	// ####### end Gilbert 23/2 ########//
 
-#ifdef USE_FLIP
-	vga.blt_buf(INFO_X1, INFO_Y1-125, INFO_X2, INFO_Y2, 0);
-#endif
-
 	// ######## begin Gilbert 23/12 #######//
 	help.show_area();
 	// ######## end Gilbert 23/12 #######//
-
-	//----- restore use back buffer if it was ----//
-
-	if( saveUseBackBuf )
-		vga.use_back();
 }
 //-------- End of function Info::disp --------//
 
@@ -471,13 +449,7 @@ void Info::update()
 
 	//------- use front buffer -------//
 
-	int saveUseBackBuf = vga.use_back_buf;
-
-	vga.use_front();
-
-	vga.use_back();
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
-	vga.use_front();
 
 	//-------------------------------------------//
 
@@ -539,9 +511,6 @@ void Info::update()
 	// ######## end Gilbert 8/3 #######//
 
 	//----- restore use back buffer if it was ----//
-
-	if( saveUseBackBuf )
-		vga.use_back();
 }
 //-------- End of function Info::update --------//
 
@@ -549,10 +518,7 @@ void Info::update()
 
 void Info::disp_heading()
 {
-#ifdef USE_FLIP
 	vga_back.put_bitmapW(TOP_MENU_X1, TOP_MENU_Y1, heading_background_bitmap);
-#endif
-	vga.use_back();
 
 	//---- display info on the top menu area ----//
 
@@ -983,8 +949,6 @@ void Info::disp_heading()
 			}
 		}
 	}
-
-	vga.use_front();
 }
 //-------- End of function Info::disp_heading --------//
 
@@ -1183,52 +1147,38 @@ void Info::save_game_scr()
 	if( 0 < ZOOM_Y1 )
 	{
 		save_buf_1 = vga_front.save_area(0, 0, VGA_WIDTH-1, ZOOM_Y1-1);
-		save_buf_1b = vga_back.save_area(0, 0, VGA_WIDTH-1, ZOOM_Y1-1);		// save the back buffer also as the top area of the back buf is used for font display 
 	}
 	else
 	{
 		save_buf_1 = NULL;	// clear it so rest_game_scr won't restore it
-		save_buf_1b = NULL;
 	}
 
 	if( ZOOM_Y2 < VGA_HEIGHT-1 )
 	{
 		save_buf_2 = vga_front.save_area(0, ZOOM_Y2+1, VGA_WIDTH-1, VGA_HEIGHT-1);
-#ifdef USE_FLIP
-		save_buf_2b = vga_back.save_area(0, ZOOM_Y2+1, VGA_WIDTH-1, VGA_HEIGHT-1);
-#endif
 	}
 	else
 	{
 		save_buf_2 = NULL;
-		save_buf_2b = NULL;
 	}
 
 	// left and right
 	if( 0 < ZOOM_X1 )
 	{
 		save_buf_3 = vga_front.save_area(0, ZOOM_Y1, ZOOM_X1-1, ZOOM_Y2);
-#ifdef USE_FLIP
-		save_buf_3b = vga_back.save_area(0, ZOOM_Y1, ZOOM_X1-1, ZOOM_Y2);
-#endif
 	}
 	else
 	{
 		save_buf_3 = NULL;
-		save_buf_3b = NULL;
 	}
 
 	if( ZOOM_X2 < VGA_WIDTH-1 )
 	{
 		save_buf_4 = vga_front.save_area(ZOOM_X2+1, ZOOM_Y1, VGA_WIDTH-1, ZOOM_Y2);
-#ifdef USE_FLIP
-		save_buf_4b = vga_back.save_area(ZOOM_X2+1, ZOOM_Y1, VGA_WIDTH-1, ZOOM_Y2);
-#endif
 	}
 	else
 	{
 		save_buf_4 = NULL;
-		save_buf_4b = NULL;
 	}
 }
 //---------- End of function Info::save_game_scr ---------//
@@ -1241,17 +1191,6 @@ void Info::rest_game_scr()
 	// restore area outside front buffer
 	mouse.hide();
 
-#ifdef USE_FLIP
-	if(save_buf_4b)
-		vga_back.rest_area(save_buf_4b, 1);
-	save_buf_4b = NULL;
-	if(save_buf_3b)
-		vga_back.rest_area(save_buf_3b, 1);
-	save_buf_3b = NULL;
-	if(save_buf_2b)
-		vga_back.rest_area(save_buf_2b, 1);
-	save_buf_2b = NULL;
-#endif
 	if(save_buf_4)
 		vga_front.rest_area(save_buf_4, 1);
 	save_buf_4 = NULL;
@@ -1264,14 +1203,8 @@ void Info::rest_game_scr()
 	if(save_buf_1)
 		vga_front.rest_area(save_buf_1, 1);
 	save_buf_1 = NULL;
-	if(save_buf_1b)
-		vga_back.rest_area(save_buf_1b, 1);
- 	save_buf_1b = NULL;
-
-	save_buf_1 = NULL;
 
 	info.disp();
-	sys.blt_virtual_buf();		// blt the virtual front buffer to the screen
 	mouse.show();
 }
 //---------- End of function Info::rest_game_scr ---------//
@@ -1302,30 +1235,6 @@ void Info::free_game_scr()
 	{
 		mem_del(save_buf_1);
 		save_buf_1 = NULL;
-	}
-
-	if(save_buf_4b)
-	{
-		mem_del(save_buf_4b);
-		save_buf_4b = NULL;
-	}
-
-	if(save_buf_3b)
-	{
-		mem_del(save_buf_3b);
-		save_buf_3b = NULL;
-	}
-
-	if(save_buf_2b)
-	{
-		mem_del(save_buf_2b);
-		save_buf_2b = NULL;
-	}
-
-	if(save_buf_1b)
-	{
-		mem_del(save_buf_1b);
-		save_buf_1b = NULL;
 	}
 }
 //---------- End of function Info::free_game_scr ---------//
@@ -1512,9 +1421,6 @@ int Info::draw_unit_icon( int x, int y, int unitId, int nationRecno,
 		{
 			// ------ draw icon ----------//
 
-			if( vga.active_buf->is_front )
-				mouse.hide_area( x1+srcX1, y1+srcY1, x1+srcX2, x1+srcY2);
-
 			if( para & 2 )
 			{
 				colorRemapTable = (short *)vga.vga_color_table->get_table(6);
@@ -1549,9 +1455,6 @@ int Info::draw_unit_icon( int x, int y, int unitId, int nationRecno,
 				for( j=0 ; j<8 ; j++ )
 					colorRemapTable[FIRST_REMAP_KEY+j] = colour_buffer[j];
 			}
-
-			if( vga.active_buf->is_front )
-				mouse.show_area();
 		}
 
 		if( para & 6 )

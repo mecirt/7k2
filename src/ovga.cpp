@@ -43,9 +43,8 @@
 
 //------ Define static class member vars ---------//
 
-char    Vga::use_back_buf = 0;
 char    Vga::opaque_flag  = 0;
-VgaBuf* Vga::active_buf   = &vga_front;      // default: front buffer
+VgaBuf* Vga::active_buf   = &vga_buffer;
 
 extern "C"
 {
@@ -92,6 +91,27 @@ BOOL Vga::init()
    if( !set_mode(VGA_WIDTH, VGA_HEIGHT) )
       return FALSE;
 
+   File palFile;
+   palFile.file_open(DIR_RES"pal_std.res");
+   ColorTable colorTable;
+
+   BYTE palBuf[0x100][3];
+   palFile.file_seek(8);     				// bypass the header info
+   palFile.file_read(palBuf, sizeof(palBuf));
+   palFile.file_close();
+
+   // ------- palette description -------------//
+
+   PalDesc palBufDesc( palBuf, 3, 0x100, 8 );
+
+   //-------- create color remap table ---------//
+
+   colorTable.generate_table_fast( 0, palBufDesc, ColorTable::bright_func );
+   default_remap_table = (short *) malloc(0x100 * 2);
+   memcpy( default_remap_table, colorTable.get_table(0), 0x100 * 2 );
+
+   default_blend_table = 0;
+  
    return TRUE;
 }
 //-------- End of function Vga::init ----------//
@@ -129,16 +149,6 @@ void Vga::deinit()
 }
 //-------- End of function Vga::deinit ----------//
 
-//--------- Start of function Vga::init_color_table ----------//
-
-void Vga::init_color_table()
-{
-  default_remap_table = 0;
-  default_blend_table = 0;
-}
-//----------- End of function Vga::init_color_table ----------//
-
-
 //--------- Begin of function Vga::blt_buf ----------//
 //
 // Blt the back buffer to the front buffer.
@@ -150,72 +160,22 @@ void Vga::init_color_table()
 //
 BOOL Vga::blt_buf(int x1, int y1, int x2, int y2, int putBackCursor)
 {
-#ifdef DEBUG
-	unsigned long startTime = m.get_time();
-#endif
-
-   if( putBackCursor )
-   {
-      mouse_cursor.hide_area_flag = 0;    // do not call mouse.hide_area() which will double paint the cursor
-
-      mouse_cursor.hide_x1 = x1;
-      mouse_cursor.hide_y1 = y1;
-      mouse_cursor.hide_x2 = x2;
-      mouse_cursor.hide_y2 = y2;
-
-      //-------- put mouse cursor ---------//
-
-      mouse_cursor.disp_back_buf(x1, y1, x2, y2);
-   }
-   else
-   {
-      mouse.hide_area(x1, y1, x2, y2);
-   }
-
-   //--------------------------------------//
-
-	// ###### end Gilbert 12/9 #######//
-	// use blt function
-	vga_front.temp_unlock();
-	vga_back.temp_unlock();
-
-  BltFast (&vga_front, &vga_back, x1, y1, x2, y2, 2);
-	vga_back.temp_restore_lock();
-	vga_front.temp_restore_lock();
-	// ###### end Gilbert 12/10 #######//
-
-   //--------------------------------------//
-
-   if( putBackCursor )
-      mouse_cursor.hide_area_flag = 0;    // do not call mouse.show_area() which will double paint the cursor
-   else
-      mouse.show_area();
-
-#ifdef DEBUG
-	startTime = m.get_time() - startTime;
-#endif
-
-   return TRUE;
+  // nothing here!
 }
 //---------- End of function Vga::blt_buf ----------//
 
 //----------- Begin of function Vga::flip ----------//
 void Vga::flip()
 {
-#if(defined(USE_FLIP))
-
 	mouse_cursor.before_flip();
 
-	vga_front.temp_unlock();
-	vga_back.temp_unlock();
+	vga_buffer.temp_unlock();
 
   FlipBuffer (&vga_front);
 
-	vga_back.temp_restore_lock();
-	vga_front.temp_restore_lock();
+	vga_buffer.temp_restore_lock();
 
 	mouse_cursor.after_flip();
-#endif
 }
 //----------- End of function Vga::flip ----------//
 
@@ -233,49 +193,18 @@ void Vga::d3_panel_up(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBorde
 {
    err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
 
-   VgaBuf* vgaBuf;
-
-   if( vgaFrontOnly )
-      vgaBuf = &vga_front;
-   else
-      vgaBuf = &vga_back;
-
    if( !drawBorderOnly )
    {
 		// ##### begin Gilbert 19/10 #####//
       if( Vga::opaque_flag )
-         // vgaBuf->bar(x1+1, y1+1, x2-1, y2-1, UP_OPAQUE_COLOR);
-         vgaBuf->bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_light);
+         vga_back.bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_light);
       else
-         // vgaBuf->bar_alpha(x1+1, y1+1, x2-1, y2-1, IF_UP_BRIGHTNESS_ADJUST/2-1, V_WHITE);
-			vgaBuf->bar_alpha( x1+1, y1+1, x2-1, y2-1, IF_UP_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_light );
+			vga_back.bar_alpha( x1+1, y1+1, x2-1, y2-1, IF_UP_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_light );
 		// ##### end Gilbert 19/10 #####//
    }
 
-	// ##### begin Gilbert 19/10 ######//
-   // mouse.hide_area( x1,y1,x2,y2 );
+	vga_back.draw_d3_up_border( x1, y1, x2, y2 );
 
-   //--------- white border on top and left sides -----------//
-
-	// vgaBuf->bar_fast( x1+1,y1,x2,y1, IF_LIGHT_BORDER_COLOR );    // top side
-	// vgaBuf->bar_fast( x1,y1,x1,y2  , IF_LIGHT_BORDER_COLOR );    // left side
-
-   //--------- black border on bottom and right sides -----------//
-
-	// vgaBuf->bar_fast( x1+1,y2,x2,y2, IF_DARK_BORDER_COLOR );     // bottom side
-	// vgaBuf->bar_fast( x2,y1+1,x2,y2, IF_DARK_BORDER_COLOR );     // right side
-
-	vgaBuf->draw_d3_up_border( x1, y1, x2, y2 );
-
-   //-------------------------------------------//
-
-   // mouse.show_area();
-	// ##### end Gilbert 19/10 ######//
-
-   //----- blt the area from the back buffer to the front buffer ------//
-
-   if( !vgaFrontOnly && !use_back_buf )      // only blt the back to the front is the active buffer is the front
-      vga.blt_buf(x1, y1, x2, y2, 0);
 }
 //------------- End of function Vga::d3_panel_up ------------//
 
@@ -292,49 +221,15 @@ void Vga::d3_panel_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBor
 {
    err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
 
-   VgaBuf* vgaBuf;
-
-   if( vgaFrontOnly )
-      vgaBuf = &vga_front;
-   else
-      vgaBuf = &vga_back;
-
    if( !drawBorderOnly )
    {
-		// ##### begin Gilbert 19/10 ######//
       if( Vga::opaque_flag )
-         // vgaBuf->bar(x1+1, y1+1, x2-1, y2-1, DOWN_OPAQUE_COLOR);
-         vgaBuf->bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_dark );
+         vga_back.bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_dark );
       else
-         // vgaBuf->bar_alpha(x1+1, y1+1, x2-1, y2-1, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
-         vgaBuf->bar_alpha(x1+1, y1+1, x2-1, y2-1, IF_DOWN_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_dark );
-		// ##### end Gilbert 19/10 ######//
+         vga_back.bar_alpha(x1+1, y1+1, x2-1, y2-1, IF_DOWN_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_dark );
    }
 
-	// ##### begin Gilbert 19/10 ######//
-	// mouse.hide_area( x1,y1,x2,y2 );
-
-   //--------- white border on top and left sides -----------//
-
-	// vgaBuf->bar_fast( x1+1,y1,x2,y1, IF_DARK_BORDER_COLOR );    // top side
-	// vgaBuf->bar_fast( x1,y1,x1,y2  , IF_DARK_BORDER_COLOR );    // left side
-
-   //--------- black border on bottom and right sides -----------//
-
-	// vgaBuf->bar_fast( x1+1,y2,x2,y2, IF_LIGHT_BORDER_COLOR );   // bottom side
-	// vgaBuf->bar_fast( x2,y1+1,x2,y2, IF_LIGHT_BORDER_COLOR );   // right side
-
-	vgaBuf->draw_d3_down_border( x1, y1, x2, y2 );
-
-   //-------------------------------------------//
-
-//   mouse.show_area();
-	// ##### end Gilbert 19/10 ######//
-
-   //----- blt the area from the back buffer to the front buffer ------//
-
-   if( !vgaFrontOnly && !use_back_buf )      // only blt the back to the front is the active buffer is the front
-      vga.blt_buf(x1, y1, x2, y2, 0);
+	vga_back.draw_d3_down_border( x1, y1, x2, y2 );
 }
 //------------- End of function Vga::d3_panel_down ------------//
 
@@ -351,17 +246,10 @@ void Vga::d3_panel2_up(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBord
 {
    err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
 
-   VgaBuf* vgaBuf;
-
-   if( vgaFrontOnly )
-      vgaBuf = &vga_front;
-   else
-      vgaBuf = &vga_back;
+   VgaBuf *vgaBuf = &vga_back;
 
    if( !drawBorderOnly )
       vgaBuf->bar_alpha(x1+2, y1+2, x2-3, y2-3, IF_UP_BRIGHTNESS_ADJUST/2-1, V_WHITE);
-
-   mouse.hide_area( x1,y1,x2,y2 );
 
    //--------- white border on top and left sides -----------//
 
@@ -390,11 +278,6 @@ void Vga::d3_panel2_up(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBord
    //-------------------------------------------//
 
    mouse.show_area();
-
-   //----- blt the area from the back buffer to the front buffer ------//
-
-   if( !vgaFrontOnly && !use_back_buf )      // only blt the back to the front is the active buffer is the front
-      vga.blt_buf(x1, y1, x2, y2, 0);
 }
 //------------- End of function Vga::d3_panel_up ------------//
 
@@ -412,11 +295,7 @@ void Vga::d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBo
    err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
 
    VgaBuf* vgaBuf;
-
-   if( vgaFrontOnly )
-      vgaBuf = &vga_front;
-   else
-      vgaBuf = &vga_back;
+   vgaBuf = &vga_buffer;
 
    if( !drawBorderOnly )
       vgaBuf->bar_alpha(x1+2, y1+2, x2-3, y2-3, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
@@ -448,11 +327,6 @@ void Vga::d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBo
    vgaBuf->bar_fast( x1+1, y2, x2-1, y2, 0x9c);
 
    mouse.show_area();
-
-   //----- blt the area from the back buffer to the front buffer ------//
-
-   if( !vgaFrontOnly && !use_back_buf )      // only blt the back to the front is the active buffer is the front
-      vga.blt_buf(x1, y1, x2, y2, 0);
 }
 //------------- End of function Vga::d3_panel2_down ------------//
 

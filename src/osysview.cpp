@@ -98,18 +98,8 @@ void Sys::disp_view_mode(int observeMode)
 	const int darkenWidth = 75;
 	const int darkenHeight = 21;
 	char scrollName[] = "SR1024-B";
-	int flag = 0;
-
 	
-	help.short_front_buf;
-
-	if( !vga.use_back_buf )
-	{
-		vga.use_back();
-		flag = 1;
-	}
-
-	help.short_back_buf.hide_area(SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2);
+	help.short_front_buf.hide_area(SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2);
 	
 //	if (current_display_mode.mode_id == MODE_ID_800x600x16)
 	{
@@ -120,15 +110,6 @@ void Sys::disp_view_mode(int observeMode)
 									 darkenY[i] + darkenHeight -3, text_reports.str_report_mode(i+1)); // scroll_name[i]);
 		}
 	}
-/*	else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-	{
-		const darkenWidth = 75;
-		const darkenHeight = 25;
-		image_button.put_back( SCROLL_MENU_X1, SCROLL_MENU_Y1, scrollName);
-	}
-	else
-		err_here();
-*/
 	// highlight of the mode after
 	if( view_mode >= MIN_MODE_TO_DISPLAY && view_mode <= MAX_MODE_TO_DISPLAY )
 	{
@@ -138,14 +119,6 @@ void Sys::disp_view_mode(int observeMode)
 			font_bld.center_put(darkenX[view_mode-1]+1, darkenY[view_mode-1]+1, darkenX[view_mode-1] + darkenWidth,
 									 darkenY[view_mode-1] + darkenHeight -2, text_reports.str_report_mode(view_mode));	// scroll_name[view_mode-1]);
 		}	
-/*		else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-		{
-			// find the size of that scroll
-			scrollName[7] = '0' + view_mode;
-			image_button.put_back( SCROLL_MENU_X1, SCROLL_MENU_Y1, scrollName);
-		}
-		else
-			err_here();*/
 	}
 
 	// darken buttons of view mode 1-7 if nation_array.player_recno == 0
@@ -159,21 +132,8 @@ void Sys::disp_view_mode(int observeMode)
 				darkenY[j-MIN_MODE_TO_DISPLAY]+darkenHeight-1, -5 );
 		}
 	}
-	if ( flag )
-		vga.use_front();
-
-	mouse.hide();		// hide before help.short_front_buf.hide_area();
-	help.short_front_buf.hide_area(SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2);
-
-	vga.blt_buf(SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2, 0);
 
 	help.short_front_buf.show_area();
-	help.short_back_buf.show_area();
-	mouse.show();		// show after help.short_front_buf.hide_area();
-
-#ifndef NO_REAL_TIME_UPDATE
-	sys.blt_virtual_buf_area( SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2 );
-#endif
 }
 //--------- End of funtion Sys::disp_view_mode ---------//
 
@@ -193,7 +153,6 @@ void Sys::disp_view()
 	{
 		//------- blt the zoom area to the front screen --------//
 
-		vga.use_back();
 		Vga::opaque_flag = config.opaque_report;
 
 		switch( view_mode )
@@ -239,7 +198,6 @@ void Sys::disp_view()
 				break;
 		}
 
-		vga.use_front();
 		Vga::opaque_flag = 0;
 
 		report_disp_frame_no = 0;
@@ -297,21 +255,16 @@ void Sys::update_view()
 
 		if( config.show_debug_info )
 		{
-			vga.use_back();
-
 			nation_array.draw_profile();
 			firm_array.draw_profile();
 			town_array.draw_profile();
 			unit_array.draw_profile();
 			unit_group.draw_profile();
-			vga.use_front();
 		}
 
 		if( in_game_menu.is_active() )
 		{
-			vga.use_back();
 			in_game_menu.disp();
-			vga.use_front();
 		}
 
 		//------------------------------------//
@@ -336,7 +289,6 @@ void Sys::update_view()
 		}
 		else
 		{
-			vga.use_back();
 			Vga::opaque_flag = config.opaque_report;
 
 			switch( view_mode )
@@ -387,7 +339,6 @@ void Sys::update_view()
 				in_game_menu.disp();
 			}
 
-			vga.use_front();
 			Vga::opaque_flag = 0;
 
 #if(!defined(USE_FLIP))
@@ -409,8 +360,6 @@ void Sys::detect_view()
 
 	if( enableAction )
 		info.detect();
-
-	vga.use_back();
 
 	switch( view_mode )
 	{
@@ -465,7 +414,6 @@ void Sys::detect_view()
 			return;
 		}
 	}
-	vga.use_front();
 
 	//------ detect tutorial controls -------//
 

@@ -273,14 +273,8 @@ void InGameMenu::enter(char untilExitFlag)
          sys.yield();
          mouse.get_event();
 
-         // display on front buffer
-         char useBackBuf = vga.use_back_buf;
-         vga.use_front();
          disp();
-         if(useBackBuf)
-            vga.use_back();
 
-         sys.blt_virtual_buf();
          music.yield();
          detect();
       }
@@ -300,8 +294,7 @@ void InGameMenu::disp(int needRepaint)
 	err_when( bx < ZOOM_X1 );
 
    // since use back buffer, always refresh
-   if( Vga::use_back_buf || needRepaint )
-      refresh_flag = 1;
+   refresh_flag = 1;
 
    if( refresh_flag )
    {
@@ -465,11 +458,6 @@ int InGameMenu::detect()
 
 	font_bold_red.center_put( x1, y + ySpacing * b, x2, y + ySpacing * b + font_bold_black.max_font_height,
 		str );
-
-#ifndef NO_REAL_TIME_UPDATE
-	if( !vga.use_back_buf )
-		sys.blt_virtual_buf();
-#endif
 
    while( mouse.left_press )  // holding down the button
    {

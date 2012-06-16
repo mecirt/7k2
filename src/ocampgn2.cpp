@@ -378,8 +378,6 @@ void Campaign::main_loop(int isLoadedGame)
 		else
 			music.stop();
 
-		sys.blt_virtual_buf();
-	
 		//---- if an event should happen now ----//
 
 		if( event_id )
@@ -663,18 +661,13 @@ void Campaign::disp_intro()
 	int counter = VGA_HEIGHT;
 	mouse.hide();
 	
-	vga.use_back();
 	vga.disp_image_file("Frwin01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
 		sys.sleep(100);
 	}
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 	sys.sleep(500);
 
@@ -689,8 +682,6 @@ void Campaign::disp_intro()
 		//	counter = VGA_HEIGHT;
 			break;
 
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -708,16 +699,8 @@ void Campaign::disp_intro()
 		tempCounter += font_cmpo.text_height();
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_8(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
 
 		sys.yield();
-/*		if( config.music_flag )
-		{
-			if( !music.is_playing(1) )
-				music.play(1, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-		}
-		else
-			music.stop();*/
 
 		if( mouse.left_press )
 		{
@@ -734,75 +717,8 @@ void Campaign::disp_intro()
 	for (i = 0; i < 4; i++)
 	{	
 		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
 	}
 	
-/*	vga.use_back();
-	vga.disp_image_file("Huwin01");
-	sys.yield();
-	for (i = 0; i < 4; i++)
-	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-	sys.sleep(500);
-		
-	counter = VGA_HEIGHT;
-	while(1)
-	{
-		int tempCounter = counter;
-
-		if ((counter -= 3) < -100)
-		//	counter = VGA_HEIGHT;
-			break;
-
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
-		font_cmpo.space_width -= 4;	
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_5(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_6(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_7(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_8(), 1, &font_cmpo);
-		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
-
-		sys.yield();
-//		if( config.music_flag )
-//		{
-//			if( !music.is_playing(1) )
-//				music.play(1, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-//		}
-//		else
-//			music.stop();
-
-		if( mouse.left_press )
-		{
-			counter -= 12;
-			continue;
-		}
-
-		if( mouse.right_press )
-			break;
-
-		sys.sleep(50);
-	}
-	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}*/
 	mouse.show();
 	stop_speech();
 
@@ -819,18 +735,13 @@ void Campaign::disp_monster_defeated()
 	int counter = VGA_HEIGHT;
 	
 	mouse.hide();
-	vga.use_back();
 	vga.disp_image_file("Huwin02");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
 		sys.sleep(100);
 	}
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 	sys.sleep(500);
 	
@@ -844,8 +755,6 @@ void Campaign::disp_monster_defeated()
 		//	counter = VGA_HEIGHT;
 			break;
 
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -855,16 +764,8 @@ void Campaign::disp_monster_defeated()
 		tempCounter += font_cmpo.text_height();
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_4(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
 
 		sys.yield();
-/*		if( config.music_flag )
-		{
-			if( !music.is_playing(2) )
-				music.play(2, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-		}
-		else
-			music.stop();*/
 
 		if( mouse.left_press )
 		{
@@ -881,75 +782,8 @@ void Campaign::disp_monster_defeated()
 	for (i = 0; i < 4; i++)
 	{	
 		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
 	}
 	
-/*	vga.use_back();
-	vga.disp_image_file("Huwin03");
-	sys.yield();
-	for (i = 0; i < 4; i++)
-	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}
-//	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-//	sys.blt_virtual_buf();
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-//	sys.sleep(500);
-		
-//	counter = VGA_HEIGHT;
-	while(1)
-	{
-		int tempCounter = counter;
-
-		if ((counter -= 3) < -100)
-		//	counter = VGA_HEIGHT;
-			break;
-
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
-		font_cmpo.space_width -= 4;	
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_1(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_2(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_3(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_4(), 1, &font_cmpo);
-		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
-
-		sys.yield();
-//		if( config.music_flag )
-//		{
-//			if( !music.is_playing(2) )
-//				music.play(2, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-//		}
-//		else
-//			music.stop();
-
-		if( mouse.left_press )
-		{
-			counter -= 12;
-			continue;
-		}
-
-		if( mouse.right_press )
-			break;
-
-		sys.sleep(50);
-	}
-	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}*/
 	mouse.show();
 	stop_speech();
 
@@ -966,18 +800,13 @@ void Campaign::disp_final_victory()
 	int counter = VGA_HEIGHT;
 	
 	mouse.hide();
-	vga.use_back();
 	vga.disp_image_file("BRIEF01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
 		sys.sleep(100);
 	}
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 	sys.sleep(500);
 
@@ -991,8 +820,6 @@ void Campaign::disp_final_victory()
 		//	counter = VGA_HEIGHT;
 			break;
 
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -1012,16 +839,8 @@ void Campaign::disp_final_victory()
 		tempCounter += font_cmpo.text_height();
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_9(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
 
 		sys.yield();
-/*		if( config.music_flag )
-		{
-			if( !music.is_playing(5) )
-				music.play(5, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-		}
-		else
-			music.stop();*/
 
 		if( mouse.left_press )
 		{
@@ -1038,77 +857,8 @@ void Campaign::disp_final_victory()
 	for (i = 0; i < 4; i++)
 	{	
 		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
 	}
 	
-/*	vga.use_back();
-	vga.disp_image_file("Huwin04");
-	sys.yield();
-	for (i = 0; i < 4; i++)
-	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-	sys.sleep(500);
-		
-	counter = VGA_HEIGHT;
-	while(1)
-	{
-		int tempCounter = counter;
-
-		if ((counter -= 3) < -100)
-		//	counter = VGA_HEIGHT;
-			break;
-
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		vga.use_front();
-		font_cmpo.space_width -= 4;	
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_5(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_6(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_7(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_8(), 1, &font_cmpo);
-		tempCounter += font_cmpo.text_height();
-		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_9(), 1, &font_cmpo);
-		font_cmpo.space_width += 4;	
-		sys.blt_virtual_buf();
-
-		sys.yield();
-//		if( config.music_flag )
-//		{
-//			if( !music.is_playing(5) )
-//				music.play(5, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-//		}
-//		else
-//			music.stop();
-
-		if( mouse.left_press )
-		{
-			counter -= 12;
-			continue;
-		}
-
-		if( mouse.right_press )
-			break;
-
-		sys.sleep(50);
-	}
-	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-		sys.blt_virtual_buf();
-		sys.sleep(100);
-	}*/
 	mouse.show();
 	stop_speech();
 }
@@ -1302,20 +1052,6 @@ void Campaign::disp_intro_text()
 //									(default : 0)
 void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 {
-	//--------------------------------//
-
-	int useBack = vga.use_back_buf;
-
-	if( !useBack )
-		vga.use_back();
-
-//	vga_back.bar(0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_WHITE);
-
-	//---------- display text box ---------//
-
-//	vga_back.rect( NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, 3, V_BLACK );
-
-
 	//---------- display relationship box ---------//
 
 	disp_nation_info();
@@ -1335,28 +1071,15 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 	//------ display campaign score -------//
 
 	String str;
-//	str = "Campaign Score To Date : ";
-//	str += m.format( campaign_score, 1 );
-//	font_bld.center_put( 550, 480, 750, 500, text_campaign.str_campaign_score(campaign_score) );
 
 	//------- display debug info --------//
 
 	if( event_id )
 	{
-//		str  = "Event : ";
-//		str += event_id;
-//		str += " (Run count: ";
-//		str += total_event_run_count;
-//		str += ")";
 		font_bld.center_put( 550, 460, 750, 480, text_campaign.str_event_count(event_id, total_event_run_count) );
 	}
 	else if( stage_id )
 	{
-//		str  = "Stage : ";
-//		str += stage_id;
-//		str += " (Run count: ";
-//		str += total_stage_run_count;
-//		str += ")";
 		font_bld.center_put( 550, 460, 750, 480, text_campaign.str_stage_count(stage_id, total_stage_run_count) );
 	}
 
@@ -1369,7 +1092,6 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 	length += strlen(str);
 	x -= length * font_bld.width();
 
-//	str  = translate.process("Score");
 	str  = text_campaign.str_score();
 	str += " = ";
 	str += campaign_score;
@@ -1378,15 +1100,9 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 	x = font_bld.put( x, y+20, str )+5;
 
 	str  = campaign_difficulty;
-// str += " ";
-//	str += translate.process( "(Difficulty Rating)" );
 	str += " (";
 	str += text_campaign.str_difficulty_rating();
 	str += ")";
-
-//	font_bld.center_put( x, y+9, x+140, y+6+font_bld.height(), str );
-//	vga_back.bar( x, y+27, x+140, y+28, V_BLACK );
-//	font_bld.put( x+70, y+30, 3 );
 
 	int x2 = font_bld.put( x, y+9, str );
 	vga_back.bar( x, y+27, x2, y+28, V_BLACK );
@@ -1394,19 +1110,9 @@ void Campaign::disp_strategic_screen(int shouldBltBuf, int terrainMapOnly)
 
 	str = "= ";
 	str += score;
-	// font_bld.put( x+150, y+18, str);
 	font_bld.put( x2+6, y+18, str);
 
 	//-------------------------------------//
-
-	if( !useBack )
-		vga.use_front();
-
-	if( shouldBltBuf )
-	{
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0);
-		sys.blt_virtual_buf();
-	}
 }
 //------- End of function Campaign::disp_strategic_screen -------//
 
@@ -1431,13 +1137,6 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 	int i, j;
 	unsigned level;
 
-//	if (useFront)
-//		vga.use_front();
-//	else
-//		vga.use_back();
-
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	vga.use_front();
 	short *saveBuf = vga_front.save_area(0, 0, VGA_WIDTH-1, ZOOM_Y1-1);
 
 	//------- get text substitution arguments -----//
@@ -1531,13 +1230,6 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 
 	mem_del(strBuf);
 
-//	if (!useFront)
-//	{	
-//		vga.use_front();
-//		vga.flip();
-//	}
-	sys.blt_virtual_buf();
-
 	mouse.wait_press();
 
 	if (saveBuf)
@@ -1555,41 +1247,8 @@ void Campaign::disp_end_game_bonus(int maxYear, int yearPassed)
 
 	//---------------------------------------------//
 
-/*	int x = ( vga_back.buf_width() - 444 )/ 2;
-	int y = ( vga_back.buf_height() - 275 )/ 2;
-	String str;
-	
-	//back_buffer graphic here//
-	vga_back.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	image_menu.put_back(x, y, "BOUNS");
-	//back_buffer graphic here//
-	
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0);
-	
-	//text here//
-	font_hall.center_put_paragraph( x+100, y, x+344, y+170, "Your bonus, to be added to your campaign score, is" );
-
-	str = maxYear - yearPassed;
-	font_hall.center_put_paragraph( x, y, x+444, y+275, str );
-
-	str = "That is ";
-	str += maxYear;
-	str += ", minus the number of years that it took to achieve the goal";
-	
-	font_hall.center_put_paragraph( x+70, y+105, x+374, y+275, str );
-	//text here//
-
-	sys.blt_virtual_buf();
-
-	if( !game.campaign()->auto_test_flag )		// do not wait if auto_test_flag is on.
-		mouse.wait_press(60);		// 60 seconds to time out*/
 
 	String str;
-//	str = "Your bonus, to be added to your campaign score, is ";
-//	str += maxYear - yearPassed;
-//	str += "\n\nThat is ";
-//	str += maxYear;
-//	str += ", minus the number of years that it took to achieve the goal.";
 	str  = text_campaign.str_bonus( maxYear - yearPassed );
 	str += "\n\n";
 	str += text_campaign.str_bonus_formula( maxYear );
@@ -1637,8 +1296,6 @@ void Campaign::disp_narrative(char* dialogText, ...)
 		mouse.wait_press();
 
 	vga_back.put_bitmapW(NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, background_bitmap);
-	vga.blt_buf( NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, 0);
-	sys.blt_virtual_buf();
 	
 	mem_del( background_bitmap );
 }
@@ -1677,23 +1334,10 @@ void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
 			}
 			else
 			{
-			//	vga.use_back();
-			//	
-			//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, par < 5 ? ((par<<1) + 1) : (((8 - par)<<1) + 1) );
-			//
-			//	vga.use_front();
-			//
-			//	vga.flip();
 				mouse.hide();
-				vga.use_back();
 				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-				vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );	
-				sys.blt_virtual_buf();
-				vga.use_front();
 				mouse.show();
 			}
-
-			sys.blt_virtual_buf();
 
 			sys.yield();
 			mouse.get_event();
@@ -1704,8 +1348,6 @@ void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
 			}
 			else
 				music.stop();
-
-			sys.blt_virtual_buf();
 
 			if( mouse.left_press || mouse.right_press )
 				break;
@@ -1766,16 +1408,9 @@ void Campaign::disp_text(int boxX1, int boxY1, int boxX2, int boxY2,
 
 	//---------- display the dialog ----------//
 
-	mouse.hide();
-	vga.use_back();
-	
 	font_mid.put_paragraph( boxX1+8, boxY1+8, boxX2-8, boxY2-8, dialogText );
 
-	vga.blt_buf( boxX1, boxY1, boxX2, boxY2, 0);
-
 	font_mid.next_text_y += font_san.height() + DEFAULT_LINE_SPACE;
-
-	mouse.show();
 
 	// --------- display speaking movie ------ //
 
@@ -1816,13 +1451,6 @@ void Campaign::disp_text(int boxX1, int boxY1, int boxX2, int boxY2,
 	{
 		text_block_array[i].text_ptr[ text_block_array[i].nullified_pos ] = 0x0D;
 	}
-
-	//----------------------------------------//
-
-	vga.blt_buf( boxX1, boxY1, boxX2, boxY2, 0);
-	vga.use_front();
-
-	sys.blt_virtual_buf();
 }
 //--------- End of function Campaign::disp_text ----------//
 
@@ -1879,13 +1507,9 @@ void Campaign::play_speech_animation(int raceId)
 
 			flc.get_area( blob.buf_ptr(), 0, 0, flc.width()-1, flc.height()-1);
 			vga_back.put_bitmap_remap( DIALOG_TEXT_X1-155, DIALOG_TEXT_Y1+3 , blob.bitmap_ptr(), hiColorPal );
-			vga.blt_buf( DIALOG_TEXT_X1-155, DIALOG_TEXT_Y1+3,
-				DIALOG_TEXT_X1-155+flc.width()-1, DIALOG_TEXT_Y1+3+flc.height() -1, 0 );
-
 			// wait
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -1977,8 +1601,6 @@ char* Campaign::substitute_text(char* dialogText, ...)
 //
 void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 {
-	vga.use_back();
-
 	int refreshFlag = letter_refresh_flag;
 	static Font* fontPtr;
 
@@ -2059,21 +1681,11 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 
 		mouse.show();
 
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0);
-		sys.blt_virtual_buf();
-
 		if( !auto_test_flag )
 			mouse.wait_press();
 
 		//---------- display the dialog ----------//
-		if (!vga.use_back_buf)
-		{
-			vga.use_back();
-			vga.disp_image_file("LETTERS");
-			vga.use_front();
-		}
-		else
-			vga.disp_image_file("LETTERS");
+		vga.disp_image_file("LETTERS");
 
 		if( isMonster == 1 )
 			font_cmpf.center_put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
@@ -2155,8 +1767,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 
 		//----------------------------------------//
 
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0);
-
 		if (lastReplyChoice > 0)
 		{
 			int textWidth = font_cmpa.text_width(text_block_array[lastReplyChoice-1].text_ptr );
@@ -2164,8 +1774,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 			vga_front.adjust_brightness( text_block_array[lastReplyChoice-1].x1-3, text_block_array[lastReplyChoice-1].y1-3,
 				text_block_array[lastReplyChoice-1].x2+3, text_block_array[lastReplyChoice-1].y2+3, -3 );
 		}
-
-		sys.blt_virtual_buf();
 
 		//----------------------------------------//
 
@@ -2177,8 +1785,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 			disp_strategic_screen();		// close the letter and return to the strategic screen
 		}
 	}
-
-	vga.use_front();
 }
 //------- End of function Campaign::disp_letter -------//
 
@@ -2203,8 +1809,6 @@ int Campaign::detect_letter()
 		}
 		else
 			music.stop();
-
-		sys.blt_virtual_buf();
 
 		//-------- display the letter ---------//
 
@@ -2270,14 +1874,7 @@ static char* get_next_paragraph(char* textPtr)
 //
 void Campaign::disp_nation_info()
 {
-	if (!vga.use_back_buf)
-	{
-		vga.use_back();
-		vga.disp_image_file("campaign");
-		vga.use_front();
-	}
-	else
-		vga.disp_image_file("campaign");
+	vga.disp_image_file("campaign");
 
 	image_menu.put_back(0, RELATION_Y1, "CAMP");
 
@@ -2405,17 +2002,7 @@ void Campaign::attack_state(int attackerStateRecno, int targetStateRecno,
 	}
 
 	// forced to update the background
-	mouse.hide();
-	vga.use_back();
 	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );	
-	sys.blt_virtual_buf();
-	vga.use_front();
-	mouse.show();
-//	vga.flip();
-//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-//	vga.use_front();
-//	vga.flip();
 	// forced to update the background
 	
 	//------ determine source & destination locations -------//
@@ -2535,20 +2122,7 @@ void Campaign::rebel_attack_state(int stateRecno, int attackResult, int firstSte
 
 	int unitSpace = 46 * state_array.max_x_loc / ( MAIN_MAP_X2-MAIN_MAP_X1+1 );
 
-	mouse.hide();
-	vga.use_back();
 	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );	
-	sys.blt_virtual_buf();
-	vga.use_front();
-	mouse.show();
-
-//	vga.use_back();
-//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-//	vga.flip();
-//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-//	vga.use_front();
-//	vga.flip();
 
 	attack_animation( raceInfo->civilian_unit_id, raceInfo->infantry_unit_id,
 							0, get_nation(nationRecno)->color_scheme_id,
@@ -2739,13 +2313,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 			// ----- blt to front --------//
 
-			if( lastAttackerX1 >= 0 )	// restore front draw in last frame
-				vga.blt_buf( lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2, 0 );
-			if( lastTargetX1 >= 0 )
-				vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-			vga.blt_buf( attackerX1, attackerY1, attackerX2, attackerY2, 0 );
-			vga.blt_buf( targetX1, targetY1, targetX2, targetY2, 0 );
-
 			lastAttackerX1 = attackerX1;
 			lastAttackerY1 = attackerY1;
 			lastAttackerX2 = attackerX2;
@@ -2761,7 +2328,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			targetSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -2869,13 +2435,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 			// ----- blt to front --------//
 
-			if( lastAttackerX1 >= 0 )	// restore front draw in last frame
-				vga.blt_buf( lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2, 0 );
-			if( lastTargetX1 >= 0 )
-				vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-			vga.blt_buf( attackerX1, attackerY1, attackerX2, attackerY2, 0 );
-			vga.blt_buf( targetX1, targetY1, targetX2, targetY2, 0 );
-
 			lastAttackerX1 = attackerX1;
 			lastAttackerY1 = attackerY1;
 			lastAttackerX2 = attackerX2;
@@ -2891,7 +2450,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			targetSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -3001,13 +2559,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				// ----- blt to front --------//
 
-				if( lastAttackerX1 >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2, 0 );
-				if( lastTargetX1 >= 0 )
-					vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-				vga.blt_buf( attackerX1, attackerY1, attackerX2, attackerY2, 0 );
-				vga.blt_buf( targetX1, targetY1, targetX2, targetY2, 0 );
-
 				lastAttackerX1 = attackerX1;
 				lastAttackerY1 = attackerY1;
 				lastAttackerX2 = attackerX2;
@@ -3023,7 +2574,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				targetSaveScr.rest_scr(&vga_back);
 
 				sys.yield();
-				sys.blt_virtual_buf();
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
@@ -3151,13 +2701,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				// ----- blt to front --------//
 
-				if( lastAttackerX1 >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2, 0 );
-				if( lastTargetX1 >= 0 )
-					vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-				vga.blt_buf( attackerX1, attackerY1, attackerX2, attackerY2, 0 );
-				vga.blt_buf( targetX1, targetY1, targetX2, targetY2, 0 );
-
 				lastAttackerX1 = attackerX1;
 				lastAttackerY1 = attackerY1;
 				lastAttackerX2 = attackerX2;
@@ -3172,7 +2715,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				attackerSaveScr.rest_scr(&vga_back);
 
 				sys.yield();
-				sys.blt_virtual_buf();
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
@@ -3194,20 +2736,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 	if( attackResult == 1 )
 	{
-		// forced to update the background
-	//	vga.use_back();
-	//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	//	vga.flip();
-	//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	//	vga.use_front();
-	//	vga.flip();
-		mouse.hide();
-		vga.use_back();
 		disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );	
-		sys.blt_virtual_buf();
-		vga.use_front();
-		mouse.show();
 		// forced to update the background
 
 		// attackerUnit and go to take the state
@@ -3245,19 +2774,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				// ----- blt to front --------//
 
-				if( frameCount == 1 )
-				{
-					// first frame only
-					vga.blt_buf( MAIN_MAP_X1, MAIN_MAP_Y1, MAIN_MAP_X2, MAIN_MAP_Y2, 0 );
-				}
-
-				if( lastAttackerX1 >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2, 0 );
-				if( lastTargetX1 >= 0 )
-					vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-				vga.blt_buf( attackerX1, attackerY1, attackerX2, attackerY2, 0 );
-				vga.blt_buf( targetX1, targetY1, targetX2, targetY2, 0 );
-
 				lastAttackerX1 = attackerX1;
 				lastAttackerY1 = attackerY1;
 				lastAttackerX2 = attackerX2;
@@ -3272,7 +2788,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				attackerSaveScr.rest_scr(&vga_back);
 
 				sys.yield();
-				sys.blt_virtual_buf();
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
@@ -3525,25 +3040,11 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				}
 			}
 
-			// ------- blt to front -------------//
-
-			for( a = 0; a < attackerCount; ++a )
-				if( lastAttackerX1[a] >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1[a], lastAttackerY1[a], lastAttackerX2[a], lastAttackerY2[a], 0 );
-			if( lastTargetX1 >= 0 )
-				vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-			for( a = 0; a < attackerCount; ++a )
-				vga.blt_buf( lastAttackerX1[a]=attackerX1[a], lastAttackerY1[a]=attackerY1[a], lastAttackerX2[a]=attackerX2[a], lastAttackerY2[a]=attackerY2[a], 0 );
-			vga.blt_buf( lastTargetX1=targetX1, lastTargetY1=targetY1, lastTargetX2=targetX2, lastTargetY2=targetY2, 0 );
-
-			// ------ restore back buffer ---------//
-
 			for( a = 0; a < attackerCount; ++a )
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -3725,25 +3226,11 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				}
 			}
 
-			// ------- blt to front -------------//
-
-			for( a = 0; a < attackerCount; ++a )
-				if( lastAttackerX1[a] >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1[a], lastAttackerY1[a], lastAttackerX2[a], lastAttackerY2[a], 0 );
-			if( lastTargetX1 >= 0 )
-				vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-			for( a = 0; a < attackerCount; ++a )
-				vga.blt_buf( lastAttackerX1[a]=attackerX1[a], lastAttackerY1[a]=attackerY1[a], lastAttackerX2[a]=attackerX2[a], lastAttackerY2[a]=attackerY2[a], 0 );
-			vga.blt_buf( lastTargetX1=targetX1, lastTargetY1=targetY1, lastTargetX2=targetX2, lastTargetY2=targetY2, 0 );
-
-			// ------ restore back buffer ---------//
-
 			for( a = 0; a < attackerCount; ++a )
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -3907,25 +3394,11 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				}
 			}
 
-			// ------- blt to front -------------//
-
-			for( a = 0; a < attackerCount; ++a )
-				if( lastAttackerX1[a] >= 0 )	// restore front draw in last frame
-					vga.blt_buf( lastAttackerX1[a], lastAttackerY1[a], lastAttackerX2[a], lastAttackerY2[a], 0 );
-			if( lastTargetX1 >= 0 )
-				vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-			for( a = 0; a < attackerCount; ++a )
-				vga.blt_buf( lastAttackerX1[a]=attackerX1[a], lastAttackerY1[a]=attackerY1[a], lastAttackerX2[a]=attackerX2[a], lastAttackerY2[a]=attackerY2[a], 0 );
-			vga.blt_buf( lastTargetX1=targetX1, lastTargetY1=targetY1, lastTargetX2=targetX2, lastTargetY2=targetY2, 0 );
-
-			// ------ restore back buffer ---------//
-
 			for( a = 0; a < attackerCount; ++a )
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
-			sys.blt_virtual_buf();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -4171,25 +3644,11 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 					}
 				}
 
-				// ------- blt to front -------------//
-
-				for( a = 0; a < attackerCount; ++a )
-					if( lastAttackerX1[a] >= 0 )	// restore front draw in last frame
-						vga.blt_buf( lastAttackerX1[a], lastAttackerY1[a], lastAttackerX2[a], lastAttackerY2[a], 0 );
-				if( lastTargetX1 >= 0 )
-					vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-				for( a = 0; a < attackerCount; ++a )
-					vga.blt_buf( lastAttackerX1[a]=attackerX1[a], lastAttackerY1[a]=attackerY1[a], lastAttackerX2[a]=attackerX2[a], lastAttackerY2[a]=attackerY2[a], 0 );
-				vga.blt_buf( lastTargetX1=targetX1, lastTargetY1=targetY1, lastTargetX2=targetX2, lastTargetY2=targetY2, 0 );
-
-				// ------ restore back buffer ---------//
-
 				for( a = 0; a < attackerCount; ++a )
 					attackerSaveScr[a].rest_scr(&vga_back);
 				defenderSaveScr.rest_scr(&vga_back);
 
 				sys.yield();
-				sys.blt_virtual_buf();
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
@@ -4244,21 +3703,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		// --------- third step third part ---------//
 
 		// forced to update the background
-		mouse.hide();
-		vga.use_back();
 		disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-		vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );	
-		sys.blt_virtual_buf();
-		vga.use_front();
-		mouse.show();
-
-	//	vga.use_back();
-	//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	//	vga.flip();
-	//	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	//	vga.use_front();
-	//	vga.flip();
-		// forced to update the background
 
 		// attackerUnit and go to take the state
 
@@ -4336,25 +3781,11 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 					}
 				}
 
-				// ------- blt to front -------------//
-
-				for( a = 0; a < attackerCount; ++a )
-					if( lastAttackerX1[a] >= 0 )	// restore front draw in last frame
-						vga.blt_buf( lastAttackerX1[a], lastAttackerY1[a], lastAttackerX2[a], lastAttackerY2[a], 0 );
-				if( lastTargetX1 >= 0 )
-					vga.blt_buf( lastTargetX1, lastTargetY1, lastTargetX2, lastTargetY2, 0 );
-				for( a = 0; a < attackerCount; ++a )
-					vga.blt_buf( lastAttackerX1[a]=attackerX1[a], lastAttackerY1[a]=attackerY1[a], lastAttackerX2[a]=attackerX2[a], lastAttackerY2[a]=attackerY2[a], 0 );
-				vga.blt_buf( lastTargetX1=targetX1, lastTargetY1=targetY1, lastTargetX2=targetX2, lastTargetY2=targetY2, 0 );
-
-				// ------ restore back buffer ---------//
-
 				for( a = 0; a < attackerCount; ++a )
 					attackerSaveScr[a].rest_scr(&vga_back);
 				defenderSaveScr.rest_scr(&vga_back);
 
 				sys.yield();
-				sys.blt_virtual_buf();
 
 				DWORD endTime = m.get_time();
 				if( mouse.left_press || endTime - startTime >= 50 )
@@ -4826,7 +4257,6 @@ int Campaign::select_attackable_state(char *selectableStateArray, int selectable
 	short* originalTerrain =NULL;
 	memset(state_recno_of_screen, 0, SCREEN_HEIGHT * SCREEN_WIDTH);
 	render_terrain(3);
-	vga.use_back();
 	put_center_text(VGA_WIDTH>>1, 30, 
 		text_campaign.str_select_attack_state(), // "Please select a state to attack",
 		1, &font_cmpo);
@@ -4834,12 +4264,9 @@ int Campaign::select_attackable_state(char *selectableStateArray, int selectable
 	vga_back.read_bitmapW( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, originalTerrain );
 
 	render_attackable_terrain(3, selectableStateArray, selectableStateCount);
-	vga.use_back();
 	put_center_text(VGA_WIDTH>>1, 30, 
 		text_campaign.str_select_attack_state(), // "Please select a state to attack",
 		1, &font_cmpo);
-	vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-	sys.blt_virtual_buf();
 
    //### trevor 25/6 ####//
 
@@ -4896,9 +4323,6 @@ int Campaign::select_attackable_state(char *selectableStateArray, int selectable
 			else
 				str = text_campaign.str_independent_state();
 
-			vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-			vga.use_front();
-
 			if (loopCount > 4)
 				vga.active_buf->put_bitmapW( 0, 0, originalTerrain );
 
@@ -4909,17 +4333,12 @@ int Campaign::select_attackable_state(char *selectableStateArray, int selectable
 			else
 				font_mid.center_put( 0, 100, VGA_WIDTH, 140, text_campaign.str_cannot_attack() );
 
-			sys.blt_virtual_buf();
 		}
 		else
 		{
-			vga.blt_buf( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
-			vga.use_front();
-				
 			if (loopCount > 4)
 				vga.active_buf->put_bitmapW( 0, 0, originalTerrain );
 						
-			sys.blt_virtual_buf();
 		}
 			
 		if(( mouse.left_press || mouse.right_press ) && k < selectableStateCount)
