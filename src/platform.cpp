@@ -26,6 +26,7 @@
 
 #include <windowsx.h>
 #include <ddraw.h>
+#include <dsound.h>
 
 #define INITGUID
 
@@ -33,8 +34,8 @@
 #define DIRECTINPUT_VERSION 0x0300
 #include <dinput.h>
 // these three are here because we can't define INITGUID in more files
-#include <dplay.h>
-#include <dplobby.h>
+//#include <dplay.h>
+//#include <dplobby.h>
 
 
 #include <platform.h>
@@ -50,6 +51,7 @@
 #include <omouse.h>
 #include <omousecr.h>
 #include <opower.h>
+#include <ovolume.h>
 #include <key.h>
 
 #include <unistd.h>
@@ -1514,4 +1516,129 @@ void SetMousePos (int x, int y)
 }
 
 
+// audio
+LPDIRECTSOUND 		  lp_direct_sound;		// DirectSound object
+
+bool init_sound ()
+{
+  //-------- create DirectSound object -------//
+  HRESULT rc = DirectSoundCreate(NULL, &lp_direct_sound, NULL);
+
+  if( rc==DS_OK )		// Create succeeded
+  {
+    lp_direct_sound->SetCooperativeLevel((HWND)get_main_hwnd(), DSSCL_NORMAL);
+    return true;
+  }
+
+  return false;
+}
+
+void deinit_sound ()
+{
+  lp_direct_sound->Release();
+}
+
+LPDIRECTSOUNDBUFFER create_sound_buffer(const char *wav_buf, unsigned int wavDataLength)
+{
+  LPDIRECTSOUNDBUFFER res;
+  DSBUFFERDESC dsbDesc;
+
+  // set up DSBUFFERDESC structure
+  memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
+  dsbDesc.dwSize = sizeof(DSBUFFERDESC);
+  dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
+  dsbDesc.dwBufferBytes = wavDataLength;
+  dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
+
+  HRESULT hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &res, NULL);
+  if (DS_OK != hr)
+  {
+    // failed!
+    err_now("Cannot create DirectSoundBuffer");
+    return 0;
+  }
+  return res;
+}
+
+void release_buffer (LPDIRECTSOUNDBUFFER *buffer)
+{
+  if (*buffer == NULL) return;
+  (*buffer)->Stop();
+  (*buffer)->Release();
+  *buffer = NULL;
+}
+
+bool set_volume (LPDIRECTSOUNDBUFFER buffer, int volume)
+{
+  if( volume < DSBVOLUME_MIN ) volume = DSBVOLUME_MIN;
+  else if( volume > DSBVOLUME_MAX ) volume = DSBVOLUME_MAX;
+  return (DS_OK == buffer->SetVolume(volume));
+}
+
+bool set_volume (LPDIRECTSOUNDBUFFER buffer, DsVolume volume)
+{
+  set_volume(buffer, volume.ds_vol);
+  buffer->SetPan(volume.ds_pan);
+  return true;
+}
+
+int get_volume (LPDIRECTSOUNDBUFFER buffer)
+{
+  int vol;
+  if (buffer->GetVolume(&vol) != DS_OK) return 0;
+  return vol;
+}
+
+int get_pan (LPDIRECTSOUNDBUFFER buffer)
+{
+  int p;
+  if (buffer->GetPan(&p) != DS_OK) return 0;
+  return p;
+}
+
+bool fill_buffer (LPDIRECTSOUNDBUFFER buffer, const char *wav_buf, int wav_len, int start)
+{
+  // lock the buffer first
+  LPVOID lpvPtr1;
+  DWORD dwBytes1;
+  LPVOID lpvPtr2;
+  DWORD dwBytes2;
+
+  HRESULT hr = buffer->Lock(start, wav_len, &lpvPtr1, &dwBytes1, &lpvPtr2, &dwBytes2, 0);
+  if(DS_OK != hr)
+  {
+    // fail to lock
+    err_now("Cannot lock DirectSoundBuffer");
+    return false;
+  }
+
+  // write to pointers
+  memcpy(lpvPtr1, buffer, dwBytes1);
+  if(lpvPtr2)
+    memcpy(lpvPtr2, buffer + dwBytes1, dwBytes2);
+  // unlock data back
+  hr = buffer->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
+  if(DS_OK != hr)
+  {
+    // fail to unlock
+    err_now("Cannot unlock DirectSoundBuffer");
+    return false;
+  }
+  return true;
+}
+
+bool play_buffer (LPDIRECTSOUNDBUFFER buffer, bool loop)
+{
+  if (buffer->Play(0, 0, loop ? DSBPLAY_LOOPING : 0) == DS_OK) return true;
+  err_now("Cannot play DirectSoundBuffer");
+  return false;
+}
+
+bool buffer_playing (LPDIRECTSOUNDBUFFER buffer)
+{
+  if (buffer == NULL) return false;
+  DWORD dsbStatus;
+  if (!buffer->GetStatus(&dsbStatus)) return false;
+  return (dsbStatus & DSBSTATUS_PLAYING) ? true : false;
+}
 

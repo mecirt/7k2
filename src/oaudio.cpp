@@ -22,11 +22,8 @@
 //Description : Object Midi Audio and Digitized Sound
 //Ownership   : Gilbert
 
-#define NEED_WINDOWS
-
 #include <all.h>
 #include <oaudio.h>
-#include <dsound.h>
 #include <osys.h>
 #include <obox.h>
 #include <ovgalock.h>
@@ -85,11 +82,66 @@ static const char * wavefile_data(const char *wavfile_buf)
 }
 //--------- End of function wavefile_offset------------//
 
+struct Audio::Private {
+  LPDIRECTSOUNDBUFFER lp_wav_ch_dsb[MAX_WAV_CHANNEL];
+  // DirectSoundBuffer of each channel
+  int	wav_serial_no[MAX_WAV_CHANNEL];
+  int	max_wav_serial_no;
+  LPDIRECTSOUNDBUFFER lp_lwav_ch_dsb[MAX_LONG_WAV_CH];
+  int	lwav_serial_no[MAX_LONG_WAV_CH];
+  int	max_lwav_serial_no;
+  // DirectSoundBuffer of each long wave
+  File* lwav_fileptr[MAX_LONG_WAV_CH];
+  // file point of each long wave
+  short	lwav_bank[MAX_LONG_WAV_CH];	// which bank to be filled next
+  short	lwav_bufsiz[MAX_LONG_WAV_CH];
+  // buffer size of each channel = lwav_bufsiz[c]*LWAV_BANKS
+  long	wav_volume;						// -10000 to 0
+  char	run_yield;						// 0 = skip Audio::yield()
+
+  LPDIRECTSOUNDBUFFER lp_loop_ch_dsb[MAX_LOOP_WAV_CH];
+  File* loopwav_fileptr[MAX_LOOP_WAV_CH];
+  int	repeat_offset[MAX_LOOP_WAV_CH];
+  short	loopwav_bank[MAX_LOOP_WAV_CH];
+  DWORD	loopwav_fade_time[MAX_LOOP_WAV_CH];
+  int	loopwav_fade_rate[MAX_LOOP_WAV_CH];
+
+  int assign_serial( int &);
+
+  int get_free_wav_channel();
+
+};
+
+//-------------- Begin of function Audio::assign_serial ----------//
+int Audio::Private::assign_serial(int &s)
+{
+	if( s == INT_MAX)
+		return s = 1;
+	return ++s;
+}
+//-------------- End of function Audio::assign_serial ----------//
+
+int Audio::Private::get_free_wav_channel()
+{
+	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
+	{
+		if( !buffer_playing(lp_wav_ch_dsb[chanNum]))
+		{
+			release_buffer(&lp_wav_ch_dsb[chanNum]);
+		}
+
+		if( !lp_wav_ch_dsb[chanNum] ) return chanNum;
+	}
+	
+	return -1;
+}
+
 
 //--------- Begin of function Audio::Audio ----------//
 
 Audio::Audio()
 {
+  d = new Private;
 	init_flag = 0;
 }
 //--------- Begin of function Audio::Audio ----------//
@@ -100,6 +152,7 @@ Audio::Audio()
 Audio::~Audio()
 {
 	deinit();
+  delete d;
 }
 //--------- Begin of function Audio::~Audio ----------//
 
@@ -115,7 +168,7 @@ int Audio::init()
 {
 	//-------- init vars -----------//
 
-	run_yield = 0;
+	d->run_yield = 0;
 	wav_init_flag = 0;
 
 	wav_flag = 1;
@@ -127,27 +180,26 @@ int Audio::init()
 	int i;
 	for(i = 0; i < MAX_WAV_CHANNEL; ++i)
 	{
-		lp_wav_ch_dsb[i] = NULL;
-		wav_serial_no[i] = 0;
+		d->lp_wav_ch_dsb[i] = NULL;
+		d->wav_serial_no[i] = 0;
 	}
-	max_lwav_serial_no = 0;
+	d->max_lwav_serial_no = 0;
 
 	for(i=0; i < MAX_LONG_WAV_CH; ++i)
 	{
-		lp_lwav_ch_dsb[i] = NULL;
-		lwav_serial_no[i] = 0;
-		lwav_fileptr[i] = NULL;
+		d->lp_lwav_ch_dsb[i] = NULL;
+		d->lwav_serial_no[i] = 0;
+		d->lwav_fileptr[i] = NULL;
 	}
-	max_lwav_serial_no = 0;
+	d->max_lwav_serial_no = 0;
 
 	for(i=0; i < MAX_LOOP_WAV_CH; ++i)
 	{
-		lp_loop_ch_dsb[i] = NULL;
-		loopwav_fileptr[i] = NULL;
+		d->lp_loop_ch_dsb[i] = NULL;
+		d->loopwav_fileptr[i] = NULL;
 	}
 
-	// wav_volume = 0;
-	wav_volume = 100;		// 0(slient) - 100(loudest)
+	d->wav_volume = 100;		// 0(slient) - 100(loudest)
 
 	//--------- init devices ----------//
 
@@ -175,7 +227,7 @@ void Audio::deinit()
 	{
 		//------- deinit vars --------//
 
-		run_yield = 0;
+		d->run_yield = 0;
 		init_flag = 0;
 
 		//------- deinit devices -------//
@@ -197,20 +249,10 @@ int Audio::init_wav()
 {
 	if( wav_init_flag )
 		return 1;
+  if (init_sound())
+    wav_init_flag = 1;
 
-	//-------- create DirectSound object -------//
-
-	HRESULT rc=DirectSoundCreate(NULL, &lp_direct_sound, NULL);
-
-	//------------------------------------------//
-
-	if( rc==DS_OK )		// Create succeeded
-	{
-		lp_direct_sound->SetCooperativeLevel((HWND)get_main_hwnd(), DSSCL_NORMAL);
-		wav_init_flag=1;
-	}
-
-	return wav_init_flag;
+  return wav_init_flag;
 }
 //--------- End of function Audio::init_wav ----------//
 
@@ -228,7 +270,7 @@ void Audio::deinit_wav()
 
 	if(wav_init_flag)
 	{
-		lp_direct_sound->Release();
+		deinit_sound();
 		wav_init_flag = 0;
 	}
 }
@@ -253,131 +295,21 @@ int Audio::play_wav(short resIdx, DsVolume dsVolume)
 
 	//-------- Load wav file header-------//
 	int   dataSize;
-	DWORD wavDataOffset, wavDataLength;
 
 	File* filePtr = wav_res.get_file(resIdx, dataSize);
 
 	if( !filePtr )
 		return 0;
 
-	// load small part of the wave file (first 128 bytes) enough to hold
-	// the hold header
-#ifdef LOAD_FULL_WAVE
 	if( dataSize > wav_buf_size )
 	{
 		wav_buf_size = dataSize;
 		wav_buf = mem_resize( wav_buf, wav_buf_size );
 	}
 	if( !filePtr->file_read( wav_buf, dataSize))
-#else
-	if( !filePtr->file_read( wav_buf, 128 ) )
-#endif
 		return 0;
 
-// short-cut to test play_resided_wave()
-#ifdef LOAD_FULL_WAVE
-	return play_resided_wav(wav_buf);
-#endif
-
-	// determine the wave data offset and length
-	const char * dataTag = wavefile_data(wav_buf);
-	if (!dataTag)
-	{
-		err_now("Invalid wave file format");
-		return 0;		// invalid RIFF WAVE format
-	}
-
-	wavDataOffset = (dataTag - wav_buf) + 4 + sizeof(DWORD);
-	wavDataLength = *(DWORD *)(dataTag+4);
-
-#ifndef LOAD_FULL_WAVE
-	// seek to the start of wave data
-	filePtr->file_seek(wavDataOffset-128,false);
-#endif
-
-	//------- Create DirectSoundBuffer to store a wave ------//
-	LPDIRECTSOUNDBUFFER lpDsb;
-	DSBUFFERDESC dsbDesc;
-	HRESULT hr;
-	DWORD dsbStatus;
-
-	// set up DSBUFFERDESC structure
-	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
-	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
-	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
-	dsbDesc.dwBufferBytes = wavDataLength;
-	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
-	// ------- assign buffer to a channel number ----------//
-	lpDsb = NULL;
-	int chanNum = get_free_wav_channel();
-	if( chanNum == -1) return 0;
-	// found an idle channel, create DirectSoundBuffer
-	hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-	if (DS_OK != hr)
-	{
-		// failed!
-		err_now("Cannot create DirectSoundBuffer");
-		return 0;
-	}
-	lp_wav_ch_dsb[chanNum] = lpDsb;
-
-	// Note : if not found, just play the sound, don't play the sound
-	// increase MAX_WAV_CHANNEL
-	
-	//------- copy sound data to DirectSoundBuffer--------//
-	// unlock vga_front
-	VgaFrontLock vgaLock;
-
-	// lock the buffer first
-	LPVOID lpvPtr1;
-	DWORD dwBytes1;
-	LPVOID lpvPtr2;
-	DWORD dwBytes2;
-
-	hr = lpDsb->Lock(0, wavDataLength, &lpvPtr1, &dwBytes1, &lpvPtr2, &dwBytes2, 0);
-	if(DS_OK != hr)
-	{
-		// fail to lock
-		err_now("Cannot lock DirectSoundBuffer");
-		return 0;
-	}
-
-	// write to pointers
-#ifdef LOAD_FULL_WAVE
-	memcpy(lpvPtr1, wav_buf+wavDataOffset, dwBytes1);
-#else
-	filePtr->file_read(lpvPtr1, dwBytes1);
-#endif
-	if(lpvPtr2)
-	{
-#ifdef LOAD_FULL_WAVE
-		memcpy(lpvPtr2, wav_buf+wavDataOffset+dwBytes1, dwBytes2);
-#else
-		filePtr->file_read(lpvPtr2, dwBytes2);
-#endif
-	}
-	// unlock data back
-	hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-	if(DS_OK != hr)
-	{
-		// fail to unlock
-		err_now("Cannot unlock DirectSoundBuffer");
-		return 0;
-	}
-
-	//------- Set volume and pan -----------//
-	lpDsb->SetVolume(dsVolume.ds_vol);
-	lpDsb->SetPan(dsVolume.ds_pan);
-
-	//------- Play wav file --------//
-	if(lpDsb->Play(0, 0, 0) != DS_OK)
-	{
-		// fail to play
-		err_now("Cannot play DirectSoundBuffer");
-		return 0;
-	}
-
-	return wav_serial_no[chanNum] = assign_serial(max_wav_serial_no);
+	return play_resided_wav(wav_buf, dsVolume);
 }
 //------- End of function Audio::play_wav -------//
 
@@ -414,29 +346,15 @@ int Audio::play_resided_wav(const char* wavBuf, DsVolume dsVolume)
 
 	//------- Create DirectSoundBuffer to store a wave ------//
 	LPDIRECTSOUNDBUFFER lpDsb;
-	DSBUFFERDESC dsbDesc;
-	HRESULT hr;
-	DWORD dsbStatus;
 
-		// set up DSBUFFERDESC structure
-	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
-	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
-	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
-	dsbDesc.dwBufferBytes = wavDataLength;
-	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wavBuf+0x14);
 	// ------- assign buffer to a channel number ----------//
 	lpDsb = NULL;
-	int chanNum = get_free_wav_channel();
+	int chanNum = d->get_free_wav_channel();
 	if( chanNum == -1) return 0;
 	// found an idle channel, create DirectSoundBuffer
-	hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-	if (DS_OK != hr)
-	{
-		// failed!
-		err_now("Cannot create DirectSoundBuffer");
-		return 0;
-	}
-	lp_wav_ch_dsb[chanNum] = lpDsb;
+	lpDsb = create_sound_buffer(wavBuf, wavDataLength);
+	if (!lpDsb) return 0;
+	d->lp_wav_ch_dsb[chanNum] = lpDsb;
 
 	// Note : if not found, just play the sound, don't play the sound
 	// increase MAX_WAV_CHANNEL
@@ -445,48 +363,15 @@ int Audio::play_resided_wav(const char* wavBuf, DsVolume dsVolume)
 	// unlock vga_front
 	VgaFrontLock vgaLock;
 
-	// lock the buffer first
-	LPVOID lpvPtr1;
-	DWORD dwBytes1;
-	LPVOID lpvPtr2;
-	DWORD dwBytes2;
-
-	hr = lpDsb->Lock(0, wavDataLength, &lpvPtr1, &dwBytes1, &lpvPtr2, &dwBytes2, 0);
-	if(DS_OK != hr)
-	{
-		// fail to lock
-		err_now("Cannot lock DirectSoundBuffer");
-		return 0;
-	}
-
-	// write to pointers
-	memcpy(lpvPtr1, wavBuf+wavDataOffset, dwBytes1);
-	if(lpvPtr2)
-	{
-		memcpy(lpvPtr2, wavBuf+wavDataOffset+dwBytes1, dwBytes2);
-	}
-	// unlock data back
-	hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-	if(DS_OK != hr)
-	{
-		// fail to unlock
-		err_now("Cannot unlock DirectSoundBuffer");
-		return 0;
-	}
+	if (!fill_buffer(lpDsb, wavBuf+wavDataOffset, wavDataLength)) return 0;
 
 	//------- Set volume -----------//
-	lpDsb->SetVolume(dsVolume.ds_vol);
-	lpDsb->SetPan(dsVolume.ds_pan);
+	set_volume(lpDsb, dsVolume);
 
 	//------- Play wav file --------//
-	if(lpDsb->Play(0, 0, 0) != DS_OK)
-	{
-		// fail to play
-		err_now("Cannot play DirectSoundBuffer");
-		return 0;
-	}
+	if (!play_buffer(lpDsb)) return 0;
 
-	return wav_serial_no[chanNum] = assign_serial(max_wav_serial_no);
+	return d->wav_serial_no[chanNum] = d->assign_serial(d->max_wav_serial_no);
 }
 //------- End of function Audio::play_resided_wav -------//
 
@@ -495,17 +380,12 @@ int Audio::play_resided_wav(const char* wavBuf, DsVolume dsVolume)
 int Audio::get_free_wav_ch()
 {
 	int count = 0;
-	DWORD dsbStatus;
 	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
 	{
-		if( lp_wav_ch_dsb[chanNum] != NULL && (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)) )
-		{
-			lp_wav_ch_dsb[chanNum]->Release();
-			lp_wav_ch_dsb[chanNum] = NULL;
-		}
+		if (!buffer_playing(d->lp_wav_ch_dsb[chanNum]))
+			release_buffer(&d->lp_wav_ch_dsb[chanNum]);
 
-		if( !lp_wav_ch_dsb[chanNum] )
+		if( !d->lp_wav_ch_dsb[chanNum] )
 			count++;
 	}
 	
@@ -513,24 +393,6 @@ int Audio::get_free_wav_ch()
 }
 //------- End of function Audio::get_free_wav_ch --------//
 // ###### end Gilbert 6/12 ########//
-
-int Audio::get_free_wav_channel()
-{
-	DWORD dsbStatus;
-	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
-	{
-		if( lp_wav_ch_dsb[chanNum] != NULL && (lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)) )
-		{
-			lp_wav_ch_dsb[chanNum]->Release();
-			lp_wav_ch_dsb[chanNum] = NULL;
-		}
-
-		if( !lp_wav_ch_dsb[chanNum] ) return chanNum;
-	}
-	
-	return -1;
-}
 
 //------- Begin of function Audio::stop_wav ------------//
 //
@@ -545,12 +407,10 @@ int Audio::stop_wav(int serial)
 {
 	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
 	{
-		if(lp_wav_ch_dsb[chanNum] != NULL && wav_serial_no[chanNum] == serial)
+		if(d->lp_wav_ch_dsb[chanNum] != NULL && d->wav_serial_no[chanNum] == serial)
 		{
-			lp_wav_ch_dsb[chanNum]->Stop();
-			lp_wav_ch_dsb[chanNum]->Release();
-			lp_wav_ch_dsb[chanNum] = NULL;
-			wav_serial_no[chanNum] = 0;
+			release_buffer(&d->lp_wav_ch_dsb[chanNum]);
+			d->wav_serial_no[chanNum] = 0;
 			return 1;
 		}
 	}
@@ -566,14 +426,10 @@ int Audio::stop_wav(int serial)
 //
 int Audio::is_wav_playing(int serial)
 {
-	DWORD dsbStatus;
 	for( int chanNum = 0; chanNum < MAX_WAV_CHANNEL; ++chanNum)
 	{
-		if(lp_wav_ch_dsb[chanNum] != NULL && wav_serial_no[chanNum] == serial 
-			&& lp_wav_ch_dsb[chanNum]->GetStatus(&dsbStatus) )
-		{
-			return dsbStatus & DSBSTATUS_PLAYING;
-		}
+		if (d->lp_wav_ch_dsb[chanNum] && d->wav_serial_no[chanNum] == serial)
+			return buffer_playing (d->lp_wav_ch_dsb[chanNum]);
 	}
 	return 0;
 }
@@ -593,7 +449,7 @@ int Audio::is_wav_playing(int serial)
 
 // Create a DirectSoundBuffer of size lwav_buf_size[c]*LWAV_BANKS
 // divide into LWAV_BANKS parts. Each time Audio::yield() is called,
-// load wave file into one part. lwav_bank[c] record which part to be
+// load wave file into one part. d->lwav_bank[c] record which part to be
 // filled next for channel c.
 
 int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
@@ -641,7 +497,7 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
 	wavDataLength = *(DWORD *)(dataTag+4);
 
 	// seek to the start of wave data
-	long temp1 = filePtr->file_seek(wavDataOffset);
+	filePtr->file_seek(wavDataOffset);
 
 	WORD OptBufferSize=LWAV_STREAM_BUFSIZ,
 		MinRemainder =(WORD)(wavDataLength % (OptBufferSize * LWAV_BANKS));
@@ -663,44 +519,27 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
 
 	//------- Create DirectSoundBuffer to store a wave ------//
 	LPDIRECTSOUNDBUFFER lpDsb;
-	DSBUFFERDESC dsbDesc;
-	HRESULT hr;
-	DWORD dsbStatus;
 
-		// set up DSBUFFERDESC structure
-	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
-	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
-	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
-	dsbDesc.dwBufferBytes = OptBufferSize * LWAV_BANKS;
-	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
 	// ------- assign buffer to a channel number ----------//
 	lpDsb = NULL;
 	int chanNum;
 	for( chanNum = 0; chanNum < MAX_LONG_WAV_CH; ++chanNum)
-		if(lp_lwav_ch_dsb[chanNum] == NULL || (lp_lwav_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)))
+		if (!buffer_playing (d->lp_lwav_ch_dsb[chanNum]))
 		{
-			if(lp_lwav_ch_dsb[chanNum])
+			if(d->lp_lwav_ch_dsb[chanNum])
 			{
-				lp_lwav_ch_dsb[chanNum]->Release();
-				lp_lwav_ch_dsb[chanNum] = NULL;
-				// mem_del(lwav_fileptr[chanNum]);	// delete lwav_fileptr[chanNum];
-				delete lwav_fileptr[chanNum];
-				lwav_fileptr[chanNum] = NULL;
+				release_buffer(&d->lp_lwav_ch_dsb[chanNum]);
+				delete d->lwav_fileptr[chanNum];
+				d->lwav_fileptr[chanNum] = NULL;
 			}
+
 			// found an idle channel, create DirectSoundBuffer
-			hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-			if (DS_OK != hr)
-			{
-				// failed!
-				err_now("Cannot create Stream DirectSoundBuffer");
-				delete filePtr;
-				return 0;
-			}
-			lp_lwav_ch_dsb[chanNum] = lpDsb;
-			lwav_fileptr[chanNum] = filePtr;			// no need to delete filePtr any more
-			lwav_bank[chanNum] = 0;
-			lwav_bufsiz[chanNum] = OptBufferSize;
+			lpDsb = create_sound_buffer(wav_buf, OptBufferSize * LWAV_BANKS);
+			if (!lpDsb) { delete filePtr; return 0; }
+			d->lp_lwav_ch_dsb[chanNum] = lpDsb;
+			d->lwav_fileptr[chanNum] = filePtr;			// no need to delete filePtr any more
+			d->lwav_bank[chanNum] = 0;
+			d->lwav_bufsiz[chanNum] = OptBufferSize;
 			break;
 		}
 	if( chanNum >= MAX_LONG_WAV_CH)
@@ -715,76 +554,26 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
 	// unlock vga_front
 	VgaFrontLock vgaLock;
 
-	// lock the buffer first
-	LPVOID lpvPtr1;
-	DWORD dwBytes1;
-	LPVOID lpvPtr2;
-	DWORD dwBytes2;
-
 	// load wave data into buffer
 	// load data before lock DirectSoundBuffer in case the wave file
 	// is very short
-	DWORD startPos = filePtr->file_pos();
 	if( !filePtr->file_read(wav_buf, OptBufferSize*LWAV_BANKS))
 	{
 		// file error
 		err_now("Missing wave file");
 		return 0;
 	}
-	DWORD readStreamSize = filePtr->file_pos() - startPos;
-	DWORD playFlag = DSBPLAY_LOOPING;
-	hr = lpDsb->Lock(0, OptBufferSize*LWAV_BANKS, &lpvPtr1, &dwBytes1,
-		&lpvPtr2, &dwBytes2, 0);
-	if(DS_OK != hr)
-	{
-		// fail to lock
-		err_now("Cannot lock DirectSoundBuffer");
-		return 0;
-	}
+	if (!fill_buffer(lpDsb, wav_buf, OptBufferSize*LWAV_BANKS)) return 0;
 
-	// write to pointers
-	memcpy(lpvPtr1, wav_buf, min(dwBytes1, readStreamSize));
-	if( dwBytes1 > readStreamSize )
-	{	// end of file, fill the remaining with zero
-		memset((char *)lpvPtr1+readStreamSize, 0, dwBytes1 - readStreamSize);
-		playFlag &= ~DSBPLAY_LOOPING;
-	}
-	else
-	{
-		readStreamSize -= dwBytes1;
-		if(lpvPtr2 && dwBytes2 > 0)
-		{
-			memcpy(lpvPtr2, wav_buf+dwBytes1, min(dwBytes2, readStreamSize));
-			if( dwBytes2 > readStreamSize )
-			{ // end of file, fill the remaining with zero
-				memset((char *)lpvPtr2+readStreamSize, 0 , dwBytes2 - readStreamSize);
-				playFlag &= ~DSBPLAY_LOOPING;
-			}
-		}
-	}
+  bool loop = true;
+        if (filePtr->file_pos() >= filePtr->file_size() - 1) loop = false;
 
-	// unlock data back
-	hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-	if(DS_OK != hr)
-	{
-		// fail to unlock
-		err_now("Cannot unlock DirectSoundBuffer");
-		return 0;
-	}
-
-	//------- Set volume -----------//
-	lpDsb->SetVolume(dsVolume.ds_vol);
-	lpDsb->SetPan(dsVolume.ds_pan);
+	set_volume(lpDsb, dsVolume);
 
 	//------- Play wav file --------//
-	if(lpDsb->Play(0, 0, playFlag) != DS_OK)
-	{
-		// fail to play
-		err_now("Cannot play DirectSoundBuffer");
-		return 0;
-	}
-	run_yield = 1;
-	return lwav_serial_no[chanNum] = assign_serial(max_lwav_serial_no);
+	if (!play_buffer(lpDsb, loop)) return 0;
+	d->run_yield = 1;
+	return d->lwav_serial_no[chanNum] = d->assign_serial(d->max_lwav_serial_no);
 }
 //------- End of function Audio::play_long_wav ----------//
 
@@ -801,14 +590,12 @@ int Audio::stop_long_wav(int serial)
 {
 	for( int chanNum = 0; chanNum < MAX_LONG_WAV_CH; ++chanNum)
 	{
-		if(lp_lwav_ch_dsb[chanNum] != NULL && lwav_serial_no[chanNum] == serial)
+		if(d->lp_lwav_ch_dsb[chanNum] != NULL && d->lwav_serial_no[chanNum] == serial)
 		{
-			lp_lwav_ch_dsb[chanNum]->Stop();
-			lp_lwav_ch_dsb[chanNum]->Release();
-			lp_lwav_ch_dsb[chanNum] = NULL;
-			delete lwav_fileptr[chanNum];
-			lwav_fileptr[chanNum] = NULL;
-			lwav_serial_no[chanNum] = 0;
+			release_buffer(&d->lp_lwav_ch_dsb[chanNum]);
+			delete d->lwav_fileptr[chanNum];
+			d->lwav_fileptr[chanNum] = NULL;
+			d->lwav_serial_no[chanNum] = 0;
 			return 1;
 		}
 	}
@@ -824,14 +611,10 @@ int Audio::stop_long_wav(int serial)
 //
 int Audio::is_long_wav_playing(int serial)
 {
-	DWORD dsbStatus;
 	for( int chanNum = 0; chanNum < MAX_LONG_WAV_CH; ++chanNum)
 	{
-		if(lp_lwav_ch_dsb[chanNum] != NULL && lwav_serial_no[chanNum] == serial
-			&& lp_lwav_ch_dsb[chanNum]->GetStatus(&dsbStatus) == DS_OK )
-		{
-			return dsbStatus & DSBSTATUS_PLAYING;
-		}
+		if(d->lp_lwav_ch_dsb[chanNum] && d->lwav_serial_no[chanNum] == serial)
+			return buffer_playing(d->lp_lwav_ch_dsb[chanNum]);
 	}
 	return 0;
 }
@@ -840,7 +623,7 @@ int Audio::is_long_wav_playing(int serial)
 //--------------- Begin of Audio::vol_multiply --------------//
 long Audio::vol_multiply(int relVolume)
 {
-	long dsVolume = (wav_volume * relVolume) - 10000;
+	long dsVolume = (d->wav_volume * relVolume) - 10000;
 	if( dsVolume > 0 )
 		dsVolume = 0;
 	else if( dsVolume < -10000 )
@@ -848,23 +631,6 @@ long Audio::vol_multiply(int relVolume)
 	return dsVolume;
 }
 //--------------- End of Audio::vol_multiply --------------//
-
-
-//--------------- Begin of Audio::vol_divide --------------//
-int Audio::vol_divide(long dsVolume)
-{
-	if( wav_volume == 0)
-		return 0;
-
-	int relVolume = (dsVolume + 10000) / wav_volume;
-	if( relVolume < 0)
-		relVolume = 0;
-	else if( relVolume > 100 )
-		relVolume = 100;
-	return relVolume;
-}
-//--------------- End of Audio::vol_divide --------------//
-
 
 //------- Begin of function Audio::play_loop_wav -------//
 //
@@ -883,7 +649,7 @@ int	Audio::play_loop_wav(const char *wavName, int repeatOffset, DsVolume dsVolum
 		return 0;
 
 	//-------- Load wav file header-------//
-	DWORD wavDataOffset,wavDataLength;
+	DWORD wavDataOffset;
 
 	// File* filePtr = (File *)mem_add(sizeof(File));		// new File;
 	File* filePtr = new File;
@@ -915,53 +681,36 @@ int	Audio::play_loop_wav(const char *wavName, int repeatOffset, DsVolume dsVolum
 		return 0;		// invalid RIFF WAVE format
 	}
 	wavDataOffset = (dataTag - wav_buf) + 4 + sizeof(DWORD);
-	wavDataLength = *(DWORD *)(dataTag+4);
 
 	// seek to the start of wave data
-	long temp1 = filePtr->file_seek(wavDataOffset);
+	filePtr->file_seek(wavDataOffset);
 
 	WORD OptBufferSize=LOOPWAV_STREAM_BUFSIZ;
 
 	//------- Create DirectSoundBuffer to store a wave ------//
 	LPDIRECTSOUNDBUFFER lpDsb;
-	DSBUFFERDESC dsbDesc;
-	HRESULT hr;
-	DWORD dsbStatus;
 
-		// set up DSBUFFERDESC structure
-	memset(&dsbDesc, 0, sizeof(DSBUFFERDESC));	// zero it out
-	dsbDesc.dwSize = sizeof(DSBUFFERDESC);
-	dsbDesc.dwFlags = DSBCAPS_CTRLDEFAULT;			// Need defaul controls (pan, volume, frequency)
-	dsbDesc.dwBufferBytes = OptBufferSize * LWAV_BANKS;
-	dsbDesc.lpwfxFormat = (LPWAVEFORMATEX) (wav_buf+0x14);
 	// ------- assign buffer to a channel number ----------//
 	lpDsb = NULL;
 	int chanNum;
 	for( chanNum = 0; chanNum < MAX_LOOP_WAV_CH; ++chanNum)
-		if(lp_loop_ch_dsb[chanNum] == NULL || (lp_loop_ch_dsb[chanNum]->GetStatus(&dsbStatus),
-			!(dsbStatus & DSBSTATUS_PLAYING)))
+		if (!buffer_playing (d->lp_loop_ch_dsb[chanNum]))
 		{
-			if(lp_loop_ch_dsb[chanNum])
+			if(d->lp_loop_ch_dsb[chanNum])
 			{
-				lp_loop_ch_dsb[chanNum]->Release();
-				lp_loop_ch_dsb[chanNum] = NULL;
-				// mem_del(loopwav_fileptr[chanNum]);	// delete lwav_fileptr[chanNum];
-				delete loopwav_fileptr[chanNum];
-				loopwav_fileptr[chanNum] = NULL;
+				release_buffer(&d->lp_loop_ch_dsb[chanNum]);
+				// mem_del(d->loopwav_fileptr[chanNum]);	// delete lwav_fileptr[chanNum];
+				delete d->loopwav_fileptr[chanNum];
+				d->loopwav_fileptr[chanNum] = NULL;
 			}
 			// found an idle channel, create DirectSoundBuffer
-			hr = lp_direct_sound->CreateSoundBuffer(&dsbDesc, &lpDsb, NULL);
-			if (DS_OK != hr)
-			{
-				// failed!
-				err_now("Cannot create Stream DirectSoundBuffer");
-				return 0;
-			}
-			lp_loop_ch_dsb[chanNum] = lpDsb;
-			loopwav_fileptr[chanNum] = filePtr;			// no need to delete filePtr any more
-			loopwav_bank[chanNum] = 0;
-			repeat_offset[chanNum] = wavDataOffset + repeatOffset;
-			loopwav_fade_rate[chanNum] = 0;
+			lpDsb = create_sound_buffer(wav_buf, OptBufferSize * LWAV_BANKS);
+			if (!lpDsb) return 0;
+			d->lp_loop_ch_dsb[chanNum] = lpDsb;
+			d->loopwav_fileptr[chanNum] = filePtr;			// no need to delete filePtr any more
+			d->loopwav_bank[chanNum] = 0;
+			d->repeat_offset[chanNum] = wavDataOffset + repeatOffset;
+			d->loopwav_fade_rate[chanNum] = 0;
 			break;
 		}
 	if( chanNum >= MAX_LOOP_WAV_CH)
@@ -975,66 +724,24 @@ int	Audio::play_loop_wav(const char *wavName, int repeatOffset, DsVolume dsVolum
 	// unlock vga_front
 	VgaFrontLock vgaLock;
 
-	// lock the buffer first
-	LPVOID lpvPtr1;
-	DWORD dwBytes1;
-	LPVOID lpvPtr2;
-	DWORD dwBytes2;
-
 	// load wave data into buffer
 	// load data before lock DirectSoundBuffer in case the wave file
 	// is very short
-	DWORD startPos = filePtr->file_pos();
 	if( !filePtr->file_read(wav_buf, OptBufferSize*LOOPWAV_BANKS))
 	{
 		// file error
 		err_now("Missing wave file");
 		return 0;
 	}
-	DWORD readStreamSize = filePtr->file_pos() - startPos;
-	DWORD playFlag = DSBPLAY_LOOPING;
-	hr = lpDsb->Lock(0, OptBufferSize*LOOPWAV_BANKS, &lpvPtr1, &dwBytes1,
-		&lpvPtr2, &dwBytes2, 0);
-	if(DS_OK != hr)
-	{
-		// fail to lock
-		err_now("Cannot lock DirectSoundBuffer");
-		return 0;
-	}
 
-	// write to pointers, assume wave file repeating size is
-	// larger than OptBufferSize * LOOPWAV_BANKS
-	memcpy(lpvPtr1, wav_buf, min(dwBytes1, readStreamSize));
-	if( dwBytes1 < readStreamSize )
-	{
-		readStreamSize -= dwBytes1;
-		if(lpvPtr2 && dwBytes2 > 0)
-		{
-			memcpy(lpvPtr2, wav_buf+dwBytes1, min(dwBytes2, readStreamSize));
-		}
-	}
-
-	// unlock data back
-	hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-	if(DS_OK != hr)
-	{
-		// fail to unlock
-		err_now("Cannot unlock DirectSoundBuffer");
-		return 0;
-	}
+	fill_buffer(lpDsb, wav_buf, OptBufferSize*LOOPWAV_BANKS);
 
 	//------- Set volume -----------//
-	lpDsb->SetVolume(dsVolume.ds_vol);
-	lpDsb->SetPan(dsVolume.ds_pan);
+	set_volume(lpDsb, dsVolume);
 
 	//------- Play wav file --------//
-	if(lpDsb->Play(0, 0, playFlag) != DS_OK)
-	{
-		// fail to play
-		err_now("Cannot play DirectSoundBuffer");
-		return 0;
-	}
-	run_yield = 1;
+	if (!play_buffer(lpDsb, true)) return 0;
+	d->run_yield = 1;
 	return chanNum+1;
 }
 //------- End of function Audio::play_loop_wav ---------//
@@ -1046,13 +753,12 @@ void	Audio::volume_loop_wav(int ch, DsVolume dsVolume)
 	int chanNum = ch-1;
 	if( chanNum < 0 || chanNum >= MAX_LOOP_WAV_CH)
 		return;
-	if(lp_loop_ch_dsb[chanNum])
+	if(d->lp_loop_ch_dsb[chanNum])
 	{
-		lp_loop_ch_dsb[chanNum]->SetVolume(dsVolume.ds_vol);
-		lp_loop_ch_dsb[chanNum]->SetPan(dsVolume.ds_pan);
+		set_volume(d->lp_loop_ch_dsb[chanNum], dsVolume);
 		
 		// stop fading
-		loopwav_fade_rate[chanNum] = 0;
+		d->loopwav_fade_rate[chanNum] = 0;
 	}
 }
 //------- End of function Audio::volume_loop_wav -------//
@@ -1067,10 +773,10 @@ void Audio::fade_out_loop_wav(int ch, int fadeRate)
 	int chanNum = ch-1;
 	if( chanNum < 0 || chanNum >= MAX_LOOP_WAV_CH)
 		return;
-	if(lp_loop_ch_dsb[chanNum])
+	if(d->lp_loop_ch_dsb[chanNum])
 	{
-		loopwav_fade_rate[chanNum] = fadeRate;
-		loopwav_fade_time[chanNum] = m.get_time();
+		d->loopwav_fade_rate[chanNum] = fadeRate;
+		d->loopwav_fade_time[chanNum] = m.get_time();
 	}
 }
 //------- End of function Audio::fade_out_loop_wav -------//
@@ -1086,14 +792,9 @@ DsVolume Audio::get_loop_wav_volume(int ch)
 		return DsVolume(rel);
         }
 
-	LONG volume;
-	LONG pan;
-	LPDIRECTSOUNDBUFFER lpDsb= lp_loop_ch_dsb[chanNum];
-	if( lpDsb && lpDsb->GetVolume(&volume) == DS_OK &&
-		lpDsb->GetPan(&pan) == DS_OK )
-	{
-		return DsVolume(volume, pan);
-	}
+	LPDIRECTSOUNDBUFFER lpDsb= d->lp_loop_ch_dsb[chanNum];
+	if( lpDsb)
+		return DsVolume(get_volume(lpDsb), get_pan(lpDsb));
         RelVolume rel = RelVolume(0,0);
 	return DsVolume(rel);
 }
@@ -1107,7 +808,7 @@ int Audio::is_loop_wav_fading(int ch)
 	if( chanNum < 0 || chanNum >= MAX_LOOP_WAV_CH)
 		return 0;
 
-	return lp_loop_ch_dsb[chanNum] && loopwav_fade_rate[chanNum];
+	return d->lp_loop_ch_dsb[chanNum] && d->loopwav_fade_rate[chanNum];
 }
 //------- End of function Audio::is_loop_wav_fading -------//
 
@@ -1115,10 +816,10 @@ int Audio::is_loop_wav_fading(int ch)
 //------- Begin of function Audio::yield ---------------//
 void	Audio::yield()
 {
-	if( !run_yield)
+	if( !d->run_yield)
 		return;
 
-	run_yield = 0;			// suspend recursive Audio::yield();
+	d->run_yield = 0;			// suspend recursive Audio::yield();
 
 	// unlock vga_front
 	VgaFrontLock vgaLock;
@@ -1127,233 +828,97 @@ void	Audio::yield()
 	int i;
 	for(i = 0; i < MAX_LONG_WAV_CH; ++i)
 	{
-		if( !lp_lwav_ch_dsb[i] )
+		if( !d->lp_lwav_ch_dsb[i] )
 			continue;
 
 		// if a wav is not play, or buffer lost, stop it
-		LPDIRECTSOUNDBUFFER& lpDsb = lp_lwav_ch_dsb[i];
-		DWORD dsbStatus;
-		if( lpDsb->GetStatus(&dsbStatus) != DS_OK)
-			err_here();
-		if( !(dsbStatus & DSBSTATUS_PLAYING) || 
-			(dsbStatus & DSBSTATUS_BUFFERLOST) && lpDsb->Restore() != DS_OK )
+		LPDIRECTSOUNDBUFFER& lpDsb = d->lp_lwav_ch_dsb[i];
+		if( !buffer_playing(lpDsb))
 		{
-			lpDsb->Stop();
-			lpDsb->Release();
-			lpDsb = NULL;
+			release_buffer(&lpDsb);
 			// mem_del(lwav_fileptr[i]);
-			delete lwav_fileptr[i];
-			lwav_fileptr[i] = NULL;
+			delete d->lwav_fileptr[i];
+			d->lwav_fileptr[i] = NULL;
 			continue;
 		}
 
-		char writeTooFast = 1;
-
-		// buffer lost, succeeded in restoring
-		if( dsbStatus & DSBSTATUS_BUFFERLOST )
-		{
-			writeTooFast = 0;
-		}
-		else
-		{
-		// perform flow control
-			DWORD tmpPlayCursor, tmpWriteCursor;
-			if( lpDsb->GetCurrentPosition(&tmpPlayCursor, &tmpWriteCursor) == DS_OK)
-			{
-				writeTooFast = ((short)(tmpPlayCursor / lwav_bufsiz[i]) == lwav_bank[i]);
-			}
-		}
-		
-		if(!writeTooFast)
-		{
 			// lock a channel for lwav_bufsiz[i]
-			LPVOID lpvPtr1;
-			DWORD dwBytes1;
-			LPVOID lpvPtr2;
-			DWORD dwBytes2;
-			File *filePtr = lwav_fileptr[i];
-			HRESULT hr = lpDsb->Lock(lwav_bank[i]*lwav_bufsiz[i], lwav_bufsiz[i],
-				&lpvPtr1, &dwBytes1,	&lpvPtr2, &dwBytes2, 0);
-			lwav_bank[i] = (lwav_bank[i] + 1) % LWAV_BANKS;	// next bank to fill
-			if(DS_OK != hr)
-			{
-				// fail to lock
-				err_now("Cannot lock DirectSoundBuffer");
-				run_yield = 1;
-				return;
-			}
-
-			long startPos;
-			long readStreamSize;
-			DWORD playFlag = DSBPLAY_LOOPING;
+			File *filePtr = d->lwav_fileptr[i];
+			d->lwav_bank[i] = (d->lwav_bank[i] + 1) % LWAV_BANKS;	// next bank to fill
+			bool loop = true;
 
 			// write to pointers
-			startPos = filePtr->file_pos();
+			long startPos = filePtr->file_pos();
 
-//			filePtr->file_read(wav_buf, dwBytes1);
-//			readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
-//			memcpy(lpvPtr1, wav_buf, readStreamSize);
-			filePtr->file_read(lpvPtr1, dwBytes1);
-			readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
+			filePtr->file_read(wav_buf, d->lwav_bufsiz[i]);
+			long readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
+			fill_buffer(lpDsb, wav_buf, d->lwav_bufsiz[i], d->lwav_bank[i]*d->lwav_bufsiz[i]);
 
-			if((long)dwBytes1 > readStreamSize)
-			{	// end of file, fill the remaining with zero
-//				memset((char *)lpvPtr1+readStreamSize, 0, dwBytes1 - readStreamSize);
-				playFlag &= ~DSBPLAY_LOOPING;		// clear DSBPLAY_LOOPING
-			}
-			else
-			{
-				if( lpvPtr2 && dwBytes2 > 0)
-				{
-					startPos = filePtr->file_pos();
-					filePtr->file_read(lpvPtr2, dwBytes2);
-					readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
-					if((long)dwBytes2 > readStreamSize)
-					{	// end of file
-//						memset((char *)lpvPtr2+readStreamSize, 0, dwBytes2 - readStreamSize);
-						playFlag &= ~DSBPLAY_LOOPING;		// clear DSBPLAY_LOOPING
-					}
-				}			
-			}
-
-			// unlock data back
-			hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-			if(DS_OK != hr)
-			{
-				// fail to unlock
-				err_now("Cannot unlock DirectSoundBuffer");
-				run_yield = 1;
-				return;
-			}
+			if (d->lwav_bufsiz[i] > readStreamSize)
+				loop = false;
 			// load file into a channel, on last stream, don't loop back
 			//------- Play wav file --------//
-			if(lpDsb->Play(0, 0, playFlag) != DS_OK)
+			if (!play_buffer(lpDsb, loop))
 			{
-			// fail to play
-				err_now("Cannot play DirectSoundBuffer");
-				run_yield = 1;
+				d->run_yield = 1;
 				return;
 			}
-		}
 	}
 
 	for(i = 0; i < MAX_LOOP_WAV_CH; ++i)
 	{
-		if( !lp_loop_ch_dsb[i] )
+		if( !d->lp_loop_ch_dsb[i] )
 			continue;
 
 		// if a channel is not playing, or can't restore release it
-		LPDIRECTSOUNDBUFFER& lpDsb = lp_loop_ch_dsb[i];
-		DWORD dsbStatus;
-		if( lpDsb->GetStatus(&dsbStatus) != DS_OK )
-			err_here();
-		if( !(dsbStatus & DSBSTATUS_PLAYING) ||
-			(dsbStatus & DSBSTATUS_BUFFERLOST) && lpDsb->Restore() != DS_OK )
+		LPDIRECTSOUNDBUFFER& lpDsb = d->lp_loop_ch_dsb[i];
+		if (!buffer_playing(lpDsb))
 		{
-			lpDsb->Stop();
-			lpDsb->Release();
-			lpDsb = NULL;
-			// mem_del(loopwav_fileptr[i]);
-			delete loopwav_fileptr[i];
-			loopwav_fileptr[i] = NULL;
+			release_buffer(&lpDsb);
+			delete d->loopwav_fileptr[i];
+			d->loopwav_fileptr[i] = NULL;
 			continue;
 		}
 
-		char writeTooFast = 1;
-
-		// buffer lost, succeeded in restoring
-		if( dsbStatus & DSBSTATUS_BUFFERLOST )
-		{
-			writeTooFast = 0;
-		}
-		else
-		{
-			// perform flow control
-			DWORD tmpPlayCursor, tmpWriteCursor;
-			if( lpDsb->GetCurrentPosition(&tmpPlayCursor, &tmpWriteCursor) == DS_OK)
-			{
-				writeTooFast = ((short)(tmpPlayCursor / LOOPWAV_STREAM_BUFSIZ) == loopwav_bank[i]);
-			}
-
-		}
-		
-		if(!writeTooFast)
-		{
-			// lock a channel for loopwav_bufsiz[i]
-			LPVOID lpvPtr1;
-			DWORD dwBytes1;
-			LPVOID lpvPtr2;
-			DWORD dwBytes2;
-			File *filePtr = loopwav_fileptr[i];
-			HRESULT hr = lpDsb->Lock(loopwav_bank[i]*LOOPWAV_STREAM_BUFSIZ, LOOPWAV_STREAM_BUFSIZ,
-				&lpvPtr1, &dwBytes1,	&lpvPtr2, &dwBytes2, 0);
-			loopwav_bank[i] = (loopwav_bank[i] + 1) % LOOPWAV_BANKS;	// next bank to fill
-			if(DS_OK != hr)
-			{
-				// fail to lock
-				err_now("Cannot lock DirectSoundBuffer");
-				run_yield = 1;
-				return;
-			}
-
-			long startPos;
-			long readStreamSize;
-			DWORD playFlag = DSBPLAY_LOOPING;
+			File *filePtr = d->loopwav_fileptr[i];
+			d->loopwav_bank[i] = (d->loopwav_bank[i] + 1) % LOOPWAV_BANKS;	// next bank to fill
 
 			// write to pointers
-			startPos = filePtr->file_pos();
-			filePtr->file_read(lpvPtr1, dwBytes1);
-			readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
-
-			if((long)dwBytes1 > readStreamSize)
+			long startPos = filePtr->file_pos();
+			filePtr->file_read(wav_buf, LOOPWAV_STREAM_BUFSIZ);
+			long readStreamSize = filePtr->file_pos() - startPos;	// bytes read in
+			if(LOOPWAV_STREAM_BUFSIZ > readStreamSize)
 			{	// end of file, seek to beginning and read again
-				filePtr->file_seek(repeat_offset[i]);
-				filePtr->file_read((char *)lpvPtr1+readStreamSize, dwBytes1-readStreamSize);
+				filePtr->file_seek(d->repeat_offset[i]);
+				filePtr->file_read(wav_buf+readStreamSize, LOOPWAV_STREAM_BUFSIZ-readStreamSize);
 			}
-
-			// unlock data back
-			hr = lpDsb->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2);
-			if(DS_OK != hr)
-			{
+			if (!fill_buffer(lpDsb, wav_buf, LOOPWAV_STREAM_BUFSIZ, d->loopwav_bank[i]*LOOPWAV_STREAM_BUFSIZ)) {
 				// fail to unlock
-				err_now("Cannot unlock DirectSoundBuffer");
-				run_yield = 1;
+				d->run_yield = 1;
 				return;
 			}
 
 			// set volume if fading
-			if( loopwav_fade_rate[i] )
+			if( d->loopwav_fade_rate[i] )
 			{
 				DWORD nextFadeTime = m.get_time();
-				LONG	volume;
-				if( DS_OK == (hr = lpDsb->GetVolume(&volume)) )
-				{
-					// calculate new volume
-					volume -= (nextFadeTime - loopwav_fade_time[i]) * loopwav_fade_rate[i];
-					if( volume < DSBVOLUME_MIN )
-						volume = DSBVOLUME_MIN;
-					else if( volume > DSBVOLUME_MAX )
-						volume = DSBVOLUME_MAX;
-					if( DS_OK == (hr = lpDsb->SetVolume(volume)) )
-					{
-						loopwav_fade_time[i] = nextFadeTime;
-					}
-				}
+				int volume = get_volume(lpDsb);
+				// calculate new volume
+				volume -= (nextFadeTime - d->loopwav_fade_time[i]) * d->loopwav_fade_rate[i];
+				if (set_volume(lpDsb, volume))
+					d->loopwav_fade_time[i] = nextFadeTime;
 			}
 
 			// load file into a channel, on last stream, don't loop back
 			//------- Play wav file --------//
-			if(lpDsb->Play(0, 0, playFlag) != DS_OK)
+			if (!play_buffer(lpDsb, true))
 			{
-			// fail to play
-				err_now("Cannot play DirectSoundBuffer");
-				run_yield = 1;
+				d->run_yield = 1;
 				return;
 			}
-		}
 	}
 
-	run_yield = 1;		// resume Audio::yield();
+	d->run_yield = 1;		// resume Audio::yield();
 }
 
 //------- End of function Audio::yield ---------------//
@@ -1369,11 +934,9 @@ void Audio::stop_wav()
 	// ---------- stop all short wave  ------------- //
 	int i;
 	for(i = 0; i < MAX_WAV_CHANNEL; ++i)
-		if(lp_wav_ch_dsb[i])
+		if(d->lp_wav_ch_dsb[i])
 			{
-			lp_wav_ch_dsb[i]->Stop();
-			lp_wav_ch_dsb[i]->Release();
-			lp_wav_ch_dsb[i] = NULL;
+			release_buffer(&d->lp_wav_ch_dsb[i]);
 			}
 
 	// ----------- stop all long wave ------------- //
@@ -1396,14 +959,11 @@ void Audio::stop_long_wav()
 		return;
 
 	for(int i = 0; i < MAX_LONG_WAV_CH; ++i)
-		if(lp_lwav_ch_dsb[i])
+		if(d->lp_lwav_ch_dsb[i])
 		{
-			lp_lwav_ch_dsb[i]->Stop();
-			lp_lwav_ch_dsb[i]->Release();
-			lp_lwav_ch_dsb[i] = NULL;
-			// mem_del(lwav_fileptr[i]);
-			delete lwav_fileptr[i];
-			lwav_fileptr[i] = NULL;
+			release_buffer(&d->lp_lwav_ch_dsb[i]);
+			delete d->lwav_fileptr[i];
+			d->lwav_fileptr[i] = NULL;
 		}
 }
 //------- End of function Audio::stop_long_wav -------//
@@ -1415,14 +975,11 @@ void	Audio::stop_loop_wav(int ch)
 	int chanNum = ch-1;
 	if( chanNum < 0 || chanNum >= MAX_LOOP_WAV_CH)
 		return;
-	if(lp_loop_ch_dsb[chanNum])
+	if(d->lp_loop_ch_dsb[chanNum])
 	{
-		lp_loop_ch_dsb[chanNum]->Stop();
-		lp_loop_ch_dsb[chanNum]->Release();
-		lp_loop_ch_dsb[chanNum] = NULL;
-		// mem_del(loopwav_fileptr[chanNum]);	// delete lwav_fileptr[chanNum];
-		delete loopwav_fileptr[chanNum];
-		loopwav_fileptr[chanNum] = NULL;
+		release_buffer(&d->lp_loop_ch_dsb[chanNum]);
+		delete d->loopwav_fileptr[chanNum];
+		d->loopwav_fileptr[chanNum] = NULL;
 	}
 }
 //------- End of function Audio::stop_loop_wav ---------//
@@ -1433,28 +990,17 @@ void	Audio::stop_loop_wav(int ch)
 int Audio::is_wav_playing()
 {
 	int playingChannelCount = 0;
-	DWORD dwStatus;
 	if( !wav_init_flag || !wav_flag )   // a initialized and workable midi device can be disabled by user setting
 		return 0;
 
 	//------ find any wav channel is playing -----//
-	// update lp_wav_ch_dsb[x] if necessary
+	// update d->lp_wav_ch_dsb[x] if necessary
 	for(int ch=0; ch < MAX_WAV_CHANNEL; ++ch)
-		if( lp_wav_ch_dsb[ch])
-			if( lp_wav_ch_dsb[ch]->GetStatus(&dwStatus) == DS_OK)
-				if (dwStatus & DSBSTATUS_PLAYING )
-					// a channel is playing
-					playingChannelCount++;
-				else
-					// is not playing, clear it
-					lp_wav_ch_dsb[ch] = NULL;
-			else
-				// GetStatus not ok, clear it
-				lp_wav_ch_dsb[ch] = NULL;
+		if( buffer_playing(d->lp_wav_ch_dsb[ch]))
+			playingChannelCount++;
 		else
-		{
-			// nothing
-		}
+			// is not playing, clear it
+			release_buffer(&d->lp_wav_ch_dsb[ch]);
 
 	return (playingChannelCount > 0);
 }
@@ -1484,81 +1030,53 @@ void Audio::set_wav_volume(int wavVolume)
 	if( !wav_init_flag )
 		return;
 
-	LONG dsVolume;
-	long dsVolDiff = (wavVolume - wav_volume) * 100;
+	int dsVolume;
+	long dsVolDiff = (wavVolume - d->wav_volume) * 100;
 
 	// change volume for all channels
 	int i;
 	for( i = 0; i < MAX_WAV_CHANNEL; ++i)
 	{
-		if( lp_wav_ch_dsb[i] && 
-			lp_wav_ch_dsb[i]->GetVolume(&dsVolume) == DS_OK)
+		if( d->lp_wav_ch_dsb[i])
 		{
-			dsVolume += dsVolDiff;
-			if( dsVolume > DSBVOLUME_MAX )
-				dsVolume = DSBVOLUME_MAX;
-			if( dsVolume < DSBVOLUME_MIN )
-				dsVolume = DSBVOLUME_MIN;
-			lp_wav_ch_dsb[i]->SetVolume(dsVolume);
+			dsVolume = get_volume(d->lp_wav_ch_dsb[i]) + dsVolDiff;
+			set_volume(d->lp_wav_ch_dsb[i], dsVolume);
 		}
 	}
 
 	for( i = 0; i < MAX_LONG_WAV_CH; ++i)
 	{
-		if( lp_lwav_ch_dsb[i] &&
-			lp_lwav_ch_dsb[i]->GetVolume(&dsVolume) == DS_OK)
+		if( d->lp_lwav_ch_dsb[i])
 		{
-			dsVolume += dsVolDiff;
-			if( dsVolume > DSBVOLUME_MAX )
-				dsVolume = DSBVOLUME_MAX;
-			if( dsVolume < DSBVOLUME_MIN )
-				dsVolume = DSBVOLUME_MIN;
-			lp_lwav_ch_dsb[i]->SetVolume(dsVolume);
+			dsVolume = get_volume(d->lp_lwav_ch_dsb[i]) + dsVolDiff;
+			set_volume(d->lp_lwav_ch_dsb[i], dsVolume);
 		}
 	}
 
 	for( i = 0; i < MAX_LOOP_WAV_CH; ++i)
 	{
-		if( lp_loop_ch_dsb[i] &&
-			lp_loop_ch_dsb[i]->GetVolume(&dsVolume) == DS_OK)
+		if( d->lp_loop_ch_dsb[i])
 		{
-			dsVolume += dsVolDiff;
-			if( dsVolume > DSBVOLUME_MAX )
-				dsVolume = DSBVOLUME_MAX;
-			if( dsVolume < DSBVOLUME_MIN )
-				dsVolume = DSBVOLUME_MIN;
-			lp_loop_ch_dsb[i]->SetVolume(dsVolume);
+			dsVolume = get_volume(d->lp_loop_ch_dsb[i]) + dsVolDiff;
+			set_volume(d->lp_loop_ch_dsb[i], dsVolume);
 		}
 	}
 
-	wav_volume = wavVolume;
+	d->wav_volume = wavVolume;
 }
 //--------------- End of Audio::set_wav_volume --------------//
-
-
-//-------------- Begin of function Audio::assign_serial ----------//
-int Audio::assign_serial(int &s)
-{
-	if( s == INT_MAX)
-		return s = 1;
-	return ++s;
-}
-//-------------- End of function Audio::assign_serial ----------//
 
 
 // ------------ Begin of function Audio::volume_long_wav -------//
 void Audio::volume_long_wav(int serial, DsVolume dsVolume)
 {
-	if( is_long_wav_playing(serial) )
+	if( !is_long_wav_playing(serial) ) return;
+	for( int chanNum = 0; chanNum < MAX_LONG_WAV_CH; ++chanNum)
 	{
-		for( int chanNum = 0; chanNum < MAX_LONG_WAV_CH; ++chanNum)
+		if(d->lp_lwav_ch_dsb[chanNum] != NULL && d->lwav_serial_no[chanNum] == serial )
 		{
-			if(lp_lwav_ch_dsb[chanNum] != NULL && lwav_serial_no[chanNum] == serial )
-			{
-				lp_lwav_ch_dsb[chanNum]->SetVolume(dsVolume.ds_vol);
-				// lp_lwav_ch_dsb[chanNum]->SetPan(dsVolume.ds_pan);
-				break;
-			}
+			set_volume(d->lp_lwav_ch_dsb[chanNum], dsVolume.ds_vol); // no pan
+			break;
 		}
 	}
 }

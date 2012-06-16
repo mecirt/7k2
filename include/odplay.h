@@ -38,18 +38,6 @@ int broadcastPID();
 #define MP_FORMAL_NAME_LEN 64
 #define MP_RECV_BUFFER_SIZE 0x2000
 
-typedef DWORD DPID, *LPDPID;
-struct tagDPLCONNECTION;
-struct IDirectPlay4;
-struct IDirectPlayLobby3;
-typedef struct tagDPLCONNECTION DPLCONNECTION;
-typedef struct IDirectPlay4 *LPDIRECTPLAY4A;
-typedef struct IDirectPlayLobby3 *LPDIRECTPLAYLOBBY3A;
-
-#ifndef NEED_WINDOWS
-typedef DWORD *LPDWORD;
-#endif
-
 struct DPServiceProvider
 {
 	GUID guid;
@@ -67,13 +55,13 @@ struct DPSessionDesc;
 
 struct DPPlayer
 {
-	DPID	player_id;
+	DWORD	player_id;
 	char	friendly_name[MP_FRIENDLY_NAME_LEN+1];
 	char	formal_name[MP_FORMAL_NAME_LEN+1];
 	char	connecting;		// initially set to 1, 
 	                     // clear after DPSYS_DESTROYPLAYERORGROUP received from DirectPlay
 
-	DPID	pid()			{ return player_id; }
+	DWORD	pid()			{ return player_id; }
 	char *friendly_name_str() { return friendly_name; }
 	char *formal_name_str() { return formal_name; }
 };
@@ -86,12 +74,8 @@ public:
 	DynArrayB				service_providers;		// array of DPServiceProvider
 	DynArrayB				current_sessions;			// array of DPSessionDesc
 	int						co_inited;
-//	LPDIRECTPLAY			direct_play1;
-	LPDIRECTPLAY4A			direct_play4;
-	LPDIRECTPLAYLOBBY3A	direct_play_lobby;
-	DPLCONNECTION *		connection_string;		// only when lobbied
 
-	DPID						my_player_id;
+	DWORD						my_player_id;
 	int						host_flag;
 	DynArrayB				player_pool;
 
@@ -113,7 +97,7 @@ public:
 	int	is_lobbied();		// return 0=not lobbied, 1=auto create, 2=auto join, 4=selectable
 	char *get_lobbied_name();			// return 0 if not available
 	int	send_lobby(LPVOID lpData, DWORD dataSize);
-	char *receive_lobby(LPDWORD recvLen);
+	char *receive_lobby(DWORD *recvLen);
 
 	// ------- functions on service provider ------ //
 	void	poll_service_providers();								// can be called before init
@@ -134,30 +118,30 @@ public:
 	// -------- functions on player management -------//
 	int	create_player(char *friendlyName, char *formalName,
 		LPVOID lpData=NULL, DWORD dataSize=0, DWORD flags=0);
-	void	destroy_player( DPID playerId );
+	void	destroy_player( DWORD playerId );
 	void	poll_players();
 	DPPlayer *get_player(int i);
-	DPPlayer *search_player(DPID player_id);
+	DPPlayer *search_player(DWORD player_id);
 	DPPlayer *search_player(char *name);
-	int	is_host(DPID playerId);
+	int	is_host(DWORD playerId);
 	int	am_I_host();
-	int	is_player_connecting(DPID playerId);
+	int	is_player_connecting(DWORD playerId);
 
 	// ------- functions on data management ------//
 	// remote data (public) : each player has one data to the public
-	int	update_public_data(DPID, LPVOID, DWORD );
-	int	retrieve_public_data(DPID, LPVOID, LPDWORD);
+	int	update_public_data(DWORD, LPVOID, DWORD );
+	int	retrieve_public_data(DWORD, LPVOID, DWORD *);
 	// local data (private) : each player keeps a data on each other player
-	int	update_private_data(DPID, LPVOID, DWORD);
-	int	retrieve_private_data(DPID, LPVOID, LPDWORD);
+	int	update_private_data(DWORD, LPVOID, DWORD);
+	int	retrieve_private_data(DWORD, LPVOID, DWORD *);
 
 	// ------- functions on message passing ------//
-	int	send(DPID toId, LPVOID lpData, DWORD dataSize);
-	void	begin_stream(DPID toID);
-	int	send_stream(DPID toId, LPVOID lpData, DWORD dataSize);
-	void	end_stream(DPID toID);
+	int	send(DWORD toId, LPVOID lpData, DWORD dataSize);
+	void	begin_stream(DWORD toID);
+	int	send_stream(DWORD toId, LPVOID lpData, DWORD dataSize);
+	void	end_stream(DWORD toID);
 	int	get_msg_count();
-	char *receive(LPDPID from, LPDPID to, LPDWORD recvLen, int *sysMsgCount=0);
+	char *receive(DWORD *from, DWORD *to, DWORD *recvLen, int *sysMsgCount=0);
 
 	void	before_receive()		{} // dummy function to compatible with IMMPLAY, call before receive
 	void	after_send()			{}	// dummy function to compatible with IMMPLAY, call after send
@@ -165,6 +149,7 @@ public:
 protected:
 	void	handle_system_msg(LPVOID, DWORD );
 	void	handle_lobby_system_msg(LPVOID, DWORD);
+  void playerLost (DWORD id);
 };
 
 extern MultiPlayerDP mp_dp;
