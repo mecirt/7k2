@@ -770,6 +770,8 @@ void Campaign::disp_monster_defeated()
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_4(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
 
+                game.process_messages();
+                vga.flip();
 		sys.yield();
 
 		if( mouse.left_press )
@@ -845,6 +847,8 @@ void Campaign::disp_final_victory()
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_9(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
 
+                game.process_messages();
+                vga.flip();
 		sys.yield();
 
 		if( mouse.left_press )
@@ -1235,6 +1239,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 
 	mem_del(strBuf);
 
+vga.flip();
 	mouse.wait_press();
 
 	if (saveBuf)
@@ -1344,6 +1349,9 @@ void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
 				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 				mouse.show();
 			}
+
+			game.process_messages();
+ 			vga.flip();
 
 			sys.yield();
 			mouse.get_event();
@@ -1783,6 +1791,7 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 
 		if( text_block_count==1 )		
 		{
+                        vga.flip();
 			if( !auto_test_flag )
 				mouse.wait_press();
 
@@ -4298,6 +4307,8 @@ int Campaign::select_attackable_state(char *selectableStateArray, int selectable
 		if (k == selectableStateCount)
 			mouse_cursor.set_icon(CURSOR_NORMAL);
 
+                game.process_messages();
+                vga.flip();
 		sys.yield();
 		mouse.get_event();
 		if( config.music_flag )

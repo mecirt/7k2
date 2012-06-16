@@ -207,7 +207,8 @@ void Box::ok_button(int timeOut)
 
 	char* okStr = text_basic.is_inited() ? text_basic.str_box_ok() : (char*)"Ok";
    button.paint_text( box_x1+(box_x2-box_x1+1)/2-10, box_y2-BOX_BUTTON_MARGIN, okStr );
-	
+
+   vga.flip();
    button.wait_press(timeOut);
 }
 //------------ End of function Box::ok_button ---------//

@@ -993,9 +993,11 @@ int Mouse::wait_press(int timeOutSecond)
 	if( sys.paused_flag || !sys.active_flag )		// return immediately if switched task
 		return 0;
 	// ####### end Gilbert 7/7 #######//
+puts("wait_press is running!");
 
 	while( mouse.left_press || mouse.any_click() || mouse.key_code )		// avoid repeat clicking
 	{
+game.process_messages();
 		sys.yield();
 		mouse.get_event();
 	}
@@ -1005,6 +1007,7 @@ int Mouse::wait_press(int timeOutSecond)
 
 	while(1)
 	{
+game.process_messages();
 		sys.yield();
 		mouse.get_event();
 
