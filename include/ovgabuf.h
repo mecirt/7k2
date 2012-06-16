@@ -141,8 +141,6 @@ public:
 	void  	thick_line(int x1,int y1,int x2,int y2,int colorCode);
 
 	void  	indicator(int,int,int,int,float,float,int,int= -1);
-	void		indicator(int barType, int x,int y,float,float,int colorScheme);
-	void  	v_indicator(int,int,int,int,float,float,int,int= -1);
 
 	void  	rect(int,int,int,int,int,int);
 	void  	d3_rect(int,int,int,int);
@@ -152,7 +150,6 @@ public:
 	void  	d3_panel_up_clear(int,int,int,int,int=2);
 	void  	d3_panel_down_clear(int,int,int,int,int=2);
 
-	void  	tile(int,int,int,int,char*);
 	void 		adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree);
 	void 		draw_d3_up_border(int x1,int y1,int x2,int y2);
 	void 		draw_d3_down_border(int x1,int y1,int x2,int y2);

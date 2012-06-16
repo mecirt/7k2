@@ -51,7 +51,6 @@ void VBrowseIF2::init(int inX1, int inY1, int inX2, int inY2,
 //
 VBrowseIF2::VBrowseIF2()
 {
-	vga_front_only = 0;  // if 1, then it does all the bitmap processing on the front buffer only
 }
 //----------- End of function VBrowseIF::VBrowseIF ----------//
 
@@ -63,7 +62,7 @@ void VBrowseIF2::init_var(int totalRec, int recNo)
 	VBrowse::init_var(totalRec, recNo);
 	scroll_bar.init( 1, x1+3, y1-19, x1+34, y2+2, disp_max_rec,
 		 (disp_frame && x_max_rec==1 ? 1 : disp_max_rec),    // only use record as scroller unit when it's a vertical browser with frame
-		 total_rec_num, 1, 1 );		// last 1 - Interface mode if_flag is 1
+		 total_rec_num, 1 );		// last 1 - Interface mode if_flag is 1
 }
 //----------- End of function VBrowseIF::init_var ----------//
 
@@ -113,7 +112,7 @@ void VBrowseIF2::update(int totalRec)
 //
 void VBrowseIF2::refresh(int newRecNo, int newTotalRec)
 {
-	if( !vga_front_only && !vga.use_back_buf )
+	if( !vga.use_back_buf )
 		vga.blt_buf( x1, y1, x2, y2, 0 );  // the list content box
 
 	VBrowse::refresh(newRecNo, newTotalRec);
@@ -239,7 +238,7 @@ void VBrowseIF2::disp_all()
 {
 	int recNo;
 
-	if( !vga_front_only && !vga.use_back_buf )
+	if( !vga.use_back_buf )
 		vga.blt_buf( ix1, iy1, ix2, iy2, 0 ); // clear background
 
 	Vga::active_buf->put_bitmap_trans_decompress( x1+2, y1-20, image_button.read("ARROWUP") );
@@ -280,7 +279,7 @@ void VBrowseIF2::disp_one(int recNo, int dispType)
 
 	//---- put a outline rect around the record if it is highlight ---//
 
-	if( disp_frame && dispType == CLEAR_HIGH && !vga.use_back_buf && !vga_front_only )
+	if( disp_frame && dispType == CLEAR_HIGH && !vga.use_back_buf )
 	{
 		vga.blt_buf( x-2, y-2			  , x+rec_width+1, y-2				, 0 );	// top
 		vga.blt_buf( x-2, y+rec_height+1, x+rec_width+1, y+rec_height+1, 0 );	// bottom

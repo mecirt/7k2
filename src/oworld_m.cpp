@@ -779,7 +779,6 @@ void MapMatrix::draw_square()
 	// height = 100, width = 200 and the lower triangle must with height = 99 and width
 	// = 198
 	//
-	// vga_back.rect( x1, y1, x2, y2, 1, VGA_YELLOW + squareFrameCount );
 	if ((y1 < image_y1) || (y1 > (image_y2 -1)))
 		limitx = -1;
 	else

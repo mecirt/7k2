@@ -30,7 +30,6 @@
 
 #ifndef NEED_WINDOWS
 typedef void *HANDLE;
-typedef void *HWND;
 #endif
 
 typedef long LPARAM;

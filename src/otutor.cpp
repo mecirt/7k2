@@ -520,9 +520,7 @@ void Tutor::select_run_tutor(int inGameCall)
 {
 	if( inGameCall )
 		err_here();
-	//	select_tutor(-2);
 
-	//int tutorId = select_tutor(1);
 	int tutorId = select_learning_campaign_menu();
 
 	if( tutorId > 0 )
@@ -530,7 +528,6 @@ void Tutor::select_run_tutor(int inGameCall)
 
 	if( inGameCall )
 		err_here();
-	//	select_tutor(-1);
 }
 //--------- End of function Tutor::select_run_tutor ---------//
 

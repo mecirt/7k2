@@ -84,10 +84,6 @@ void Sys::run(int isLoadedGame)
 	sys_flag  = SYS_RUN;
 	view_mode = MODE_NORMAL;
 
-#ifdef DEBUG_JULIET
-	config.show_debug_info = TRUE;
-#endif
-
 	// ###### begin Gilbert 21/5 #########//
 	if( !remote.is_enable() )
 	{

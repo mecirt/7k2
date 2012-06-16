@@ -89,7 +89,6 @@ void Mouse::init(void *i)
   GetMousePos(&cur_x, &cur_y);
 
   InitInputDevices (i);
-  HINSTANCE hinst = (HINSTANCE) i;
 
   init_keyboard();
 

@@ -104,56 +104,6 @@ void VgaBuf::bar(int x1,int y1,int x2,int y2,int colorCode)
 }
 //--------------- End of function VgaBuf::bar --------------//
 
-/*
-//------------- Begin of function VgaBuf::pixelize --------------//
-//
-// Put an area of evenly distributed pixels on the given area.
-//
-// <int> x1,y1     - the top left vertex of the bar
-// <int> x2,y2     - the bottom right vertex of the bar
-// <int> colorCode - colorCode of the pixels
-//
-void VgaBuf::pixelize(int x1,int y1,int x2,int y2,int colorCode)
-{
-	err_when( !buf_locked );
-
-	if( is_front )
-		mouse.hide_area(x1,y1,x2,y2);
-
-   //---------------------------------------//
-
-	// ###### begin Gilbert 7/7 #########//
-	int	bufPitch = buf_pitch();
-	int   x, y, lineRemainBytes = bufPitch - (x2-x1+1);
-	char* writePtr = buf_ptr() + bufPitch * y1 + x1;
-
-	for( y=y1 ; y<=y2 ; y++ )
-	{
-		if( y&1 )
-		{
-			writePtr+=bufPitch;
-		}
-		else
-		{
-			for( x=x1 ; x<=x2 ; x++, writePtr++ )
-			{
-				if( x&1 )
-					*writePtr = colorCode;
-			}
-
-			writePtr+=lineRemainBytes;
-		}
-	}
-	// ###### end Gilbert 7/7 #########//
-
-	//---------------------------------------//
-
-	if( is_front )
-		mouse.show_area();
-}
-//--------------- End of function VgaBuf::pixelize --------------//
-*/
-
 //------------- Begin of function VgaBuf::rect --------------//
 //
 // Draw a rect on VGA screen
@@ -192,49 +142,6 @@ void VgaBuf::d3_rect(int x1,int y1,int x2,int y2)
 	rect( x1, y1, x2-1, y2-1, 1, VGA_GRAY+8 );
 }
 //--------------- End of function VgaBuf::d3_rect --------------//
-
-/*
-
-//------------- Start of function VgaBuf::tile --------------//
-//
-// Fill an area with a specific tile
-//
-// <int>   x1,y1    - the top left vertex of the tile
-// <int>   x2,y2    - the bottom right vertex of the tile
-// <char*> tileName - the name of the tile
-//
-void VgaBuf::tile(int x1,int y1,int x2,int y2,char* tileName)
-{
-   if( image_init_flag )
-   {
-      err_if( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=image_width || y2>=image_height )
-         err_now( "VgaBuf::tile (image)" );
-
-		char* tilePtr = icon_sym.get_ptr(tileName);
-
-      if( tilePtr )
-         IMGtile(x1,y1,x2,y2,tilePtr);
-   }
-   else
-   {
-      err_if( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT )
-         err_now( "VgaBuf::tile (direct)" );
-
-		if( is_front )
-			mouse.hide_area( x1,y1,x2,y2 );
-
-		char* tilePtr = icon_sym.get_ptr(tileName);
-
-		if( tilePtr )
-			VGAtile(x1,y1,x2,y2,tilePtr);
-
-		if( is_front )
-			mouse.show_area();
-	}
-}
-//--------------- End of function VgaBuf::tile --------------//
-
-*/
 
 //------------- Start of function VgaBuf::separator --------------//
 //
@@ -277,39 +184,6 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
    if( backColor == -1 )
       backColor = color_down;
 
-	/*
-   if( curValue > maxValue )
-		curValue = maxValue;
-
-   if( curValue > 0 )
-   {
-      int barWidth = (int) ((float)(x2-x1) * curValue / maxValue);
-
-		int halfHeight = (y2-y1+1)/2-1;
-		int tx2        = x1+barWidth;
-		int y;
-
-		indiColor+=halfHeight;
-
-		for( y=y1 ; y<y1+halfHeight ; y++, indiColor-- )
-			bar( x1, y, tx2, y, indiColor );
-
-		for( ; y<=y2 ; y++, indiColor++ )
-			bar( x1, y, tx2, y, indiColor );
-
-		if( backColor != -2 )	// -2 if don't paint background color
-		{
-			if( x1+barWidth < x2 )
-			bar( x1+barWidth+1, y1, x2, y2, backColor );
-		}
-	}
-	else
-	{
-		if( backColor != -2 )	// -2 if don't paint background color
-			bar( x1, y1, x2, y2, backColor );
-   }
-	*/
-
 	int cutPoint;
 	if( curValue <= 0.0f )
 		cutPoint = x1;
@@ -350,99 +224,6 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
 	}
 }
 //--------------- End of function VgaBuf::indicator --------------//
-
-
-//------------- Start of function VgaBuf::indicator --------------//
-//
-// <int>   barType        = bar style, bit 0 = disp curValue, bit 1 =  disp '/' and maxValue, bit 2 clear=mtr_b4 set=mtr_40, bit 3 = use another back buffer
-// <int>   x1, y1         = coordination of the indicator
-// <float> curValue       = the value of the bar
-// <float> maxValue       = max value, the bar width = maxBarWidth * curValue / maxValue
-// <int>   colorScheme    = color of the indicator // not used
-//
-void VgaBuf::indicator(int barType, int x1, int y1, float curValue, float maxValue, int colorScheme)
-{
-	int barWidth = 106;
-	int barHeight = 35;
-	int barLeftMargin = 15;
-	int barRightMargin = 15;
-	int barFluidMaxWidth = barWidth - barLeftMargin - barRightMargin;
-
-	char *emptyBitmapName = barType & 2 ? (char*)"MTR_00" : (char*)"MTR_B1";
-	char *fullBitmapName = barType & 2 ? (char*)"MTR_40" : (char*)"MTR_B4";
-
-	int cutPoint;
-	if( curValue <= 0.0f )
-		cutPoint = barLeftMargin;
-	else if( curValue >= maxValue )
-		cutPoint = barWidth - barRightMargin;
-	else
-		cutPoint = barLeftMargin + int( (float)barFluidMaxWidth * curValue / maxValue );
-
-	// ignore barType & 8;
-	if( cutPoint > 0 )
-		put_bitmap_area_trans( x1, y1, image_spict.read(fullBitmapName), 0, 0, cutPoint-1, barHeight-1 );
-	if( cutPoint < barWidth )
-		put_bitmap_area_trans( x1, y1, image_spict.read(emptyBitmapName), cutPoint, 0, barWidth-1, barHeight-1);
-
-	if( barType & 1 )
-	{
-		String str;
-		str = (int)curValue;
-		if( barType & 2 )
-		{
-			str += "/";
-			str += (int)maxValue;
-		}
-		font_hitpoint.center_put( x1, y1, x1+barWidth-1, y1+barHeight-1, str );
-	}
-}
-//------------- End of function VgaBuf::indicator --------------//
-
-
-//------------- Start of function VgaBuf::v_indicator --------------//
-//
-// Vertical indicator, all parameters are same as indicator() except
-// it is vertical.
-//
-// <int>   x1, y1, x2, y2 = coordination of the indicator
-// <float> curValue       = the value of the bar
-// <float> maxValue       = max value, the bar width = maxBarWidth * curValue / maxValue
-// <int>   indiColor      = color of the indicator
-// [int]   backColor      = background color
-//                          (default : vga.color_down)
-//
-void VgaBuf::v_indicator(int x1, int y1, int x2, int y2, float curValue,
-                      float maxValue, int indiColor, int backColor)
-{
-   if( backColor == -1 )
-      backColor = color_down;
-
-	if( curValue > 0 )
-   {
-      int barHeight = (int) ((float)(y2-y1) * curValue / maxValue);
-
-      int halfWidth = (x2-x1+1)/2-1;
-		int ty1        = max(y2-barHeight,y1); // when curValue>0, even the actual bar width < 1, one pixel will also be painted
-		int x;
-
-		indiColor+=halfWidth;
-
-		for( x=x1 ; x<x1+halfWidth ; x++, indiColor-- )
-			bar( x, ty1, x, y2, indiColor );
-
-		for( ; x<=x2 ; x++, indiColor++ )
-			bar( x, ty1, x, y2, indiColor );
-
-		if( y1 < y2-barHeight )
-			bar( x1, y1, x2, y2-barHeight-1, backColor );
-	}
-	else
-	{
-		bar( x1, y1, x2, y2, backColor );
-	}
-}
-//--------------- End of function VgaBuf::v_indicator --------------//
 
 
 //---------- Begin of function VgaBuf::line -------------//

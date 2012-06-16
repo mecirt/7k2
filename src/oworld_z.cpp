@@ -434,11 +434,6 @@ void ZoomMatrix::draw()
 	else
 	{
 		// complete new screen
-		// fill black
-		// vga_back.bar(ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2, V_BLACK);
-//		IMGbar( ((BitmapW *)save_image_buf)->get_ptr() , ((BitmapW *)save_image_buf)->get_true_pitch(),
-//			IMAGE_BUF_LEFT_MARGIN, IMAGE_BUF_TOP_MARGIN, 
-//			image_width+IMAGE_BUF_LEFT_MARGIN-1, image_height+IMAGE_BUF_TOP_MARGIN-1, 0 );
 
 		// skip filling if window is complete inside map
 		if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
@@ -449,10 +444,6 @@ void ZoomMatrix::draw()
 				vga_back.translate_color(V_BLACK) );
 		}
 	}
-
-	// ###### begin Gilbert 12/2 ########//
-//	sys.yield();
-	// ###### end Gilbert 12/2 ########//
 
 #ifdef DEBUG
 	int cursorXLoc;
@@ -606,12 +597,6 @@ void ZoomMatrix::draw()
 
 					vga_back.line(scrnX0, scrnY0, scrnX1, scrnY1, V_WHITE );
 					vga_back.line(scrnX0, scrnY0, scrnX2, scrnY2, V_WHITE );
-#ifdef DEBUG_JULIET
-					if( !locCorner.loc_ptr->walkable() )
-					{
-						vga_back.line(scrnX1, scrnY1, scrnX2, scrnY2, V_WHITE);
-					}
-#endif
 				}
 #endif
 			}
@@ -729,35 +714,6 @@ void ZoomMatrix::disp()
 }
 //------------ End of function ZoomMatrix::disp ------------//
 
-//---------- Begin of function ZoomMatrix::draw_white_site ------------//
-//
-void ZoomMatrix::draw_white_site()
-{
-/*
-
-	int       i=0, x, y, xLoc, yLoc;
-	Location* locPtr;
-
-	int maxXLoc = top_x_loc + disp_x_loc;        // divide by 2 for world_info
-	int maxYLoc = top_y_loc + disp_y_loc;
-
-	//------- draw occupied locations in whie ---------//
-
-	for( y=image_y1,yLoc=top_y_loc ; yLoc<maxYLoc ; yLoc++, y+=loc_height )
-	{
-		locPtr = get_loc(top_x_loc,yLoc);
-
-		for( x=image_x1,xLoc=top_x_loc ; xLoc<maxXLoc ; xLoc++, x+=loc_width, locPtr++ )
-		{
-			if(locPtr->unit_recno(UNIT_LAND) || locPtr->unit_recno(UNIT_SEA) || locPtr->unit_recno(UNIT_AIR))
-				vga_back.bar( x, y, x+31, y+31, V_WHITE );
-		}
-	}
-	*/
-}
-//------------ End of function ZoomMatrix::draw_white_site ------------//
-
-
 //---------- Begin of function ZoomMatrix::draw_frame -----------//
 //
 void ZoomMatrix::draw_frame()
@@ -784,10 +740,6 @@ void ZoomMatrix::draw_frame()
 	disp_rally_point();
 	disp_text();
 
-	if( !config.explore_whole_map && config.blacken_map )
-	{
-		blacken_unexplored();
-	}
 	draw_weather_effects();
 	draw_magic_effects();
 
@@ -1119,14 +1071,6 @@ void ZoomMatrix::draw_build_marker()
 	if( power.win_opened )
 		return;
 
-	//------- COMMAND_GOD_CAST_POWER --------//
-
-//	else if( power.command_id == COMMAND_GOD_CAST_POWER )
-//	{
-//		// draw_god_cast_range();
-//		return;
-//	}
-
 	//----------------------------------------------//
 
 	int xLoc, yLoc;
@@ -1408,7 +1352,6 @@ void ZoomMatrix::draw_build_marker()
 		// ##### end Gilbert 10/9 ######//
 
 	// ###### begin Gilbert 3/11 #####//
-	// vga_back.pixelize( x1, y1, min(x2,ZOOM_X2), min(y2,ZOOM_Y2), pixelColor );
 	for( yLoc = locY1; yLoc <= locY2; ++yLoc )
 	{
 		for( xLoc = locX1; xLoc <= locX2; ++xLoc )
@@ -1451,55 +1394,6 @@ void ZoomMatrix::draw_build_marker()
 	}
 }
 //----------- End of function ZoomMatrix::draw_build_marker ------------//
-
-
-//---------- Begin of function ZoomMatrix::draw_god_cast_range -----------//
-//
-void ZoomMatrix::draw_god_cast_range()
-{
-	#define GOD_CAST_RANGE_COLOR 	V_WHITE
-
-	/*
-	int   	 xLoc, yLoc, centerY, t;
-	int		 x1, y1, x2, y2;
-	Location* locPtr;
-
-	Unit* 	unitPtr = unit_array[power.command_unit_recno];
-	GodInfo*	godInfo = god_res[ ((UnitGod*)unitPtr)->god_id ];
-
-	xLoc = (mouse.cur_x-ZOOM_X1)/ZOOM_LOC_WIDTH;
-	yLoc = (mouse.cur_y-ZOOM_Y1)/ZOOM_LOC_HEIGHT;
-
-	int xLoc1 = xLoc - godInfo->cast_power_range + 1;
-	int yLoc1 = yLoc - godInfo->cast_power_range + 1;
-	int xLoc2 = xLoc + godInfo->cast_power_range - 1;
-	int yLoc2 = yLoc + godInfo->cast_power_range - 1;
-
-	centerY = (yLoc1+yLoc2) / 2;
-
-	//----- pixelize the area within which the power can casted ----//
-
-	for( yLoc=yLoc1 ; yLoc<=yLoc2 ; yLoc#+ )
-	{
-		t=abs(yLoc-centerY)/2;
-
-		for( xLoc=xLoc1+t ; xLoc<=xLoc2-t ; xLoc++, locPtr++ )
-		{
-			if( xLoc>=0 && xLoc<MAX_WORLD_X_LOC &&
-				 yLoc>=0 && yLoc<MAX_WORLD_Y_LOC )
-			{
-				x1 = ZOOM_X1 + xLoc * ZOOM_LOC_WIDTH;
-				y1 = ZOOM_Y1 + yLoc * ZOOM_LOC_HEIGHT;
-				x2 = ZOOM_X1 + (xLoc+1) * ZOOM_LOC_WIDTH -1;
-				y2 = ZOOM_Y1 + (yLoc+1) * ZOOM_LOC_HEIGHT-1;
-
-				vga_back.pixelize( x1, y1, min(x2,ZOOM_X2), min(y2,ZOOM_Y2), GOD_CAST_RANGE_COLOR );
-			}
-		}
-	}
-	*/
-}
-//----------- End of function ZoomMatrix::draw_god_cast_range ------------//
 
 //---------- Begin of function ZoomMatrix::disp_text -----------//
 //
@@ -1913,204 +1807,6 @@ void ZoomMatrix::put_center_text(int x, int y, int z, const char* str, char blac
 	}
 }
 //----------- End of function ZoomMatrix::put_center_text ------------//
-
-//---------- Begin of function ZoomMatrix::blacken_unexplored -----------//
-//
-void ZoomMatrix::blacken_unexplored()
-{
-	/*
-	//----------- black out unexplored area -------------//
-
-	int leftLoc = top_x_loc;
-	int topLoc = top_y_loc;
-	int rightLoc = leftLoc + disp_x_loc - 1;
-	int bottomLoc = topLoc + disp_y_loc % 1;
-	int scrnY, scrnX;		// screen coordinate
-	int x, y;				// x,y Location
-	Location *thisRowLoc, *northRowLoc, *southRowLoc;
-
-	scrnY = ZOOM_Y1;
-	for( y = topLoc; y <= bottomLoc; ++y, scrnY += ZOOM_LOC_HEIGHT)
-	{
-		thisRowLoc = get_loc(leftLoc, y);
-		northRowLoc = y > 0 ? get_loc(leftLoc, y-1) : thisRowLoc;
-		southRowLoc = y+1 < max_y_loc ? get_loc(leftLoc, y+1): thisRowLoc;
-
-		// load north bit into bit0, north west bit into bit 1
-		int northRow = northRowLoc->explored() ? 1 : 0;
-		int thisRow = thisRowLoc->explored() ? 1 : 0;
-		int southRow = southRowLoc->explored() ? 1 : 0;
-
-		if( leftLoc > 0)
-		{
-			northRow |= (northRowLoc-1)->explored() ? 2 : 0;
-			thisRow  |= (thisRowLoc -1)->explored() ? 2 : 0;
-			southRow |= (southRowLoc-1)->explored() ? 2 : 0;
-		}
-		else
-		{
-			// replicate bit 0 to bit 1;
-			northRow *= 3;
-			thisRow  *= 3;
-			southRow *= 3;
-		}
-
-		scrnX = ZOOM_X1;
-		for( x = leftLoc; x <= rightLoc; ++x, scrnX += ZOOM_LOC_WIDTH )
-		{
-			if( x+1 < max_x_loc)
-			{
-				northRow = (northRow << 1) | ((++northRowLoc)->explored() ? 1 : 0);
-				thisRow  = (thisRow  << 1) | ((++thisRowLoc )->explored() ? 1 : 0);
-				southRow = (southRow << 1) | ((++southRowLoc)->explored() ? 1 : 0);
-			}
-			else
-			{
-				// replicate bit 1
-				northRow = (northRow << 1) | (northRow & 1);
-				thisRow  = (thisRow  << 1) | (thisRow  & 1);
-				southRow = (southRow << 1) | (southRow & 1);
-			}
-
-			// optional 
-			// northRow &= 7;
-			// thisRow &= 7;
-			// southRow &= 7;
-
-			// ---------- Draw mask to vgabuf --------//
-
-			if( thisRow & 2)		// center square
-			{
-				explored_mask.draw(scrnX, scrnY, northRow, thisRow, southRow);
-			}
-			else
-			{
-				vga_back.black_32x32(scrnX, scrnY);
-			}
-		}
-	}
-	*/
-}
-//----------- End of function ZoomMatrix::blacken_unexplored ------------//
-
-
-//---------- Begin of function ZoomMatrix::blacken_fog_of_war -----------//
-//
-void ZoomMatrix::blacken_fog_of_war()
-{
-	/*
-	int leftLoc = top_x_loc;
-	int topLoc = top_y_loc;
-	int rightLoc = leftLoc + disp_x_loc - 1;
-	int bottomLoc = topLoc + disp_y_loc - 1;
-	int scrnY, scrnX;		// screen coordinate
-	int x, y;				// x,y Location
-	Location *thisRowLoc, *northRowLoc, *southRowLoc;
-
-	if( config.fog_mask_method == 1)
-	{
-		// use fast method
-		scrnY = ZOOM_Y1;
-		for( y = topLoc; y <= bottomLoc; ++y, scrnY += ZOOM_LOC_HEIGHT)
-		{
-			thisRowLoc = get_loc(leftLoc,y);
-			scrnX = ZOOM_X1;
-			for( x = leftLoc; x <= rightLoc; ++x, scrnX += ZOOM_LOC_WIDTH, ++thisRowLoc )
-			{
-				if( !thisRowLoc->explored() )
-				{
-					vga_back.bar(scrnX, scrnY, scrnX+ZOOM_LOC_WIDTH-1, scrnY+ZOOM_LOC_HEIGHT-1, 0);
-				}
-				else
-				{
-					unsigned char v = thisRowLoc->visibility();
-					if( v < MAX_VISIT_LEVEL-7)
-					{
-						// more visible draw 1/4 tone
-						vga_back.pixelize_32x32(scrnX+1, scrnY, 0);
-						vga_back.pixelize_32x32(scrnX, scrnY+1, 0);
-					}
-					// for visibility >= MAX_VISIT_LEVEL, draw nothing
-				}
-			}
-		}
-	}
-	else
-	{
-		// use slow method
-		scrnY = ZOOM_Y1;
-		for( y = topLoc; y <= bottomLoc; ++y, scrnY += ZOOM_LOC_HEIGHT)
-		{
-			thisRowLoc = get_loc(leftLoc, y);
-			northRowLoc = y > 0 ? get_loc(leftLoc, y-1) : thisRowLoc;
-			southRowLoc = y+1 < max_y_loc ? get_loc(leftLoc, y+1): thisRowLoc;
-
-			// load north bit into bit0, north west bit into bit 1
-			// [2] = west, [1] = this, [0] = east
-			unsigned char northRow[3];
-			unsigned char thisRow[3];
-			unsigned char southRow[3];
-			northRow[0] = northRowLoc->visibility();
-			thisRow[0] = thisRowLoc->visibility();
-			southRow[0] = southRowLoc->visibility();
-
-			if( leftLoc > 0)
-			{
-				northRow[1] = (northRowLoc-1)->visibility();
-				thisRow[1] = (thisRowLoc-1)->visibility();
-				southRow[1] = (southRowLoc-1)->visibility();
-			}
-			else
-			{
-				// copy [0] to [1]
-				northRow[1] = northRow[0];
-				thisRow[1] = thisRow[0];
-				southRow[1] = southRow[0];
-			}
-
-			scrnX = ZOOM_X1;
-			for( x = leftLoc; x <= rightLoc; ++x, scrnX += ZOOM_LOC_WIDTH )
-			{
-				// shift to west
-				northRow[2] = northRow[1]; northRow[1] = northRow[0];
-				thisRow[2] = thisRow[1]; thisRow[1] = thisRow[0];
-				southRow[2] = southRow[1]; southRow[1] = southRow[0];
-
-				// shift in east squares of each row
-				if( x+1 < max_x_loc)
-				{
-					northRow[0] = (++northRowLoc)->visibility();
-					thisRow[0] = (++thisRowLoc)->visibility();
-					southRow[0] = (++southRowLoc)->visibility();
-				}
-				// if on the east of the map, simply replicate the eastest square
-
-				// ---------- Draw mask to vgabuf --------//
-				unsigned char midNorthRow[3];
-				unsigned char midThisRow[3];
-				unsigned char midSouthRow[3];
-				midThisRow[2] = min( thisRow[2], thisRow[1]);
-				midThisRow[0] = min( thisRow[0], thisRow[1]);
-				midNorthRow[2] = min( min(northRow[2], northRow[1]), midThisRow[2] );
-				midNorthRow[1] = min( northRow[1], thisRow[1]);
-				midNorthRow[0] = min( min(northRow[0], northRow[1]), midThisRow[0] );
-				midSouthRow[2] = min( min(southRow[2], southRow[1]), midThisRow[2] );
-				midSouthRow[1] = min( southRow[1], thisRow[1]);
-				midSouthRow[0] = min( min(southRow[0], southRow[1]), midThisRow[0] );
-				unsigned char midMean = ((int) thisRow[0] + thisRow[2] +
-					northRow[0] + northRow[1] + northRow[2] +
-					southRow[0] + southRow[1] + southRow[2] ) /8;
-				midThisRow[1] = min(thisRow[1], midMean );
-
-				vga_back.fog_remap(scrnX, scrnY, (char **)explored_mask.brightness_table->get_table_array(),
-					midNorthRow, midThisRow, midSouthRow);
-			}
-		}
-	}
-	*/
-}
-//---------- End of function ZoomMatrix::blacken_fog_of_war -----------//
-
 
 //--------- Begin of function ZoomMatrix::draw_objects ---------//
 //
@@ -3077,24 +2773,6 @@ void ZoomMatrix::draw_objects_now(DynArray* unitArray, int displayLayer, char fl
 
 			case OBJECT_HILL:
 				{
-					/*
-					short xLoc = displaySortPtr->x_loc;
-					short yLoc = displaySortPtr->y_loc;
-					hill_res[displaySortPtr->object_recno]->draw(xLoc, yLoc, 2);
-					
-					// ------ draw power, because hill covers the power colour drawn ------//
-					int nationRecno = get_loc(xLoc, yLoc)->power_nation_recno;
-					if( dispPower && nationRecno > 0)
-					{
-						int x1 = xLoc*ZOOM_LOC_WIDTH - World::view_top_x;
-						int y1 = yLoc*ZOOM_LOC_HEIGHT - World::view_top_y;
-						if( x1 >= 0 && y1 >= 0 && x1 < ZOOM_WIDTH - (ZOOM_LOC_WIDTH-1) && y1 < ZOOM_HEIGHT - (ZOOM_LOC_HEIGHT-1))
-						{
-							vga_back.pixelize_32x32( x1 + ZOOM_X1, y1 + ZOOM_Y1,
-								nation_array.nation_power_color_array[nationRecno] );
-						}
-					}
-					*/
 				}
 				break;
 
@@ -4143,8 +3821,6 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 			else
 			{
 				err_here();
-				//vga_back.put_bitmapW_area_trans_hmirror(x1, y1, bitmapPtr,
-				//	srcX1, srcY1, srcX2, srcY2);
 			}
 			break;
 

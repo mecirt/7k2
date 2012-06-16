@@ -44,7 +44,6 @@ private:
    short disp_rec_num;
    char  page_type;         // yes or no, for refered when user press down button
 	char	if_flag;
-	char  vga_front_only;
    char  top_rec_flag;
 
    short slot_height;       // height of the scroll slot
@@ -57,7 +56,7 @@ private:
 public :
    ScrollBar()  { type= -1; }
 
-	void  init(int,int,int,int,int,int,int,int,int=1,int=0,int=0);
+	void  init(int,int,int,int,int,int,int,int,int=1,int=0);
 
 	void  paint(int=1);
    void  refresh(int,int=0,int= -1,int= -1,int= -1);

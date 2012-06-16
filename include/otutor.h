@@ -186,7 +186,6 @@ public:
 	void        deinit();
 
 	int			select_learning_campaign_menu();
-	int			select_tutor(int);
 	void			select_run_tutor(int inGameCall);
 	void 			run(int tutorId, int inGameCall);
 	void			load(int tutorId);

@@ -94,9 +94,6 @@ public:
 	void disable()     { if(enable_flag)  { enable_flag=0; paint(); } }
 	void enable()      { if(!enable_flag) { enable_flag=1; paint(); } }
 
-	static void disp_text_button_func(ButtonCustom *, int repaintBody);
-	static void disp_text2_button_func(ButtonCustom *, int repaintBody);
-
 };
 
 //------- Define class ButtonCustomGroup ----------------//

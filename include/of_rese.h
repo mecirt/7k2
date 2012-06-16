@@ -75,9 +75,6 @@ protected:
 private:
 	void 		progress_research();
 
-	void		disp_research_info(int dispY1, int refreshFlag);
-	void 		disp_research_button(int y, int techId, int buttonUp);
-
 	//-------- AI actions ---------//
 
 	int		think_del();

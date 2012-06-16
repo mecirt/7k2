@@ -141,7 +141,6 @@ public:
 	void disp();
 	void draw_frame();
 	void scroll(int,int);
-	void draw_white_site();
 	void put_bitmap_clip(int x, int y, char* bitmapPtr,int compressedFlag=0);
 	void put_bitmap_remap_clip(int x, int y, char* bitmapPtr, short* colorRemapTable=NULL,int compressedFlag=0);
 	int  detect_bitmap_clip(int x, int y, char* bitmapPtr);
@@ -194,10 +193,6 @@ protected:
 	void draw_weather_effects();
 
 	void draw_build_marker();
-	void draw_god_cast_range();
-
-	void blacken_unexplored();
-	void blacken_fog_of_war();
 
 	void disp_rally_point();
 	void disp_text();

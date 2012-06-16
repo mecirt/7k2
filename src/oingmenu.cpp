@@ -308,13 +308,8 @@ void InGameMenu::disp(int needRepaint)
       int x1=bx+105;
 		int x2=bx+GAME_MENU_WIDTH-105;
 		int y=by+80;
-	//	int ySpacing = font_bold_black.max_font_height + 10;
 		int ySpacing = font_bold_black.max_font_height + 6;
 
-//      if( Vga::use_back_buf )
-//         image_interface.put_back( GAME_MENU_X1, GAME_MENU_Y1, "GAMEMENU" );
-//      else
-//         image_interface.put_front( GAME_MENU_X1, GAME_MENU_Y1, "GAMEMENU" );
 		mouse.hide();
 		vga.active_buf->put_bitmap_trans_remap(bx, by, background_bitmap, color_remap_table );
 

@@ -90,11 +90,6 @@ struct IDirectInputA;
 struct IDirectInputDeviceA;
 typedef struct IDirectInputA *LPDIRECTINPUT;
 typedef struct IDirectInputDeviceA *LPDIRECTINPUTDEVICE;
-#ifndef NEED_WINDOWS
-typedef void *HHOOK;
-typedef void *HINSTANCE;
-typedef void *HWND;
-#endif
 
 //-------- Define struct MouseClick -------//
 
@@ -141,8 +136,6 @@ public:
 	char   handle_flicking;
 
 	short*  vga_update_buf;
-
-	HHOOK  key_hook_handle;
 
 	//------- real-time mouse state -------//
 

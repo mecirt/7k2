@@ -161,7 +161,7 @@ void VBrowse::init_var(int totalRec, int recNo)
 
 	scroll_bar.init( 1, x2-SCROLL_BAR_WIDTH, y1, x2, y2, disp_max_rec,
 		    (disp_frame && x_max_rec==1 ? 1 : disp_max_rec),    // only use record as scroller unit when it's a vertical browser with frame
-		    total_rec_num, 1 );
+		    total_rec_num);
 }
 //----------- End of function VBrowse::init_var ----------//
 

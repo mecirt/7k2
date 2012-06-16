@@ -485,58 +485,6 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 //--------- End of static function i_disp_research_button ---------//
 
 
-//--------- Begin of function FirmResearch::disp_research_info ---------//
-//
-void FirmResearch::disp_research_info(int dispY1, int refreshFlag)
-{
-	static short lastTechId=0;
-
-	int techId = nation_array[nation_recno]->research_tech_id;
-
-	if( refreshFlag==INFO_UPDATE && lastTechId != techId )
-	{
-		lastTechId = techId;
-		info.disp();
-	}
-
-	//---------------- paint the panel --------------//
-
-	if( refreshFlag == INFO_REPAINT )
-		vga.d3_panel_up( INFO_X1, dispY1, INFO_X2, dispY1+50 );
-
-	if( !techId )
-		return;
-
-	int x=INFO_X1+4, y=dispY1+4;
-
-	//-------- display the icon of the researching item ---------//
-
-	TechInfo* techInfo = tech_res[techId];
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		//----------- display text ------------//
-
-		String str;
-
-		str  = techInfo->tech_des();
-
-		int researchVersion = techInfo->get_nation_tech_level(nation_recno)+1;		// research the next non-researched version
-
-		if( researchVersion > 1 )
-		{
-			str += " ";
-			str += m.roman_number(researchVersion);
-		}
-
-		font_san.put( x, y+4, str);
-	}
-
-	vga_front.indicator( 0, x-2, y+21, nation_array[nation_recno]->research_progress(), (float)100, VGA_GRAY );
-}
-//----------- End of function FirmResearch::disp_research_info -----------//
-
-
 // -------- begin of function FirmResearch::disp_firm_info --------//
 //
 void FirmResearch::disp_firm_info(int dispY1, int refreshFlag)

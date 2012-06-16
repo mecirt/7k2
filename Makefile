@@ -78,7 +78,6 @@ LIBRARIES             =
 			src/otornado.cpp \
 			src/ofirmai.cpp \
 			src/otrainee.cpp \
-			src/otutor2.cpp \
 			src/onationa.cpp \
 			src/of_mtrn.cpp \
 			src/ohillres.cpp \

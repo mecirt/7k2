@@ -394,13 +394,6 @@ void Sys::disp_zoom()
 	dispTime = m.get_time() - dispTime;
 #endif
 
-	//---- draw sprite white sites if in debug mode ----//
-
-	#ifdef DEBUG
-	if(debug2_enable_flag)
-		world.zoom_matrix->draw_white_site();
-	#endif
-
 	//------- draw foreground objects --------//
 
 #ifdef DEBUG
