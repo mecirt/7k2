@@ -257,7 +257,7 @@ void TerrainRes::init()
 	// ------ load texture information --------- //
 
 	str  = DIR_RES;
-	str += "i_TERX";
+	str += "I_TERX";
 	str += config.terrain_set;
 	str += ".RES";
 

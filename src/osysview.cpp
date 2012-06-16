@@ -145,7 +145,6 @@ void Sys::disp_view_mode(int observeMode)
 void Sys::disp_view()
 {
 	disp_zoom();
-	report_disp_frame_no = 0;
 
 	//---- if in report mode, convert the view to gray scale ----//
 
@@ -199,8 +198,6 @@ void Sys::disp_view()
 		}
 
 		Vga::opaque_flag = 0;
-
-		report_disp_frame_no = 0;
 	}
 	// ####### begin Gilbert 21/5 #######//
 	else
@@ -237,8 +234,6 @@ void Sys::update_view()
 #ifdef DEBUG
 		dispZoomTime = m.get_time() - dispZoomTime;
 #endif
-		report_disp_frame_no = 0;
-		
 		// display tips box
 
 		tips_res.disp( ZOOM_X1+50, ZOOM_Y1+8);
@@ -268,27 +263,10 @@ void Sys::update_view()
 		}
 
 		//------------------------------------//
-
-#if(!defined(USE_FLIP))
-		vga.blt_buf(ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2);
-#endif
 	}
 	else
 	{
-		//-------------------------------------------//
-		//
-		// In report mode, display the background view in odd
-		// number frames and the report in even number frames.
-		//
-		//-------------------------------------------//
-
-		if( !report_disp_frame_no )
-		{
 			disp_zoom();
-			report_disp_frame_no = 1;		// report_disp_frame_no = 1 means report has not been drawn
-		}
-		else
-		{
 			Vga::opaque_flag = config.opaque_report;
 
 			switch( view_mode )
@@ -340,13 +318,6 @@ void Sys::update_view()
 			}
 
 			Vga::opaque_flag = 0;
-
-#if(!defined(USE_FLIP))
-			vga.blt_buf(ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2);
-#endif
-			
-			report_disp_frame_no = 0;
-		}
 	}
 }
 //-------- End of function Sys::update_view --------//

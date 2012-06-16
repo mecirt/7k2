@@ -163,14 +163,10 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 	if( option_menu.is_active() )
 	{
-		option_menu.disp(need_redraw_flag);
+		option_menu.disp(1);
 	}
 	else
 	{
-		// -------- re-draw the whole screen if needed, such as after task switching ---------//
-
-		if( need_redraw_flag )
-		{
 			// ###### begin Gilbert 4/1 ######//
 			help.short_front_buf.clear();
 			// ###### end Gilbert 4/1 ######//
@@ -205,55 +201,24 @@ void Sys::disp_frame(int dispCampaignMsg)
 					}
 				}
 				// ######## end Gilbert 1/4 #########//
-				vga.flip();
 			}
 
 			//------------------------------------//
 
+			update_view();
+			info.update();
+
 			disp_view_mode();
 
 			info.disp();
-		}
-		else
-		{
-#ifdef DEBUG
-			updateViewTime = m.get_time();
-#endif
 
-			update_view();
-
-#ifdef DEBUG
-			updateViewTime = m.get_time() - updateViewTime;
-			infoUpdateTime = m.get_time();
-#endif 
-
-			info.update();
-
-#ifdef DEBUG
-			infoUpdateTime = m.get_time() - infoUpdateTime;
-#endif 
-
-		//-------- display the mini map ----------//
-
-#ifdef DEBUG
-			dispMapTime = m.get_time();
-#endif
-			disp_map();
-#ifdef DEBUG
-			dispMapTime = m.get_time() - dispMapTime;
-#endif
-	
-			//------ display tutorial text -------//
 			if( game.game_mode == GAME_TUTORIAL )
 				tutor.disp();
-		}
 
 		//--------- display the map and info area --------//
 
 		help.disp_short_help(&vga_back);
 
-		if( !report_disp_frame_no )
-		{
 	#ifdef DEBUG
 			flipTime = m.get_time();
 	#endif
@@ -261,7 +226,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 	#ifdef DEBUG
 			flipTime = m.get_time() - flipTime;
 	#endif
-		}
 
 		help.hide_short_help(&vga_back);
 

@@ -490,6 +490,7 @@ void OptionMenu::disp(int needRepaint)
 		}
 
 		refresh_flag = 0;
+                vga.flip();
 	}
 }
 

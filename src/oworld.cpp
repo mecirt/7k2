@@ -2711,9 +2711,6 @@ void World::visit_shell(int xLoc1, int yLoc1, int xLoc2, int yLoc2, int visitLev
 
 void World::process_visibility()
 {
-	if( sys.frame_count & 1 )
-	{
-		// odd frame
 		// ##### patch begin Gilbert 18/1 ######//
 		// with japanese SOP, visit level won't drop
 		if( config.fog_of_war &&
@@ -2749,15 +2746,10 @@ void World::process_visibility()
 			startTime =  0; // set break point here
 #endif
 		}
-	}
-	else
-	{
-		// odd frame
 		if( !config.explore_whole_map || config.fog_of_war)
 		{
 			sys.zoom_need_redraw = 1;	// request world.zoom_matrix->disp() to call draw()
 		}
-	}
 	// #### end Gilbert 8/2 #####//
 }
 //------- End of function World::process_visibility -----------//

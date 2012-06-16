@@ -73,16 +73,6 @@ static int	filter_unit( FilterUnitFunc filterFunc, int para1, int negate=0);
 //
 void Sys::detect()
 {
-	//--- only detect at the even frames when in report mode ---//
-
-	if( view_mode != MODE_NORMAL &&
-		 report_disp_frame_no )
-	{
-		return;
-	}
-
-	//--------------------------------------//
-
 	mouse.get_event();
 
 	if( option_menu.is_active() )

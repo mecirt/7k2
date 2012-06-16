@@ -139,8 +139,6 @@ public:
 
 	//------ view report var -----//
 
-	int		report_disp_frame_no;
-
 	//------- file paths -------//
 
 	char  	cdrom_drive;

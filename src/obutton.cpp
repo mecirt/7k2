@@ -579,6 +579,7 @@ void Button::wait_press(int timeOut)
 
 	while( !detect(KEY_RETURN,KEY_ESC) && !mouse.any_click(1) )  // 1-only right mouse button
 	{
+          game.process_messages();
 		sys.yield();
 		mouse.get_event();
 

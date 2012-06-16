@@ -350,12 +350,14 @@ void Campaign::main_loop(int isLoadedGame)
 		for (i = 0; i < HFIELD_WIDTH; i++)
 			for (j = 0; j < HFIELD_HEIGHT; j++)
 				map[i][j] = smoothing_checking(i, j, HFIELD_BIT_SHIFT);
+game.process_messages();
 
-		if (screenNeedUpdate)
+		if (screenNeedUpdate || 1)
 		{
 			if (firstRun && !isLoadedGame)
 			{
 				disp_strategic_screen(1, 1);
+                                vga.flip();
 				mouse.wait_press(1);
 				disp_strategic_screen(1, 2);
 				disp_strategic_screen(1, 3);
@@ -366,6 +368,7 @@ void Campaign::main_loop(int isLoadedGame)
 				disp_strategic_screen();
 
 			screenNeedUpdate = 0;
+                        vga.flip();
 		}
 
 		sys.yield();
@@ -394,7 +397,6 @@ void Campaign::main_loop(int isLoadedGame)
 			saved_random_seed = m.random_seed;
 
 			stage_prelude();
-
 			//------ play a game now -------//
 
 				// --- hint for balance race_res.name_used_array and monster_res.name_used_array ----//
@@ -682,6 +684,7 @@ void Campaign::disp_intro()
 		//	counter = VGA_HEIGHT;
 			break;
 
+		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -700,6 +703,8 @@ void Campaign::disp_intro()
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_8(), 1, &font_cmpo);
 		font_cmpo.space_width += 4;	
 
+                game.process_messages();
+                vga.flip();
 		sys.yield();
 
 		if( mouse.left_press )
@@ -1292,6 +1297,7 @@ void Campaign::disp_narrative(char* dialogText, ...)
 
 	mem_del( strBuf );
 
+vga.flip();
 	if( !auto_test_flag )
 		mouse.wait_press();
 
@@ -1670,8 +1676,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 	{
 		disp_strategic_screen(0);		// don't blt buffer after the display
 
-		mouse.hide();
-
 		font_mid.put_paragraph( NARRATIVE_TEXT_X1+8, NARRATIVE_TEXT_Y1+8,
 			NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, text_buf );
 
@@ -1679,10 +1683,10 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 			text_campaign.str_click_to_read_msg() );
 			//"Click to read message..." );
 
-		mouse.show();
-
-		if( !auto_test_flag )
+		if( !auto_test_flag ) {
+                  vga.flip();
 			mouse.wait_press();
+                }
 
 		//---------- display the dialog ----------//
 		vga.disp_image_file("LETTERS");
@@ -1783,6 +1787,7 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 				mouse.wait_press();
 
 			disp_strategic_screen();		// close the letter and return to the strategic screen
+                        vga.flip();
 		}
 	}
 }
@@ -1835,6 +1840,7 @@ int Campaign::detect_letter()
 											text_block_array[i].x2, text_block_array[i].y2+8 ) )
 			{
 				disp_strategic_screen();		// close the letter and return to the strategic screen
+                                vga.flip();
 				se_ctrl.immediate_sound("TURN_ON");
 				return i-FIRST_REPLY_TEXT_BLOCK_ID+1;
 			}

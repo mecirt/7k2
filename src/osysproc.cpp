@@ -173,6 +173,7 @@ void Sys::run(int isLoadedGame)
 //
 void Sys::main_loop(int isLoadedGame)
 {
+  puts ("Entering main loop!");
 	//-------- reset day_frame_count -------//
 
 	if( !isLoadedGame )
@@ -603,6 +604,8 @@ void Sys::yield()
       return;
 
    isYielding=1;
+
+   game.process_messages();
 
 	// ###### begin Gilbert 11/2 #######//
 #ifdef DEBUG
