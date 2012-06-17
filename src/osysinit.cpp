@@ -293,10 +293,8 @@ int Sys::init_objects()
    image_icon.init(DIR_RES"I_ICON.RES",1,0);       // 1-read into buffer
    image_interface.init(DIR_RES"I_IF.RES",0,0);    // 0-don't read into the buffer, don't use common buffer
 
-   #ifndef DEMO         // do not load these in the demo verison
       image_menu.init(DIR_RES"I_MENU.RES",0,0);       // 0-don't read into the buffer, don't use common buffer
    // image_encyc.init(DIR_RES"I_ENCYC.RES",0,0); // 0-don't read into the buffer, don't use common buffer
-   #endif
 
 	image_gameif.init(DIR_RES"I_GAMEIF.RES",1,0);
    image_button.init(DIR_RES"I_BUTTON.RES",1,0);

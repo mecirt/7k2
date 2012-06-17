@@ -217,12 +217,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 	briefModeButton.create_text( SCROLL_SHEET_X2-140, SCROLL_SHEET_Y2+42, 
 		SCROLL_SHEET_X2-40, SCROLL_SHEET_Y2+62, text_game_menu.str_brief_mode(briefMode), 0 );
 
-#ifdef DEMO
-	briefModeButton.visible_flag = 0;
-	for( i = 0; i < MAX_SCENARIO_PATH; ++i )
-		groupEnableButton[i].visible_flag = 0;
-#endif
-
 	int currentScenCount = 0;			// sum of scenCountArray which are enabled
 	// int scenIndex[scenCount];
 	Blob blobScenIndex( sizeof(int)*scenCount );
