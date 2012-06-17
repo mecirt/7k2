@@ -327,7 +327,7 @@ void Sys::update_view()
 void Sys::detect_view()
 {
 	int enableAction;			// some action is not enabled, when paused.
-	enableAction = config.frame_speed > 0 || !remote.is_enable();	// AMPLUS allows action when paused in single player
+	enableAction = config.frame_speed > 0 || !remote.is_enable();
 
 	if( enableAction )
 		info.detect();

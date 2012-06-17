@@ -87,10 +87,6 @@ void Unit::set_combat_level(int combatLevel)
 	// ##### end Gilbert 4/11 #######//
 	{
 		can_guard_flag = sprite_info->can_guard_flag;
-#ifdef AMPLUS
-		if( unit_id == UNIT_ZULU )
-			can_guard_flag |= 4;			// shield during attack delay
-#endif
 	}
 	else
 	{

@@ -522,7 +522,6 @@ void UnitGod::cast_on_worker(Worker* workerPtr, int nationRecno, int divider)
 			maya_cast_power( workerPtr, nationRecno, divider );
 			break;
 
-#ifdef AMPLUS
 		case GOD_EGYPTIAN:
 			egyptian_cast_power(workerPtr, nationRecno, divider);
 			break;
@@ -534,7 +533,6 @@ void UnitGod::cast_on_worker(Worker* workerPtr, int nationRecno, int divider)
 		case GOD_ZULU:
 			zulu_cast_power(workerPtr, nationRecno, divider);
 			break;
-#endif
 
 		default:
 			err_here();

@@ -256,9 +256,6 @@ void Unit::init_attack_info()
 		switch( unit_id )
 		{
 		case UNIT_BALLISTA:
-//#ifdef AMPLUS
-		case UNIT_F_BALLISTA:
-//#endif
 			attack_count = 2;
 			break;
 		case UNIT_EXPLOSIVE_CART:
