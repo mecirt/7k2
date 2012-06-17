@@ -330,15 +330,6 @@ public:
 
 	// --------- VgaBuf to VgaBuf copy ------------ //
 
-	void		blt_buf( VgaBuf *srcBuf, int x1, int y1 );
-	// put whole srcBuf at (x1, y1) of this Vgabuf
-
-	void		blt_buf_fast( VgaBuf *srcBuf, int srcX1, int srcY1, int srcX2, int srcY2)
-				{ IMGcopyW( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, srcX1, srcY1, srcX2, srcY2); }
-	// cut (srcX1,srcY1)-(srcX2,srcY2) of srcBuf and put at (srcX1,srcY1) of this VgaBuf
-
-	void		blt_buf_bright( VgaBuf *srcBuf, int srcX1, int srcY1, int srcX2, int srcY2, int brightness);
-
 	void		join_trans( VgaBuf *srcBuf, int x, int y, char *bitmapBuf )
 				{ IMGjoinTransRemap( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, x, y, bitmapBuf, default_remap_table ); }
 };

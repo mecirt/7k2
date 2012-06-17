@@ -648,25 +648,6 @@ void VgaBuf::adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree)
 }
 //------------- End of function VgaBuf::adjust_brightness ------------//
 
-
-//----------- Begin of function VgaBuf::blt_buf_bright ----------//
-//
-// copy and change brightness of an area
-//
-void VgaBuf::blt_buf_bright( VgaBuf *srcBuf, int srcX1, int srcY1, int srcX2, int srcY2, int adjustDegree)
-{
-#if( MAX_BRIGHTNESS_ADJUST_DEGREE > 10 )
-	adjustDegree *= MAX_BRIGHTNESS_ADJUST_DEGREE / 10;
-#endif
-
-	err_when( adjustDegree < -MAX_BRIGHTNESS_ADJUST_DEGREE ||
-				 adjustDegree >  MAX_BRIGHTNESS_ADJUST_DEGREE );
-
-	IMGcopyWbright( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, srcX1, srcY1, srcX2, srcY2, adjustDegree); 
-}
-//----------- End of function VgaBuf::blt_buf_bright ----------//
-
-
 //----------- Begin of function VgaBuf::draw_d3_up_border ------------//
 //
 // Draw interface border.
@@ -687,27 +668,6 @@ void VgaBuf::draw_d3_down_border(int x1,int y1,int x2,int y2)
 	d3_panel_down( x1, y1, x2, y2, 4, 0 );
 }
 //------------- End of function VgaBuf::draw_d3_down_border ------------//
-
-
-//------------- Begin of function VgaBuf::blt_buf ------------//
-// copy put whole part of a vgaBuf to (x1,y1) of this VgaBuf
-void VgaBuf::blt_buf( VgaBuf *srcBuf, int x1, int y1 )
-{
-	char *srcPtr = (char *) srcBuf->cur_buf_ptr;
-	int srcWidth = srcBuf->buf_width();
-	int srcPitch = srcBuf->cur_pitch;
-	int srcHeight = srcBuf->buf_height();
-	char *destPtr = (char *) cur_buf_ptr;
-	int destPitch = cur_pitch;
-
-  destPtr += y1 * destPitch + x1 * 2;
-  for (int idx = 0; idx < srcHeight; ++idx) {
-    memcpy (destPtr, srcPtr, srcWidth * 2);
-    destPtr += destPitch;
-    srcPtr += srcPitch;
-  }
-}
-//------------- End of function VgaBuf::blt_buf ------------//
 
 
 //------------- Begin of function VgaBuf::bar_alpha --------------//

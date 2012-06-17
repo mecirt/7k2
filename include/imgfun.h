@@ -138,13 +138,6 @@ extern "C"
 		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWAreaTransBlacken");
 	// ##### end Gilbert 20/10 #######//
 
-	// 16 bit buffer to 16 bit buffer blt
-
-	void IMGcall IMGcopyW( short *imageBuf, int imgPitch, short *backBuf, int backPitch,
-		int srcX1, int srcY1, int srcX2, int srcY2) __asmsym__("_IMGcopyW");
-	void IMGcall IMGcopyWbright( short *imageBuf, int imgPitch, short *backBuf, int backPitch,
-		int srcX1, int srcY1, int srcX2, int srcY2, int brightness) __asmsym__("_IMGcopyWbright");
-
 	void IMGcall IMGbrightBar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int brightness) __asmsym__("_IMGbrightBar");
 
 	// join bitmap and back buffer to front buffer

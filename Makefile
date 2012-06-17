@@ -498,7 +498,6 @@ LIBRARIES             =
 			src/asm/ib_br.asm \
 			src/asm/ib_brm.asm \
 			src/asm/ib_hrdm.asm \
-			src/asm/i_bright.asm \
 			src/asm/ib_t.asm \
 			src/asm/ib_tk.asm \
 			src/asm/ib_trd.asm \
@@ -508,7 +507,7 @@ LIBRARIES             =
 			src/asm/ib_warm.asm \
 			src/asm/ib_wr.asm \
 			src/asm/ib_wrm.asm \
-			src/asm/ic.asm \
+			src/asm/i_bright.asm \
 			src/asm/i_ctrl.asm \
 			src/asm/i_effect.asm \
 			src/asm/ij_tr.asm \
