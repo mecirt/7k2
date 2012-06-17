@@ -366,34 +366,7 @@ void Town::disp_main_menu(int refreshFlag)
 
 	help.set_help( INFO_X1+16, INFO_Y1 +96, INFO_X1+96, INFO_Y1 +138, "TPOP" );
 
-//	int unitId = race_res[race_id]->civilian_unit_id;
-//	SpriteInfo*  sprite_info = sprite_res[unit_res[unitId]->sprite_id];
-//	sprite_info->load_bitmap_res();
-//	int offsetX[6] = {  60,  46,  76,  36,  86,  60};
-//	int offsetY[6] = { 225-20, 221-20, 221-20, 218-20, 218-20, 215-20 };
-//	int stopArrayOffset[6] = { 4, 5, 3, 5, 3, 4 };
-//	for(int i= ((population + 9)/10); i > 0; i--)
-//	{
-//		SpriteStop *stopAction = sprite_info->stop_array +stopArrayOffset[5-i];
-//		SpriteFrame *spriteFrame = sprite_frame_res[stopAction->frame_recno];
-//		char* bitmapPtr = sprite_info->res_bitmap.read_imported(spriteFrame->bitmap_offset);
-//		short* colorRemapTable = sprite_info->get_color_remap_table(nation_recno, 0);
-//		if (!((stopArrayOffset[5-i] < 8 || sprite_info->turn_resolution <= 8) ? (stopArrayOffset[5-i] & 7) >= 5 : (stopArrayOffset[5-i] & 7) >= 4))
-//		{
-//			if( !colorRemapTable )
-//				vga_back.put_bitmap_trans_decompress(INFO_X1 +offsetX[5-i] +spriteFrame->offset_x, INFO_Y1 +offsetY[5-i] +spriteFrame->offset_y, bitmapPtr);
-//			else
-//				vga_back.put_bitmap_trans_remap_decompress(INFO_X1 +offsetX[5-i] +spriteFrame->offset_x, INFO_Y1 +offsetY[5-i] +spriteFrame->offset_y, bitmapPtr, colorRemapTable);
-//		}
-//		else
-//		{
-//			if( !colorRemapTable )
-//				vga_back.put_bitmap_trans_decompress_hmirror(INFO_X1 +offsetX[5-i] +spriteFrame->offset_x, INFO_Y1 +offsetY[5-i] +spriteFrame->offset_y, bitmapPtr);
-//			else
-//				vga_back.put_bitmap_trans_remap_decompress_hmirror(INFO_X1 +offsetX[5-i] +spriteFrame->offset_x, INFO_Y1 +offsetY[5-i] +spriteFrame->offset_y, bitmapPtr, colorRemapTable);
-//		}
-//	}
-	
+
 	// ------- display jobless population ---------//
 	// str = "Peasant";
 	font_vilb.put( INFO_X1+160, INFO_Y1 +127, text_firm.str_town_peasant(), 0, INFO_X2-6 );
@@ -1107,7 +1080,6 @@ static void disp_auto_menu_button(ButtonCustom *button, int)
 	if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap( button->x1, button->y1, image_icon.read("BUILDDW3") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_bld.center_put(button->x1+1, button->y1, button->x2+1, button->y2, str );
 	}
 	else
@@ -1141,7 +1113,6 @@ static void disp_man_power_button(ButtonCustom *button, int)
 	if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap( button->x1, button->y1, image_icon.read("BUILDDWN") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_snds.center_put(button->x1+1, button->y1+2, button->x2+1, button->y2+2, 
 			text_firm.str_no_of_worker(paintInfo) );
 	}
@@ -1419,8 +1390,6 @@ static void put_spy_rec(int recNo, int x, int y, int refreshFlag)
 
 	//------ display the action mode of the spy ------//
 
-//	vga.blt_buf( x+95, y+6, x2, y+5+font_san.height(), 0 );
-
 	font_whbl.center_put( x+115, y+6, INFO_X2, y+20, spyPtr->action_str() );
 }
 //----------- End of static function put_spy_rec -----------//
@@ -1478,7 +1447,7 @@ int Town::input_town_name()
 		sys.yield();
 		mouse.get_event();
 		
-		if( refreshFlag )
+		if( refreshFlag || 1 )
 		{
 			descTextBox.paint(1);
 

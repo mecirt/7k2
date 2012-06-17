@@ -62,9 +62,9 @@ static Button3D button_cast;
 
 void FirmOffensive::put_info(int refreshFlag)
 {
-	if( refreshFlag == INFO_REPAINT )
-		last_menu_mode = menu_mode = FIRM_MAGIC_MENU_MAIN;
-	else if( last_menu_mode != menu_mode )
+//	if( refreshFlag == INFO_REPAINT )
+//		last_menu_mode = menu_mode = FIRM_MAGIC_MENU_MAIN;
+	/*else*/ if( last_menu_mode != menu_mode )
 	{
 		refreshFlag = INFO_REPAINT;
 		last_menu_mode = menu_mode;
@@ -303,35 +303,4 @@ void FirmOffensive::detect_magic_menu()
 		// ##### end Gilbert 26/1 #####//
 	}
 }
-/*
 
-// ---------- begin of static function disp_firm_button --------//
-static void disp_magic_button(ButtonCustom *button, int)
-{
-	char *magicName = tech_res[FirmMagic::magic_info_array[button->custom_para.value-1 +4].tech_id]->tech_des();
-
-	if ( !button->enable_flag )
-	{
-		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDUP") );
-		font_bld.center_put(button->x1, button->y1-2, button->x2, button->y2-2, magicName );
-		vga.active_buf->bar_alpha(button->x1+1, button->y1+1, button->x2-1, button->y2-1, 1, 0);
-	}
-	else if ( button->pushed_flag )
-	{
-		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDDWN") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
-		font_bld.center_put(button->x1+1, button->y1-1, button->x2+1, button->y2-1, magicName );
-	}
-	else if (mouse.in_area(button->x1, button->y1, button->x2, button->y2))
-	{
-		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDSEL") );
-		font_bld.center_put(button->x1, button->y1-2, button->x2, button->y2-2, magicName );
-	}
-	else
-	{
-		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDUP") );
-		font_bld.center_put(button->x1, button->y1-2, button->x2, button->y2-2, magicName );
-	}
-}
-// ---------- end of static function disp_firm_button --------//
-*/

@@ -200,14 +200,10 @@ void ScrollBar::refresh(int topRecNo, int forceRefresh, int pageSkipRec, int dis
 		{
 			if( type == VERTICAL )
 			{
-				vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
-
 				Vga::active_buf->draw_d3_up_border( x1+2, indicator_y, x2-2, indicator_y+indicator_height-1 );
 			}
 			else
 			{
-				vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
-
 				Vga::active_buf->draw_d3_up_border( indicator_y, y1+2, indicator_y+indicator_height-1, y2-2 );
 			}
 		}
@@ -362,8 +358,6 @@ int ScrollBar::detect()
 
 					if( if_flag )
 					{
-						vga.blt_buf( x1, y1+12, x2, y2-13, 0 );
-
 						Vga::active_buf->draw_d3_up_border( x1+2, indicator_y, x2-2, indicator_y+indicator_height-1 );
 					}
 					else
@@ -389,8 +383,6 @@ int ScrollBar::detect()
 
 					if( if_flag )
 					{
-						vga.blt_buf( x1+12, y1, x2-13, y2, 0 );
-
 						Vga::active_buf->draw_d3_up_border( indicator_y, y1+2, indicator_y+indicator_height-1, y2-2 );
 					}
 					else

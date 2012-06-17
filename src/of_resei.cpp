@@ -85,16 +85,16 @@ static void i_disp_research_class_button(ButtonCustom *, int);
 //
 void FirmResearch::put_info(int refreshFlag)
 {
-	if( refreshFlag==INFO_REPAINT )
-		last_menu_mode = research_menu_mode = RESEARCH_MENU_MAIN;
-	else
-	{
+//	if( refreshFlag==INFO_REPAINT )
+//		last_menu_mode = research_menu_mode = RESEARCH_MENU_MAIN;
+//	else
+//	{
 		if( last_menu_mode != research_menu_mode )		// if changing menu mode pass repaint to sub-menu
 		{
 			refreshFlag = INFO_REPAINT;
 			last_menu_mode = research_menu_mode;
 		}
-	}
+//	}
 
 	switch( research_menu_mode )
 	{
@@ -417,7 +417,6 @@ static void i_disp_research_class_button(ButtonCustom *button, int)
 	else if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDDWN") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_bld.center_put(button->x1+1, button->y1-1, button->x2+1, button->y2-1, techDes );
 	}
 	else if (mouse.in_area(button->x1, button->y1, button->x2, button->y2))
@@ -465,7 +464,6 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 	if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDDW2") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_cara.center_put(button->x1+1, button->y1+1, button->x2+1, button->y2+1, str );
 	}
 	else

@@ -89,12 +89,6 @@ public:
 		  void	d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly=0,int drawBorderOnly=0);
 		  void 	separator(int x1, int y1, int x2, int y2);
 
-                  void 	use_front() {
-                  }
-                  void 	use_back() {
-                  }
-
-		  BOOL   blt_buf(int x1, int y1, int x2, int y2, int putMouseCursor=1);
 		  void	flip();
 
 		  void 	disp_image_file(const char* fileName,int x1=0, int y1=0);

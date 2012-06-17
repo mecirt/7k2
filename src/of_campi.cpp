@@ -93,13 +93,13 @@ static void disp_training_bar(int x1, int y1, int x2, int hitPoints, int maxHitP
 void FirmCamp::put_info(int refreshFlag)
 {
 	// ##### begin Gilbert 21/9 ######//
-	if( refreshFlag == INFO_REPAINT )
-	{
-		last_menu_mode = firm_menu_mode = FIRM_MENU_MAIN;
-		disp_combat_or_skill = 0;		// display combat
-	}
+//	if( refreshFlag == INFO_REPAINT )
+//	{
+//		last_menu_mode = firm_menu_mode = FIRM_MENU_MAIN;
+//		disp_combat_or_skill = 0;		// display combat
+//	}
 	// ##### end Gilbert 21/9 ######//
-	else
+//	else
 	{
 		if( last_menu_mode != firm_menu_mode )		// if changing menu mode pass repaint to sub-menu
 		{
@@ -700,208 +700,6 @@ void FirmCamp::disp_soldier_list(int dispY1, int refreshFlag, int dispSpyMenu)
 		}
 	}
 
-/*
-	//---------------- paint the panel --------------//
-
-	if( overseer_recno )
-	{
-		//------------ display overseer info -------------//
-
-		Unit* overseerUnit = unit_array[overseer_recno];
-
-		int x=INFO_X1+6, y=dispY1+4, x1=x+UNIT_LARGE_ICON_WIDTH+8;
-
-		if( selected_soldier_id == 0 )
-		{
-			vga_front.rect( x-2, y-2, x+UNIT_LARGE_ICON_WIDTH+1, y+UNIT_LARGE_ICON_HEIGHT+1, 2, V_YELLOW );
-		}
-		else
-		{
-			vga.blt_buf( x-2, y-2, x+UNIT_LARGE_ICON_WIDTH+1, y-1, 0 );
-			vga.blt_buf( x-2, y+UNIT_LARGE_ICON_HEIGHT+1, x+UNIT_LARGE_ICON_WIDTH+1, y+UNIT_LARGE_ICON_HEIGHT+2, 0 );
-			vga.blt_buf( x-2, y-2, x-1, y+UNIT_LARGE_ICON_HEIGHT+2, 0 );
-			vga.blt_buf( x+UNIT_LARGE_ICON_WIDTH, y-2, x+UNIT_LARGE_ICON_WIDTH+1, y+UNIT_LARGE_ICON_HEIGHT+2, 0 );
-		}
-
-		//-------------------------------------//
-
-		if( refreshFlag == INFO_REPAINT )
-		{
-			vga_front.put_bitmap(x, y, unit_res[overseerUnit->unit_id]->get_large_icon_ptr(overseerUnit->rank_id) );
-		}
-
-		//-------- set help parameters --------//
-
-		if( mouse.in_area(x, y, x+UNIT_LARGE_ICON_WIDTH+3, y+UNIT_LARGE_ICON_HEIGHT+3) )
-			help.set_unit_help( overseerUnit->unit_id, overseerUnit->rank_id, x, y, x+UNIT_LARGE_ICON_WIDTH+3, y+UNIT_LARGE_ICON_HEIGHT+3);
-
-		//-------------------------------------//
-
-		if( overseerUnit->rank_id == RANK_KING )
-		{
-			if( refreshFlag == INFO_REPAINT )
-				font_san.put( x1, y, "King" );
-
-			y+=14;
-		}
-
-		if( refreshFlag == INFO_REPAINT )
-			font_san.put( x1, y, overseerUnit->unit_name(0), 0, INFO_X2-2 );		// 0-ask unit_name() not to return the title of the unit
-
-		y+=14;
-
-		//------- display leadership -------//
-
-		String str;
-
-		str  = translate.process("Leadership");
-		str += ": ";
-		str += overseerUnit->skill.skill_level;
-
-		font_san.disp( x1, y, str, INFO_X2-10 );
-		y+=14;
-
-		//--------- display loyalty ----------//
-
-		if( overseerUnit->rank_id != RANK_KING )
-		{
-			x1 = font_san.put( x1, y, "Loyalty:" );
-
-			int x2 = info.disp_loyalty( x1, y-1, x1, overseerUnit->loyalty, overseerUnit->target_loyalty, nation_recno, refreshFlag );
-
-			if( overseerUnit->spy_recno )
-			{
-				//------ if this is the player's spy -------//
-
-				if( overseerUnit->is_own_spy() )
-				{
-					vga_front.put_bitmap( x2+5, y+1, image_icon.get_ptr("U_SPY") );
-					x2 += 15;
-				}
-			}
-
-			vga.blt_buf( x2, y-1, INFO_X2-2, dispY1+44, 0 );
-		}
-	}
-
-	pop_disp_y1 = dispY1;
-
-	//---------------- paint the panel --------------//
-
-	if( refreshFlag == INFO_REPAINT )
-		vga.d3_panel_up( INFO_X1, dispY1, INFO_X2, dispY1+60 );
-
-	//----------- display populatin distribution ---------//
-
-	int overseerRaceId=0;
-
-	if( overseer_recno )
-		overseerRaceId = unit_array[overseer_recno]->race_id;
-
-	if( selected_soldier_id > soldier_count )
-		selected_soldier_id = soldier_count;
-
-	//------ display population composition -------//
-
-	int	  x, y;
-	Soldier* soldierPtr = soldier_array;
-	static  char last_race_id_array[MAX_SOLDIER];
-	static  char last_unit_id_array[MAX_SOLDIER];
-
-	dispY1+=1;
-
-	for( int i=0 ; i<MAX_SOLDIER ; i++, soldierPtr++ )
-	{
-		x = INFO_X1+4+i%4*50;
-		y = dispY1+i/4*29;
-
-		if( i<soldier_count )
-		{
-			if( refreshFlag==INFO_REPAINT ||
-				 last_race_id_array[i] != soldierPtr->race_id ||
-				 last_unit_id_array[i] != soldierPtr->unit_id )
-			{
-				vga_front.put_bitmap(x+2, y+2, soldierPtr->small_icon_ptr());
-			}
-
-			//----- highlight the selected soldier -------//
-
-			if( selected_soldier_id == i+1 )
-				vga_front.rect( x, y, x+27, y+23, 2, V_YELLOW );
-			else
-				vga_front.rect( x, y, x+27, y+23, 2, vga_front.color_up );
-
-			//------ display hit points bar --------//
-
-			disp_soldier_hit_points( x+2, y+24, x+25, soldierPtr->shown_hit_points(), soldierPtr->max_hit_points() );
-
-			//----- display combat or skill level ------//
-
-			char* spyIconName=NULL;
-
-			if( soldierPtr->spy_recno )
-			{
-				Spy* spyPtr = spy_array[soldierPtr->spy_recno];
-
-				//------ if this is the player's spy -------//
-
-				if( nation_array.player_recno &&
-					 spyPtr->true_nation_recno == nation_array.player_recno )
-				{
-					spyIconName = "U_SPY";
-				}
-
-				//--------------------------------------------//
-				//
-				// If this is an enemy spy and this firm belongs
-				// to the player and there is a player's phoenix
-				// over this firm and the spying skill of the spy
-				// is low (below 40)
-				//
-				//--------------------------------------------//
-
-//				else if( spyPtr->spy_skill < 40 &&
-//							nation_recno == nation_array.player_recno &&
-//							nation_array.player_recno &&
-//					 (~nation_array)->revealed_by_phoenix(loc_x1, loc_y1) )
-//				{
-//					spyIconName = "ENEMYSPY";
-//				}
-
-			}
-
-			//--------------------------------------//
-
-			if( spyIconName )
-			{
-				vga_front.put_bitmap( x+30, y+6, image_icon.get_ptr(spyIconName) );
-				vga.blt_buf( x+40, y+6, x+49, y+15, 0 );
-				vga.blt_buf( x+30, y+16, x+49, y+26, 0 );
-			}
-			else
-			{
-				font_san.disp(x+30, y+6, soldierPtr->skill.combat_level, 1, x+49);
-			}
-
-			last_race_id_array[i] = soldierPtr->race_id;
-			last_unit_id_array[i] = soldierPtr->unit_id;
-
-			//------- set help parameters ---------//
-
-			if( mouse.in_area(x, y, x+27, y+23) )
-				help.set_unit_help( soldierPtr->unit_id, 0, x, y, x+27, y+23 );
-		}
-		else
-		{
-			if( last_race_id_array[i] != 0 || last_unit_id_array[i] != 0 )
-			{
-				vga.blt_buf( x, y, x+49, y+27, 0 );
-				last_race_id_array[i] = 0;
-				last_unit_id_array[i] = 0;
-			}
-		}
-	}
-*/
 }
 //----------- End of function FirmCamp::disp_soldier_list -----------//
 
@@ -1157,23 +955,14 @@ static void disp_soldier_hit_points(int x1, int y1, int x2, int hitPoints, int m
 
 	vga.active_buf->bar( x1, y1, x1+barWidth-1, y1+1, hitBarColor + HIT_BAR_BODY );
 
-//	if( x1+barWidth <= x2 )
-//		vga.blt_buf( x1+barWidth, y1, x2, y1+1, 0 );
-
 	y1+=2;
 
 	vga.active_buf->bar( x1, y1, x1+barWidth-1, y1, hitBarColor + HIT_BAR_DARK_BORDER );
 	vga.active_buf->bar( x1+barWidth, y1, x1+barWidth, y1, V_BLACK );
 
-//	if( x1+barWidth+1 <= x2 )
-//		vga.blt_buf( x1+barWidth+1, y1, x2, y1, 0 );
-
 	y1++;
 
 	vga.active_buf->bar( x1+1, y1, x1+barWidth, y1, V_BLACK );
-
-//	if( x1+barWidth+1 <= x2 )
-//		vga.blt_buf( x1+barWidth+1, y1, x2, y1, 0 );
 }
 //----------- End of function disp_soldier_hit_points -----------//
 
@@ -1195,23 +984,14 @@ static void disp_training_bar(int x1, int y1, int x2, int hitPoints, int maxHitP
 
 	vga.active_buf->bar( x1, y1, x1+barWidth-1, y1+1, hitBarColor + HIT_BAR_BODY );
 
-//	if( x1+barWidth <= x2 )
-//		vga.blt_buf( x1+barWidth, y1, x2, y1+1, 0 );
-
 	y1+=2;
 
 	vga.active_buf->bar( x1, y1, x1+barWidth-1, y1, hitBarColor + HIT_BAR_DARK_BORDER );
 	vga.active_buf->bar( x1+barWidth, y1, x1+barWidth, y1, V_BLACK );
 
-//	if( x1+barWidth+1 <= x2 )
-//		vga.blt_buf( x1+barWidth+1, y1, x2, y1, 0 );
-
 	y1++;
 
 	vga.active_buf->bar( x1+1, y1, x1+barWidth, y1, V_BLACK );
-
-//	if( x1+barWidth+1 <= x2 )
-//		vga.blt_buf( x1+barWidth+1, y1, x2, y1, 0 );
 }
 //----------- End of function disp_training_bar -----------//
 

@@ -107,17 +107,17 @@ static void i_disp_queue_button(ButtonCustom *button, int);
 
 void FirmWar::put_info(int refreshFlag)
 {
-	if( refreshFlag==INFO_REPAINT )
+//	if( refreshFlag==INFO_REPAINT )
 	//if( refreshFlag==INFO_REPAINT && !disable_refresh )
-		last_menu_mode = war_menu_mode = WAR_MENU_MAIN;
-	else
-	{
+//		last_menu_mode = war_menu_mode = WAR_MENU_MAIN;
+//	else
+//	{
 		if( last_menu_mode != war_menu_mode )		// if changing menu mode pass repaint to sub-menu
 		{
 			refreshFlag = INFO_REPAINT;
 			last_menu_mode = war_menu_mode;
 		}
-	}
+//	}
 
 	switch( war_menu_mode )
 	{

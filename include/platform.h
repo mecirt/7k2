@@ -66,8 +66,6 @@ int BufferSize (const VgaBuf *buf);
 int BufferWidth (const VgaBuf *buf);
 int BufferHeight (const VgaBuf *buf);
 
-void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2, int y2, int mode);
-
 int WriteBitmapFile (const VgaBuf *buf, const char *name);
 
 // mouse

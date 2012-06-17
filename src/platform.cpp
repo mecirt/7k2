@@ -772,24 +772,6 @@ int BufferHeight (const VgaBuf *buf)
 }
 
 
-void BltFast (VgaBuf *targetBuffer, VgaBuf *sourceBuffer, int x1, int y1, int x2, int y2, int mode)
-{
-  RECT bltRect;
-
-  bltRect.left   = x1;
-  bltRect.top    = y1;
-  bltRect.right  = x2+1;
-  bltRect.bottom = y2+1;
-
-  targetBuffer->dd_buf->BltFast(
-      x1, y1,
-      sourceBuffer->dd_buf,        // src surface
-      &bltRect,               // src rect (all of it)
-      (mode == 1) ? DDBLTFAST_WAIT : DDBLTFAST_NOCOLORKEY);
-
-}
-
-
 // mouse
 
 LPDIRECTINPUT direct_input;

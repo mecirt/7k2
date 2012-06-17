@@ -67,11 +67,11 @@ static short edit_spy_x1, edit_spy_y1, edit_spy_x2, edit_spy_y2, edit_spy_enable
 //
 void FirmMonsterTrain::put_info(int refreshFlag)
 {
-	if( refreshFlag == INFO_REPAINT )
-	{
-		firm_menu_mode = FIRM_MONS_TRAIN_MENU_MAIN;
-		disp_combat_or_skill = 0;
-	}
+//	if( refreshFlag == INFO_REPAINT )
+//	{
+//		firm_menu_mode = FIRM_MONS_TRAIN_MENU_MAIN;
+//		disp_combat_or_skill = 0;
+//	}
 
 	Firm::put_info(refreshFlag);
 

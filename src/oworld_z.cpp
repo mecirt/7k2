@@ -935,7 +935,7 @@ void ZoomMatrix::draw_weather_effects()
 			if( world.lightning_signal == 108 && config.sound_effect_flag && config.lightning_audio)
                         {
                           RelVolume r(config.lightning_volume,0);
-                          audio.play_long_wav(DIR_SOUND"THUNDER.WAV", DsVolume(r));
+                          audio.play_long_wav(DIR_SOUND"thunder.WAV", DsVolume(r));
                         }
 
 			// find the starting and ending point of the lightning
@@ -3514,7 +3514,6 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 	int y2 = y1 + bitmapHeight - 1;
 
 	// ------------- test if the whole bitmap outside window ---------//
-
 	if( x1 >= image_width || x2 < 0 || y1 >= image_height || y2 < 0)
 		return;
 

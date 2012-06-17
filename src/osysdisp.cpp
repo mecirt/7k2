@@ -288,12 +288,6 @@ void Sys::disp_map()
 		tornado_array.draw_dot();
 
 	mapMatrix->draw_square();		// draw a square on the map for current zoomed area
-
-	//------- blt the map area to the front screen --------//
-
-#if(!defined(USE_FLIP))
-	vga.blt_buf( MAP_X1, MAP_Y1 , MAP_X2 , MAP_Y2);
-#endif
 }
 //-------- End of function Sys::disp_map --------//
 

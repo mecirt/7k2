@@ -378,12 +378,7 @@ void Sys::detect_view()
 	if( view_mode == MODE_NORMAL && scenario_editor.is_enable() )
 	{
 		if( scenario_editor.detect_menu_bar() || scenario_editor.detect_view() )
-		{
-			// ###### begin Gilbert 5/1 #######//
-			vga.use_front();
-			// ###### end Gilbert 5/1 #######//
 			return;
-		}
 	}
 
 	//------ detect tutorial controls -------//

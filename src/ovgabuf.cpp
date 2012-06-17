@@ -42,7 +42,6 @@ short *VgaBuf::default_blend_table;
 int VgaBuf::buf_size() const { return BufferSize (this); }
 int VgaBuf::buf_width()	const { return BufferWidth (this); }
 int VgaBuf::buf_height() const { return BufferHeight (this); }
-void VgaBuf::set_default_buf_ptr()	{ RestoreBufferPointers (this); }
 
 
 //-------- Begin of function VgaBuf::VgaBuf ----------//

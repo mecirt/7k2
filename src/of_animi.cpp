@@ -71,11 +71,11 @@ void FirmAnimal::put_info(int refreshFlag)
 {
 	// ------- reset selected_unit_id ------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		selected_unit_id = 0;
-	}
-	else
+//	if( refreshFlag == INFO_REPAINT )
+//	{
+//		selected_unit_id = 0;
+//	}
+//	else
 	{
 		if( selected_unit_id < 0 )
 			selected_unit_id = 0;

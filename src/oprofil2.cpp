@@ -373,9 +373,6 @@ int PlayerProfile::register_menu()
 							{
 								int rec = (scrollBar.view_recno + c) * SCROLL_LINE_COUNT + i + 1;
 
-								// copy blank from back buffer
-								vga.blt_buf( x1, y, x1+columnWidth-1, y+SCROLL_LINE_HEIGHT-1, 0 );
-
 								if( rec > 0 && rec <= profileCount )
 								{
 									// choose font
@@ -398,10 +395,6 @@ int PlayerProfile::register_menu()
 						scrollBar.paint();		// scroll bar and button
 						scrollLeft.paint();
 						scrollRight.paint();
-					}
-					else
-					{
-						vga.blt_buf( BROWSE_X1, SCROLL_BAR_Y1, BROWSE_X2, SCROLL_BAR_Y2, 0 );
 					}
 				}
 				break;

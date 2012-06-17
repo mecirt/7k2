@@ -92,9 +92,6 @@ void Mouse::init(void *i)
 
   init_keyboard();
 
-  //------- initialize VGA update buffer -------//
-  vga_update_buf = (short *)mem_add( VGA_UPDATE_BUF_SIZE );
-
   // ------ initialize mouse boundary ---------//
   reset_boundary();
 
@@ -113,12 +110,6 @@ void Mouse::init(void *i)
 void Mouse::deinit()
 {
 	init_flag = 0;
-
-	if( vga_update_buf )
-	{
-		mem_del(vga_update_buf);
-		vga_update_buf = NULL;
-	}
 
   UninitInputDevices ();
 }
@@ -172,33 +163,6 @@ void Mouse::hide_area(int x1, int y1, int x2, int y2)
 						 curX+mouse_cursor.icon_width-1,
 						 curY+mouse_cursor.icon_height-1 ) )
 	{
-		if( handle_flicking )
-		{
-			update_x1 = min(x1, curX);
-			update_y1 = min(y1, curY);
-			update_x2 = max(x2, curX+mouse_cursor.icon_width-1);
-			update_y2 = max(y2, curY+mouse_cursor.icon_height-1);
-
-			update_x1 = max(0, update_x1);
-			update_y1 = max(0, update_y1);
-			update_x2 = min(VGA_WIDTH-1 , update_x2);
-			update_y2 = min(VGA_HEIGHT-1, update_y2);
-
-			err_when( (update_x2-update_x1+1) * (update_y2-update_y1+1) * sizeof(short) > VGA_UPDATE_BUF_SIZE );
-
-			//---- save the update area of the back buf to a temp buffer ----//
-
-			vga_back.read_bitmapW( update_x1, update_y1, update_x2, update_y2, vga_update_buf );
-
-			//--- copy the update area from the front buf to the back buf ---//
-
-			vga_back.blt_buf_fast( &vga_front, update_x1, update_y1, update_x2, update_y2 );
-
-			//-- redirect the front VGA buffer pointer to the back VGA buffer --//
-
-			vga_front.set_buf_ptr( vga_back.buf_ptr(), vga_back.buf_true_pitch() );
-		}
-
 		//------ hide up the mouse cursor --------//
 
 		mouse_cursor.process(cur_x, cur_y);
@@ -227,21 +191,6 @@ void Mouse::show_area()
 		//----- redisplay the mouse cursor ------//
 
 		mouse_cursor.process(cur_x, cur_y);
-
-		if( handle_flicking )
-		{
-			//--- copy the update area from the back buf to the front buf ---//
-
-			vga_front.blt_buf_fast( &vga_back, update_x1, update_y1, update_x2, update_y2 );
-
-			//--- restore the update area of the back buf with the temp buffer ---//
-
-			vga_back.put_bitmapW( update_x1, update_y1, vga_update_buf );
-
-			//--- restore the VGA front buffer's buf ptr ---//
-
-			RestoreBufferPointers(&vga_front);
-		}
 	}
 }
 //--------- End of Mouse::show_area --------------//

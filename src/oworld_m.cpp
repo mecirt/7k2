@@ -109,11 +109,7 @@ void MapMatrix::paint()
 //
 // Display map mode buttons.
 //
-// [int] putFront - 1-display the buttons on the front buffer
-//						  0-display the buttons on the back buffer
-//						  (default: 0)
-//
-void MapMatrix::disp_mode_button(int putFront)
+void MapMatrix::disp_mode_button()
 {
 	const char* iconName;
 	const char* iconName2 = NULL;
@@ -145,12 +141,6 @@ void MapMatrix::disp_mode_button(int putFront)
 	else
 		iconName2 = "MAP-4U";
 
-	if( putFront )
-	{
-		mouse.hide_area( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, 
-			MAP_MODE_BUTTON_X1+84-1, MAP_MODE_BUTTON_Y1+86-1 );
-		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, 
-			MAP_MODE_BUTTON_X1+84-1, MAP_MODE_BUTTON_Y1+86-1 );
 		image_button.put_front( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, iconName, 1 );
 
 		if (button_filter_object.pushed_flag)
@@ -164,41 +154,7 @@ void MapMatrix::disp_mode_button(int putFront)
 		button_filter_object.paint( filter_object_flag );
 		button_filter_nation.paint( filter_nation_flag );
 
-		help.short_front_buf.show_area();
-		mouse.show_area();
-		
-		mouse.hide_area( MAP_MODE_BUTTON_X1-97, MAP_MODE_BUTTON_Y1+10, 
-			MAP_MODE_BUTTON_X1-97+34-1, MAP_MODE_BUTTON_Y1+10+34-1 );
-		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1-97, MAP_MODE_BUTTON_Y1+10, 
-			MAP_MODE_BUTTON_X1-97+34-1, MAP_MODE_BUTTON_Y1+10+34-1 );
 		image_button.put_front( MAP_MODE_BUTTON_X1-94, MAP_MODE_BUTTON_Y1+13, iconName2, 1 );
-		help.short_front_buf.show_area();
-		mouse.show_area();
-	}
-	else
-	{
-		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, 
-			MAP_MODE_BUTTON_X1+84-1, MAP_MODE_BUTTON_Y1+86-1 );
-		image_button.put_back( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, iconName, 1 );
-		
-		if (button_filter_object.pushed_flag)
-			vga_back.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+55, MAP_MODE_BUTTON_Y1+7,
-				image_button.read("O-LOCK") );
-	
-		if (button_filter_nation.pushed_flag)
-			vga_back.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+30, MAP_MODE_BUTTON_Y1+7,
-				image_button.read("N-LOCK") );
-
-		button_filter_object.paint( filter_object_flag );
-		button_filter_nation.paint( filter_nation_flag );
-
-		help.short_front_buf.show_area();
-	
-		help.short_front_buf.hide_area( MAP_MODE_BUTTON_X1-97, MAP_MODE_BUTTON_Y1+10, 
-			MAP_MODE_BUTTON_X1-97+34-1, MAP_MODE_BUTTON_Y1+10+34-1 );
-		image_button.put_back( MAP_MODE_BUTTON_X1-94, MAP_MODE_BUTTON_Y1+13, iconName2, 1 );
-		help.short_front_buf.show_area();
-	}
 }
 //----------- End of function MapMatrix::disp_mode_button ------------//
 
@@ -230,10 +186,7 @@ int MapMatrix::detect()
 		else
 			zoom_map_building_disappear = 1;
 		
-		disp_mode_button(1);		// 1-display the buttons on the front buffer.
-	#ifdef USE_FLIP
-		disp_mode_button(0);		// 0-display the buttons on the back buffer.
-	#endif
+		disp_mode_button();
 		refresh();
 		return 1;
 	}
@@ -260,10 +213,7 @@ int MapMatrix::detect()
 				filter_object_para = 0;
 		}
 
-		disp_mode_button(1);
-#ifdef USE_FLIP
-		disp_mode_button(0);	
-#endif
+		disp_mode_button();
 		refresh();
 	}
 	else
@@ -286,10 +236,7 @@ int MapMatrix::detect()
 			filter_nation_locked = 0;
 		}
 
-		disp_mode_button(1);
-#ifdef USE_FLIP
-		disp_mode_button(0);		
-#endif
+		disp_mode_button();
 		refresh();
 	}
 	else
@@ -853,24 +800,9 @@ void MapMatrix::draw_square()
 
 void MapMatrix::toggle_map_mode(int modeId)
 {
-/*
-	if( map_mode == modeId )
-	{
-		if( map_mode == MAP_MODE_POWER )		// clicking on a pressed button unclick the button
-			power_mode = !power_mode;
-	}
-	else
-	{
-		map_mode = modeId;
-	}
-*/
 	map_mode = modeId;
 
-	disp_mode_button(1);		// 1-display the buttons on the front buffer.
-#ifdef USE_FLIP
-	disp_mode_button(0);		// 0-display the buttons on the back buffer.
-#endif
-
+	disp_mode_button();
 	refresh();
 }
 //---------- End of function MapMatrix::toggle_map_mode ------------//

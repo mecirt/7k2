@@ -116,9 +116,6 @@ public:
 	void		temp_lock();
 	void		temp_restore_unlock();
 
-	void		set_buf_ptr(short* bufPtr, long pitch)	{ cur_buf_ptr = bufPtr; cur_pitch = pitch; }
-	void		set_default_buf_ptr();
-
 	int 		write_bmp_file(char* fileName);
 
 	//---------- painting functions ----------//

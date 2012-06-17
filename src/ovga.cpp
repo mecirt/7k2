@@ -93,7 +93,6 @@ BOOL Vga::init()
 
    File palFile;
    palFile.file_open(DIR_RES"pal_std.res");
-   ColorTable colorTable;
 
    BYTE palBuf[0x100][3];
    palFile.file_seek(8);     				// bypass the header info
@@ -106,9 +105,9 @@ BOOL Vga::init()
 
    //-------- create color remap table ---------//
 
-   colorTable.generate_table_fast( 0, palBufDesc, ColorTable::bright_func );
+   vga_color_table->generate_table_fast( 0, palBufDesc, ColorTable::bright_func );
    default_remap_table = (short *) malloc(0x100 * 2);
-   memcpy( default_remap_table, colorTable.get_table(0), 0x100 * 2 );
+   memcpy( default_remap_table, vga_color_table->get_table(0), 0x100 * 2 );
 
    default_blend_table = 0;
   
@@ -148,21 +147,6 @@ void Vga::deinit()
   DeinitGraphics();
 }
 //-------- End of function Vga::deinit ----------//
-
-//--------- Begin of function Vga::blt_buf ----------//
-//
-// Blt the back buffer to the front buffer.
-//
-// <int> x1, y1, x2, y2 - the coordinations of the area to be blit
-// [int] putBackCursor  - whether put a mouse cursor onto the back buffer
-//                        before blitting.
-//                        (default: 1)
-//
-BOOL Vga::blt_buf(int x1, int y1, int x2, int y2, int putBackCursor)
-{
-  // nothing here!
-}
-//---------- End of function Vga::blt_buf ----------//
 
 //----------- Begin of function Vga::flip ----------//
 void Vga::flip()

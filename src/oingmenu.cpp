@@ -367,6 +367,7 @@ void InGameMenu::disp(int needRepaint)
       }
 
 		mouse.show();
+vga.flip();
 
       refresh_flag = 0;
    }

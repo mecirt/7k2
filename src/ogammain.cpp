@@ -417,7 +417,6 @@ void Game::main_menu()
 					resStr += "X";
 					resStr += DisplayModeInfo::get_display_info(config.display_mode_id)->screen_height;
 
-					vga.blt_buf( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, 0);
 					font_thin_black.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, resStr );
 
 					disp_version();

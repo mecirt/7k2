@@ -104,7 +104,7 @@ protected:
 	int  detect_area();
 
 	void set_filter_para();
-	void disp_mode_button(int putFront=0);
+	void disp_mode_button();
 };
 
 //-------- Define class ZoomMatrix -------//

@@ -133,9 +133,6 @@ class Mouse
 {
 public:
 	char 	 init_flag;
-	char   handle_flicking;
-
-	short*  vga_update_buf;
 
 	//------- real-time mouse state -------//
 

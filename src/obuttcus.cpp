@@ -250,8 +250,6 @@ void ButtonCustom::hide()
 	if( !init_flag )
 		return;
 
-	vga.blt_buf( x1, y1, x2, y2, 0 );
-
 	// #### begin Gilbert 11/9 ######//
 	// enable_flag = 0;
 	visible_flag = 0;

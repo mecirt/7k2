@@ -74,12 +74,6 @@ void MouseCursor::init()
 
 	load_cursor_info();
 
-	// ------ init save_scr, save_back_scr, merge_buf -------//
-
-	save_scr = new Blob2DW;
-	save_back_scr = new Blob2DW;
-	merge_buf = new Blob2DW;
-
 	init_flag=1;
 }
 //----------- End of function MouseCursor::init ------//
@@ -92,24 +86,6 @@ void MouseCursor::deinit()
 	if( init_flag )
 	{
 		mem_del(cursor_info_array);
-
-		if( save_scr )
-		{
-			delete save_scr;
-			save_scr = NULL;
-		}
-
-		if( save_back_scr )
-		{
-			delete save_back_scr;
-			save_back_scr = NULL;
-		}
-
-		if( merge_buf )		// buffer for merging save screen from the front and back buffers
-		{
-			delete merge_buf;
-			merge_buf = NULL;
-		}
 
 		init_flag = 0;
 		icon_ptr  = NULL;
@@ -171,15 +147,9 @@ void MouseCursor::set_icon(int cursorId)
 	//-------- hide the cursor first ----------//
 
 	int hideAllFlag = hide_all_flag;
-	int oldX1, oldY1, oldX2, oldY2;
-	int newX1, newY1, newX2, newY2;
 
 	if( !hideAllFlag )     // if the mouse has been hiden before, don't hide and show it
 	{
-		oldX1 = cur_x1;
-		oldY1 = cur_y1;
-		oldX2 = cur_x2;
-		oldY2 = cur_y2;
 		mouse.hide();
 	}
 
@@ -218,15 +188,6 @@ void MouseCursor::set_icon(int cursorId)
 	cur_icon = cursorId;
 	// ###### end Gilbert 18/8 #####//
 
-	//------- allocate buffer for screen saving ------//
-
-	save_scr->clear();
-	save_scr->resize( 0, 0, icon_width, icon_height );
-	save_back_scr->clear();
-	save_back_scr->resize(0, 0, icon_width, icon_height);
-	merge_buf->clear();
-	merge_buf->resize(0, 0, icon_width,icon_height);
-
 	//------------ redisplay cursor -----------//
 
 	if( !hideAllFlag )
@@ -246,8 +207,6 @@ void MouseCursor::set_icon(int cursorId)
 //
 void MouseCursor::define_custom_icon( char *iconPtr, int hotX, int hotY)
 {
-	int changeCurrentIconFlag = 0;
-
 	custom_icon_ptr = iconPtr;
 	custom_hot_spot_x = hotX;
 	custom_hot_spot_y = hotY;
@@ -275,7 +234,7 @@ void MouseCursor::set_frame(char frameFlag, char buildTrack)
 		return;
 
 	frame_flag  = frameFlag;
-	frame_shown = 0;
+  frame_shown = 0;
 }
 //----------- End of function MouseCursor::set_frame -------//
 
@@ -308,22 +267,8 @@ void MouseCursor::process(int curX, int curY)
 	//---------- store screen area ------------//
 
 	// ##### begin Gilbert 29/1 ######//
-	int showOldRect = 0;
-	int oldX1, oldY1, oldX2, oldY2;
-	int showNewRect = 0;
+	int oldX1, oldY1;
 	int newX1, newY1, newX2, newY2;
-
-	if( cursor_shown )    // restore screen
-	{
-		vga_front.put_bitmapW_fast( (oldX1=max(cur_x1,0)), (oldY1=max(cur_y1,0)), save_scr->bitmap_ptr() );
-		showOldRect = 1;
-		// do not use save_scr->width because save_scr never call resize
-//		oldX2 = oldX1 + save_scr->bitmap_ptr()->get_width() - 1;
-//		oldY2 = oldY1 + save_scr->bitmap_ptr()->get_height() - 1;
-		oldX2 = oldX1 + save_scr->ptr->width_field - 1;		// for faster access
-		oldY2 = oldY1 + save_scr->ptr->height_field - 1;
-	}
-	// ##### end Gilbert 29/1 ######//
 
 	//---- only the zoom map can be framed, limit the frame inside that area ----//
 
@@ -353,35 +298,6 @@ void MouseCursor::process(int curX, int curY)
 	}
 	else
 	{
-		//---- if the cursor is across the screen border -----//
-
-		if( cur_x1 < 0 || cur_x2 >= VGA_WIDTH || cur_y1 < 0 || cur_y2 >= VGA_HEIGHT )
-		{
-			// ####### begin Gilbert 29/1 ######//
-			vga_front.read_bitmapW( (newX1=max(cur_x1,0)), (newY1=max(cur_y1,0)),
-				(newX2=min(cur_x2,VGA_WIDTH-1)), (newY2=min(cur_y2,VGA_HEIGHT-1)), save_scr->bitmap_ptr() );
-
-			vga_front.put_bitmap_area_trans( cur_x1, cur_y1, icon_ptr,
-				max(0,cur_x1)-cur_x1, max(0,cur_y1)-cur_y1,
-				min(VGA_WIDTH-1,cur_x2)-cur_x1, min(VGA_HEIGHT-1,cur_y2)-cur_y1 );
-
-			showNewRect = 1;
-			// ####### end Gilbert 29/1 ######//
-		}
-		else  //----- if the whole cursor is on the screen -----//
-		{
-			vga_front.read_bitmapW( cur_x1, cur_y1, cur_x2, cur_y2, save_scr->bitmap_ptr() );
-			vga_front.put_bitmap_trans( cur_x1, cur_y1, icon_ptr );     // must use PutIcon instead of PutArea for background masking
-
-			// ####### begin Gilbert 29/1 ######//
-			showNewRect = 1;
-			newX1 = cur_x1;
-			newY1 = cur_y1;
-			newX2 = cur_x2;
-			newY2 = cur_y2;
-			// ####### end Gilbert 29/1 ######//
-		}
-
 		cursor_shown = 1;
 	}
 
@@ -396,88 +312,56 @@ void MouseCursor::process(int curX, int curY)
 
 void MouseCursor::process_frame(int curX, int curY)
 {
-	int showOldRect = 0;
-	int oldX1, oldY1, oldX2, oldY2;
-	int showNewRect = 0;
-	int newX1, newY1, newX2, newY2;
+  if( !frame_shown )                      // a new frame
+  {
+    frame_origin_x = curX;
+    frame_origin_y = curY;
 
-	//---- restore the screen area overwritten by the last frame ---//
+    frame_x1 = curX;
+    frame_y1 = curY;
+    frame_x2 = curX;
+    frame_y2 = curY;
+  }
+  else    // update the postion of the existing frame
+  {
+    //---------- update frame position ----------//
 
-	if( frame_shown )
-	{
-		vga_front.put_bitmapW_fast( frame_x1, frame_y1, frame_top_save_scr    );
-		vga_front.put_bitmapW_fast( frame_x1, frame_y2, frame_bottom_save_scr );
-		vga_front.put_bitmapW_fast( frame_x1, frame_y1, frame_left_save_scr   );
-		vga_front.put_bitmapW_fast( frame_x2, frame_y1, frame_right_save_scr  );
+    if( curX > frame_origin_x )
+    {
+      if( curY > frame_origin_y )             // stretching towards the lower right end
+      {
+        frame_x1 = frame_origin_x;
+        frame_y1 = frame_origin_y;
+        frame_x2 = curX;
+        frame_y2 = curY;
+      }
+      else            // stretching towards the upper right end
+      {
+        frame_x1 = frame_origin_x;
+        frame_y1 = curY;
+        frame_x2 = curX;
 
-		showOldRect = 1;
-		oldX1 = frame_x1;
-		oldY1 = frame_y1;
-		oldX2 = frame_x2;
-		oldY2 = frame_y2;
-	}
-
-	//---------- update frame position ----------//
-
-	if( !frame_shown )			// a new frame
-	{
-		frame_origin_x = curX;
-		frame_origin_y = curY;
-
-		frame_x1 = curX;
-		frame_y1 = curY;
-		frame_x2 = curX;
-		frame_y2 = curY;
-	}
-	else  	// update the postion of the existing frame
-	{
-		//---------- update frame position ----------//
-
-		if( curX > frame_origin_x )
-		{
-			if( curY > frame_origin_y )		// stretching towards the lower right end
-			{
-				frame_x1 = frame_origin_x;
-				frame_y1 = frame_origin_y;
-				frame_x2 = curX;
-				frame_y2 = curY;
-			}
-			else		// stretching towards the upper right end
-			{
-				frame_x1 = frame_origin_x;
-				frame_y1 = curY;
-				frame_x2 = curX;
-				frame_y2 = frame_origin_y;
-			}
-		}
-		else
-		{
-			if( curY > frame_origin_y )		// stretching towards the lower left end
-			{
-				frame_x1 = curX;
-				frame_y1 = frame_origin_y;
-				frame_x2 =	frame_origin_x;
-				frame_y2 = curY;
-			}
-			else		// stretching towards the upper left end
-			{
-				frame_x1 = curX;
-				frame_y1 = curY;
-				frame_x2 = frame_origin_x;
-				frame_y2 = frame_origin_y;
-			}
-		}
-	}
-
-	showNewRect = 1;
-	newX1 = frame_x1;
-	newY1 = frame_y1;
-	newX2 = frame_x2;
-	newY2 = frame_y2;
-
-	//------- save the screen area and display the frame ------//
-
-	disp_frame(&vga_front);
+        frame_y2 = frame_origin_y;
+      }
+    }
+    else
+    {
+      if( curY > frame_origin_y )             // stretching towards the lower left end
+      {
+        frame_x1 = curX;
+        frame_y1 = frame_origin_y;
+        frame_x2 =      frame_origin_x;
+        frame_y2 = curY;
+      }
+      else            // stretching towards the upper left end
+      {
+        frame_x1 = curX;
+        frame_y1 = curY;
+        frame_x2 = frame_origin_x;
+        frame_y2 = frame_origin_y;
+      }
+    }
+  }
 }
 //----------- End of function MouseCursor::process_frame -------//
 
@@ -486,20 +370,9 @@ void MouseCursor::process_frame(int curX, int curY)
 
 void MouseCursor::disp_frame(VgaBuf* vgaBufPtr)
 {
-	//------- save the screen area that will be overwriteen -------//
-
-	vgaBufPtr->read_bitmapW( frame_x1, frame_y1, frame_x2, frame_y1, frame_top_save_scr );
-	vgaBufPtr->read_bitmapW( frame_x1, frame_y2, frame_x2, frame_y2, frame_bottom_save_scr );
-	vgaBufPtr->read_bitmapW( frame_x1, frame_y1, frame_x1, frame_y2, frame_left_save_scr );
-	vgaBufPtr->read_bitmapW( frame_x2, frame_y1, frame_x2, frame_y2, frame_right_save_scr );
-
-	//---------- draw the rectagular frame now -----------//
-
-	vgaBufPtr->rect( frame_x1, frame_y1, frame_x2, frame_y2, 1, OWN_SELECT_FRAME_COLOR );
-
-	//---------- set frame flag ----------//
-
-	frame_shown = 1;
+  vgaBufPtr->rect( frame_x1, frame_y1, frame_x2, frame_y2, 1, OWN_SELECT_FRAME_COLOR );
+  //---------- set frame flag ----------//
+  frame_shown = 1;
 }
 //----------- End of function MouseCursor::disp_frame -------//
 
@@ -528,17 +401,6 @@ void MouseCursor::disp_back_buf(int bltX1, int bltY1, int bltX2, int bltY2)
 		int y1 = max(cur_y1,bltY1);
 		int x2 = min(cur_x2,bltX2);
 		int y2 = min(cur_y2,bltY2);
-
-		vga_back.read_bitmapW( x1, y1, x2, y2, save_back_scr->bitmap_ptr() );
-
-		//--- merge the save area of the back buf with the front buf's save area ---//
-
-		// save_scr width  : min(cur_x2,VGA_WIDTH-1) -max(cur_x1,0)+1;
-		// save_scr height : min(cur_y2,VGA_HEIGHT-1)-max(cur_y1,0)+1;
-
-		// IMGbltW( save_scr->buf_ptr(), min(cur_x2,VGA_WIDTH-1) -max(cur_x1,0)+1, x1-max(cur_x1,0), y1-max(cur_y1,0), save_back_scr->bitmap_ptr() );		// +4 is the width & height info
-		IMGbltW( save_scr->buf_ptr(), sizeof(short) * (min(cur_x2,VGA_WIDTH-1) -max(cur_x1,0)+1), x1-max(cur_x1,0), y1-max(cur_y1,0), save_back_scr->bitmap_ptr() );		// +4 is the width & height info
-
 		//--------- display the mouse cursor now -----------//
 
 		if( cur_x1 < bltX1 || cur_x2 > bltX2 || cur_y1 < bltY1 || cur_y2 > bltY2 )
@@ -569,37 +431,26 @@ void MouseCursor::before_flip()
 {
 	if( cursor_shown )
 	{
+
+		if( frame_flag )
+			disp_frame(&vga_back);
+		//---- if the cursor is completely off-screen for some reason -----//
+		if (cur_x2 < 0 || cur_x1 >= VGA_WIDTH || cur_y2 < 0 || cur_y1 >= VGA_HEIGHT) return;
+
 		//---- if the cursor is across the screen border -----//
 
 		if( cur_x1 < 0 || cur_x2 >= VGA_WIDTH || cur_y1 < 0 || cur_y2 >= VGA_HEIGHT )
 		{
-			vga_back.read_bitmapW( max(cur_x1,0), max(cur_y1,0),
-				min(cur_x2,VGA_WIDTH-1), min(cur_y2,VGA_HEIGHT-1), save_back_scr->bitmap_ptr() );
-
 			vga_back.put_bitmap_area_trans( cur_x1, cur_y1, icon_ptr,
 				max(0,cur_x1)-cur_x1, max(0,cur_y1)-cur_y1,
 				min(VGA_WIDTH-1,cur_x2)-cur_x1, min(VGA_HEIGHT-1,cur_y2)-cur_y1 );
 		}
 		else  //----- if the whole cursor is on the screen -----//
 		{
-			vga_back.read_bitmapW( cur_x1, cur_y1, cur_x2, cur_y2, save_back_scr->bitmap_ptr() );
 			vga_back.put_bitmap_trans( cur_x1, cur_y1, icon_ptr );     // must use PutIcon instead of PutArea for background masking
 		}
 	}
 
-	if( frame_flag )
-	{
-		// restore frame
-
-		vga_front.put_bitmapW_fast( frame_x1, frame_y1, frame_top_save_scr    );
-		vga_front.put_bitmapW_fast( frame_x1, frame_y2, frame_bottom_save_scr );
-		vga_front.put_bitmapW_fast( frame_x1, frame_y1, frame_left_save_scr   );
-		vga_front.put_bitmapW_fast( frame_x2, frame_y1, frame_right_save_scr  );
-
-		// draw frame on back buffer
-
-		disp_frame(&vga_back);
-	}
 }
 //----------- End of function MouseCursor::before_flip --------//
 
@@ -610,18 +461,7 @@ void MouseCursor::before_flip()
 //
 void MouseCursor::after_flip()
 {
-	if( cursor_shown )
-	{
-		// exchange save_scr and save_back_scr
-
-		Blob2DW *temp = save_back_scr;
-		save_back_scr = save_scr;
-		save_scr = temp;
-
-		// restore screen
-
-		vga_back.put_bitmapW_fast( max(cur_x1,0), max(cur_y1,0), save_back_scr->bitmap_ptr() );
-	}
+  // nothing here
 }
 //----------- End of function MouseCursor::after_flip --------//
 

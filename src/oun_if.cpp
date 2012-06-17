@@ -2569,7 +2569,6 @@ static void disp_auto_menu_button(ButtonCustom *button, int)
 	if ( button->pushed_flag )
 	{
 		vga.active_buf->put_bitmap( button->x1, button->y1, image_icon.read("BUILDDW3") );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_bld.center_put(button->x1+1, button->y1, button->x2+1, button->y2, str );
 	}
 	else

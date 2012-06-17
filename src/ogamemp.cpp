@@ -1262,7 +1262,6 @@ int Game::mp_select_session()
 					int x2 = sx2;
 					int y1 = sy1 + ySpacing * b;
 					int y2 = y1 + ySpacing - 4;
-					vga.blt_buf( x1, y1, x2, y2, 0 );
 
 					if( mp_obj.get_session(s) )
 					{
@@ -1293,13 +1292,7 @@ int Game::mp_select_session()
 				int arrowY2 = arrowY1 + bitmapHeight-1;
 				if( page > 0 )
 				{
-					mouse.hide_area( arrowX1, arrowY1, arrowX2, arrowY2 );
 					vga.active_buf->put_bitmap_trans_decompress_hmirror( arrowX1, arrowY1, bitmapPtr );
-					mouse.show_area();
-				}
-				else
-				{
-					vga.blt_buf( arrowX1, arrowY1, arrowX2, arrowY2, 0 );
 				}
 
 				// centering
@@ -1307,13 +1300,7 @@ int Game::mp_select_session()
 				arrowX2 = arrowX1 + bitmapWidth-1;
 				if( page < maxPage-1 )
 				{
-					mouse.hide_area( arrowX1, arrowY1, arrowX2, arrowY2 );
 					vga.active_buf->put_bitmap_trans_decompress( arrowX1, arrowY1, bitmapPtr );
-					mouse.show_area();
-				}
-				else
-				{
-					vga.blt_buf( arrowX1, arrowY1, arrowX2, arrowY2, 0 );
 				}
 			}
 
@@ -1325,8 +1312,6 @@ int Game::mp_select_session()
 
 		if( choice > 0 && flashingJoin != 0 )
 			font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_join()); // "Join" );
-		else
-			vga.blt_buf( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 0 );
 		if( ++flashingJoin > 4 )
 			flashingJoin = 0;
 
@@ -6211,11 +6196,6 @@ static void disp_service_button(ButtonCustom *button, int)
 {
 	int serviceSeq = button->custom_para.value;
 	ServiceProviderDesc *servicePtr = mp_obj.get_service_provider(serviceSeq);
-
-	if( !button->pushed_flag )
-	{
-		vga.blt_buf( button->x1, button->y1, button->x2, button->y2, 0 );
-	}
 
 	(button->pushed_flag ? font_bold_red : font_bold_black).put( 
 		button->x1+16, button->y1+6, servicePtr ? servicePtr->name_str() : (char*)"",

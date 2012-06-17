@@ -133,7 +133,6 @@ public:
 	char  wait_mode_count;  // allow nested wait cursor
 
 	char 	*icon_ptr, *icon_data_ptr;
-	Blob2DW *save_scr, *save_back_scr, *merge_buf;
 
 	// ------ custom cursor setting ------- //
 

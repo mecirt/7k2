@@ -363,8 +363,6 @@ void Info::disp_panel()
 //
 void Info::disp()
 {
-//	mouse.handle_flicking = 0;		// since it will be called by Firm detect functions directly which may have set mouse.handle_flicking to 1 first, so we need to cancel it here
-
 	if( !power.enable_flag )
 		return;
 

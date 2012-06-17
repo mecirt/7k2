@@ -668,9 +668,11 @@ void Campaign::disp_intro()
 	for (i = 0; i < 4; i++)
 	{
 		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+                vga.flip();
 		sys.sleep(100);
 	}
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+        vga.flip();
 	sys.sleep(500);
 
 	music.stop();
@@ -723,6 +725,7 @@ void Campaign::disp_intro()
 	{	
 		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 	}
+        vga.flip();
 	
 	mouse.show();
 	stop_speech();
@@ -1523,6 +1526,7 @@ void Campaign::play_speech_animation(int raceId)
 			vga_back.put_bitmap_remap( DIALOG_TEXT_X1-155, DIALOG_TEXT_Y1+3 , blob.bitmap_ptr(), hiColorPal );
 			// wait
 
+                        vga.flip();
 			sys.yield();
 
 			DWORD endTime = m.get_time();
@@ -2071,12 +2075,6 @@ void Campaign::attack_state(int attackerStateRecno, int targetStateRecno,
 
 	attack_animation(attackerArray, attackerCount, &defender, firstStep, lastStep );
 
-//#else
-//	attack_animation(attackerUnitId, targetUnitId,
-//						  get_nation(attackerNation)->color_scheme_id,
-//						  get_nation(targetNation)->color_scheme_id,
-//						  srcScrnX, srcScrnY, destScrnX, destScrnY, attackResult, firstStep, lastStep);
-//#endif
 	// ####### end Gilbert 19/3 ########//
 	
 	//--------- change state nation ----------//
@@ -2343,6 +2341,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			targetSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
+                        vga.flip();
 
 			DWORD endTime = m.get_time();
 			if( mouse.left_press || endTime - startTime >= 50 )
@@ -2464,6 +2463,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			attackerSaveScr.rest_scr(&vga_back);
 			targetSaveScr.rest_scr(&vga_back);
 
+                        vga.flip();
 			sys.yield();
 
 			DWORD endTime = m.get_time();
@@ -2588,6 +2588,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				attackerSaveScr.rest_scr(&vga_back);
 				targetSaveScr.rest_scr(&vga_back);
 
+                                vga.flip();
 				sys.yield();
 
 				DWORD endTime = m.get_time();
@@ -2729,6 +2730,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				attackerSaveScr.rest_scr(&vga_back);
 
+                                vga.flip();
 				sys.yield();
 
 				DWORD endTime = m.get_time();
@@ -2802,6 +2804,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 				attackerSaveScr.rest_scr(&vga_back);
 
+                                vga.flip();
 				sys.yield();
 
 				DWORD endTime = m.get_time();
@@ -3059,6 +3062,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
+                        vga.flip();
 			sys.yield();
 
 			DWORD endTime = m.get_time();
@@ -3245,6 +3249,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
+                        vga.flip();
 			sys.yield();
 
 			DWORD endTime = m.get_time();
@@ -3413,6 +3418,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 				attackerSaveScr[a].rest_scr(&vga_back);
 			defenderSaveScr.rest_scr(&vga_back);
 
+                        vga.flip();
 			sys.yield();
 
 			DWORD endTime = m.get_time();
@@ -3663,6 +3669,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 					attackerSaveScr[a].rest_scr(&vga_back);
 				defenderSaveScr.rest_scr(&vga_back);
 
+                                vga.flip();
 				sys.yield();
 
 				DWORD endTime = m.get_time();
@@ -3800,6 +3807,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 					attackerSaveScr[a].rest_scr(&vga_back);
 				defenderSaveScr.rest_scr(&vga_back);
 
+                                vga.flip();
 				sys.yield();
 
 				DWORD endTime = m.get_time();

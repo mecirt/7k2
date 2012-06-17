@@ -324,7 +324,6 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 
 	if ( !button->enable_flag )
 	{
-		// vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDUP") );
 		vga.active_buf->d3_panel_up( button->x1, button->y1, button->x2, button->y2 );
 		font_bld.center_put(button->x1, button->y1+2, button->x2, midY, str );
 		font_bld.center_put(button->x1, midY, button->x2, button->y2-2, 
@@ -334,9 +333,7 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 	else
 	if ( button->pushed_flag )
 	{
-		// vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDDWN") );
 		vga.active_buf->d3_panel_down( button->x1, button->y1, button->x2, button->y2 );
-//		vga.blt_buf(button->x1, button->y1, button->x2, button->y2, 0);
 		font_bld.center_put(button->x1, button->y1+2, button->x2, midY, str );
 		font_bld.center_put(button->x1, midY, button->x2, button->y2-2,
 			text_firm.str_lair_research(techInfo->live_points_cost()) );
@@ -344,7 +341,6 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 	else
 	if (mouse.in_area(button->x1, button->y1, button->x2, button->y2))
 	{
-		// vga.active_buf->put_bitmap(  button->x1, button->y1, image_icon.read("BUILDSEL") );
 		vga.active_buf->bar( button->x1, button->y1, button->x2, button->y2, V_WHITE );
 		vga.active_buf->draw_d3_up_border(button->x1, button->y1, button->x2, button->y2);
 		font_bld.center_put(button->x1, button->y1+2, button->x2, midY, str );
@@ -353,7 +349,6 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 	}
 	else
 	{
-		// vga.active_buf->put_bitmap( button->x1, button->y1, image_icon.read("BUILDUP") );
 		vga.active_buf->d3_panel_up( button->x1, button->y1, button->x2, button->y2 );
 		font_bld.center_put(button->x1, button->y1+2, button->x2, midY, str );
 		font_bld.center_put(button->x1, midY, button->x2, button->y2-2, 
