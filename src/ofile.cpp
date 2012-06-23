@@ -290,6 +290,8 @@ int File::file_write(void* dataBuf, unsigned dataSize)
 
 int File::file_read(void* dataBuf, unsigned dataSize)
 {
+  if (dataSize == 0) return 1;
+
 	#define MAX_READ_SIZE 0xFFF0
 
 	err_when (file_handle == NULL);       // not initialized
@@ -325,6 +327,7 @@ int File::file_read(void* dataBuf, unsigned dataSize)
 		char msgStr[100];
 
 		sprintf( msgStr, "Error reading file %s, Retry ?", file_name );
+puts(msgStr);
 
 		if( box.ask(msgStr) )
 		{

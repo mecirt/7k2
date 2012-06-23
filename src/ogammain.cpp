@@ -193,7 +193,7 @@ void Game::disp_gen_game_status(int addStep)
 
 	// ------- draw status background ------ //
 
-	if( addStep == 0 || sys.need_redraw_flag )
+	if( addStep == 0 || sys.need_redraw_flag || 1 )
 	{
 		if (game.is_campaign_mode())
 			image_menu.put_front(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, "NEWWORLD");

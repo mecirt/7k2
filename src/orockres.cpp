@@ -90,8 +90,6 @@ void RockRes::init()
 	str += config.terrain_set;
 	str += ".RES";
 
-	res_pal.init_imported(str,1);  // 1-read all into buffer
-
 	//------- load database information --------//
 
 	load_info();
@@ -114,7 +112,6 @@ void RockRes::deinit()
 		rock_info_count = 0;
 		rock_bitmap_count = 0;
 
-		res_pal.deinit();
 		res_bitmap.deinit();
 
 		init_flag = 0;
@@ -168,16 +165,7 @@ void RockRes::load_info()
 		rockInfo->first_bitmap_recno = m.atoi(rockRec->first_bitmap_recno, rockRec->RECNO_LEN);
 		rockInfo->max_frame          = m.atoi(rockRec->max_frame, rockRec->MAX_FRAME_LEN);
 
-	//	if( rockRec->pal_file_name[0] == ' ' || rockRec->pal_file_name[0] == '\0' )
-	//	{
-			rockInfo->palw_ptr = NULL;
-	//	}
-	//	else 
-	//	{
-	//		long paletteOffset;
-	//		memcpy( &paletteOffset, rockRec->pal_offset, sizeof(long) );
-	//		rockInfo->palw_ptr = res_pal.read_imported_pal(paletteOffset);
-	//	}
+		rockInfo->palw_ptr = NULL;
 	}
 }
 // ------------ end of function RockRes::load_info -----------//

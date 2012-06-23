@@ -853,7 +853,6 @@ void TerrainRes::load_anim_info()
 	memset(lastAnimRec.filename, ' ', lastAnimRec.FILE_NAME_LEN);
 	
 	//---------- read in TERANM.DBF -------//
-//	int j,k,l;
 	int l;
 	for( i = 0; i < count; i++)
 	{

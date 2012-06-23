@@ -33,9 +33,6 @@
 // define DIRECTINPUT_VERSION before include dinput.h for directx 3 emulation
 #define DIRECTINPUT_VERSION 0x0300
 #include <dinput.h>
-// these three are here because we can't define INITGUID in more files
-//#include <dplay.h>
-//#include <dplobby.h>
 
 
 #include <platform.h>

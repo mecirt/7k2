@@ -767,7 +767,8 @@ void GameFile::disp_info(int x, int y)
 	x2 = font_small.put( x+380, y+12, text_game_menu.str_file_name() );
 	font_small.put( x2, y+12, shortFileName );
 
-        struct tm *tval = localtime(&file_date);
+        time_t dd = file_date;
+        struct tm *tval = localtime(&dd);
 
 //	str  = translate.process("File Date: ");
 //	str += date.date_str(date.julian(sysTime.wYear, sysTime.wMonth,sysTime.wDay), 1);

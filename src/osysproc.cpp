@@ -570,6 +570,8 @@ void Sys::unpause()
 //
 void Sys::sleep(int time)
 {
+  printf ("Sleeping for %d milliseconds\n", time);
+
 	int time2 = time>>2;
 	for (int i = time2; i > 0; i--)
 	{

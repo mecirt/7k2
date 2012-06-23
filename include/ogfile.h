@@ -54,7 +54,7 @@ public:
 
 //-------- Define class GameFile -----------//
 
-class GameFile
+class GameFile 
 {
 public:
 	enum     { SAVE_GAME_DESC_LEN = 80 };
@@ -69,7 +69,7 @@ public:
    char     nation_color;
 
    int      game_date;      // the game date of the saved game
-   time_t   file_date;              // saving game date
+   DWORD    file_date, file_date2;              // saving game date - broken because if's a FILETIME copy
    short    terrain_set;				// duplicate from config
 	int		display_mode_id;			// duplicate from config
 	char		building_size;				// duplicate from config
@@ -107,7 +107,7 @@ private:
 
    void  write_book_mark(short bookMark);
    int   read_book_mark(short bookMark);
-};
+} __attribute__((packed)) ;
 
 //------- Define class GameFileArray --------//
 

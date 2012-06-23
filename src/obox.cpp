@@ -223,10 +223,17 @@ void Box::ok_button(int timeOut)
 // [int]   rightClickClose = whether pressing the right button will close the window
 //			     (default: 1)
 //
-int Box::ask_button(const char* buttonDes1, const char* buttonDes2, int rightClickClose)
+int Box::ask_button(const char *msgStr, const char* buttonDes1, const char* buttonDes2, int rightClickClose)
 {
+   while( 1 )
+   {
+
    int width;
 
+   paint(1);
+
+	font_bld.put_paragraph( box_x1+BOX_X_MARGIN, box_y1+BOX_TOP_MARGIN, box_x2-BOX_X_MARGIN,
+			   box_y2-BOX_BOTTOM_MARGIN, msgStr, BOX_LINE_SPACE );
    width = box_x2-box_x1+1;
 
    Button buttonOk, buttonCancel;
@@ -254,9 +261,7 @@ int Box::ask_button(const char* buttonDes1, const char* buttonDes2, int rightCli
    buttonCancel.paint();
 
    //..........................................//
-
-   while( 1 )
-	{
+   vga.flip();
 		sys.yield();
 		mouse.get_event();
 
@@ -273,44 +278,6 @@ int Box::ask_button(const char* buttonDes1, const char* buttonDes2, int rightCli
 	}
 }
 //--------- End of function Box::ask_button --------//
-
-
-//---------- Begin of function Box::ask_button ---------//
-//
-// Display a Ok and Cancel button, and wait for player to click one of them
-//
-// <Button&> buttonOk, buttonCancel = the defined buttons
-// [char*]   strOk, strCancel       = the string of the button Ok & Cancel
-//                                 ( default : "Ok" & "Cancel" )
-//
-void Box::ask_button(Button& buttonOk, Button& buttonCancel, const char* strOk, const char* strCancel )
-{
-   int width;
-
-   width = box_x2-box_x1+1;
-
-	if( !strOk )
-	{
-		if( text_basic.is_inited() )
-			strOk = text_basic.str_box_ok();
-		else
-			strOk = "Ok";
-	}
-   buttonOk.create_text( box_x1+width/2-36, box_y2-BOX_BUTTON_MARGIN, strOk );
-
-	if( !strCancel )
-	{
-		if( text_basic.is_inited() )
-			strCancel = text_basic.str_box_cancel();
-		else
-			strCancel = "Cancel";
-	}
-   buttonCancel.create_text( box_x1+width/2+2 , box_y2-BOX_BUTTON_MARGIN, strCancel );
-
-   buttonOk.paint();      // paint button
-   buttonCancel.paint();
-}
-//--------- End of function Box::ask_button ---------//
 
 
 //------- Begin of function Box::ask ----------//
@@ -335,12 +302,7 @@ int Box::ask(char* msgStr, char* buttonDes1, char* buttonDes2, int x1, int y1)
 
    calc_size(msgStr,BOX_TOP_MARGIN+BOX_BOTTOM_MARGIN,x1,y1);   // calculate x1, y1, x2, y2 depended on the msgStr
 
-   paint(1);
-
-	font_bld.put_paragraph( box_x1+BOX_X_MARGIN, box_y1+BOX_TOP_MARGIN, box_x2-BOX_X_MARGIN,
-			   box_y2-BOX_BOTTOM_MARGIN, msgStr, BOX_LINE_SPACE );
-
-   rc = ask_button(buttonDes1, buttonDes2);
+   rc = ask_button(msgStr, buttonDes1, buttonDes2);
 
    close();
 
