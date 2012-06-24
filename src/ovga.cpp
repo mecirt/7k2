@@ -155,11 +155,13 @@ void Vga::flip()
 
 	vga_buffer.temp_unlock();
 
-  FlipBuffer (&vga_front);
+  FlipBuffer (&vga_buffer);
 
 	vga_buffer.temp_restore_lock();
 
 	mouse_cursor.after_flip();
+
+  vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 5, V_BLACK );
 }
 //----------- End of function Vga::flip ----------//
 
