@@ -50,6 +50,7 @@ void ShowMessageBox (const char *text) {
 void ShowMouseCursor (bool show)
 {
   SDL_ShowCursor (show);
+//  SDL_WM_GrabInput(show ? SDL_GRAB_OFF : SDL_GRAB_ON);
 }
 
 // Bitmap files. We only need this once, and use the palette from here, nothing else.

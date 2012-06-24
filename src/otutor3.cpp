@@ -84,8 +84,6 @@ enum { OPTION_SPECIES,
 // ----- declare static function -------//
 
 static void i_disp_text_button(ButtonCustom *, int repaintBody);
-static void i_disp_race_button(ButtonCustom *, int repaintBody);
-static void i_disp_color_button(ButtonCustom *, int repaintBody);
 
 static int par1, par2;
 
@@ -195,12 +193,8 @@ int Tutor::select_learning_campaign_menu()
 	char *arrowBitmap2 = image_button.read("SCROLL-L");
 	int pageUpX1 = (TLSCROLL_X2 + TLSCROLL_X1 - ((Bitmap *)arrowBitmap)->get_width()) / 2;
 	int pageUpY1 = (TLSCROLL_Y2 + TLSCROLL_Y1 - ((Bitmap *)arrowBitmap)->get_height()) / 2;
-	int pageUpX2 = pageUpX1 + ((Bitmap *)arrowBitmap)->get_width() - 1;
-	int pageUpY2 = pageUpY1 + ((Bitmap *)arrowBitmap)->get_height() - 1;
 	int pageDownX1 = (TRSCROLL_X2 + TRSCROLL_X1 - ((Bitmap *)arrowBitmap)->get_width()) / 2;
 	int pageDownY1 = (TRSCROLL_Y2 + TRSCROLL_Y1 - ((Bitmap *)arrowBitmap)->get_height()) / 2;
-	int pageDownX2 = pageDownX1 + ((Bitmap *)arrowBitmap)->get_width() - 1;
-	int pageDownY2 = pageDownY1 + ((Bitmap *)arrowBitmap)->get_height() - 1;
 
 	// ###### patch begin Gilbert 3/11 ######//
 	int pageNoX1 = 610; // 635;
@@ -456,52 +450,6 @@ static void i_disp_text_button(ButtonCustom *button, int repaintBody)
 		(char *)button->custom_para.ptr );
 }
 // ------ end of static function i_disp_text_button ------//
-
-
-// ------ begin of static function i_disp_race_button ------//
-//
-// BustomCustom callback function to display race name on top centre
-//
-static void i_disp_race_button(ButtonCustom *button, int repaintBody)
-{
-	int raceId = button->custom_para.value;
-	Font *fontPtr = button->pushed_flag ? &font_bold_red : &font_thin_black;
-	// top center align
-	fontPtr->center_put( button->x1, button->y1, button->x2, button->y1+fontPtr->font_height-1,
-		raceId >= 0 ? race_res[raceId]->name : monster_res[-raceId]->name );
-}
-// ------ end of static function i_disp_race_button ------//
-
-
-// ------ begin of static function i_disp_color_button ------//
-//
-// BustomCustom callback function to display color code marker
-//
-static void i_disp_color_button(ButtonCustom *button, int repaintBody)
-{
-	// 9,7,35,37, x+29
-	int colorSchemeId = button->custom_para.value;
-	short *colorRemapTable = game.color_remap_array[colorSchemeId].color_table;
-
-	if( !button->pushed_flag )
-	{
-		int clipX1 = 9 + (colorSchemeId-1)*29;
-		int clipY1 = 7;
-		int clipX2 = clipX1 + 27 - 1;
-		int clipY2 = 37;
-
-		vga.active_buf->put_bitmap_area_trans_remap_decompress( 
-			button->x1 - clipX1,	button->y1 - clipY1, image_button.read("F-COLOR"), 
-			clipX1, clipY1, clipX2, clipY2,	colorRemapTable );
-	}
-	else
-	{
-		vga.active_buf->put_bitmap_trans_remap_decompress(
-			button->x1, button->y1, image_button.read("F-COL-DW"), colorRemapTable );
-
-	}
-}
-// ------ end of static function i_disp_color_button ------//
 
 
 // ------- Begin of function Tutor::update_tutorial_finish_count -----//
@@ -2656,7 +2604,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// allow clicking and doing anything
 			// detect seleting a firm and
 			// click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -2683,7 +2630,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting a town
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -2718,7 +2664,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -2742,7 +2687,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button F_RESE
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -2772,7 +2716,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -2796,7 +2739,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 		// wait for the finish of Tower of Science
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -2819,7 +2761,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button TRAIN
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -2849,7 +2790,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting a firm
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -2882,7 +2822,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect all for final battle
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -2905,7 +2844,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// detect clicking on button CANCEL
 			// but allow clicking anything in INFO without button area
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 2;
@@ -2936,7 +2874,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -2958,7 +2895,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -2979,7 +2915,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3005,7 +2940,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3029,7 +2963,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button F_PATROL
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -3058,7 +2991,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 4)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3080,7 +3012,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3103,7 +3034,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button RESEARCH
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -3133,7 +3063,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3159,7 +3088,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3224,7 +3152,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// not allow clicking and doing anything
 			// detect clicking on right click (attack) on a town
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -3253,7 +3180,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect continue button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -3287,7 +3213,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3310,7 +3235,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3332,7 +3256,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3359,7 +3282,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// allow clicking and doing anything
 			// detect seleting a firm and
 			// click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3384,7 +3306,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// waiting for condition one - enslave an town - is true
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -3409,7 +3330,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3430,7 +3350,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3453,7 +3372,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3475,7 +3393,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3501,7 +3418,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// allow any click inside the INFO area, allow and detect only SORTIE button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 2;
@@ -3536,7 +3452,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// detect clicking on button F_RETCMP
 			// detect right click on a firm
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 4;
@@ -3569,7 +3484,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// detect all for final goal
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -3592,7 +3506,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect continue button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -3622,7 +3535,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 		// wait for the finish of Special Structure
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3643,7 +3555,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3669,7 +3580,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3691,7 +3601,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting the first slave town
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -3719,7 +3628,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3741,7 +3649,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3762,7 +3669,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect all for final battle
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -3787,7 +3693,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3809,7 +3714,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting the lair
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -3866,7 +3770,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -3897,7 +3800,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button S_TRAIN
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -3929,7 +3831,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -3951,7 +3852,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// and allow free access to lower left first 2 INFO buttons.
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -3992,7 +3892,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -4016,7 +3915,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4040,7 +3938,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button RETCAMP
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4070,7 +3967,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// not allow clicking and doing anything
 			// detect clicking on right click (attack) on a town
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4099,7 +3995,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -4123,7 +4018,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4147,7 +4041,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4169,7 +4062,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// waiting for condition one - enslave an town - is true
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -4193,7 +4085,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -4216,7 +4107,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 		// wait for the finish of War Factory
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4241,7 +4131,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// find an independent town
 			// centre the town
 			// detect seleting the town
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4273,7 +4162,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// detect clicking on button F_RETCMP
 			// detect right click on a firm
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 4;
@@ -4305,7 +4193,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -4330,7 +4217,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4353,7 +4239,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect continue button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -4381,7 +4266,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting the lair
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4409,7 +4293,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -4433,7 +4316,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button MAKEWEAP
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4466,7 +4348,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// detect seleting a thing in ZOOM view
 			// no detect is allow in button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4491,7 +4372,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// detect a right click on a unit icon
 			// but not allow clicking the general position 
 			// and not allow to click unit icon with lightness != 0
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 2;
@@ -4525,7 +4405,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 			// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -4562,7 +4441,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4586,7 +4464,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button F_PROMOT
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4617,7 +4494,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// detect seleting a thing in ZOOM view
 			// no detect is allow in button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4643,7 +4519,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// detect kingdom report
 			// allow click on close box
 			// display hint in front of the kingdom report
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -4667,7 +4542,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 		// wait for the finish of Seat of Power
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4690,7 +4564,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4712,7 +4585,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button F_PROMOT
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4741,7 +4613,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4766,7 +4637,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4789,7 +4659,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect on selecting any soldiers
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;	
@@ -4812,7 +4681,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting the independent lair
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4840,7 +4708,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button HIRECARA
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4870,7 +4737,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// and allow free access to lower left second INFO buttons.(ie. invoke god icon)
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4910,7 +4776,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// not allow clicking and doing anything
 			// detect clicking on button PROMOTE
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -4941,7 +4806,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// detect seleting a thing in ZOOM view
 			// no detect is allow in button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -4965,7 +4829,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -4985,7 +4848,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 		//	disable_fast_build();
@@ -5009,7 +4871,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5031,7 +4892,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button BUILD
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -5061,7 +4921,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5088,7 +4947,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// but allow right clicking anything in ZOOM VIEW
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 		//	selectively_detect_flag = 6;
@@ -5126,7 +4984,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 1)
 		{	
 			// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5147,7 +5004,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// wait until a lair linked to the independent lair is built
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5168,7 +5024,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5188,7 +5043,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5210,7 +5064,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 1)
 		{	
 			// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5230,7 +5083,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect seleting the independent lair
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 1;
@@ -5257,7 +5109,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5278,7 +5129,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button BLESS
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 		//	set_fast_build();
@@ -5331,7 +5181,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect continue button
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5359,7 +5208,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button F_GRANT
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -5389,7 +5237,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5415,7 +5262,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5438,7 +5284,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 1)
 		{	
 			// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5463,7 +5308,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{
 			// not allow clicking and doing anything
 			// just allow clicking the "YES" button inside the INFO view area
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 2;
@@ -5489,7 +5333,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -5512,7 +5355,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5534,7 +5376,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 1)
 		{	
 			// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5561,7 +5402,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect all for final battle
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5585,7 +5425,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -5609,7 +5448,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5641,7 +5479,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect all for final battle
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5671,7 +5508,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5692,7 +5528,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -5718,7 +5553,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button CARACOPY
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -5746,7 +5580,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5769,7 +5602,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -5793,7 +5625,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5820,7 +5651,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 5)
 		{	
 			// detect all for final goal
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -5843,7 +5673,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -5868,7 +5697,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5891,7 +5719,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// and allow free access to lower left first three INFO buttons.(ie. all train button in spy college)
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -5926,7 +5753,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -5949,7 +5775,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -5978,7 +5803,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -6002,7 +5826,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			// not allow clicking and doing anything
 			// allow any click inside the INFO area without INFO buttons
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 2;
@@ -6035,7 +5858,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button SPYNOTI0
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -6067,7 +5889,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button SPYNOTI1
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -6099,7 +5920,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6126,7 +5946,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -6149,7 +5968,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button SPYMENU
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -6181,7 +5999,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button CHG-TASK
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -6212,7 +6029,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -6235,7 +6051,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6263,7 +6078,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// click the continue box and select a firm with a spy inside
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -6289,7 +6103,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6317,7 +6130,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -6343,7 +6155,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 		// allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			// set this to enable the senario editor
@@ -6368,7 +6179,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		if (cur_tutor_id == 9)
 		{	
 		// allow clicking and doing anything
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 5;
@@ -6391,7 +6201,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// detect clicking on button SPYMENU
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 3;
@@ -6423,7 +6232,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6451,7 +6259,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6479,7 +6286,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6507,7 +6313,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6535,7 +6340,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// not allow clicking and doing anything
 			// just click the continue box
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 6;
@@ -6563,7 +6367,6 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		{	
 			// allow clicking and doing anything
 			// detect all for final battle
-			TutorTextBlock* tutorTextBlock = text_block_array+text_block_count+objestiveRecNo-1;
 			current_objective = objestiveRecNo;
 			reset_detect_variables();
 			selectively_detect_flag = 0;
@@ -7600,8 +7403,6 @@ void Tutor::load_in_game_box(int tutorId, int objectiveRecno)
 		if (objectiveRecno == objective_no && in_box_count < MAX_IN_GAME_BOX_PER_OBJECTIVE)
 		{
 			strcpy( tutor_box[in_box_count].text, textPtr );
-		//	tutorTextBlock.text_ptr = textPtr;
-		//	tutorTextBlock.text_len = readLen;
 			in_box_count ++;
 		}
 
