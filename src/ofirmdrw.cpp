@@ -454,7 +454,6 @@ int Firm::draw_detect_link_line(int actionDetect)
 		if( actionDetect )
 		{
 			if( is_own() && world.zoom_matrix->detect_bitmap_clip( firmX-16, firmY-16, bitmapPtr ) )
-		//	if( is_own() && world.zoom_matrix->detect_bitmap_clip( firmX-11, firmY-11, bitmapPtr ) )
 			{
 				if( linked_firm_enable_array[i] & LINK_ED )
 				{
@@ -472,7 +471,6 @@ int Firm::draw_detect_link_line(int actionDetect)
 		else
 		{
 			if( nation_recno == nation_array.player_recno )
-			//	world.zoom_matrix->put_bitmap_clip( firmX-11, firmY-11, bitmapPtr );
 				world.zoom_matrix->put_bitmap_clip( firmX-16, firmY-16, bitmapPtr );
 		}
 	}
@@ -539,7 +537,6 @@ int Firm::draw_detect_link_line(int actionDetect)
 
 		if( actionDetect )
 		{
-		//	int rc = world.zoom_matrix->detect_bitmap_clip( townX-11, townY-11, bitmapPtr );
 			int rc = world.zoom_matrix->detect_bitmap_clip( townX-16, townY-16, bitmapPtr );
 
 			//------ left clicking to toggle link -------//
@@ -584,9 +581,7 @@ int Firm::draw_detect_link_line(int actionDetect)
 		else
 		{
 			if( nation_recno == nation_array.player_recno )
-			{
 				world.zoom_matrix->put_bitmap_clip( townX-16, townY-16, bitmapPtr );
-			}
 		}
 	}
 

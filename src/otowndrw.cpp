@@ -305,9 +305,6 @@ void Town::draw_farm(int curX, int curY, int farmId, short *remapTable)
 
 	farmName[5] = '0' + farmId;
 
-//	int drawX = absBaseX - world.view_top_x + ZOOM_X1;
-//	int drawY = absBaseY - world.view_top_y + ZOOM_Y1;
-//	world.zoom_matrix->put_bitmap_clip(drawX, drawY, image_spict.get_ptr(farmName), 1);	// 1-the bitmap is compressed
 	char *farmBitmap = image_spict.get_ptr(farmName);
 
 	world.zoom_matrix->put_bitmap(curX, curY, altitude, farmBitmap,

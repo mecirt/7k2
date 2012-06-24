@@ -2868,10 +2868,8 @@ static int sort_display_function( const void *a, const void *b )
 //
 // <int>   x, y 			  - the location of the bitmap, in the current screen coordination
 // <char*> bitmapPtr 	  - bitmap ptr
-// [int]   compressedFlag - whether the bitmap is compressed or not
-//									 (default: 0)
 //
-void ZoomMatrix::put_bitmap_clip(int x, int y, char* bitmapPtr, int compressedFlag)
+void ZoomMatrix::put_bitmap_clip(int x, int y, char* bitmapPtr)
 {
 	int x2 = x + ((Bitmap *)bitmapPtr)->get_width() - 1;
 	int y2 = y + ((Bitmap *)bitmapPtr)->get_height() - 1;
@@ -2883,26 +2881,15 @@ void ZoomMatrix::put_bitmap_clip(int x, int y, char* bitmapPtr, int compressedFl
 
 	if( x < ZOOM_X1 || x2 > ZOOM_X2 || y < ZOOM_Y1 || y2 > ZOOM_Y2 )
 	{
-		if( compressedFlag )
-		{
-			vga_back.put_bitmap_area_trans_decompress( x, y, bitmapPtr,
-				max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y );
-		}
-		else
-		{
-			vga_back.put_bitmap_area_trans( x, y, bitmapPtr,
-				max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y );
-		}
+		vga_back.put_bitmap_area_trans( x, y, bitmapPtr,
+			max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y );
 	}
 
 	//---- the whole sprite is inside the view area ------//
 
 	else
 	{
-		if( compressedFlag )
-			vga_back.put_bitmap_trans_decompress( x, y, bitmapPtr );
-		else
-			vga_back.put_bitmap_trans( x, y, bitmapPtr );
+		vga_back.put_bitmap_trans( x, y, bitmapPtr );
 	}
 }
 //--------- End of function ZoomMatrix::put_bitmap_clip ---------//
@@ -2931,79 +2918,6 @@ int ZoomMatrix::detect_bitmap_clip(int x, int y, char* bitmapPtr)
 	mouse.any_click( max(ZOOM_X1,x), max(ZOOM_Y1,y), min(ZOOM_X2,x2), min(ZOOM_Y2,y2), 1 ) ? 2 : 0;
 }
 //--------- End of function ZoomMatrix::detect_bitmap_clip ---------//
-
-
-//------ Begin of function ZoomMatrix::put_bitmap_remap_clip ---------//
-//
-// Put a bitmap on the surface buffer
-//
-// <int>   x, y 				- the location of the bitmap
-// <char*> bitmapPtr 		- bitmap ptr
-// [char*] colorRemapTable - color remap table
-// [int]   compressedFlag  - whether the bitmap is compressed or not
-//									  (default: 0)
-//
-void ZoomMatrix::put_bitmap_remap_clip(int x, int y, char* bitmapPtr, short* colorRemapTable, int compressedFlag)
-{
-	int x2 = x + *((short*)bitmapPtr) 	  - 1;
-	int y2 = y + *(((short*)bitmapPtr)+1) - 1;
-
-	if( x2 < ZOOM_X1 || y2 < ZOOM_Y1 || x > ZOOM_X2 || y > ZOOM_Y2 )
-		return;
-
-	//---- only portion of the sprite is inside the view arec ------//
-
-	if( x < ZOOM_X1 || x2 > ZOOM_X2 || y < ZOOM_Y1 || y2 > ZOOM_Y2 )
-	{
-		if( compressedFlag )
-		{
-			if( colorRemapTable )
-			{
-				vga_back.put_bitmap_area_trans_remap_decompress( x, y, bitmapPtr,
-					max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y, colorRemapTable );
-			}
-			else
-			{
-				vga_back.put_bitmap_area_trans_decompress( x, y, bitmapPtr,
-					max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y );
-			}
-		}
-		else
-		{
-			if( colorRemapTable )
-			{
-				vga_back.put_bitmap_area_trans_remap( x, y, bitmapPtr,
-					max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y, colorRemapTable );
-			}
-			else
-			{
-				vga_back.put_bitmap_area_trans( x, y, bitmapPtr,
-					max(ZOOM_X1,x)-x, max(ZOOM_Y1,y)-y, min(ZOOM_X2,x2)-x, min(ZOOM_Y2,y2)-y );
-			}
-		}
-	}
-
-	//---- the whole sprite is inside the view area ------//
-
-	else
-	{
-		if( compressedFlag )
-		{
-			if( colorRemapTable )
-				vga_back.put_bitmap_trans_remap_decompress( x, y, bitmapPtr, colorRemapTable );
-			else
-				vga_back.put_bitmap_trans_decompress( x, y, bitmapPtr );
-		}
-		else
-		{
-			if( colorRemapTable )
-				vga_back.put_bitmap_trans_remap( x, y, bitmapPtr, colorRemapTable );
-			else
-				vga_back.put_bitmap_trans( x, y, bitmapPtr );
-		}
-	}
-}
-//--------- End of function ZoomMatrix::put_bitmap_remap_clip ---------//
 
 
 //------ Begin of function ZoomMatrix::calc_zoom_x ---------//

@@ -141,8 +141,7 @@ public:
 	void disp();
 	void draw_frame();
 	void scroll(int,int);
-	void put_bitmap_clip(int x, int y, char* bitmapPtr,int compressedFlag=0);
-	void put_bitmap_remap_clip(int x, int y, char* bitmapPtr, short* colorRemapTable=NULL,int compressedFlag=0);
+	void put_bitmap_clip(int x, int y, char* bitmapPtr);
 	int  detect_bitmap_clip(int x, int y, char* bitmapPtr);
 
 	// ------- new for isometric view -------//
