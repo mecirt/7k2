@@ -69,11 +69,12 @@ Magic::~Magic()
 	mem_del(dist_table);
 	dist_table = NULL;
 }
-short Magic::add_blend(short *point, short R, short G, short B, int mode)
+short Magic::add_blend(short *point, short R, short G, short B)
 {
 	short prev_r;
 	short prev_g;
 	short prev_b;
+  int mode = vga.pixel_format_flag;
 	if (mode == 0)
 	{
 		prev_r = ( *point & 0x001F );
@@ -160,304 +161,13 @@ short Magic::add_blend(short *point, short R, short G, short B, int mode)
 	}
 }
 
-short Magic::add_blend2(short *point, short *point2, int mode)
+short Magic::shading(short *origin, short *point, short ratio)
 {
 	short prev_r;
 	short prev_g;
 	short prev_b;
-	short R, G, B;
-	if (mode == 0)
-	{
-		prev_r = ( *point & 0x001F );
-		prev_g = ( *point & 0x03E0 ) >>5;///32;
-		prev_b = ( *point & 0x7C00 ) >>10;///1024;
-		R = ( *point2 & 0x001F );
-		G = ( *point2 & 0x03E0 ) >>5;///32;
-		B = ( *point2 & 0x7C00 ) >>10;///1024;
-		
-		prev_r = prev_r + R; 
-		prev_g = prev_g + G; 
-		prev_b = prev_b + B; 
-		if (prev_r > 0x001F)
-			prev_r = 0x001F; 
-		if (prev_g > 0x001F)
-			prev_g = 0x03E0;
-		else
-			prev_g = prev_g <<5;
-		
-		if (prev_b > 0x001F)
-			prev_b = 0x7C00;
-		else
-			prev_b = prev_b <<10;
-		return (prev_r | prev_g | prev_b);
-	}
-	else
-	if (mode == 1)
-	{
-		prev_r = ( *point & 0x001F );
-		prev_g = ( *point & 0x07E0 ) >>5;///32;
-		prev_b = ( *point & 0xF800 ) >>11;///2048;
-		R = ( *point2 & 0x001F );
-		G = ( *point2 & 0x07E0 ) >>5;///32;
-		B = ( *point2 & 0xF800 ) >>11;///1024;
-		
-		prev_r = prev_r + R; 
-		prev_g = prev_g + G; 
-		prev_b = prev_b + B;
-		if (prev_r > 0x001F)
-			prev_r = 0x001F; 
-		if (prev_g > 0x003F)
-			prev_g = 0x07E0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_b > 0x001F)
-			prev_b = (prev_b | 0x001F )<< 11;
-		else
-			prev_b = prev_b <<11;
-		return (prev_r | prev_g | prev_b);
-	}
-	else 
-	if (mode == 2)
-	{
-		prev_b = ( *point & 0x001F ); 
-		prev_g = ( *point & 0x03E0 ) >>5;///32;
-		prev_r = ( *point & 0x7C00 ) >>10;///1024;
-		B = ( *point2 & 0x001F );
-		G = ( *point2 & 0x03E0 ) >>5;///32;
-		R = ( *point2 & 0x7C00 ) >>10;///1024;
-		
-		prev_b = prev_b + B; 
-		prev_g = prev_g + G; 
-		prev_r = prev_r + R; 
-		if (prev_b > 0x001F)
-			prev_b = 0x001F; 
-		if (prev_g > 0x001F)
-			prev_g = 0x03E0;
-		else
-			prev_g = prev_g <<5;
-		
-		if (prev_r > 0x001F)
-			prev_r = 0x7C00;
-		else
-			prev_r = prev_r <<10;
-		return (prev_b | prev_g | prev_r);
-	}
-	else
-	{
-		prev_b = ( *point & 0x001F );
-		prev_g = ( *point & 0x07E0 ) >>5;///32;
-		prev_r = ( *point & 0xF800 ) >>11;///2048;
-		B = ( *point2 & 0x001F );
-		G = ( *point2 & 0x07E0 ) >>5;///32;
-		R = ( *point2 & 0xF800 ) >>11;///1024;
-		
-		prev_b = prev_b + B; 
-		prev_g = prev_g + G; 
-		prev_r = prev_r + R; 
-		if (prev_b > 0x001F)
-			prev_b = 0x001F; 
-	 	if (prev_g > 0x003F)
-			prev_g = 0x07E0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_r > 0x001F)
-			prev_r = (prev_r | 0x001F )<< 11;
-		else
-			prev_r = prev_r <<11;
-		return (prev_b | prev_g | prev_r);
-	}
-}
+  int mode = vga.pixel_format_flag;
 
-short Magic::add_blend3(short *point, short R, short G, short B, int mode, int par)
-{
-	short prev_r;
-	short prev_g;
-	short prev_b;
-	R = R  * (100 - par) /100;
-	G = G  * (100 - par) /100;
-	B = B  * (100 - par) /100;
-	
-	if (mode == 0)
-	{
-		prev_r =  ( *point & 0x001F ) * par /100;
-		prev_g = (( *point & 0x03E0 ) >>5) * par /100;///32;
-		prev_b = (( *point & 0x7C00 ) >>10) * par /100;///1024;
-		prev_r = prev_r + R; 
-		prev_g = prev_g + G; 
-		prev_b = prev_b + B; 
-		if (prev_r > 0x001F)
-			prev_r = 0x001F; 
-		if (prev_g > 0x001F)
-			prev_g = 0x03E0;
-		else
-			prev_g = prev_g <<5;
-		
-		if (prev_b > 0x001F)
-			prev_b = 0x7C00;
-		else
-			prev_b = prev_b <<10;
-		return (prev_r | prev_g | prev_b);
-	}
-	else
-	if (mode == 1)
-	{
-		prev_r = ( *point & 0x001F ) * par /100;
-		prev_g = (( *point & 0x07E0 ) >>5) * par /100;///32;
-		prev_b = (( *point & 0xF800 ) >>11) * par /100;///2048;
-		prev_r = prev_r + R; 
-		prev_g = prev_g + G; 
-		prev_b = prev_b + B;
-		if (prev_r > 0x001F)
-			prev_r = 0x001F; 
-		if (prev_g > 0x003F)
-			prev_g = 0x07E0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_b > 0x001F)
-			prev_b = (prev_b | 0x001F )<< 11;
-		else
-			prev_b = prev_b <<11;
-		return (prev_r | prev_g | prev_b);
-	}
-	else 
-	if (mode == 2)
-	{
-		prev_b = ( *point & 0x001F ) * par /100; 
-		prev_g = (( *point & 0x03E0 ) >>5) * par /100;///32;
-		prev_r = (( *point & 0x7C00 ) >>10) * par /100;///1024;
-		prev_b = prev_b + B; 
-		prev_g = prev_g + G; 
-		prev_r = prev_r + R; 
-		if (prev_b > 0x001F)
-			prev_b = 0x001F; 
-		if (prev_g > 0x001F)
-			prev_g = 0x03E0;
-		else
-			prev_g = prev_g <<5;
-		
-		if (prev_r > 0x001F)
-			prev_r = 0x7C00;
-		else
-			prev_r = prev_r <<10;
-		return (prev_b | prev_g | prev_r);
-	}
-	else
-	{
-		prev_b = ( *point & 0x001F ) * par /100;
-		prev_g = (( *point & 0x07E0 ) >>5) * par /100;///32;
-		prev_r = (( *point & 0xF800 ) >>11) * par /100;///2048;
-		prev_b = prev_b + B; 
-		prev_g = prev_g + G; 
-		prev_r = prev_r + R; 
-		if (prev_b > 0x001F)
-			prev_b = 0x001F; 
-	 	if (prev_g > 0x003F)
-			prev_g = 0x07E0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_r > 0x001F)
-			prev_r = (prev_r | 0x001F )<< 11;
-		else
-			prev_r = prev_r <<11;
-		return (prev_b | prev_g | prev_r);
-	}
-}
-
-short Magic::mins_blend(short *point, short R, short G, short B, int mode)
-{
-	short prev_r;
-	short prev_g;
-	short prev_b;
-	if (mode == 0)
-	{
-		prev_r = ( *point & 0x001F );
-		prev_g = ( *point & 0x03E0 ) >>5;///32;
-		prev_b = ( *point & 0x7C00 ) >>10;///1024;
-		prev_r = R - prev_r; 
-		prev_g = G - prev_g; 
-		prev_b = B - prev_b; 
-		if (prev_r < 0)
-			prev_r = 0; 
-		if (prev_g < 0)
-			prev_g = 0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_b < 0)
-			prev_b = 0;
-		else
-			prev_b = prev_b <<10;
-		return (prev_r | prev_g | prev_b);
-	}
-	else
-	if (mode == 1)
-	{
-		prev_r = ( *point & 0x001F );
-		prev_g = ( *point & 0x07E0 ) >>5;///32;
-		prev_b = ( *point & 0xF800 ) >>11;///2048;
-		prev_r = R - prev_r; 
-		prev_g = G - prev_g; 
-		prev_b = B - prev_b;
-		if (prev_r < 0)
-			prev_r = 0; 
-		if (prev_g < 0)
-			prev_g = 0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_b < 0)
-			prev_b = 0;
-		else
-			prev_b = prev_b <<11;
-		return (prev_r | prev_g | prev_b);
-	}
-	else 
-	if (mode == 2)
-	{
-		prev_b = ( *point & 0x001F ); 
-		prev_g = ( *point & 0x03E0 ) >>5;///32;
-		prev_r = ( *point & 0x7C00 ) >>10;///1024;
-		prev_b = B - prev_b; 
-		prev_g = G - prev_g; 
-		prev_r = R - prev_r; 
-		if (prev_b < 0)
-			prev_b = 0; 
-		if (prev_g < 0)
-			prev_g = 0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_r < 0)
-			prev_r = 0;
-		else
-			prev_r = prev_r <<10;
-		return (prev_b | prev_g | prev_r);
-	}
-	else
-	{
-		prev_b = ( *point & 0x001F );
-		prev_g = ( *point & 0x07E0 ) >>5;///32;
-		prev_r = ( *point & 0xF800 ) >>11;///2048;
-		prev_b = B - prev_b; 
-		prev_g = G - prev_g; 
-		prev_r = R - prev_r; 
-		if (prev_b < 0)
-			prev_b = 0; 
-	 	if (prev_g < 0)
-			prev_g = 0;
-		else
-			prev_g = prev_g <<5;
-		if (prev_r < 0)
-			prev_r = 0;
-		else
-			prev_r = prev_r <<11;
-		return (prev_b | prev_g | prev_r);
-	}
-}
-
-short Magic::shading(short *origin, short *point, short ratio, int mode)
-{
-	short prev_r;
-	short prev_g;
-	short prev_b;
-	
 	if (!origin)
 		origin = point;
 
@@ -493,11 +203,12 @@ short Magic::shading(short *origin, short *point, short ratio, int mode)
 	}
 }
 
-short Magic::draw(short R, short G, short B, int mode)
+short Magic::draw(short R, short G, short B)
 {
   short prev_r;
   short prev_g;
   short prev_b;
+  int mode = vga.pixel_format_flag;
 
   R = R >> 3;
   B = B >> 3;
@@ -637,11 +348,12 @@ unsigned Magic::rand_seed()
 //-------- Begin of function Magic::straight_light_beam ----------//
 void Magic::straight_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 								int thickness, int lightness, short R1, short G1, short B1, 
-								short R2, short G2, short B2, int mode, char angle) 
+								short R2, short G2, short B2, char angle) 
 {
 	// All coordinates are in global value
 	// and all coordination will not out bound
 	// RGB range should be 0 - 255 /31 = 255-248 /0 = 0-7
+  int mode = vga.pixel_format_flag;
 	int i, k, diff, ratio, limit;
 	int x = x1;
 	int y = y1;
@@ -942,7 +654,7 @@ FINISH22:			add esi, line			//point = point + line;
 //-------- Begin of function Magic::straight_light_beam2 ----------//
 void Magic::straight_light_beam2(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 								int thickness, int lightness, short R1, short G1, short B1, 
-								short R2, short G2, short B2, int mode, char angle) 
+								short R2, short G2, short B2, char angle) 
 {
 	// this routine is as same as straight_light_beam, but
 	// it performs clipping checking for each pixel. 
@@ -951,6 +663,7 @@ void Magic::straight_light_beam2(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 	// All coordinates are in global value
 	// and all coordination will not out bound
 	// RGB range should be 0 - 255 /31 = 255-248 /0 = 0-7
+  int mode = vga.pixel_format_flag;
 	int i, k, diff, ratio, limit;
 	int x = x1;
 	int y = y1;
@@ -1440,7 +1153,7 @@ FINISH22:			add esi, line			//point = point + line;
 
 void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 								int thickness, int lightness, short R1, short G1, short B1, 
-								short R2, short G2, short B2, int mode, char angle, char fast) 
+								short R2, short G2, short B2, char angle, char fast) 
 {
 	int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
@@ -1496,9 +1209,9 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 		y1 >= b_y1 && y1 <= b_y2 && y2 >= b_y1 && y2 <= b_y2)
 	
 		if (fast)
-			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 		else
-			straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+			straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 	else
 	{
 		if( y1 == y2)
@@ -1516,9 +1229,9 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 			else if (x2 > b_x2)
 				x2 = b_x2;
 			if (fast)
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle);
+				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle);
 			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle);
+				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle);
 		}
 		else if( x1 == x2)
 		{
@@ -1535,9 +1248,9 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 			else if( y2 > b_y2)
 				y2 = b_y2;
 			if (fast)
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 		}
 		else
 		{
@@ -1638,16 +1351,16 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 				}
 			}
 			if (fast)	
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, mode, angle) ;
+				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
 		}
 	}
 }
 // ----------- End of function Magic::draw_light_beam ----------//
 
 // ----------- Begin of function Magic::generate_particle ----------//
-void Magic::generate_particle(int x1, int y1, int x2, int y2, int dirx, int diry, int type, int var, int mode,
+void Magic::generate_particle(int x1, int y1, int x2, int y2, int dirx, int diry, int type, int var,
 							  int number, int birth_time, int lifecount, int lifeLimit, int lifeOffset) 
 {
 	int i, diff;
@@ -1722,6 +1435,7 @@ void Magic::generate_particle(int x1, int y1, int x2, int y2, int dirx, int diry
 			temp_ptr->prev_y = temp_y + temp_ptr->dir_y *(temp_ptr->life -1);
 			temp_ptr->pos_y = temp_ptr->prev_y + temp_ptr->dir_y;
 
+  int mode = vga.pixel_format_flag;
 			// (temp_ptr->life+6) hard coded for firmdie
 			if (mode == 0)
 				temp_ptr->color = 0xFFFF >> (5 +(temp_ptr->life +lifeOffset) *10 /20);//	temp_ptr->prev_color = 0xFFFF;	temp_ptr->delta_color = 25 +temp_r1/4;
@@ -1740,14 +1454,14 @@ void Magic::generate_particle(int x1, int y1, int x2, int y2, int dirx, int diry
 // ----------- End of function Magic::generate_particle ----------//
 // ----------- Begin of function Magic::draw_particle ----------//
 void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, int type, int var, int size,
-						  VgaBuf *vgabuf, int mode, int number, int birth_time, int lifecount, int life_limit, int lifeOffset)
+						  VgaBuf *vgabuf, int number, int birth_time, int lifecount, int life_limit, int lifeOffset)
 {
 	Particle *particle;
 	int i;
 	seed = (unsigned)(x1 +x2 +y1 +y2);
 	(void) rand_seed();
 	h_particle = (Particle *) mem_add( sizeof(Particle) *number);
-	generate_particle( x1, y1, x2, y2, dirx, diry, type, var, mode, number, birth_time, lifecount, life_limit, lifeOffset);
+	generate_particle( x1, y1, x2, y2, dirx, diry, type, var, number, birth_time, lifecount, life_limit, lifeOffset);
 	//lifecount range = must 0 - 20 !;
 	if (type == 0)// direction particle
 	{
@@ -1755,7 +1469,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 		{
 			particle = h_particle +i;
 			if ((particle->life <= life_limit) && (particle->life >= 0))
-				draw_circle(vgabuf, particle->pos_x, particle->pos_y, 5, 1, 1, 200, 100, 100, mode, 0);
+				draw_circle(vgabuf, particle->pos_x, particle->pos_y, 5, 1, 1, 200, 100, 100, 0);
 		}
 	}
 	else
@@ -1765,7 +1479,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 		{
 			particle = h_particle +i;
 			if ((particle->life <= (life_limit<<1)) && (particle->life >= 0))
-				draw_circle(vgabuf, particle->pos_x, particle->pos_y, 5, 1, 1, 200, 100, 100, mode, 0);
+				draw_circle(vgabuf, particle->pos_x, particle->pos_y, 5, 1, 1, 200, 100, 100, 0);
 		}
 	}
 	else
@@ -1775,7 +1489,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 		{
 			particle = h_particle +i;
 			if ((particle->life <= (life_limit<<1)) && (particle->life >= 0))
-				draw_circle(vgabuf, particle->pos_x, particle->pos_y, size, 1, 1, 200, 100, 100, mode, 0);
+				draw_circle(vgabuf, particle->pos_x, particle->pos_y, size, 1, 1, 200, 100, 100, 0);
 		}
 	}
 	else
@@ -1785,7 +1499,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 		{
 			particle = h_particle +i;
 			if ((particle->life <= (life_limit<<1)) && (particle->life >= 0))
-				draw_circle(vgabuf, particle->pos_x, particle->pos_y, size, 1, 1, 200, 200, 200, mode, 1);
+				draw_circle(vgabuf, particle->pos_x, particle->pos_y, size, 1, 1, 200, 200, 200, 1);
 		}
 	}
 	else// direction line
@@ -1811,7 +1525,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 // ----------- End of function Magic::draw_particle -----//
 // ----------- Begin of function Magic::draw_circle -----//
 void Magic::draw_circle(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, char r_y,
-						short R1, short G1, short B1, int mode, int dir) 
+						short R1, short G1, short B1, int dir) 
 {
 	int i, j, line = 2*vgabuf->buf_pitch();
 	int mag, temp_mag, up_level;
@@ -1821,6 +1535,7 @@ void Magic::draw_circle(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, ch
 	int dis_state, temp_dis_state;
 	int start_x, end_x;
 	int start_y, end_y;
+  int mode = vga.pixel_format_flag;
 	int mode_offset = mode *12;
 	unsigned short *base1 = check_table;
 	unsigned short *base2 = color_table;
@@ -2148,7 +1863,7 @@ TD_PLUS:
 // no return values
 //
 void Magic::draw_circle2(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, char r_y,
-						short R1, short G1, short B1, int mode, int dir) 
+						short R1, short G1, short B1, int dir) 
 {
 	int i, j, line = 2*vgabuf->buf_pitch();
 	int mag, temp_mag, up_level;
@@ -2158,6 +1873,7 @@ void Magic::draw_circle2(VgaBuf *vgabuf, int x1, int y1, int radius, char r_x, c
 	int dis_state, temp_dis_state;
 	int start_x, end_x;
 	int start_y, end_y;
+  int mode = vga.pixel_format_flag;
 	int mode_offset = mode *12;
 	unsigned short *base1 = check_table;
 	unsigned short *base2 = color_table;
@@ -2540,7 +2256,7 @@ void Magic::generate_lighting_particle(int x1, int y1, int x2, int y2, int numbe
 // ----------- End of function Magic::generate_particle ----------//
 // ----------- Begin of function Magic::draw_particle ----------//
 void Magic::draw_lighting(int x1, int y1, int x2, int y2, int thickness, int lightness, short R1, short G1, short B1, 
-						  short R2, short G2, short B2, VgaBuf *vgabuf, int var, int mode, int number, int lifecount,
+						  short R2, short G2, short B2, VgaBuf *vgabuf, int var, int number, int lifecount,
 						  int level)
 {
 	Lighting_Particle *particle, *particle1, *h_l_particle;
@@ -2555,8 +2271,8 @@ void Magic::draw_lighting(int x1, int y1, int x2, int y2, int thickness, int lig
 	{
 		particle = h_l_particle +i;
 		draw_light_beam(vgabuf, particle->prev_x, particle->prev_y, particle->pos_x, particle->pos_y,
-						thickness, lightness, R1, G1, B1, R2, G2, B2, mode, 00);
-		draw_circle(vgabuf, particle->pos_x, particle->pos_y, thickness, 1, 1, R3, G3, B3, mode, 0);
+						thickness, lightness, R1, G1, B1, R2, G2, B2, 0);
+		draw_circle(vgabuf, particle->pos_x, particle->pos_y, thickness, 1, 1, R3, G3, B3, 0);
 	}
 	thickness = thickness>>1;
 	lightness = lightness>>1;
@@ -2570,7 +2286,7 @@ void Magic::draw_lighting(int x1, int y1, int x2, int y2, int thickness, int lig
 			particle = h_l_particle +i;
 			particle1 = particle +2;
 			draw_lighting(particle->prev_x, particle->prev_y, particle1->pos_x, particle1->pos_y,
-						thickness, lightness, R1, G1, B1, R2, G2, B2, vgabuf, level, mode, temp,
+						thickness, lightness, R1, G1, B1, R2, G2, B2, vgabuf, level, temp,
 						lifecount, temp1);
 		}
 	}
@@ -2579,48 +2295,48 @@ void Magic::draw_lighting(int x1, int y1, int x2, int y2, int thickness, int lig
 }		
 // ----------- End of function Magic::draw_particle -----//
 // ----------- Begin of function Magic::draw_magic_one -----//
-void Magic::draw_magic_one(VgaBuf *vgabuf, int x1, int y1, int mode, int count) 
+void Magic::draw_magic_one(VgaBuf *vgabuf, int x1, int y1, int count) 
 {
 	if (count == 6)
 	{
 		draw_light_beam(vgabuf, x1-100, y1-200, x1, y1,
-							10, 2, 255, 80, 0, 255, 255, 255, mode, 0);
+							10, 2, 255, 80, 0, 255, 255, 255, 0);
 		draw_light_beam(vgabuf, x1+100, y1-200, x1, y1,
-							10, 2, 255, 80, 0, 255, 255, 255, mode, 0);
+							10, 2, 255, 80, 0, 255, 255, 255, 0);
 		draw_light_beam(vgabuf, x1-150, y1+100, x1, y1,
-							10, 2, 255, 80, 0, 255, 255, 255, mode, 0);
+							10, 2, 255, 80, 0, 255, 255, 255, 0);
 		draw_light_beam(vgabuf, x1+150, y1+100, x1, y1,
-							10, 2, 255, 80, 0, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1-100, y1-200, 17, 1, 1, 255, 200, 0, mode, 1);
-		draw_circle(vgabuf, x1+100, y1-200, 17, 1, 1, 255, 200, 0, mode, 1); 
-		draw_circle(vgabuf, x1-150, y1+100, 25, 1, 1, 255, 200, 0, mode, 1); 
-		draw_circle(vgabuf, x1+150, y1+100, 25, 1, 1, 255, 200, 0, mode, 1); 
-		draw_particle(x1-100, y1-200, x1-100, y1-200, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 0, 20);
-		draw_particle(x1+100, y1-200, x1+100, y1-200, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 0, 20);
-		draw_particle(x1-150, y1+100, x1-150, y1+100, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 0, 20);
-		draw_particle(x1+150, y1+100, x1+150, y1+100, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 0, 20);
+							10, 2, 255, 80, 0, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1-100, y1-200, 17, 1, 1, 255, 200, 0, 1);
+		draw_circle(vgabuf, x1+100, y1-200, 17, 1, 1, 255, 200, 0, 1); 
+		draw_circle(vgabuf, x1-150, y1+100, 25, 1, 1, 255, 200, 0, 1); 
+		draw_circle(vgabuf, x1+150, y1+100, 25, 1, 1, 255, 200, 0, 1); 
+		draw_particle(x1-100, y1-200, x1-100, y1-200, 0, 0, 0, 6, 0, vgabuf, 100, 2, 0, 20);
+		draw_particle(x1+100, y1-200, x1+100, y1-200, 0, 0, 0, 6, 0, vgabuf, 100, 2, 0, 20);
+		draw_particle(x1-150, y1+100, x1-150, y1+100, 0, 0, 0, 6, 0, vgabuf, 100, 2, 0, 20);
+		draw_particle(x1+150, y1+100, x1+150, y1+100, 0, 0, 0, 6, 0, vgabuf, 100, 2, 0, 20);
 	}
 	if ((count == 6) || (count == 7))
-		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, 0);
 	if ((count >5) && (count <16))
-		draw_circle(vgabuf, x1, y1, (count -4)<<3, 0, 1, 255 -25 *(count -6), 255 -25 *(count -6), 10, mode, 1);
+		draw_circle(vgabuf, x1, y1, (count -4)<<3, 0, 1, 255 -25 *(count -6), 255 -25 *(count -6), 10, 1);
 	if ((count >0) && (count <6))
 	{
-		draw_circle(vgabuf, x1-100, y1-200, 17, 1, 1, 255, 200, 0, mode, 1);
-		draw_circle(vgabuf, x1+100, y1-200, 17, 1, 1, 255, 200, 0, mode, 1); 
-		draw_circle(vgabuf, x1-150, y1+100, 25, 1, 1, 255, 200, 0, mode, 1); 
-		draw_circle(vgabuf, x1+150, y1+100, 25, 1, 1, 255, 200, 0, mode, 1); 
-		draw_particle(x1-100, y1-200, x1-100, y1-200, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 6 -count, 20);
-		draw_particle(x1+100, y1-200, x1+100, y1-200, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 6 -count, 20);
-		draw_particle(x1-150, y1+100, x1-150, y1+100, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 6 -count, 20);
-		draw_particle(x1+150, y1+100, x1+150, y1+100, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 6 -count, 20);
+		draw_circle(vgabuf, x1-100, y1-200, 17, 1, 1, 255, 200, 0, 1);
+		draw_circle(vgabuf, x1+100, y1-200, 17, 1, 1, 255, 200, 0, 1); 
+		draw_circle(vgabuf, x1-150, y1+100, 25, 1, 1, 255, 200, 0, 1); 
+		draw_circle(vgabuf, x1+150, y1+100, 25, 1, 1, 255, 200, 0, 1); 
+		draw_particle(x1-100, y1-200, x1-100, y1-200, 0, 0, 0, 6, 0, vgabuf, 100, 2, 6 -count, 20);
+		draw_particle(x1+100, y1-200, x1+100, y1-200, 0, 0, 0, 6, 0, vgabuf, 100, 2, 6 -count, 20);
+		draw_particle(x1-150, y1+100, x1-150, y1+100, 0, 0, 0, 6, 0, vgabuf, 100, 2, 6 -count, 20);
+		draw_particle(x1+150, y1+100, x1+150, y1+100, 0, 0, 0, 6, 0, vgabuf, 100, 2, 6 -count, 20);
 	}
 	if ((count > 6) && (count <21))
-		draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 1, 10, 0, vgabuf, mode, 100, 2, count -6, 6);
+		draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 1, 10, 0, vgabuf, 100, 2, count -6, 6);
 }
 // ----------- End of function Magic::draw_magic_one -----//
 // ----------- Begin of function Magic::draw_magic_two -----//
-void Magic::draw_magic_two(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int diff, int mode, int curStep, int totalStep) 
+void Magic::draw_magic_two(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int diff, int curStep, int totalStep) 
 {
 	//shift all coordinates to the ZOOM display
 	x1 = x1 + bound_x1;
@@ -2636,201 +2352,201 @@ void Magic::draw_magic_two(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int d
 	if (count == 3)
 	{
 		draw_lighting(x1, y1, x2+diff, y2+diff, 8, 2, 30, 30, 00, 180, 180, 180,
-						vgabuf, 27, mode, 10, 3, 1);
-		draw_circle(vgabuf, x2+diff, y2+diff, 30, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, 27, 10, 3, 1);
+		draw_circle(vgabuf, x2+diff, y2+diff, 30, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count > 3) && (count <6))
 	{
 		draw_lighting(x1, y1, x2+diff, y2+diff, 8, 2, 127, 127, 00, 255, 255, 255,
-						vgabuf, (count-3) * 27, mode, 10, 3, 1);
-		draw_circle(vgabuf, x2+diff, y2+diff, 40, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, (count-3) * 27, 10, 3, 1);
+		draw_circle(vgabuf, x2+diff, y2+diff, 40, 1, 1, 255, 255, 255, 0);
 	}
 	if (count == 6)
 	{
 		draw_lighting(x1, y1, x2-diff, y2-diff, 8, 2, 30, 30, 00, 180, 180, 180,
-						vgabuf, 117, mode, 10, 3, 1);
-		draw_circle(vgabuf, x2-diff, y2-diff, 30, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, 117, 10, 3, 1);
+		draw_circle(vgabuf, x2-diff, y2-diff, 30, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count > 6) && (count <9))
 	{
 		draw_lighting(x1, y1, x2-diff, y2-diff, 8, 2, 127, 127, 00, 255, 255, 255,
-						vgabuf, (count-6) * 117, mode, 10, 3, 1);
-		draw_circle(vgabuf, x2-diff, y2-diff, 40, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, (count-6) * 117, 10, 3, 1);
+		draw_circle(vgabuf, x2-diff, y2-diff, 40, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >0) && (count <4))
 	{
-		draw_circle(vgabuf, x1, y1, (10 *count), 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1 +5 -(10 *count), (12 *count), 1, 1, 255, 255, 255, mode, 1);
+		draw_circle(vgabuf, x1, y1, (10 *count), 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1 +5 -(10 *count), (12 *count), 1, 1, 255, 255, 255, 1);
 	}
 	if ((count >3) && (count <10))
 	{
-		draw_circle(vgabuf, x1, y1, 50, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1 -35, 50, 1, 1, 255, 255, 255, mode, 1);
+		draw_circle(vgabuf, x1, y1, 50, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1 -35, 50, 1, 1, 255, 255, 255, 1);
 	}
 	if ((count > 3) && (count <18))
 		draw_particle(x2+diff+10, y2+diff+10, x2+diff-10, y2+diff-10, 0, 0, 1, 10, 0, 
-						vgabuf, mode, 100, 2, count-3, 6);
+						vgabuf, 100, 2, count-3, 6);
 	if ((count > 6) && (count <21))
 		draw_particle(x2-diff+10, y2-diff+10, x2-diff-10, y2-diff-10, 0, 0, 1, 10, 0, 
-						vgabuf, mode, 100, 2, count-6, 6);
+						vgabuf, 100, 2, count-6, 6);
 }
 // ----------- End of function Magic::draw_magic_two -----//
 // ----------- Begin of function Magic::draw_magic_three -----//
-void Magic::draw_magic_three(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_three(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
 	if ((count >0) && (count <7))
 	{
-		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, mode, 1);
+		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, 1);
 	}
 	if (count == 1)
 	{
-		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, mode, 2);
-		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, mode, 0);
+		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, 2);
+		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >0) && (count <7))
 	{
-		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count+1)<<3, 0, 1, 255 -50 *(count -1), 255 -50 *(count -1), 10, mode, 1);
-		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count+2)<<3, 0, 1, 255 -50 *(count -1), 255 -50 *(count -1), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count+1)<<3, 0, 1, 255 -50 *(count -1), 255 -50 *(count -1), 10, 1);
+		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count+2)<<3, 0, 1, 255 -50 *(count -1), 255 -50 *(count -1), 10, 1);
 	}
 
 	x1 =x1 -100;
 	if ((count >5) && (count <12))
 	{
-		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, mode, 1);
+		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, 1);
 	}
 	if (count == 6)
 	{
-		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, mode, 2);
-		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, mode, 0);
+		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, 2);
+		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >5) && (count <12))
 	{
-		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count-4)<<3, 0, 1, 255 -50 *(count -6), 255 -50 *(count -6), 10, mode, 1);
-		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count-3)<<3, 0, 1, 255 -50 *(count -6), 255 -50 *(count -6), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count-4)<<3, 0, 1, 255 -50 *(count -6), 255 -50 *(count -6), 10, 1);
+		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count-3)<<3, 0, 1, 255 -50 *(count -6), 255 -50 *(count -6), 10, 1);
 	}
 	x1 =x1 +200;
 	if ((count >10) && (count <17))
 	{
-		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, mode, 1);
+		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, 1);
 	}
 	if (count == 11)
 	{
-		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, mode, 2);
-		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, mode, 0);
+		draw_light_beam(vgabuf, x1, y1, x2, y2,	25, 0, 127, 127, 0, 127, 127, 127, 2);
+		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >10) && (count <17))
 	{
-		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count-9)<<3, 0, 1, 255 -50 *(count -11), 255 -50 *(count -11), 10, mode, 1);
-		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count-8)<<3, 0, 1, 255 -50 *(count -11), 255 -50 *(count -11), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)/3+x2, (y1-y2)/3+y2, (count-9)<<3, 0, 1, 255 -50 *(count -11), 255 -50 *(count -11), 10, 1);
+		draw_circle(vgabuf, (x1-x2)*2/3+x2, (y1-y2)*2/3+y2, (count-8)<<3, 0, 1, 255 -50 *(count -11), 255 -50 *(count -11), 10, 1);
 	}
 	if ((count >0) && (count <21))
-		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, mode, 100, 2, count, 9);
+		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, 100, 2, count, 9);
 	if ((count >5) && (count <21))
-		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, mode, 100, 2, count -5, 7);
+		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, 100, 2, count -5, 7);
 	if ((count >10) && (count <21))
-		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, mode, 100, 2, count -10, 6);
+		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, 100, 2, count -10, 6);
 }
 // ----------- End of function Magic::draw_magic_three -----//
 // ----------- Begin of function Magic::draw_magic_four -----//
-void Magic::draw_magic_four(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_four(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
 	int step_x = (x2 - x1)>>3;
 	int step_y = (y2 - y1)>>3;
 	int avg = (step_x + step_y)>>2;
 	if ((count >0) && (count <3))
 	{
-		draw_circle(vgabuf, x1, y1, 53, 1, 1, 255, 0, 255, mode, 1);
-		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1, 53, 1, 1, 255, 0, 255, 1);
+		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1-50, y1, x1-10, y1, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1-50, y1, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1-50, y1, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1+50, y1, x1+10, y1, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1+50, y1, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1+50, y1, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1, y1-50, x1, y1-10, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1, y1-50, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1, y1-50, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1, y1+50, x1, y1+10, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);	
-		draw_circle(vgabuf, x1, y1+50, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);	
+		draw_circle(vgabuf, x1, y1+50, 10, 1, 1, 255, 255, 255, 0);
 	}
 	x1 = x1+(count-2)*step_x;
 	y1 = y1+(count-2)*step_y;
 	if ((count >2) && (count <10))
 	{
 		draw_lighting(x1-33, y1, x1-10, y1, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1-33, y1, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1-33, y1, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1+33, y1, x1+10, y1, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1+33, y1, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1+33, y1, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1, y1-50, x1, y1-10, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x1, y1-50, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x1, y1-50, 10, 1, 1, 255, 255, 255, 0);
 		draw_lighting(x1, y1+50, x1, y1+10, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);	
-		draw_circle(vgabuf, x1, y1+50, 10, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 53, 1, 0, 255, 0, 255, mode, 1);
-		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);	
+		draw_circle(vgabuf, x1, y1+50, 10, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 53, 1, 0, 255, 0, 255, 1);
+		draw_circle(vgabuf, x1, y1, 40, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >2) && (count <11))
-		draw_particle(x1+5, y1+5, x1-5, y1-5, -step_x, -step_y, 0, -avg, 0, vgabuf, mode, 100, 2, 3, 15);
+		draw_particle(x1+5, y1+5, x1-5, y1-5, -step_x, -step_y, 0, -avg, 0, vgabuf, 100, 2, 3, 15);
 	if ((count >9) && (count <21))
-		draw_circle(vgabuf, x2, y2, (count-8)<<3, 0, 1, 255 -22 *(count -10), 10, 255 -22 *(count -10), mode, 1);
+		draw_circle(vgabuf, x2, y2, (count-8)<<3, 0, 1, 255 -22 *(count -10), 10, 255 -22 *(count -10), 1);
 	if ((count >9) && (count <21))
-		draw_particle(x2+5, y2+5, x2-5, y2-5, -step_x>>1, -step_y>>1, 1, -avg, 0, vgabuf, mode, 100, 2, count-9, 5);
+		draw_particle(x2+5, y2+5, x2-5, y2-5, -step_x>>1, -step_y>>1, 1, -avg, 0, vgabuf, 100, 2, count-9, 5);
 }
 // ----------- End of function Magic::draw_magic_four -----//
 // ----------- Begin of function Magic::draw_magic_five -----//
-void Magic::draw_magic_five(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_five(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
 	int step_x = (x1 - x2)>>2;
 	int step_y = (y1 - y2)>>2;
 	int avg = (step_x + step_y)>>1;
-	draw_particle(x2+ 8, y2+ 8, x2-10, y2-10, step_x>>1, step_y>>1, 2, avg, 40 -(count<<1), vgabuf, mode, 15, 2, count-1, 8);
-	draw_particle(x2+10, y2+10, x2- 8, y2- 8, step_x>>1, step_y>>1, 3, avg, 20, vgabuf, mode, 5, 2, count-1, 8);
+	draw_particle(x2+ 8, y2+ 8, x2-10, y2-10, step_x>>1, step_y>>1, 2, avg, 40 -(count<<1), vgabuf, 15, 2, count-1, 8);
+	draw_particle(x2+10, y2+10, x2- 8, y2- 8, step_x>>1, step_y>>1, 3, avg, 20, vgabuf, 5, 2, count-1, 8);
 }
 // ----------- End of function Magic::draw_magic_five -----//
 // ----------- Begin of function Magic::draw_magic_six -----//
-void Magic::draw_magic_six(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_six(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
 	if ((count >10) && (count <15))
 	{
-		draw_circle(vgabuf, x1, y1, 25 +(count<<3), 1, 1, 55 +5 *(count-10), 255 -(count-10)*50, 255 -(count-10)*50, mode, 0);
-		draw_circle(vgabuf, x1, y1, 15 +(count<<3), 0, 1, 35 +5 *(count-10), 0, 0, mode, 1);
+		draw_circle(vgabuf, x1, y1, 25 +(count<<3), 1, 1, 55 +5 *(count-10), 255 -(count-10)*50, 255 -(count-10)*50, 0);
+		draw_circle(vgabuf, x1, y1, 15 +(count<<3), 0, 1, 35 +5 *(count-10), 0, 0, 1);
 	}
 	if ((count >0) && (count <11))	
 	{
-		draw_light_beam(vgabuf, x1, y1, (x2-x1)*count/10 +x1, (y2-y1)*count/10 +y1,	25, 0, 127, 127, 0, 127, 127, 127, mode, 2);
-		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, mode, 1);
+		draw_light_beam(vgabuf, x1, y1, (x2-x1)*count/10 +x1, (y2-y1)*count/10 +y1,	25, 0, 127, 127, 0, 127, 127, 127, 2);
+		draw_circle(vgabuf, x1, y1, 55, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 35, 0, 1, 255, 0, 0, 1);
 	}
 	if (count ==10)
-		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x2, y2, 35, 1, 1, 255, 255, 255, 0);
 	if ((count >3) && (count <8))
-		draw_circle(vgabuf, (x1-x2)*5/6+x2, (y1-y2)*5/6+y2, (count+1)<<3, 0, 1, 255 -70 *(count -4), 255 -70 *(count -4), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)*5/6+x2, (y1-y2)*5/6+y2, (count+1)<<3, 0, 1, 255 -70 *(count -4), 255 -70 *(count -4), 10, 1);
 	if ((count >4) && (count <9))
-		draw_circle(vgabuf, (x1-x2)*4/6+x2, (y1-y2)*4/6+y2, (count-1)<<3, 0, 1, 255 -70 *(count -5), 255 -70 *(count -5), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)*4/6+x2, (y1-y2)*4/6+y2, (count-1)<<3, 0, 1, 255 -70 *(count -5), 255 -70 *(count -5), 10, 1);
 	if ((count >5) && (count <10))
-		draw_circle(vgabuf, (x1-x2)*3/6+x2, (y1-y2)*3/6+y2, (count-3)<<3, 0, 1, 255 -70 *(count -6), 255 -70 *(count -6), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)*3/6+x2, (y1-y2)*3/6+y2, (count-3)<<3, 0, 1, 255 -70 *(count -6), 255 -70 *(count -6), 10, 1);
 	if ((count >7) && (count <12))
-		draw_circle(vgabuf, (x1-x2)*2/6+x2, (y1-y2)*2/6+y2, (count-6)<<3, 0, 1, 255 -70 *(count -8), 255 -70 *(count -8), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)*2/6+x2, (y1-y2)*2/6+y2, (count-6)<<3, 0, 1, 255 -70 *(count -8), 255 -70 *(count -8), 10, 1);
 	if ((count >8) && (count <13))
-		draw_circle(vgabuf, (x1-x2)*1/6+x2, (y1-y2)*1/6+y2, (count-8)<<3, 0, 1, 255 -70 *(count -9), 255 -70 *(count -9), 10, mode, 1);
+		draw_circle(vgabuf, (x1-x2)*1/6+x2, (y1-y2)*1/6+y2, (count-8)<<3, 0, 1, 255 -70 *(count -9), 255 -70 *(count -9), 10, 1);
 	if ((count >10) && (count <21))
-		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, mode, 100, 2, count-10, 5);
+		draw_particle(x2+5, y2+5, x2-5, y2-5, 0, 0, 1, 10, 0, vgabuf, 100, 2, count-10, 5);
 }
 // ----------- End of function Magic::draw_magic_six -----//
 
 // ----------- Begin of function Magic::draw_magic_seven -----//
-void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
 //	IMGline(vgabuf->buf_ptr(), vgabuf->buf_true_pitch(), vgabuf->buf_width(),
 //						vgabuf->buf_height(), x1-20, y1, x1+20, y1, 0xFFFF);
-//	draw_circle(vgabuf, x1, y1, 30, 1, 1, 155, 155, 255, mode, 0);
+//	draw_circle(vgabuf, x1, y1, 30, 1, 1, 155, 155, 255, 0);
 
 	int totalNum = 20;
 	int totalFrame = 20;
@@ -2863,80 +2579,80 @@ void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int
 		int frame = (int)((rand_seed() + count)%15);
 		if ((frame >1) && (frame <4))
 		{
-			draw_circle(vgabuf, curX, curY, 15, 1, 1, 255, 255, 255, mode, 0);
+			draw_circle(vgabuf, curX, curY, 15, 1, 1, 255, 255, 255, 0);
 		}	
 		if ((frame >3) && (frame <6))
 		{
-			draw_circle(vgabuf, curX, curY, 15, 1, 1, 255, 255, 255, mode, 0);
-			draw_circle(vgabuf, curX, curY, 10, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
+			draw_circle(vgabuf, curX, curY, 15, 1, 1, 255, 255, 255, 0);
+			draw_circle(vgabuf, curX, curY, 10, 1, 1, color[col][0], color[col][1], color[col][2], 1);
 		}
 		if ((frame >5) && (frame <8))
 		{
-			draw_circle(vgabuf, curX, curY, 15, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-			draw_circle(vgabuf, curX, curY, 15, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-			draw_light_beam(vgabuf, curX, curY, curX-20, curY, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX+20, curY, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
+			draw_circle(vgabuf, curX, curY, 15, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+			draw_circle(vgabuf, curX, curY, 15, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+			draw_light_beam(vgabuf, curX, curY, curX-20, curY, 3, 1, 255, 255, 255, 255, 255, 255, 2);
+			draw_light_beam(vgabuf, curX, curY, curX+20, curY, 3, 1, 255, 255, 255, 255, 255, 255, 2);
 		}	
 	
 		if ((frame >7) && (frame <10))
 		{
-			draw_circle(vgabuf, curX, curY, 40, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-			draw_circle(vgabuf, curX, curY, 10, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-			draw_light_beam(vgabuf, curX, curY, curX-20, curY, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX+20, curY, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
+			draw_circle(vgabuf, curX, curY, 40, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+			draw_circle(vgabuf, curX, curY, 10, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+			draw_light_beam(vgabuf, curX, curY, curX-20, curY, 3, 1, 255, 255, 255, 255, 255, 255, 2);
+			draw_light_beam(vgabuf, curX, curY, curX+20, curY, 3, 1, 255, 255, 255, 255, 255, 255, 2);
 		}	
 
 		if ((frame >9) && (frame <12))
 		{
-			draw_circle(vgabuf, curX, curY, 30, 1, 1, 255, 255, 255, mode, 0);
-			draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-			draw_light_beam(vgabuf, curX, curY, curX-30, curY, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX+30, curY, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX, curY-30, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX, curY+30, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
+			draw_circle(vgabuf, curX, curY, 30, 1, 1, 255, 255, 255, 0);
+			draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+			draw_light_beam(vgabuf, curX, curY, curX-30, curY, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX+30, curY, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX, curY-30, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX, curY+30, 5, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 		}
 
 		if ((frame > 11) && (frame <14))
 		{
-			draw_circle(vgabuf, curX, curY, 20, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-			draw_circle(vgabuf, curX, curY, 30, 1, 1, 255, 255, 255, mode, 0);
-		//	draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-			draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, 255, 255, 255, mode, 0);
-			draw_light_beam(vgabuf, curX, curY, curX-40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX+40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX, curY-40, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-			draw_light_beam(vgabuf, curX, curY, curX, curY+40, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
+			draw_circle(vgabuf, curX, curY, 20, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+			draw_circle(vgabuf, curX, curY, 30, 1, 1, 255, 255, 255, 0);
+		//	draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+			draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, 255, 255, 255, 0);
+			draw_light_beam(vgabuf, curX, curY, curX-40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX+40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX, curY-40, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+			draw_light_beam(vgabuf, curX, curY, curX, curY+40, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 		}	
 	}
 }
 // ----------- End of function Magic::draw_magic_seven -----//
 
 // ----------- Begin of function Magic::draw_magic_eight -----//
-void Magic::draw_magic_eight(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int count) 
+void Magic::draw_magic_eight(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
-//	draw_circle2(vgabuf, x1-100, y1,		 100, 100, 255, 055, 055, mode, 1);
-//	draw_circle2(vgabuf, x1-100, y1+200, 100, 100, 255, 055, 055, mode, 1);
+//	draw_circle2(vgabuf, x1-100, y1,		 100, 100, 255, 055, 055, 1);
+//	draw_circle2(vgabuf, x1-100, y1+200, 100, 100, 255, 055, 055, 1);
 
-//	draw_circle2(vgabuf, x1-100, y1+400, 100, 100, 255, 055, 055, mode, 1);
-//	draw_circle2(vgabuf, x1+100, y1+200, 100, 100, 255, 055, 055, mode, 0);
-//	draw_circle2(vgabuf, x1+100, y1,		 100, 100, 255, 055, 055, mode, 0);
+//	draw_circle2(vgabuf, x1-100, y1+400, 100, 100, 255, 055, 055, 1);
+//	draw_circle2(vgabuf, x1+100, y1+200, 100, 100, 255, 055, 055, 0);
+//	draw_circle2(vgabuf, x1+100, y1,		 100, 100, 255, 055, 055, 0);
 
 //1. why circle can't use 0,1 
 //2. why when 0,1 occurs clipping problem
 
 // ----------- End of function Magic::draw_magic_eight -----//
 
-	draw_circle2(vgabuf, x1, y1, 80, config.frame_speed /3, 0, 255,   0,   0, mode, 1);
-	draw_circle2(vgabuf, x1, y1, 80, 0, config.frame_speed /3,   0, 255,   0, mode, 1);
-	draw_circle2(vgabuf, x1, y1, 80, 0, 0,   0,   0, 255, mode, 1);
+	draw_circle2(vgabuf, x1, y1, 80, config.frame_speed /3, 0, 255,   0,   0, 1);
+	draw_circle2(vgabuf, x1, y1, 80, 0, config.frame_speed /3,   0, 255,   0, 1);
+	draw_circle2(vgabuf, x1, y1, 80, 0, 0,   0,   0, 255, 1);
 
-	draw_circle2(vgabuf, x1, y1+300, 80, config.frame_speed /3, 0, 255,   0,   0, mode, 1);
-	draw_circle2(vgabuf, x1, y1+300, 80, 0, config.frame_speed /3,   0, 255,   0, mode, 1);
-	draw_circle2(vgabuf, x1, y1+300, 80, 0, 0,   0,   0, 255, mode, 1);
+	draw_circle2(vgabuf, x1, y1+300, 80, config.frame_speed /3, 0, 255,   0,   0, 1);
+	draw_circle2(vgabuf, x1, y1+300, 80, 0, config.frame_speed /3,   0, 255,   0, 1);
+	draw_circle2(vgabuf, x1, y1+300, 80, 0, 0,   0,   0, 255, 1);
 }
 
 // ----------- Begin of function Magic::draw_magic_nine -----//
-void Magic::draw_magic_nine(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int curStep, int totalStep) 
+void Magic::draw_magic_nine(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int curStep, int totalStep) 
 {
 	//shift all coordinates to the ZOOM display
 	x1 = x1 + bound_x1;
@@ -2950,49 +2666,49 @@ void Magic::draw_magic_nine(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int 
 	if (count == 3)
 	{
 		draw_lighting(x1, y1, x2, y2, 4, 1, 30, 30, 00, 180, 180, 180,
-						vgabuf, 27, mode, 12, 3, 2);
-		draw_circle(vgabuf, x2, y2, 10, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, 27, 12, 3, 2);
+		draw_circle(vgabuf, x2, y2, 10, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count > 3) && (count <6))
 	{
 		draw_lighting(x1, y1, x2, y2, 4, 1, 127, 127, 00, 255, 255, 255,
-						vgabuf, (count+3) * 27, mode, 12, 3, 2);
-		draw_circle(vgabuf, x2, y2, 20, 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, (count+3) * 27, 12, 3, 2);
+		draw_circle(vgabuf, x2, y2, 20, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count >0) && (count <4))
 	{
 		draw_light_beam(vgabuf, x1, y1, x1, y1-count*10,
-						5, 2, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						5, 2, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(vgabuf, x1, y1, x1+count*10, y1,
-						5, 2, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						5, 2, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(vgabuf, x1, y1, x1, y1+count*10,
-						5, 2, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						5, 2, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(vgabuf, x1, y1, x1-count*10, y1,
-						5, 2, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
-		draw_circle(vgabuf, x1, y1, (12 *count), 0, 1, 255, 255, 255, mode, 0);
+						5, 2, 127, 127, 0, 255, 255, 255, 2);
+		draw_circle(vgabuf, x1, y1, (12 *count), 0, 1, 255, 255, 255, 0);
 	}
 	if ((count >2) && (count <6))
 	{
-		draw_circle(vgabuf, x1, y1, 20, 1, 1, 127, 127, 0, mode, 1);
-		draw_circle(vgabuf, x1, y1, 25, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1-7, y1+7, 10, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1, 20, 1, 1, 127, 127, 0, 1);
+		draw_circle(vgabuf, x1, y1, 25, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1-7, y1+7, 10, 1, 1, 255, 255, 255, 0);
 	}
 }
 // ----------- End of function Magic::draw_magic_nine -----//
 
 // ----------- Begin of function Magic::draw_magic_nine_die -----//
-void Magic::draw_magic_nine_die(VgaBuf *vgabuf, int x1, int y1, int mode, int count) 
+void Magic::draw_magic_nine_die(VgaBuf *vgabuf, int x1, int y1, int count) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
 
 	if (count <15)
-		draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 1, 10, 0, vgabuf, mode, 50, 2, count, 6);
+		draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 1, 10, 0, vgabuf, 50, 2, count, 6);
 }
 // ----------- End of function Magic::draw_magic_nine_die -----//
 
 // ----------- Begin of function Magic::draw_magic_ten -----//
-void Magic::draw_magic_ten(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int mode, int curStep, int totalStep, int delay) 
+void Magic::draw_magic_ten(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int curStep, int totalStep, int delay) 
 {
 	//shift all coordinates to the ZOOM display
 	x1 = x1 + bound_x1;
@@ -3003,77 +2719,77 @@ void Magic::draw_magic_ten(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int m
 	int count = curStep;
 
 	if ((count >0) && (count <= delay))
-		draw_particle(x1-5, y1-120, x1+5, y1-110, 0, 0, 0, 6, 0, vgabuf, mode, 100, 2, 9 -curStep, 20);
+		draw_particle(x1-5, y1-120, x1+5, y1-110, 0, 0, 0, 6, 0, vgabuf, 100, 2, 9 -curStep, 20);
 
 	if ((count == 6) || (count == 7))
-		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, 0);
 	
 	if ((count >5) && (count <16))
-		draw_circle(vgabuf, x1, y1-405, (count -4)<<3, 1, 1, 255 -25 *(count -6), 255 -25 *(count -6), 10, mode, 1);
+		draw_circle(vgabuf, x1, y1-405, (count -4)<<3, 1, 1, 255 -25 *(count -6), 255 -25 *(count -6), 10, 1);
 
 	if (count == 6)
-		draw_lighting(x1, y1-110, x1+5, y1-400, 8, 2, 30, 30, 00, 180, 180, 180, vgabuf, 27, mode, 10, 3, 1);
+		draw_lighting(x1, y1-110, x1+5, y1-400, 8, 2, 30, 30, 00, 180, 180, 180, vgabuf, 27, 10, 3, 1);
 	
 	if ((count > 6) && (count <9))
 	{
-		draw_lighting(x1, y1-110, x1+5, y1-400, 8, 2, 127, 127, 00, 255, 255, 255, vgabuf, (count-6) * 27, mode, 10, 3, 1);
-		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, mode, 0);
+		draw_lighting(x1, y1-110, x1+5, y1-400, 8, 2, 127, 127, 00, 255, 255, 255, vgabuf, (count-6) * 27, 10, 3, 1);
+		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, 0);
 	}
 	if (count == 9)
 	{
-		draw_lighting(x1, y1-110, x1-5, y1-400, 8, 2, 30, 30, 00, 180, 180, 180, vgabuf, 117, mode, 10, 3, 1);
-		draw_circle(vgabuf, x1, y1-405, 30, 1, 1, 255, 255, 255, mode, 0);
+		draw_lighting(x1, y1-110, x1-5, y1-400, 8, 2, 30, 30, 00, 180, 180, 180, vgabuf, 117, 10, 3, 1);
+		draw_circle(vgabuf, x1, y1-405, 30, 1, 1, 255, 255, 255, 0);
 	}
 	if ((count > 9) && (count <12))
 	{
-		draw_lighting(x1, y1-110, x1-5, y1-400, 8, 2, 127, 127, 00, 255, 255, 255, vgabuf, (count-9) * 117, mode, 10, 3, 1);
-		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, mode, 0);
+		draw_lighting(x1, y1-110, x1-5, y1-400, 8, 2, 127, 127, 00, 255, 255, 255, vgabuf, (count-9) * 117, 10, 3, 1);
+		draw_circle(vgabuf, x1, y1-405, 40, 1, 1, 255, 255, 255, 0);
 	}
 
 	if ((count >1) && (count <5))
-		draw_circle(vgabuf, x1, y1-115, (10 *(count)), 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1-115, (10 *(count)), 1, 1, 255, 255, 255, 0);
 	
 	if ((count >4) && (count <16))
-		draw_circle(vgabuf, x1, y1-115, 60, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1-115, 60, 1, 1, 255, 255, 255, 0);
 			
 	if ((count >6) && (count <13))
 	{
 		draw_light_beam(&vga_back, x1, y1-405, x1, y1-45-405,
-						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						10, 4, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(&vga_back, x1, y1-405, x1+45, y1-405,
-						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						10, 4, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(&vga_back, x1, y1-405, x1, y1+45-405,
-						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						10, 4, 127, 127, 0, 255, 255, 255, 2);
 		draw_light_beam(&vga_back, x1, y1-405, x1-45, y1-405,
-						10, 4, 127, 127, 0, 255, 255, 255, vga.pixel_format_flag, 02);
+						10, 4, 127, 127, 0, 255, 255, 255, 2);
 	}
 
 	if ((count >6) && (count <16))
-		draw_circle(vgabuf, x1, y1-405, 50, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1-405, 50, 1, 1, 255, 255, 255, 0);
 
 	if ((count >11) && (count <16))
 	{
-		draw_light_beam(vgabuf, x1, y1-400, x2, y2, 25, 0, 127, 127, 0, 127, 127, 127, mode, 2, 0);
-		draw_circle(vgabuf, x2, y2, 53- 10 * (count-11), 1, 1, 255, 0, 255, mode, 1);
-		draw_circle(vgabuf, x2, y2, 40- 10 * (count-11), 1, 1, 255, 255, 255, mode, 0);
+		draw_light_beam(vgabuf, x1, y1-400, x2, y2, 25, 0, 127, 127, 0, 127, 127, 127, 2, 0);
+		draw_circle(vgabuf, x2, y2, 53- 10 * (count-11), 1, 1, 255, 0, 255, 1);
+		draw_circle(vgabuf, x2, y2, 40- 10 * (count-11), 1, 1, 255, 255, 255, 0);
 		draw_lighting(x2-50 + 10 * (count-11), y2, x2-10 + 2 * (count-11), y2, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x2-50 + 10 * (count-11), y2, 10 - 2 * (count-11), 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x2-50 + 10 * (count-11), y2, 10 - 2 * (count-11), 1, 1, 255, 255, 255, 0);
 		draw_lighting(x2+50 - 10 * (count-11), y2, x2+10 - 2 * (count-11), y2, 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x2+50 - 10 * (count-11), y2, 10 - 2 * (count-11), 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x2+50 - 10 * (count-11), y2, 10 - 2 * (count-11), 1, 1, 255, 255, 255, 0);
 		draw_lighting(x2, y2-50 + 10 * (count-11), x2, y2-10 + 2 * (count-11), 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);
-		draw_circle(vgabuf, x2, y2-50 + 10 * (count-11), 10 - 2 * (count-11), 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);
+		draw_circle(vgabuf, x2, y2-50 + 10 * (count-11), 10 - 2 * (count-11), 1, 1, 255, 255, 255, 0);
 		draw_lighting(x2, y2+50 - 10 * (count-11), x2, y2+10 - 2 * (count-11), 4, 1, 127, 0, 127, 255, 255, 255,
-						vgabuf, count, mode, 5, 2, 0);	
-		draw_circle(vgabuf, x2, y2+50 - 10 * (count-11), 10 - 2 * (count-11), 1, 1, 255, 255, 255, mode, 0);
+						vgabuf, count, 5, 2, 0);	
+		draw_circle(vgabuf, x2, y2+50 - 10 * (count-11), 10 - 2 * (count-11), 1, 1, 255, 255, 255, 0);
 	}
 }
 // ----------- End of function Magic::draw_magic_ten -----//
 
 // ----------- Begin of function Magic::draw_magic_eleven -----//
-void Magic::draw_magic_eleven(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep) 
+void Magic::draw_magic_eleven(VgaBuf *vgabuf, int x1, int y1, int curStep) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
@@ -3082,12 +2798,12 @@ void Magic::draw_magic_eleven(VgaBuf *vgabuf, int x1, int y1, int mode, int curS
 	int intensity = (curStep >> 2); 
 
 	draw_circle2(vgabuf, x1, y1, 40 * curStep, 1, 0, (curStep<<4)>>intensity, 255>>intensity,
-		(255-(curStep<<4))>>intensity, mode, 1);
+		(255-(curStep<<4))>>intensity, 1);
 }
 // ----------- End of function Magic::draw_magic_eleven -----//
 
 // ----------- Begin of function Magic::draw_magic_twelve -----//
-void Magic::draw_magic_twelve(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep, int nationRecno) 
+void Magic::draw_magic_twelve(VgaBuf *vgabuf, int x1, int y1, int curStep, int nationRecno) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
@@ -3126,76 +2842,76 @@ void Magic::draw_magic_twelve(VgaBuf *vgabuf, int x1, int y1, int mode, int curS
 
 	if ((curStep >0) && (curStep <2))
 	{
-		draw_circle(vgabuf, x1, y1, 45, 1, 1, 255, 255, 255, mode, 0);
+		draw_circle(vgabuf, x1, y1, 45, 1, 1, 255, 255, 255, 0);
 	}	
 	if ((curStep >1) && (curStep <3))
 	{
-		draw_circle(vgabuf, x1, y1, 45, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1, y1, 30, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
+		draw_circle(vgabuf, x1, y1, 45, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1, y1, 30, 1, 1, color[col][0], color[col][1], color[col][2], 1);
 	}
 	if ((curStep >2) && (curStep <4))
 	{
-		draw_circle(vgabuf, x1, y1, 45, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-		draw_circle(vgabuf, x1, y1, 45, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-		draw_light_beam(vgabuf, x1, y1, x1-60, y1, 5, 1, 255, 255, 255, 255, 255, 255, mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+60, y1, 5, 1, 255, 255, 255, 255, 255, 255, mode, 2);
+		draw_circle(vgabuf, x1, y1, 45, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+		draw_circle(vgabuf, x1, y1, 45, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+		draw_light_beam(vgabuf, x1, y1, x1-60, y1, 5, 1, 255, 255, 255, 255, 255, 255, 2);
+		draw_light_beam(vgabuf, x1, y1, x1+60, y1, 5, 1, 255, 255, 255, 255, 255, 255, 2);
 	}	
 
 	if ((curStep >3) && (curStep <5)) 
 	{
-		draw_circle(vgabuf, x1, y1, 120, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-		draw_circle(vgabuf, x1, y1, 30, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-		draw_light_beam(vgabuf, x1, y1, x1-60, y1, 5, 1, 255, 255, 255, 255, 255, 255, mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+60, y1, 5, 1, 255, 255, 255, 255, 255, 255, mode, 2);
+		draw_circle(vgabuf, x1, y1, 120, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+		draw_circle(vgabuf, x1, y1, 30, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+		draw_light_beam(vgabuf, x1, y1, x1-60, y1, 5, 1, 255, 255, 255, 255, 255, 255, 2);
+		draw_light_beam(vgabuf, x1, y1, x1+60, y1, 5, 1, 255, 255, 255, 255, 255, 255, 2);
 	}	
 
 	if ((curStep >4) && (curStep <7))
 	{
-		draw_circle(vgabuf, x1, y1, 60, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-		draw_circle(vgabuf, x1, y1, 120, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-		draw_circle(vgabuf, x1+24, y1+24, 36, 1, 1, color[col][0], color[col][1], color[col][2], mode, 0);
-		draw_light_beam(vgabuf, x1, y1, x1-90, y1, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+90, y1, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1-90, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1+90, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
+		draw_circle(vgabuf, x1, y1, 60, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+		draw_circle(vgabuf, x1, y1, 120, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+		draw_circle(vgabuf, x1+24, y1+24, 36, 1, 1, color[col][0], color[col][1], color[col][2], 0);
+		draw_light_beam(vgabuf, x1, y1, x1-90, y1, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1+90, y1, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1-90, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1+90, 8, 1, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 	}
 
 	if ((curStep >6) && (curStep <9))
 	{
-		draw_circle(vgabuf, x1, y1, 60, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-		draw_circle(vgabuf, x1, y1, 90, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1+24, y1+24, 36, 1, 1, 255, 255, 255, mode, 0);
-		draw_light_beam(vgabuf, x1, y1, x1-120, y1, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+120, y1, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1-120, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1+120, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
+		draw_circle(vgabuf, x1, y1, 60, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+		draw_circle(vgabuf, x1, y1, 90, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1+24, y1+24, 36, 1, 1, 255, 255, 255, 0);
+		draw_light_beam(vgabuf, x1, y1, x1-120, y1, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1+120, y1, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1-120, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1+120, 8, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 	}
 
 	if ((curStep >8) && (curStep <11))
 	{
-		draw_circle(vgabuf, x1, y1, 70, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-		draw_circle(vgabuf, x1, y1, 60, 1, 1, 255, 255, 255, mode, 0);
-		draw_circle(vgabuf, x1+16, y1+16, 24, 1, 1, 255, 255, 255, mode, 0);
-		draw_light_beam(vgabuf, x1, y1, x1-80, y1, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+80, y1, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1-80, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1, y1+80, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], mode, 2);
+		draw_circle(vgabuf, x1, y1, 70, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+		draw_circle(vgabuf, x1, y1, 60, 1, 1, 255, 255, 255, 0);
+		draw_circle(vgabuf, x1+16, y1+16, 24, 1, 1, 255, 255, 255, 0);
+		draw_light_beam(vgabuf, x1, y1, x1-80, y1, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1+80, y1, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1-80, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
+		draw_light_beam(vgabuf, x1, y1, x1, y1+80, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 	}
 
 	if ((curStep >10) && (curStep <17))
 	{
-		draw_circle(vgabuf, x1, y1, 170 - curStep*10, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
-		draw_light_beam(vgabuf, x1, y1, x1-(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
-		draw_light_beam(vgabuf, x1, y1, x1+(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, mode, 2);
+		draw_circle(vgabuf, x1, y1, 170 - curStep*10, 1, 1, color[col][0], color[col][1], color[col][2], 1);
+		draw_light_beam(vgabuf, x1, y1, x1-(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, 2);
+		draw_light_beam(vgabuf, x1, y1, x1+(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, 2);
 	}
 			
 //	draw_circle2(vgabuf, x1, y1, 40 * curStep, 0, 0, (curStep<<4)>>intensity, 255>>intensity,
-//		(255-(curStep<<4))>>intensity, mode, 1);
+//		(255-(curStep<<4))>>intensity, 1);
 }
 // ----------- End of function Magic::draw_magic_twelve -----//
 
 // ----------- Begin of function Magic::draw_magic_twelve_die -----//
-void Magic::draw_magic_twelve_die(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep, int nationRecno, int random) 
+void Magic::draw_magic_twelve_die(VgaBuf *vgabuf, int x1, int y1, int curStep, int nationRecno, int random) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
@@ -3229,25 +2945,25 @@ void Magic::draw_magic_twelve_die(VgaBuf *vgabuf, int x1, int y1, int mode, int 
 			short *colorRemapTable = game.get_color_remap_table(nationRecno, 1);
 			vgabuf->put_bitmap_area_trans_remap_decompress(locx1, locy1, (char *) bitmapPtr, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 		}
-		draw_circle(vgabuf, x1, y1, 70, 1, 1, color[col][0], color[col][1], color[col][2], mode, 1);
+		draw_circle(vgabuf, x1, y1, 70, 1, 1, color[col][0], color[col][1], color[col][2], 1);
 	}
 
 	if ((curStep >0) && (curStep <6))
-		draw_circle2(vgabuf, x1, y1, (5-curStep) * 35, 1, 0, 50 *curStep, 50 *curStep, 50 *curStep, mode, 1);
+		draw_circle2(vgabuf, x1, y1, (5-curStep) * 35, 1, 0, 50 *curStep, 50 *curStep, 50 *curStep, 1);
 
 	if ((curStep >2) && (curStep <8))
 		draw_circle2(vgabuf, x1, y1, (7-curStep) * 35, 1, 0, 50 *curStep -100,
-			50 *curStep -100, 50 *curStep -100, mode, 1);
+			50 *curStep -100, 50 *curStep -100, 1);
 	
 	int intensity = ((curStep-4) >> 2);
 	if ((curStep >7) && (curStep <17))
 		draw_circle2(vgabuf, x1, y1, 40 * (curStep-7), 1, 0, (255-(curStep<<4))>>intensity, 
-			255>>intensity, (curStep<<4)>>intensity, mode, 1);
+			255>>intensity, (curStep<<4)>>intensity, 1);
 }
 // ----------- End of function Magic::draw_magic_twelve_die -----//
 
 // ----------- Begin of function Magic::draw_magic_thirteen -----//
-void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep) 
+void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int curStep) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
@@ -3259,14 +2975,14 @@ void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int cu
 	
 	if ((curStep >0) && (curStep <10))
 		draw_circle2(vgabuf, x1, y1, 40 * step, 1, 0, (255 - 25 * step)>>intensity, 
-			(255 - 25 * step)>>intensity, 255>>intensity, mode, 1);
+			(255 - 25 * step)>>intensity, 255>>intensity, 1);
 	
 	if ((curStep >3) && (curStep <13))
 	{
 		step = curStep - 3;
 		intensity = (step >> 2);
 		draw_circle2(vgabuf, x1, y1, 40 * step, 1, 0, (255 - 25 * step)>>intensity, 
-			(255 - 25 * step)>>intensity, 255>>intensity, mode, 1);
+			(255 - 25 * step)>>intensity, 255>>intensity, 1);
 	}
 	
 	if ((curStep >6) && (curStep <16))
@@ -3274,13 +2990,13 @@ void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int cu
 		step = curStep - 6;
 		intensity = (step >> 2);
 		draw_circle2(vgabuf, x1, y1, 40 * step, 1, 0, (255 - 25 * step)>>intensity, 
-			(255 - 25 * step)>>intensity, 255>>intensity, mode, 1);
+			(255 - 25 * step)>>intensity, 255>>intensity, 1);
 	}
 
-	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 2, 10,10, vgabuf, mode, 50, 2, curStep, 10, 4);
-	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 4, 10, 0, vgabuf, mode, 50, 2, curStep, 10, 4);
+	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 2, 10,10, vgabuf, 50, 2, curStep, 10, 4);
+	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 4, 10, 0, vgabuf, 50, 2, curStep, 10, 4);
 
-	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 0,  7,10, vgabuf, mode, 50, 2, curStep, 10, 4);
+	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 0,  7,10, vgabuf, 50, 2, curStep, 10, 4);
 
 
 	if ((curStep >= 0) && (curStep <15))
@@ -3288,12 +3004,12 @@ void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int cu
 		if ((curStep % 2) == 0)
 		{
 			draw_light_beam(vgabuf, x1, y1, x1 +locX[curStep>>1], y1 +locY[curStep>>1],
-							10, 2, 0, 80, 255, 255, 255, 255, mode, 0);
-			draw_circle2(vgabuf, x1 +locX[curStep>>1], y1 +locY[curStep>>1], 30, 0, 0, 0, 80, 255, mode, 0);
-			draw_circle2(vgabuf, x1, y1, 30, 0, 0, 0, 80, 255, mode, 0);
+							10, 2, 0, 80, 255, 255, 255, 255, 0);
+			draw_circle2(vgabuf, x1 +locX[curStep>>1], y1 +locY[curStep>>1], 30, 0, 0, 0, 80, 255, 0);
+			draw_circle2(vgabuf, x1, y1, 30, 0, 0, 0, 80, 255, 0);
 		}
 		else
-			draw_circle2(vgabuf, x1, y1, 90, 0, 0, 0, 80, 255, mode, 0);
+			draw_circle2(vgabuf, x1, y1, 90, 0, 0, 0, 80, 255, 0);
 	}
 
 	for (int i = 0; i < 8; i ++)
@@ -3302,7 +3018,7 @@ void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int cu
 		if ((curStep >= j) && (curStep <= j +5))
 		{
 			draw_particle(x1 +locX[j>>1]-5, y1 +locY[j>>1]-5, x1 +locX[j>>1]+5, y1 +locY[j>>1]+5,
-				0, 0, 1, 10, 0, vgabuf, mode, 50, 2, curStep - j, 6);
+				0, 0, 1, 10, 0, vgabuf, 50, 2, curStep - j, 6);
 		}
 	}
 
@@ -3310,67 +3026,67 @@ void Magic::draw_magic_thirteen(VgaBuf *vgabuf, int x1, int y1, int mode, int cu
 // ----------- End of function Magic::draw_magic_thirteen -----//
 
 // ----------- Begin of function Magic::draw_magic_forteen -----//
-void Magic::draw_magic_forteen(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep, int curDir) 
+void Magic::draw_magic_forteen(VgaBuf *vgabuf, int x1, int y1, int curStep, int curDir) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1 - 20;
 
-	draw_circle2(vgabuf, x1, y1, 60, 0, 1, 255>>(curStep>>1), 255>>(curStep>>1), 255>>(curStep>>1), mode, 0);
+	draw_circle2(vgabuf, x1, y1, 60, 0, 1, 255>>(curStep>>1), 255>>(curStep>>1), 255>>(curStep>>1), 0);
 	y1 += 32;
 	switch( curDir )
 	{
 	case 0:
 		draw_light_beam(vgabuf, x1-10, y1 - (curStep<<3), x1 +10, y1 +5 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 1:
 		draw_light_beam(vgabuf, x1+7, y1 -8 - (curStep<<3), x1 +13, y1 -8 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 2:
 		draw_light_beam(vgabuf, x1-10, y1 +5 - 16 -(curStep<<3), x1 +10, y1 - 16 -(curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 3:
 		draw_light_beam(vgabuf, x1-10, y1 -16 - (curStep<<3), x1 +10, y1 -16 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 4:
 		draw_light_beam(vgabuf, x1-10, y1 - 16 -(curStep<<3), x1 +10, y1 +5 - 16 -(curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 5:
 		draw_light_beam(vgabuf, x1-7, y1 -8 - (curStep<<3), x1 -13, y1 -8 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);		
+			10, 0, 0, 80, 255, 255, 255, 255, 0);		
 		break;
 	case 6:
 		draw_light_beam(vgabuf, x1-10, y1 +5 - (curStep<<3), x1 +10, y1 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	case 7:
 		draw_light_beam(vgabuf, x1-10, y1 - (curStep<<3), x1 +10, y1 - (curStep<<3),
-			10, 0, 0, 80, 255, 255, 255, 255, mode, 0);
+			10, 0, 0, 80, 255, 255, 255, 255, 0);
 		break;
 	}
 }
 // ----------- End of function Magic::draw_magic_forteen -----//
 
 // ----------- Begin of function Magic::draw_magic_fifteen -----//
-void Magic::draw_magic_fifteen(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep) 
+void Magic::draw_magic_fifteen(VgaBuf *vgabuf, int x1, int y1, int curStep) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
-	draw_circle(vgabuf, x1, y1, curStep<<6, 0, 1, 0, 0, 510>>curStep, mode, 1);
+	draw_circle(vgabuf, x1, y1, curStep<<6, 0, 1, 0, 0, 510>>curStep, 1);
 }
 // ----------- End of function Magic::draw_magic_fifteen -----//
 
 // ----------- Begin of function Magic::draw_magic_firm_die -----//
-void Magic::draw_magic_firm_die(VgaBuf *vgabuf, int x1, int y1, int mode, int curStep) 
+void Magic::draw_magic_firm_die(VgaBuf *vgabuf, int x1, int y1, int curStep) 
 {
 	x1 = x1 + bound_x1;
 	y1 = y1 + bound_y1;
 	
-	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 0, 10, 0, vgabuf, mode, 50, 2, curStep, 10, 4);
-	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 4, 10, 0, vgabuf, mode, 50, 2, curStep, 10, 4);
+	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 0, 10, 0, vgabuf, 50, 2, curStep, 10, 4);
+	draw_particle(x1+10, y1+10, x1-10, y1-10, 0, 0, 4, 10, 0, vgabuf, 50, 2, curStep, 10, 4);
 }
 // ----------- End of function Magic::draw_magic_thirteen -----//

@@ -756,28 +756,28 @@ void ZoomMatrix::draw_magic_effects()
 	init_magic = 1 +init_magic % 6;
 	init_magic2 = 1 +init_magic2 % 20;
 	if (magic.effect_testing_flag == 1)
-		magic.draw_magic_one(&vga_back, ZOOM_X2/2, ZOOM_Y2/2, vga.pixel_format_flag, init_magic2); 
+		magic.draw_magic_one(&vga_back, ZOOM_X2/2, ZOOM_Y2/2, init_magic2); 
 //	if (magic.effect_testing_flag == 2)
 //		magic.draw_magic_two(&vga_back, ZOOM_X2/2, ZOOM_Y1+50, ZOOM_X2/2, ZOOM_Y2-150, 15, 
-//								vga.pixel_format_flag, init_magic2);
+//								init_magic2);
 	if (magic.effect_testing_flag == 3)
 		magic.draw_magic_three(&vga_back, ZOOM_X2/2, ZOOM_Y1+50, ZOOM_X2/2, ZOOM_Y2-100, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 	if (magic.effect_testing_flag == 4)
 		magic.draw_magic_four(&vga_back, ZOOM_X2/2, ZOOM_Y1+70, ZOOM_X2/2, ZOOM_Y2-70, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 	if (magic.effect_testing_flag == 5)
 		magic.draw_magic_five(&vga_back, ZOOM_X2/2, ZOOM_Y2/2-60, ZOOM_X2/2, ZOOM_Y2/2+100, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 	if (magic.effect_testing_flag == 6)
 		magic.draw_magic_six(&vga_back, ZOOM_X2/2, ZOOM_Y1+50, ZOOM_X2/2, ZOOM_Y2-100, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 	if (magic.effect_testing_flag == 7)
 		magic.draw_magic_seven(&vga_back, ZOOM_X2/2, ZOOM_Y1+50, ZOOM_X2/2, ZOOM_Y2-100, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 	if (magic.effect_testing_flag == 8)
 		magic.draw_magic_eight(&vga_back, ZOOM_X2/2, ZOOM_Y1+50, ZOOM_X2/2, ZOOM_Y2-100, 
-								vga.pixel_format_flag, init_magic2);
+								init_magic2);
 
 }
 //----------- End of function ZoomMatrix::draw_magic_effects ------------//

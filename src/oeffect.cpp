@@ -185,21 +185,21 @@ void Effect::program_effect_draw()
 		magic.draw_magic_firm_die(&vga_back, 
 			world.zoom_matrix->calc_zoom_x(cur_x, cur_y, get_z()),
 			world.zoom_matrix->calc_zoom_y(cur_x, cur_y, get_z()), 
-			vga.pixel_format_flag, cur_frame);
+			cur_frame);
 		break;
 
 	case 2:
 		magic.draw_magic_forteen(&vga_back, 
 			world.zoom_matrix->calc_zoom_x(cur_x, cur_y, get_z()),
 			world.zoom_matrix->calc_zoom_y(cur_x, cur_y, get_z()), 
-			vga.pixel_format_flag, cur_frame, cur_dir);
+			cur_frame, cur_dir);
 		break;
 
 	case 3:
 		magic.draw_magic_fifteen(&vga_back, 
 			world.zoom_matrix->calc_zoom_x(cur_x, cur_y, get_z()),
 			world.zoom_matrix->calc_zoom_y(cur_x, cur_y, get_z()), 
-			vga.pixel_format_flag, cur_frame);
+			cur_frame);
 		break;
 	
 	default:

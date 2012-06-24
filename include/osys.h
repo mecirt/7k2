@@ -28,10 +28,6 @@
 
 // ------- declare type --------//
 
-#ifndef NEED_WINDOWS
-typedef void *HANDLE;
-#endif
-
 typedef long LPARAM;
 
 #define MAX_PATH 260
@@ -87,8 +83,6 @@ enum	{	NO_DEBUG_SYN = 0,
 class Sys
 {
 public:
-	HANDLE	app_hinstance;			// handle of the application running
-
 	char		game_version;			// VERSION_???
 
 	char     active_flag;    		// we are the active app.
@@ -167,7 +161,7 @@ public:
 	Sys();
 	~Sys();
 
-	int		init(HANDLE hInstance);
+	int		init();
 	int		change_display_mode(int modeId);		// see omodeid.h for modeId
 	void		deinit();
 	void		deinit_directx();

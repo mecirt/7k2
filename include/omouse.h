@@ -63,7 +63,6 @@ enum MouseEventType
 #define CAP_LOCK_STATE_MASK 0x080
 #define SCROLL_LOCK_STATE_MASK 0x100
 #define INSERT_STATE_MASK 0x200
-#define GRAPH_KEY_MASK 0x400
 
 // bit flag of arrow_key_state
 #define ARROW_LEFT_KEY_MASK   0x0001
@@ -192,7 +191,7 @@ public:
 	Mouse();
 	~Mouse();
 
-	void	init(void *);
+	void	init();
 	void	deinit();
 
 	void 	add_event(MouseEvent *);

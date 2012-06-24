@@ -39,6 +39,7 @@
 #else
 #define __asmsym__(s) __asm__(s)
 #endif
+#define _stdcall __attribute__((__stdcall__)) __attribute__((__force_align_arg_pointer__))
 #define IMGcall _stdcall
 
 #endif

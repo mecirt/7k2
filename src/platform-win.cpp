@@ -483,9 +483,6 @@ bool InitGraphics ()
 {
   if (dd_obj) return true;
 
-  err_when( sizeof(vga.dd_pal) > sizeof(vga.vptr_dd_pal) );
-  err_when( sizeof(vga.pal_entry_buf) > sizeof(vga.dw_pal_entry_buf) );
-
   //--------- Create direct draw object --------//
 
   DEBUG_LOG("Attempt DirectDrawCreate");

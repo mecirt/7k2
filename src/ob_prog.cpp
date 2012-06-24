@@ -203,7 +203,7 @@ void BulletProgram::draw(int, int drawFlag)
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest)-400,
 								world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest), 5,
-								vga.pixel_format_flag, cur_step, total_step);								
+								cur_step, total_step);								
 		}
 		else
 		// die use cur_frame not cur_step, since the action don't repeat
@@ -211,7 +211,7 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_nine_die(&vga_back, 
 								world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest), 
-								vga.pixel_format_flag, cur_frame);
+								cur_frame);
 	//	else
 	//		err_here();
 	}
@@ -227,13 +227,13 @@ void BulletProgram::draw(int, int drawFlag)
 								world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init),
 								world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest), 
-								vga.pixel_format_flag, cur_step, total_step, delay_step);
+								cur_step, total_step, delay_step);
 				else
 					magic.draw_magic_ten(&vga_back, world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init),
 								world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init)+50,
 								world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest), 
-								vga.pixel_format_flag, cur_step, total_step, delay_step);
+								cur_step, total_step, delay_step);
 		}
 		else
 		// die use cur_frame not cur_step, since the action don't repeat
@@ -241,7 +241,7 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_nine_die(&vga_back, 
 								world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 								world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest), 
-								vga.pixel_format_flag, cur_frame);
+								cur_frame);
 	//	else
 	//		err_here();
 	}
@@ -254,12 +254,12 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_eleven(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init) -42,
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init) -100, 
-					vga.pixel_format_flag, cur_frame);
+					cur_frame);
 			else
 				magic.draw_magic_eleven(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init) -21,
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init) -70, 
-					vga.pixel_format_flag, cur_frame);
+					cur_frame);
 		}
 	//	else
 	//		err_here();
@@ -273,12 +273,12 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_twelve(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init),
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init), 
-					vga.pixel_format_flag, cur_frame, nation_recno);
+					cur_frame, nation_recno);
 			else
 				magic.draw_magic_twelve(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init),
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init), 
-					vga.pixel_format_flag, cur_frame, nation_recno);
+					cur_frame, nation_recno);
 		}
 	//	else
 	//		err_here();
@@ -292,12 +292,12 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_twelve_die(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 					world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
-					vga.pixel_format_flag, cur_frame, nation_recno, target_x_loc + target_y_loc);
+					cur_frame, nation_recno, target_x_loc + target_y_loc);
 			else
 				magic.draw_magic_twelve_die(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
 					world.zoom_matrix->calc_zoom_y(target_x_loc* LOCATE_WIDTH, target_y_loc* LOCATE_HEIGHT, z_dest),
-					vga.pixel_format_flag, cur_frame, nation_recno, target_x_loc + target_y_loc);
+					cur_frame, nation_recno, target_x_loc + target_y_loc);
 		}
 	//	else
 	//		err_here();
@@ -311,12 +311,12 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_thirteen(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init),
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init) -60, 
-					vga.pixel_format_flag, cur_frame);
+					cur_frame);
 			else
 				magic.draw_magic_thirteen(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init) -4,
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init) -33, 
-					vga.pixel_format_flag, cur_frame);
+					cur_frame);
 		}
 	//	else
 	//		err_here();
@@ -333,7 +333,7 @@ void BulletProgram::draw(int, int drawFlag)
 				magic.draw_magic_firm_die(&vga_back, 
 					world.zoom_matrix->calc_zoom_x(origin_x, origin_y, z_init),
 					world.zoom_matrix->calc_zoom_y(origin_x, origin_y, z_init), 
-					vga.pixel_format_flag, cur_frame);
+					cur_frame);
 		}
 	//	else
 	//		err_here();

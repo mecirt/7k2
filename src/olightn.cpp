@@ -187,9 +187,9 @@ void Lightning::draw_step(VgaBuf *vgabuf)
 				vgabuf->line(prex, prey-1, (int) x, (int) y-1, INLIGHTNCOLOR);
 				vgabuf->line(prex, prey, (int) x, (int) y, CORELIGHTNCOLOR);*/
 				magic.draw_light_beam(&vga_back, prex, prey, x, y, 10, 4,
-					0, 80, 255, 255, 255, 255, vga.pixel_format_flag, 0);
-				magic.draw_circle2(&vga_back, x, y, 25, 0, 0, 0, 80, 255, vga.pixel_format_flag, 0);
-				magic.draw_circle2(&vga_back, x, y, 8, 0, 0, 255, 255, 255, vga.pixel_format_flag, 0);
+					0, 80, 255, 255, 255, 255, 0);
+				magic.draw_circle2(&vga_back, x, y, 25, 0, 0, 0, 80, 255, 0);
+				magic.draw_circle2(&vga_back, x, y, 8, 0, 0, 255, 255, 255, 0);
 			}
 		}
 		else if( energy_level > 2)
@@ -203,7 +203,7 @@ void Lightning::draw_step(VgaBuf *vgabuf)
 				vgabuf->line(prex, prey+1, (int) x, (int) y+1, OUTLIGHTNCOLOR);
 				vgabuf->line(prex, prey, (int) x, (int) y, INLIGHTNCOLOR);*/
 				magic.draw_light_beam(&vga_back, prex, prey, x, y, 8, 2,
-					0, 80, 255, 255, 255, 255, vga.pixel_format_flag, 0);
+					0, 80, 255, 255, 255, 255, 0);
 			}
 		}
 		else
@@ -215,7 +215,7 @@ void Lightning::draw_step(VgaBuf *vgabuf)
 			{
 			//	vgabuf->line(prex, prey, (int) x, (int) y, OUTLIGHTNCOLOR);
 				magic.draw_light_beam(&vga_back, prex, prey, x, y, 3, 1,
-					0, 80, 255, 255, 255, 255, vga.pixel_format_flag, 0);
+					0, 80, 255, 255, 255, 255, 0);
 			}
 		}
 

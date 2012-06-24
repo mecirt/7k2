@@ -48,8 +48,6 @@
 
 //-------- Define struct FontHeader -------//
 
-/* winemaker: #pragma pack(1) */
-#include <pshpack1.h>
 struct FontHeader
 {
 	unsigned	short	max_width;
@@ -57,25 +55,17 @@ struct FontHeader
    unsigned short std_height;
 	unsigned short first_char;		// ascii code of the first character
 	unsigned	short last_char;		// ascii code of the last character
-};
-/* winemaker: #pragma pack() */
-/* winemaker:warning: Using 4 as the default alignment */
-#include <pshpack4.h>
+} __attribute__((packed));
 
 //-------- Define struct FontInfo -------//
 
-/* winemaker: #pragma pack(1) */
-#include <pshpack1.h>
 struct FontInfo	// info for each character
 {
 	char				offset_y;
 	unsigned char	width;
 	unsigned char	height;
 	long				bitmap_offset;	// file offset relative to bitmap data
-};
-/* winemaker: #pragma pack() */
-/* winemaker:warning: Using 4 as the default alignment */
-#include <pshpack4.h>
+} __attribute__((packed));
 
 //--------- Define macro constant ------------//
 

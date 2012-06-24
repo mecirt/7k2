@@ -21,8 +21,6 @@
 //Filename    : AM.CPP
 //Description : Ambition Entry Program
 
-#define NEED_WINDOWS
-
 #include <all.h>
 #include <odplay.h>
 #include <oanline.h>
@@ -386,8 +384,7 @@ static void extra_error_handler();
 // DEBUG3 - debugging some functions (e.g. Location::get_loc()) which
 //          will cause major slowdown.
 //
-int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-						  LPSTR lpCmdLine, int nCmdShow)
+int main (int argc, char *argv[])
 {
 	//try to read from CONFIG.DAT, moved to AM.CPP
 
@@ -415,7 +412,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//----------- play movie ---------------//
 
 	sys.set_game_dir();
-	if( strstr(lpCmdLine, lobbyLaunchCmdLine) == NULL )	// skip if launch from lobby
+	if( (argc < 2) || (strstr(argv[1], lobbyLaunchCmdLine) == NULL) )	// skip if launch from lobby
 	{
 		if( !m.is_file_exist("SKIPAVI.SYS") )
 		{
@@ -423,20 +420,20 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 	}
 
-	if( !sys.init(hInstance) )
+	if( !sys.init() )
 		return FALSE;
 
    err.set_extra_handler( extra_error_handler );   // set extra error handler, save the game when a error happens
 
 	// ######## begin Gilbert 2/7 #######//
-	if( strstr(lpCmdLine, lobbyLaunchCmdLine) != NULL )
+	if ( (argc >= 2) && (strstr(argv[1], lobbyLaunchCmdLine) != NULL) )
 	{
 		mp_obj.pre_init();
-		mp_obj.init_lobbied( MAX_NATION, lpCmdLine );
+		mp_obj.init_lobbied( MAX_NATION, argv[1] );
 		if( mp_obj.init_flag )
 		{
 			// player register
-			game.multi_player_menu(lpCmdLine);		// if detect launched from lobby
+			game.multi_player_menu(argv[1]);		// if detect launched from lobby
 			mp_obj.deinit();
 		}
 		else

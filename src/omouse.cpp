@@ -83,12 +83,12 @@ Mouse::~Mouse()
 
 //------------ Start of Mouse::init ------------//
 //
-void Mouse::init(void *i)
+void Mouse::init()
 {
   //-------- set starting position ---------//
   GetMousePos(&cur_x, &cur_y);
 
-  InitInputDevices (i);
+  InitInputDevices (0);
 
   init_keyboard();
 

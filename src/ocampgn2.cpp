@@ -4071,12 +4071,10 @@ void Campaign::render_terrain(int par)
                                                           read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
 								*dest_column_ptr = magic.draw((red * shadow) >>5,
 									(green * shadow) >>5,
-									(blue * shadow) >>5,
-									vga.pixel_format_flag);
+									(blue * shadow) >>5);
                                                         }
 							else
-								*dest_column_ptr = magic.draw(125, 125, 125,
-									vga.pixel_format_flag);
+								*dest_column_ptr = magic.draw(125, 125, 125);
 						}
 						else
 						if(((curr_column & 1) == 0 && (realStep & 1) == 0 && par < 1)
@@ -4088,20 +4086,19 @@ void Campaign::render_terrain(int par)
                                                           read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
 								*dest_column_ptr = magic.draw((red * shadow) >>5,
 									(green * shadow) >>5,
-									(blue * shadow) >>5,
-									vga.pixel_format_flag);
+									(blue * shadow) >>5);
 						}
 						else
 						{
 							if( (n = state_array[map[xr][yr]]->campaign_nation_recno) )
 							{
 								short bufPtr = VgaBuf::translate_color(get_nation(n)->nation_color);
-								*dest_column_ptr = magic.shading(NULL, &bufPtr, shadow, vga.pixel_format_flag);
+								*dest_column_ptr = magic.shading(NULL, &bufPtr, shadow);
 							}
 							else			
 							{
 								short bufPtr = VgaBuf::translate_color(game.color_remap_array[0].main_color);
-								*dest_column_ptr = magic.shading(NULL, &bufPtr, shadow, vga.pixel_format_flag);
+								*dest_column_ptr = magic.shading(NULL, &bufPtr, shadow);
 							}
 						}
 
@@ -4525,12 +4522,10 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
                                                           read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
 								*dest_column_ptr = magic.draw((red * modifiedShadow) >>5,
 									(green * modifiedShadow) >>5,
-									(blue * modifiedShadow) >>5,
-									vga.pixel_format_flag);
+									(blue * modifiedShadow) >>5);
                                                         }
 							else
-								*dest_column_ptr = magic.draw(125, 125, 125,
-									vga.pixel_format_flag);
+								*dest_column_ptr = magic.draw(125, 125, 125);
 						}
 						else
 						if(((curr_column & 1) == 0 && (realStep & 1) == 0 && par < 1)
@@ -4542,8 +4537,7 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
                                                           read_bitmap_palette(color_bmp_file, color, &red, &green, &blue);
 								*dest_column_ptr = magic.draw((red * modifiedShadow) >>5,
 									(green * modifiedShadow) >>5,
-									(blue * modifiedShadow) >>5,
-									vga.pixel_format_flag);
+									(blue * modifiedShadow) >>5);
 
 							state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
 						}
@@ -4563,15 +4557,15 @@ void Campaign::render_attackable_terrain(int par, char *selectableStateArray, in
 							{
 								short bufPtr = VgaBuf::translate_color(get_nation(n)->nation_color);
 								state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
-								short temp = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
-								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity, vga.pixel_format_flag);
+								short temp = magic.shading(NULL, &bufPtr, modifiedShadow);
+								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity);
 							}
 							else			
 							{
 								short bufPtr = VgaBuf::translate_color(game.color_remap_array[0].main_color);
 								state_recno_of_screen[dest_column_ptr2] = map[xr][yr];
-								short temp = magic.shading(NULL, &bufPtr, modifiedShadow, vga.pixel_format_flag);
-								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity, vga.pixel_format_flag);
+								short temp = magic.shading(NULL, &bufPtr, modifiedShadow);
+								*dest_column_ptr = magic.add_blend(&temp, intensity, intensity, intensity);
 							}
 						}
 									

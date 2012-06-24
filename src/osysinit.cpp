@@ -86,13 +86,11 @@ Sys::~Sys()
 
 //------------ Begin of function Sys::init ----------//
 //
-int Sys::init( HANDLE hInstance )
+int Sys::init()
 {
    err_when( init_flag );
 
    //------- initialize basic vars --------//
-
-   app_hinstance = hInstance;
 
 	set_game_dir();      // set game directories names and game version
 
@@ -164,8 +162,6 @@ int Sys::init_directx()
 
    //---------------------------------------//
 
-   ShowMouseCursor(false);
-
 	DisplayModeInfo::set_current_display_mode(MODE_ID_DEFAULT);
 
    //-------- initialize DirectDraw --------//
@@ -176,6 +172,7 @@ int Sys::init_directx()
    DEBUG_LOG("vga.init() ok");
 
   init_display();
+   ShowMouseCursor(false);
 
    return TRUE;
 }
@@ -236,7 +233,7 @@ int Sys::init_objects()
    mouse_cursor.init();
    mouse_cursor.set_frame_border(ZOOM_X1,ZOOM_Y1,ZOOM_X2,ZOOM_Y2);
 
-   mouse.init (app_hinstance);
+   mouse.init ();
    FocusMainWindow();
 
    //------- init resource class ----------//

@@ -70,8 +70,6 @@ const DWORD session_desc_flags =
 // note that [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\DirectPlay\Applications] 
 // folder may not exist after installed dx5
 
-HANDLE PLAYER_MESSAGE_HANDLE = NULL;	// ???
-
 int broadcastPID()
 {
   return -1; //DWORD_ALLPLAYERS;
