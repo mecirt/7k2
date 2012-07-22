@@ -99,9 +99,6 @@ void Help::init(const char* resName)
 	str += resName;
 
 	load( str );
-
-	long_save_buf.init();
-	short_front_buf.init();
 }
 //------- Begin of function Help::init ----------//
 
@@ -110,9 +107,6 @@ void Help::init(const char* resName)
 
 void Help::deinit()
 {
-	long_save_buf.deinit();
-	short_front_buf.deinit();
-
    if( help_info_array )
    {
 		mem_del( help_info_array );
@@ -269,6 +263,7 @@ void Help::disp()
 
 	if( !should_disp() )
 	{
+		disp_short_help(&vga_back);  // check if we need the short one instead
 		help_code[0] = NULL;	// reset it everytime after displaying, if the mouse is still on the button, help_code will be set again.
 		custom_help_title[0] = NULL;
 		return;
@@ -355,7 +350,7 @@ void Help::disp()
 		disp_help( help_x, help_y,
 			helpInfo->help_title, helpInfo->help_text_ptr );
 
-		help_code[0] = NULL;		// reset it everytime after displaying, if the mouse is still on the button, help_code will be set again.
+//		help_code[0] = NULL;		// reset it everytime after displaying, if the mouse is still on the button, help_code will be set again.
 	}
 
 	//-------- custom help ---------//
@@ -363,7 +358,7 @@ void Help::disp()
 	else if( custom_help_title[0] )
 	{
 		disp_help(help_x, help_y, custom_help_title, custom_help_detail);
-		custom_help_title[0] = NULL;
+//		custom_help_title[0] = NULL;
 	}
 
 	//-------- other interface help ---------//
@@ -402,8 +397,6 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 {
 	if( config.help_mode == NO_HELP )
 		return;
-
-	mouse.hide();
 
 	//------ calculate the position of the help box ------//
 
@@ -460,28 +453,12 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 		y1 = y2-winHeight+1;
 	}
 
-	// ######## begin Gilbert 21/12 #######//
-
-	// -------- hide short help --------//
-
-	hide_short_help(&vga_front);
-
-	// ######## end Gilbert 21/12 #######//
-
 	//------------- save the area --------------//
-
-	long_save_buf.save_scr( x1, y1, x2, y2 ); 	// save the screen to the private buffer in Help
 
 	//------- Draw box (and arrow if specified object) ------//
 
-//	vga_front.bar( x1, y1, x2, y2, V_WHITE );
-
-//	vga_front.bar( x1, y1, x2, y1+1, HELP_BOX_COLOR );        // Top border
-//	vga_front.bar( x1, y2-1, x2, y2, HELP_BOX_COLOR );        // Bottom border
-//	vga_front.bar( x1, y1, x1+1, y2, HELP_BOX_COLOR );        // Left border
-//	vga_front.bar( x2-1, y1, x2, y2, HELP_BOX_COLOR );        // Right border
-
-	//vga_front.rect( x1+2, y1+2, x2, y2, 3, V_BLACK );
+//	while(1)
+//	{
 	vga_front.bar( x1, y1, x2-3, y2-3, VgaBuf::color_up );
 	vga_front.rect( x1, y1, x2-3, y2-3, 3, HELP_BOX_COLOR );
 	vga_front.bar_alpha( x2-2, y1+2, x2, y2-3, 1, V_BLACK );
@@ -500,35 +477,6 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 
 		font_san.put_paragraph( x1+X_MARGIN, y+4, x2-X_MARGIN, y2-Y_MARGIN, helpDetail, MSG_LINE_SPACE );
 	}
-
-	//--- in a single player game, pause the game when a help message is disp_helplayed ---//
-
-	// ##### begin Gilbert 30/6 #########//
-//	while( should_disp() )
-//	{
-//		sys.yield();
-//		music.yield();
-//		mouse.get_event();
-//	}
-	while(1)
-	{
-		sys.yield();
-		music.yield();
-		if( !should_disp() )		// so any mouse click will not be lost
-			break;
-		mouse.get_event();
-	}
-	// ##### end Gilbert 30/6 #########//
-
-	long_save_buf.rest_scr();
-
-	// ###### begin Gilbert 21/12 #######//
-	// ---------- show short help -------//
-
-	disp_short_help(&vga_front);
-	// ##### end Gilbert 21/12 #######//
-
-	mouse.show();
 }
 //--------- End of function Help::disp_help ----------//
 
@@ -623,6 +571,7 @@ void Help::set_unit_help(int unitId, int rankId, int x1, int y1, int x2, int y2)
 //
 void Help::set_custom_help(int x1, int y1, int x2, int y2, const char* helpTitle, const char* helpDetail)
 {
+  printf ("set_custom_help %s, %s\n", helpTitle, helpDetail);
 	if( !mouse.in_area(x1, y1, x2, y2) )
 		return;
 
@@ -782,8 +731,6 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 
 		// save buffer
 
-		short_front_buf.save_scr( x1, y1, x2, y2, vgaBuf );
-
 		if( config.help_mode >= BRIEF_HELP )
 		{
 			// for safety, still capture the screen even though short help is not displayed
@@ -804,52 +751,6 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 	// ###### end Gilbert 9/9 #######//
 }
 //--------- End of function Help::disp_short_help --------//
-
-
-//--------- Begin of function Help::flip --------//
-//
-void Help::flip()
-{
-}
-//--------- End of function Help::flip --------//
-
-
-//--------- Begin of function Help::hide_short_help --------//
-//
-void Help::hide_short_help(VgaBuf *vgaBuf)
-{
-	short_front_buf.rest_scr(vgaBuf);
-}
-//--------- End of function Help::hide_short_help --------//
-
-
-//--------- Begin of function Help::hide_area --------//
-//
-void Help::hide_area(int x1, int y1, int x2, int y2)
-{
-	// updating front buffer, hide the area first
-
-	if( !short_front_buf.is_clear() )
-	{
-		short_front_buf.hide_area(x1, y1, x2, y2);
-	}
-}
-//--------- End of function Help::hide_area --------//
-
-
-//--------- Begin of function Help::show_area --------//
-//
-void Help::show_area()
-{
-	// updating front buffer, hide the area first
-
-	if( !short_front_buf.is_clear() )
-	{
-		short_front_buf.show_area();
-	}
-}
-//--------- End of function Help::show_area --------//
-
 
 //--------- Begin of function HelpSaveScreen::HelpSaveScreen --------//
 //

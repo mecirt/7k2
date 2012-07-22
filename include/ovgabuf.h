@@ -283,10 +283,9 @@ public:
 
 	// 16->16 blt
 
-	void		read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapWBuf)
-				{ IMGreadW(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, bitmapWBuf); }
+	void		read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapWBuf);
 	void		read_bitmapW(int x1,int y1,int x2,int y2, BitmapW* bitmapWBuf)
-				{ IMGreadW(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, (short *)bitmapWBuf); }
+				{ read_bitmapW(x1, y1, x2, y2, (short *)bitmapWBuf); }
 
 	void		put_bitmapW(int x, int y, short *bitmapWBuf );
 	void		put_bitmapW(int x, int y, BitmapW *bitmapWBuf )

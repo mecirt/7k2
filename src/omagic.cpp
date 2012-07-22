@@ -347,27 +347,27 @@ unsigned Magic::rand_seed()
 
 //-------- Begin of function Magic::straight_light_beam ----------//
 void Magic::straight_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
-								int thickness, int lightness, short R1, short G1, short B1, 
-								short R2, short G2, short B2, char angle) 
+    int thickness, int lightness, short R1, short G1, short B1, 
+    short R2, short G2, short B2, char angle, bool fast) 
 {
-	// All coordinates are in global value
-	// and all coordination will not out bound
-	// RGB range should be 0 - 255 /31 = 255-248 /0 = 0-7
+  // All coordinates are in global value
+  // and all coordination will not out bound
+  // RGB range should be 0 - 255 /31 = 255-248 /0 = 0-7
   int mode = vga.pixel_format_flag;
-	int i, k, diff, ratio, limit;
-	int x = x1;
-	int y = y1;
-	int d_x = abs(x2 - x1);
-	int d_y = abs(y2 - y1);
-	int	x_count, y_count;
-	short *point;
-	short temp_r, temp_g, temp_b;
-	short prev_r, prev_g, prev_b;
-	int	line = (y2 - y1) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
-	int	x_inc = (x2 - x1) > 0 ? 2 : -2;
-	int	y_inc = (x2 - x1) > 0 ? 2 : -2;
-	int mode_offset = mode *12;
-	unsigned short *base = check_table;
+  int i, k, diff, ratio, limit;
+  int x = x1;
+  int y = y1;
+  int d_x = abs(x2 - x1);
+  int d_y = abs(y2 - y1);
+  int	x_count, y_count;
+  short *point;
+  short temp_r, temp_g, temp_b;
+  short prev_r, prev_g, prev_b;
+  int	line = (y2 - y1) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
+  int	x_inc = (x2 - x1) > 0 ? 2 : -2;
+  int	y_inc = (x2 - x1) > 0 ? 2 : -2;
+  int mode_offset = mode *12;
+  unsigned short *base = check_table;
 
   R1 = R1 >> 3;
   R2 = R2 >> 3;
@@ -381,770 +381,487 @@ void Magic::straight_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
     G2 = G2 >> 3;
   }
   diff = thickness - lightness;
-	if (diff <1)
-		diff =1;
-	if ((d_y == 0) && (d_x == 0))
-		return;
-	if (d_x > d_y)
-	{
-		y_inc = (d_y << 8) / d_x;  //just calculate slope no clipping
-		for (k = -thickness; k<= thickness; k ++)
-		{
-			y = 0;
-			y_count = 0;
-			point = vgabuf->buf_ptr(x1,k + y1);
-			limit = d_x;
-			if (angle > 1)
-			{
-				line = (y2 -y1 -k) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
-				y_inc = ((abs(y2 -y1 -k)) << 8) / d_x;
-			}
-			if (angle == 1)
-			{
-				limit = d_x - d_x * abs(k)/thickness;
-				point = vgabuf->buf_ptr(x1 + (x2-x1) *abs(k) /thickness /2,k + y1);
-			}
-			// Ready Variables for line drawing
-			ratio = 15 - (abs(k)-lightness) * 15 / diff;	
-			temp_r = (R1 * ratio) >>4;
-			temp_g = (G1 * ratio) >>4;
-			temp_b = (B1 * ratio) >>4;
-			if ((k > - lightness) && (k < lightness))
-			{
+  if (diff <1)
+    diff =1;
+  if ((d_y == 0) && (d_x == 0))
+    return;
+  if (d_x > d_y)
+  {
+    y_inc = (d_y << 8) / d_x;
+    for (k = -thickness; k<= thickness; k ++)
+    {
+      y = 0;
+      y_count = 0;
+      if (fast) {
+        point = vgabuf->buf_ptr(x1,k + y1);
+        limit = d_x;
+        if (angle > 1)
+        {
+          line = (y2 -y1 -k) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
+          y_inc = ((abs(y2 -y1 -k)) << 8) / d_x;
+        }
+        if (angle == 1)
+        {
+          limit = d_x - d_x * abs(k)/thickness;
+          point = vgabuf->buf_ptr(x1 + (x2-x1) *abs(k) /thickness /2,k + y1);
+        }
+      } else {
+        // calculating the slope for clipping
+        int xDiff = (x2-x1);
+        int slope;
+        // avoid dividing by zero error
+        if (xDiff != 0)
+          slope = ((y2-y1)<<6) /xDiff;
+        else
+          slope = 999;
+
+        // clipping the Y axis and calculate the new starting and ending y coordinates
+        // no need to clip the x axis because the draw_light_beam() routine has done this 
+        // part
+        // avoid dividing by zero error
+        if (slope == 0)
+          slope = 1;
+        int tempX1=x1, tempX2=x2, tempY1=y1+k, tempY2=y2+k;
+        if (tempY1 <= bound_y1)
+        {
+          tempY1 = bound_y1;
+          tempX1 = x1 + ((tempY1 - (y1+k))<<6) / slope;
+          if (tempX1 < bound_x1 || tempX1 > bound_x2)
+            continue;
+        }
+        else
+          if (tempY1 >= bound_y2)
+          {
+            tempY1 = bound_y2;
+            tempX1 = x1 + ((tempY1 - (y1+k))<<6) / slope;
+            if (tempX1 < bound_x1 || tempX1 > bound_x2)
+              continue;
+          }
+        if (tempY2 <= bound_y1)
+        {
+          tempY2 = bound_y1;
+          tempX2 = x1 + ((tempY2 - (y1+k))<<6) / slope;
+          if (tempX2 < bound_x1 || tempX2 > bound_x2)
+            continue;
+        }
+        else
+          if (tempY2 >= bound_y2)
+          {
+            tempY2 = bound_y2;
+            tempX2 = x1 + ((tempY2 - (y1+k))<<6) / slope;
+            if (tempX2 < bound_x1 || tempX2 > bound_x2)
+              continue;
+          }
+
+        point = vgabuf->buf_ptr(tempX1, tempY1);
+        limit = abs(tempX2 - tempX1);
+        if (limit != 0)
+          y_inc = (abs(tempY2 - tempY1) << 8) / limit;
+
+        if (angle > 1)
+        {
+          // calculating the slope for clipping
+          // avoid dividing by zero error
+          if (xDiff != 0)
+            slope = ((y2-y1-k)<<6)/xDiff;
+          else
+            slope = 999;
+
+          // clipping the Y axis and calculate the new starting and ending y coordinates
+          // no need to clip the x axis because the draw_light_beam() routine has done this 
+          // avoid dividing by zero error
+          if (slope == 0)
+            slope = 1;
+
+          tempY2 = y2;
+          if (tempY2 <= bound_y1)
+          {
+            tempY2 = bound_y1;
+            tempX2 = x2 + ((tempY2 - y2)<<6) / slope;
+            if (tempX2 < bound_x1 || tempX2 > bound_x2)
+              continue;
+          }
+          else
+            if (tempY2 >= bound_y2)
+            {
+              tempY2 = bound_y2;
+              tempX2 = x2 + ((tempY2 - y2)<<6) / slope;
+              if (tempX2 < bound_x1 || tempX2 > bound_x2)
+                continue;
+            }
+
+
+          //calculating varable line, limit and y_inc
+          line = (tempY2 -tempY1) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
+          limit = abs(tempX2 - tempX1);
+          // avoid dividing by zero error
+          if (limit != 0)
+            y_inc = ((abs(tempY2 -tempY1)) << 8) / limit;
+
+          if (tempY2 == tempY1)
+            continue;
+        }
+        if (angle == 1)
+        {
+          limit = limit - limit * abs(k)/thickness;
+          point = vgabuf->buf_ptr(tempX1 + (tempX2-tempX1) *abs(k) /thickness /2, tempY1);
+        }
+
+      }
+
+      // Ready Variables for line drawing
+      ratio = 15 - (abs(k)-lightness) * 15 / diff;	
+      temp_r = (R1 * ratio) >>4;
+      temp_g = (G1 * ratio) >>4;
+      temp_b = (B1 * ratio) >>4;
+      if ((k > - lightness) && (k < lightness))
+      {
 #ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-//RED11:				
-					mov cl, [edi +8]
-					mov ax, R2
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-//GREEN11:			
-					mov ax, G2
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-//BLUE11:				
-					mov cl, [edi +10]
-					mov ax, B2
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-//END11:				
-					or  ax, prev_g			//*point = prev_r | prev_g | prev_b;			
-					or  ax, prev_r
-					mov [esi], ax
-					mov eax, y_count		//y_count = y_count + y_inc;
-					add eax, y_inc
-					mov y_count, eax
-					mov ecx, y				//if ((y << 8) < y_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH11				
-					add esi, line			//point = point + line;
-					inc ecx					// y++;
-					mov y, ecx
-FINISH11:			add esi, x_inc			//point = point + x_inc;
-					mov point, esi
-				}
+        for (i = 0; i<= limit; i ++) //draw one line
+          _asm
+          {
+            mov edi, base
+              add edi, mode_offset
+              mov esi, point	//ok
+              //RED11:				
+              mov cl, [edi +8]
+              mov ax, R2
+              shl ax, cl				// assign R_UNDER value
+              mov prev_r, ax
+              //GREEN11:			
+              mov ax, G2
+              shl ax, 5				// assign G_UNDER value
+              mov prev_g, ax
+              //BLUE11:				
+              mov cl, [edi +10]
+              mov ax, B2
+              shl ax, cl				// assign B_UNDER value
+              mov prev_b, ax
+              //END11:				
+              or  ax, prev_g			//*point = prev_r | prev_g | prev_b;			
+              or  ax, prev_r
+              mov [esi], ax
+              mov eax, y_count		//y_count = y_count + y_inc;
+            add eax, y_inc
+              mov y_count, eax
+              mov ecx, y				//if ((y << 8) < y_count)
+              mov ebx, ecx
+              shl ebx, 8
+              cmp eax, ebx
+              jle FINISH11				
+              add esi, line			//point = point + line;
+            inc ecx					// y++;
+            mov y, ecx
+              FINISH11:			add esi, x_inc			//point = point + x_inc;
+            mov point, esi
+          }
 #endif
-			}
-			else
-			{
+      }
+      else
+      {
 #ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-					mov dx, [esi]
-//RED12:				
-					mov cl, [edi +8]
-				    mov bx, [edi]
-					mov prev_r, bx			// assign R_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_r
-					cmp ax, 001fh
-					jg  GREEN12
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-GREEN12:			mov bx, [edi +2]
-					mov prev_g, bx			// assign G_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, 5
-					add ax, temp_g
-					cmp ax, [edi +6]
-					jg  BLUE12
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-BLUE12:				mov cl, [edi +10]
-					mov bx, [edi +4]
-					mov prev_b, bx			// assign B_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_b
-					cmp ax, 001fh
-					jg  END12
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-END12:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_g			
-					or  ax, prev_b
-					mov [esi], ax
-					mov eax, y_count		//y_count = y_count + y_inc;
-					add eax, y_inc
-					mov y_count, eax
-					mov ecx, y				//if ((y << 8) < y_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH12				
-					add esi, line			//point = point + line;
-					inc ecx					// y++;
-					mov y, ecx
-FINISH12:			add esi, x_inc			//point = point + x_inc;
-					mov point, esi
-				}
+        for (i = 0; i<= limit; i ++) //draw one line
+          _asm
+          {
+            mov edi, base
+              add edi, mode_offset
+              mov esi, point	//ok
+              mov dx, [esi]
+              //RED12:				
+              mov cl, [edi +8]
+              mov bx, [edi]
+              mov prev_r, bx			// assign R_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, cl
+              add ax, temp_r
+              cmp ax, 001fh
+              jg  GREEN12
+              shl ax, cl				// assign R_UNDER value
+              mov prev_r, ax
+              GREEN12:			mov bx, [edi +2]
+              mov prev_g, bx			// assign G_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, 5
+              add ax, temp_g
+              cmp ax, [edi +6]
+              jg  BLUE12
+              shl ax, 5				// assign G_UNDER value
+              mov prev_g, ax
+              BLUE12:				mov cl, [edi +10]
+              mov bx, [edi +4]
+              mov prev_b, bx			// assign B_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, cl
+              add ax, temp_b
+              cmp ax, 001fh
+              jg  END12
+              shl ax, cl				// assign B_UNDER value
+              mov prev_b, ax
+              END12:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
+            or  ax, prev_g			
+              or  ax, prev_b
+              mov [esi], ax
+              mov eax, y_count		//y_count = y_count + y_inc;
+            add eax, y_inc
+              mov y_count, eax
+              mov ecx, y				//if ((y << 8) < y_count)
+              mov ebx, ecx
+              shl ebx, 8
+              cmp eax, ebx
+              jle FINISH12				
+              add esi, line			//point = point + line;
+            inc ecx					// y++;
+            mov y, ecx
+              FINISH12:			add esi, x_inc			//point = point + x_inc;
+            mov point, esi
+          }
 #endif
-			}	
-		}
-	}
-	else 
-	{
-		x_inc = (d_x << 8 )/ d_y;
-		for (k = -thickness; k<= thickness; k ++)
-		{
-			x = 0;
-			x_count = 0;
-			point = vgabuf->buf_ptr(k + x1,y1);
-			limit = d_y;
-			if (angle > 1)
-			{
-				y_inc = (x2 -x1 -k) > 0 ? 2 : -2;
-				x_inc = ((abs(x2 -x1 -k)) << 8) / d_y;
-			}
-			if (angle == 1)
-			{
-				limit = d_y - d_y * abs(k)/thickness;
-				point = vgabuf->buf_ptr(k + x1, y1 + (y2-y1) *abs(k) /thickness /2);
-			}
-			ratio = 15 - (abs(k)-lightness) * 15 / diff;
-			temp_r = (R1 * ratio) >>4;
-			temp_g = (G1 * ratio) >>4;
-			temp_b = (B1 * ratio) >>4;
-			if ((k > - lightness) && (k < lightness))
-			{
+      }	
+    }
+  }
+  else 
+  {
+    x_inc = (d_x << 8 )/ d_y;
+    for (k = -thickness; k<= thickness; k ++)
+    {
+      x = 0;
+      x_count = 0;
+
+      if (fast) {
+        point = vgabuf->buf_ptr(k + x1,y1);
+        limit = d_y;
+        if (angle > 1)
+        {
+          y_inc = (x2 -x1 -k) > 0 ? 2 : -2;
+          x_inc = ((abs(x2 -x1 -k)) << 8) / d_y;
+        }
+        if (angle == 1)
+        {
+          limit = d_y - d_y * abs(k)/thickness;
+          point = vgabuf->buf_ptr(k + x1, y1 + (y2-y1) *abs(k) /thickness /2);
+        }
+      } else {
+        // calculating the slope for clipping
+        int xDiff = (x2-x1);
+        int slope;
+        // avoid dividing by zero error
+        if (xDiff != 0)
+          slope = ((y2-y1)<<6)/xDiff;
+        else
+          slope = 999;
+
+
+        // clipping the Y axis and calculate the new starting and ending y coordinates
+        // no need to clip the x axis because the draw_light_beam() routine has done this 
+        // part
+        // avoid dividing by zero error
+        int tempX1=x1+k, tempX2=x2+k, tempY1=y1, tempY2=y2;
+
+        if (tempX1 <= bound_x1)
+        {
+          tempX1 = bound_x1;
+          tempY1 = y1 + (((tempX1 - (x1+k)) * slope)>>6);
+          if (tempY1 < bound_y1 || tempY1 > bound_y2)
+            continue;
+        }
+        else
+          if (tempX1 >= bound_x2)
+          {
+            tempX1 = bound_x2;
+            tempY1 = y1 + (((tempX1 - (x1+k)) * slope)>>6);
+            if (tempY1 < bound_y1 || tempY1 > bound_y2)
+              continue;
+          }
+        if (tempX2 <= bound_x1)
+        {
+          tempX2 = bound_x1;
+          tempY2 = y1 + (((tempX2 - (x1+k)) * slope)>>6);
+          if (tempY2 < bound_y1 || tempY2 > bound_y2)
+            continue;
+        }
+        else
+          if (tempX2 >= bound_x2)
+          {
+            tempX2 = bound_x2;
+            tempY2 = y1 + (((tempX2 - (x1+k)) * slope)>>6);
+            if (tempY2 < bound_y1 || tempY2 > bound_y2)
+              continue;
+          }
+        point = vgabuf->buf_ptr(tempX1, tempY1);
+        limit = abs(tempY2 - tempY1);
+        if (limit != 0)
+          x_inc = (abs(tempX2 - tempX1) << 8 )/ limit;
+
+
+        if (angle > 1)
+        {
+
+          // calculating the slope for clipping
+          xDiff -= k;
+          // avoid dividing by zero error
+          if (xDiff != 0)
+            slope = ((y2-y1)<<6)/xDiff;
+          else
+            slope = 999;
+
+
+          // clipping the Y axis and calculate the new starting and ending y coordinates
+          // no need to clip the x axis because the draw_light_beam() routine has done this 
+          // part
+          tempX2=x2;
+          if (tempX2 <= bound_x1)
+          {
+            tempX2 = bound_x1;
+            tempY2 = y2 + (((tempX2 - x2) * slope)>>6);
+            if (tempY2 < bound_y1 || tempY2 > bound_y2)
+              continue;
+          }
+          else
+            if (tempX2 >= bound_x2)
+            {
+              tempX2 = bound_x2;
+              tempY2 = y2 + (((tempX2 - x2) * slope)>>6);
+              if (tempY2 < bound_y1 || tempY2 > bound_y2)
+                continue;
+            }
+          //	y_inc = (x2 -x1 -k) > 0 ? 2 : -2;
+          //	x_inc = ((abs(x2 -x1 -k)) << 8) / d_y;
+
+
+          //calculating varable line, limit and y_inc
+          y_inc = (tempX2 -tempX1) > 0 ? 2 : -2;
+          limit = abs(tempY2 - tempY1);
+          // avoid dividing by zero error
+          if (limit != 0)
+            x_inc = ((abs(tempX2 -tempX1)) << 8) / limit;
+
+          if (tempX2 == tempX1)
+            continue;
+        }
+        if (angle == 1)
+        {
+          limit = limit - limit * abs(k)/thickness;
+          point = vgabuf->buf_ptr(tempX1, tempY1 + (tempY2-tempY1) *abs(k) /thickness /2);
+        }
+      }
+
+      ratio = 15 - (abs(k)-lightness) * 15 / diff;
+      temp_r = (R1 * ratio) >>4;
+      temp_g = (G1 * ratio) >>4;
+      temp_b = (B1 * ratio) >>4;
+      if ((k > - lightness) && (k < lightness))
+      {
 #ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-//RED21:		
-					mov cl, [edi +8]
-					mov ax, R2
-				   	shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-//GREEN21:	
-					mov ax, G2
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-//BLUE21:
-					mov cl, [edi +10]
-					mov ax, B2
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-//END21:
-					or  ax, prev_g			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_r			
-					mov [esi], ax
-					mov eax, x_count		//x_count = x_count + x_inc;
-					add eax, x_inc
-					mov x_count, eax
-					mov ecx, x				//if ((x << 8) < x_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH21				
-					add esi, y_inc			//point = point + y_inc;
-					inc ecx					//x ++;
-					mov x, ecx
-FINISH21:			add esi, line			//point = point + line;
-					mov point, esi
-				}
+        for (i = 0; i<= limit; i ++) //draw one line
+          _asm
+          {
+            mov edi, base
+              add edi, mode_offset
+              mov esi, point	//ok
+              //RED21:		
+              mov cl, [edi +8]
+              mov ax, R2
+              shl ax, cl				// assign R_UNDER value
+              mov prev_r, ax
+              //GREEN21:	
+              mov ax, G2
+              shl ax, 5				// assign G_UNDER value
+              mov prev_g, ax
+              //BLUE21:
+              mov cl, [edi +10]
+              mov ax, B2
+              shl ax, cl				// assign B_UNDER value
+              mov prev_b, ax
+              //END21:
+              or  ax, prev_g			//*point = prev_r | prev_g | prev_b;
+            or  ax, prev_r			
+              mov [esi], ax
+              mov eax, x_count		//x_count = x_count + x_inc;
+            add eax, x_inc
+              mov x_count, eax
+              mov ecx, x				//if ((x << 8) < x_count)
+              mov ebx, ecx
+              shl ebx, 8
+              cmp eax, ebx
+              jle FINISH21				
+              add esi, y_inc			//point = point + y_inc;
+            inc ecx					//x ++;
+            mov x, ecx
+              FINISH21:			add esi, line			//point = point + line;
+            mov point, esi
+          }
 #endif
-			}
-			else
-			{
+      }
+      else
+      {
 #ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-					mov dx, [esi]
-//RED22:	
-					mov cl, [edi +8]
-				    mov bx, [edi]
-					mov prev_r, bx			// assign R_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_r
-					cmp ax, 001fh
-					jg  GREEN22
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-GREEN22:			mov bx, [edi +2]
-					mov prev_g, bx			// assign G_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, 5
-					add ax, temp_g
-					cmp ax, [edi +6]
-					jg  BLUE22
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-BLUE22:				mov cl, [edi +10]
-					mov bx, [edi +4]
-					mov prev_b, bx			// assign B_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_b
-					cmp ax, 001fh
-					jg  END22
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-END22:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_g			
-					or  ax, prev_b
-					mov [esi], ax
-					mov eax, x_count		//x_count = x_count + x_inc;
-					add eax, x_inc
-					mov x_count, eax
-					mov ecx, x				//if ((x << 8) < x_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH22				
-					add esi, y_inc			//point = point + y_inc;
-					inc ecx					//x ++;
-					mov x, ecx
-FINISH22:			add esi, line			//point = point + line;
-					mov point, esi
-				}
+        for (i = 0; i<= limit; i ++) //draw one line
+          _asm
+          {
+            mov edi, base
+              add edi, mode_offset
+              mov esi, point	//ok
+              mov dx, [esi]
+              //RED22:	
+              mov cl, [edi +8]
+              mov bx, [edi]
+              mov prev_r, bx			// assign R_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, cl
+              add ax, temp_r
+              cmp ax, 001fh
+              jg  GREEN22
+              shl ax, cl				// assign R_UNDER value
+              mov prev_r, ax
+              GREEN22:			mov bx, [edi +2]
+              mov prev_g, bx			// assign G_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, 5
+              add ax, temp_g
+              cmp ax, [edi +6]
+              jg  BLUE22
+              shl ax, 5				// assign G_UNDER value
+              mov prev_g, ax
+              BLUE22:				mov cl, [edi +10]
+              mov bx, [edi +4]
+              mov prev_b, bx			// assign B_OVER value
+              mov ax, dx
+              and ax, bx
+              shr ax, cl
+              add ax, temp_b
+              cmp ax, 001fh
+              jg  END22
+              shl ax, cl				// assign B_UNDER value
+              mov prev_b, ax
+              END22:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
+            or  ax, prev_g			
+              or  ax, prev_b
+              mov [esi], ax
+              mov eax, x_count		//x_count = x_count + x_inc;
+            add eax, x_inc
+              mov x_count, eax
+              mov ecx, x				//if ((x << 8) < x_count)
+              mov ebx, ecx
+              shl ebx, 8
+              cmp eax, ebx
+              jle FINISH22				
+              add esi, y_inc			//point = point + y_inc;
+            inc ecx					//x ++;
+            mov x, ecx
+              FINISH22:			add esi, line			//point = point + line;
+            mov point, esi
+          }
 #endif
-			}
-		}
-	}
+      }
+    }
+  }
 }
 //-------- End of function Magic::straight_light_beam ----------//
-
-//-------- Begin of function Magic::straight_light_beam2 ----------//
-void Magic::straight_light_beam2(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
-								int thickness, int lightness, short R1, short G1, short B1, 
-								short R2, short G2, short B2, char angle) 
-{
-	// this routine is as same as straight_light_beam, but
-	// it performs clipping checking for each pixel. 
-	// Therefore, this routine is slower than the first one
-
-	// All coordinates are in global value
-	// and all coordination will not out bound
-	// RGB range should be 0 - 255 /31 = 255-248 /0 = 0-7
-  int mode = vga.pixel_format_flag;
-	int i, k, diff, ratio, limit;
-	int x = x1;
-	int y = y1;
-	int d_x = abs(x2 - x1);
-	int d_y = abs(y2 - y1);
-	int	x_count, y_count;
-	short *point;
-	short temp_r, temp_g, temp_b;
-	short prev_r, prev_g, prev_b;
-	int	line = (y2 - y1) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
-	int	x_inc = (x2 - x1) > 0 ? 2 : -2;
-	int	y_inc = (x2 - x1) > 0 ? 2 : -2;
-	int mode_offset = mode *12;
-	unsigned short *base = check_table;
-  R1 = R1 >> 3;
-  R2 = R2 >> 3;
-  B1 = B1 >> 3;
-  B2 = B2 >> 3;
-  if ((mode == 1) || (mode == 3)) {
-    G1 = G1 >> 2;
-    G2 = G2 >> 2;
-  } else {
-    G1 = G1 >> 3;
-    G2 = G2 >> 3;
-  }
-  diff = thickness - lightness;
-	if (diff <1)
-		diff =1;
-	if ((d_y == 0) && (d_x == 0))
-		return;
-	if (d_x > d_y)
-	{
-		y_inc = (d_y << 8) / d_x;
-		for (k = -thickness; k<= thickness; k ++)
-		{
-			y = 0;
-			y_count = 0;
-			
-			// calculating the slope for clipping
-			int xDiff = (x2-x1);
-			int slope;
-				// avoid dividing by zero error
-			if (xDiff != 0)
-				slope = ((y2-y1)<<6) /xDiff;
-			else
-				slope = 999;
-
-
-
-			// clipping the Y axis and calculate the new starting and ending y coordinates
-			// no need to clip the x axis because the draw_light_beam() routine has done this 
-			// part
-				// avoid dividing by zero error
-			if (slope == 0)
-				slope = 1;
-			int tempX1=x1, tempX2=x2, tempY1=y1+k, tempY2=y2+k;
-			if (tempY1 <= bound_y1)
-			{
-				tempY1 = bound_y1;
-				tempX1 = x1 + ((tempY1 - (y1+k))<<6) / slope;
-				if (tempX1 < bound_x1 || tempX1 > bound_x2)
-					continue;
-			}
-			else
-			if (tempY1 >= bound_y2)
-			{
-				tempY1 = bound_y2;
-				tempX1 = x1 + ((tempY1 - (y1+k))<<6) / slope;
-				if (tempX1 < bound_x1 || tempX1 > bound_x2)
-					continue;
-			}
-			if (tempY2 <= bound_y1)
-			{
-				tempY2 = bound_y1;
-				tempX2 = x1 + ((tempY2 - (y1+k))<<6) / slope;
-				if (tempX2 < bound_x1 || tempX2 > bound_x2)
-					continue;
-			}
-			else
-			if (tempY2 >= bound_y2)
-			{
-				tempY2 = bound_y2;
-				tempX2 = x1 + ((tempY2 - (y1+k))<<6) / slope;
-				if (tempX2 < bound_x1 || tempX2 > bound_x2)
-					continue;
-			}
-
-
-			point = vgabuf->buf_ptr(tempX1, tempY1);
-			limit = abs(tempX2 - tempX1);
-			if (limit != 0)
-				y_inc = (abs(tempY2 - tempY1) << 8) / limit;
-
-			if (angle > 1)
-			{
-				// calculating the slope for clipping
-				// avoid dividing by zero error
-				if (xDiff != 0)
-					slope = ((y2-y1-k)<<6)/xDiff;
-				else
-					slope = 999;
-			
-				// clipping the Y axis and calculate the new starting and ending y coordinates
-				// no need to clip the x axis because the draw_light_beam() routine has done this 
-					// avoid dividing by zero error
-				if (slope == 0)
-					slope = 1;
-						
-				tempY2 = y2;
-				if (tempY2 <= bound_y1)
-				{
-					tempY2 = bound_y1;
-					tempX2 = x2 + ((tempY2 - y2)<<6) / slope;
-					if (tempX2 < bound_x1 || tempX2 > bound_x2)
-						continue;
-				}
-				else
-				if (tempY2 >= bound_y2)
-				{
-					tempY2 = bound_y2;
-					tempX2 = x2 + ((tempY2 - y2)<<6) / slope;
-					if (tempX2 < bound_x1 || tempX2 > bound_x2)
-						continue;
-				}
-
-				
-				//calculating varable line, limit and y_inc
-				line = (tempY2 -tempY1) > 0 ? (2 *vgabuf->buf_pitch()) : -(2 *vgabuf->buf_pitch());
-				limit = abs(tempX2 - tempX1);
-				// avoid dividing by zero error
-				if (limit != 0)
-					y_inc = ((abs(tempY2 -tempY1)) << 8) / limit;
-
-				if (tempY2 == tempY1)
-					continue;
-			}
-			if (angle == 1)
-			{
-			//	limit = d_x - d_x * abs(k)/thickness;
-			//	point = vgabuf->buf_ptr(x1 + (x2-x1) *abs(k) /thickness /2,k + y1);
-				limit = limit - limit * abs(k)/thickness;
-				point = vgabuf->buf_ptr(tempX1 + (tempX2-tempX1) *abs(k) /thickness /2, tempY1);
-			}
-			// Ready Variables for line drawing
-			ratio = 15 - (abs(k)-lightness) * 15 / diff;	
-			temp_r = (R1 * ratio) >>4;
-			temp_g = (G1 * ratio) >>4;
-			temp_b = (B1 * ratio) >>4;
-			if ((k > - lightness) && (k < lightness))
-			{
-#ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-//RED11:				
-					mov cl, [edi +8]
-					mov ax, R2
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-//GREEN11:			
-					mov ax, G2
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-//BLUE11:				
-					mov cl, [edi +10]
-					mov ax, B2
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-//END11:				
-					or  ax, prev_g			//*point = prev_r | prev_g | prev_b;			
-					or  ax, prev_r
-					mov [esi], ax
-					mov eax, y_count		//y_count = y_count + y_inc;
-					add eax, y_inc
-					mov y_count, eax
-					mov ecx, y				//if ((y << 8) < y_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH11				
-					add esi, line			//point = point + line;
-					inc ecx					// y++;
-					mov y, ecx
-FINISH11:			add esi, x_inc			//point = point + x_inc;
-					mov point, esi
-				}
-#endif
-			}
-			else
-			{
-#ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-					mov dx, [esi]
-//RED12:				
-					mov cl, [edi +8]
-				    mov bx, [edi]
-					mov prev_r, bx			// assign R_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_r
-					cmp ax, 001fh
-					jg  GREEN12
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-GREEN12:			mov bx, [edi +2]
-					mov prev_g, bx			// assign G_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, 5
-					add ax, temp_g
-					cmp ax, [edi +6]
-					jg  BLUE12
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-BLUE12:				mov cl, [edi +10]
-					mov bx, [edi +4]
-					mov prev_b, bx			// assign B_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_b
-					cmp ax, 001fh
-					jg  END12
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-END12:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_g			
-					or  ax, prev_b
-					mov [esi], ax
-					mov eax, y_count		//y_count = y_count + y_inc;
-					add eax, y_inc
-					mov y_count, eax
-					mov ecx, y				//if ((y << 8) < y_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH12				
-					add esi, line			//point = point + line;
-					inc ecx					// y++;
-					mov y, ecx
-FINISH12:			add esi, x_inc			//point = point + x_inc;
-					mov point, esi
-				}
-#endif
-			}	
-		}
-	}
-	else 
-	{
-		x_inc = (d_x << 8 )/ d_y;
-		for (k = -thickness; k<= thickness; k ++)
-		{
-			x = 0;
-			x_count = 0;
-			
-			
-			// calculating the slope for clipping
-			int xDiff = (x2-x1);
-			int slope;
-				// avoid dividing by zero error
-			if (xDiff != 0)
-				slope = ((y2-y1)<<6)/xDiff;
-			else
-				slope = 999;
-
-
-			// clipping the Y axis and calculate the new starting and ending y coordinates
-			// no need to clip the x axis because the draw_light_beam() routine has done this 
-			// part
-				// avoid dividing by zero error
-			int tempX1=x1+k, tempX2=x2+k, tempY1=y1, tempY2=y2;
-		
-			if (tempX1 <= bound_x1)
-			{
-				tempX1 = bound_x1;
-				tempY1 = y1 + (((tempX1 - (x1+k)) * slope)>>6);
-				if (tempY1 < bound_y1 || tempY1 > bound_y2)
-					continue;
-			}
-			else
-			if (tempX1 >= bound_x2)
-			{
-				tempX1 = bound_x2;
-				tempY1 = y1 + (((tempX1 - (x1+k)) * slope)>>6);
-				if (tempY1 < bound_y1 || tempY1 > bound_y2)
-					continue;
-			}
-			if (tempX2 <= bound_x1)
-			{
-				tempX2 = bound_x1;
-				tempY2 = y1 + (((tempX2 - (x1+k)) * slope)>>6);
-				if (tempY2 < bound_y1 || tempY2 > bound_y2)
-					continue;
-			}
-			else
-			if (tempX2 >= bound_x2)
-			{
-				tempX2 = bound_x2;
-				tempY2 = y1 + (((tempX2 - (x1+k)) * slope)>>6);
-				if (tempY2 < bound_y1 || tempY2 > bound_y2)
-					continue;
-			}
-			point = vgabuf->buf_ptr(tempX1, tempY1);
-			limit = abs(tempY2 - tempY1);
-			if (limit != 0)
-				x_inc = (abs(tempX2 - tempX1) << 8 )/ limit;
-
-
-			if (angle > 1)
-			{
-	
-				// calculating the slope for clipping
-				xDiff -= k;
-					// avoid dividing by zero error
-				if (xDiff != 0)
-					slope = ((y2-y1)<<6)/xDiff;
-				else
-					slope = 999;
-			
-				
-				// clipping the Y axis and calculate the new starting and ending y coordinates
-				// no need to clip the x axis because the draw_light_beam() routine has done this 
-				// part
-				tempX2=x2;
-				if (tempX2 <= bound_x1)
-				{
-					tempX2 = bound_x1;
-					tempY2 = y2 + (((tempX2 - x2) * slope)>>6);
-					if (tempY2 < bound_y1 || tempY2 > bound_y2)
-						continue;
-				}
-				else
-				if (tempX2 >= bound_x2)
-				{
-					tempX2 = bound_x2;
-					tempY2 = y2 + (((tempX2 - x2) * slope)>>6);
-					if (tempY2 < bound_y1 || tempY2 > bound_y2)
-						continue;
-				}
-			//	y_inc = (x2 -x1 -k) > 0 ? 2 : -2;
-			//	x_inc = ((abs(x2 -x1 -k)) << 8) / d_y;
-				
-				
-				//calculating varable line, limit and y_inc
-				y_inc = (tempX2 -tempX1) > 0 ? 2 : -2;
-				limit = abs(tempY2 - tempY1);
-				// avoid dividing by zero error
-				if (limit != 0)
-					x_inc = ((abs(tempX2 -tempX1)) << 8) / limit;
-
-				if (tempX2 == tempX1)
-					continue;
-			}
-			if (angle == 1)
-			{
-				limit = limit - limit * abs(k)/thickness;
-				point = vgabuf->buf_ptr(tempX1, tempY1 + (tempY2-tempY1) *abs(k) /thickness /2);
-			}
-			ratio = 15 - (abs(k)-lightness) * 15 / diff;
-			temp_r = (R1 * ratio) >>4;
-			temp_g = (G1 * ratio) >>4;
-			temp_b = (B1 * ratio) >>4;
-			if ((k > - lightness) && (k < lightness))
-			{
-#ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-//RED21:		
-					mov cl, [edi +8]
-					mov ax, R2
-				   	shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-//GREEN21:	
-					mov ax, G2
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-//BLUE21:
-					mov cl, [edi +10]
-					mov ax, B2
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-//END21:
-					or  ax, prev_g			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_r			
-					mov [esi], ax
-					mov eax, x_count		//x_count = x_count + x_inc;
-					add eax, x_inc
-					mov x_count, eax
-					mov ecx, x				//if ((x << 8) < x_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH21				
-					add esi, y_inc			//point = point + y_inc;
-					inc ecx					//x ++;
-					mov x, ecx
-FINISH21:			add esi, line			//point = point + line;
-					mov point, esi
-				}
-#endif
-			}
-			else
-			{
-#ifdef ASM_FOR_MSVC
-				for (i = 0; i<= limit; i ++) //draw one line
-				_asm
-				{
-					mov edi, base
-					add edi, mode_offset
-					mov esi, point	//ok
-					mov dx, [esi]
-//RED22:	
-					mov cl, [edi +8]
-				    mov bx, [edi]
-					mov prev_r, bx			// assign R_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_r
-					cmp ax, 001fh
-					jg  GREEN22
-					shl ax, cl				// assign R_UNDER value
-					mov prev_r, ax
-GREEN22:			mov bx, [edi +2]
-					mov prev_g, bx			// assign G_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, 5
-					add ax, temp_g
-					cmp ax, [edi +6]
-					jg  BLUE22
-					shl ax, 5				// assign G_UNDER value
-					mov prev_g, ax
-BLUE22:				mov cl, [edi +10]
-					mov bx, [edi +4]
-					mov prev_b, bx			// assign B_OVER value
-					mov ax, dx
-					and ax, bx
-					shr ax, cl
-					add ax, temp_b
-					cmp ax, 001fh
-					jg  END22
-					shl ax, cl				// assign B_UNDER value
-					mov prev_b, ax
-END22:				mov ax, prev_r			//*point = prev_r | prev_g | prev_b;
-					or  ax, prev_g			
-					or  ax, prev_b
-					mov [esi], ax
-					mov eax, x_count		//x_count = x_count + x_inc;
-					add eax, x_inc
-					mov x_count, eax
-					mov ecx, x				//if ((x << 8) < x_count)
-					mov ebx, ecx
-					shl ebx, 8
-					cmp eax, ebx
-					jle FINISH22				
-					add esi, y_inc			//point = point + y_inc;
-					inc ecx					//x ++;
-					mov x, ecx
-FINISH22:			add esi, line			//point = point + line;
-					mov point, esi
-				}
-#endif
-			}
-		}
-	}
-}
-//-------- End of function Magic::straight_light_beam2 ----------//
 
 // ----------- Begin of function Magic::draw_light_beam ----------//
 // This rountine is directly copied from Oanline.cpp, its function is for
@@ -1208,10 +925,7 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 	if( x1 >= b_x1 && x1 <= b_x2 && x2 >= b_x1 && x2 <= b_x2 &&
 		y1 >= b_y1 && y1 <= b_y2 && y2 >= b_y1 && y2 <= b_y2)
 	
-		if (fast)
-			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
-		else
-			straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
+		straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle, fast);
 	else
 	{
 		if( y1 == y2)
@@ -1228,10 +942,7 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 				x2 = b_x1;
 			else if (x2 > b_x2)
 				x2 = b_x2;
-			if (fast)
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle);
-			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle);
+			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle, fast);
 		}
 		else if( x1 == x2)
 		{
@@ -1247,10 +958,7 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 				y2 = b_y1;
 			else if( y2 > b_y2)
 				y2 = b_y2;
-			if (fast)
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
-			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
+			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle, fast);
 		}
 		else
 		{
@@ -1350,10 +1058,7 @@ void Magic::draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 					y2 = y2a;
 				}
 			}
-			if (fast)	
-				straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
-			else
-				straight_light_beam2(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle) ;
+			straight_light_beam(vgabuf, x1, y1, x2, y2, thickness, lightness, R1, G1, B1, R2, G2, B2, angle, fast);
 		}
 	}
 }
@@ -2544,10 +2249,6 @@ void Magic::draw_magic_six(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int c
 // ----------- Begin of function Magic::draw_magic_seven -----//
 void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
-//	IMGline(vgabuf->buf_ptr(), vgabuf->buf_true_pitch(), vgabuf->buf_width(),
-//						vgabuf->buf_height(), x1-20, y1, x1+20, y1, 0xFFFF);
-//	draw_circle(vgabuf, x1, y1, 30, 1, 1, 155, 155, 255, 0);
-
 	int totalNum = 20;
 	int totalFrame = 20;
 	int dirx = -10;
@@ -2616,7 +2317,6 @@ void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int
 		{
 			draw_circle(vgabuf, curX, curY, 20, 1, 1, color[col][0], color[col][1], color[col][2], 1);
 			draw_circle(vgabuf, curX, curY, 30, 1, 1, 255, 255, 255, 0);
-		//	draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, color[col][0], color[col][1], color[col][2], 0);
 			draw_circle(vgabuf, curX+8, curY+8, 12, 1, 1, 255, 255, 255, 0);
 			draw_light_beam(vgabuf, curX, curY, curX-40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
 			draw_light_beam(vgabuf, curX, curY, curX+40, curY, 5, 0, 255, 255, 255, color[col][0], color[col][1], color[col][2], 2);
@@ -2630,18 +2330,6 @@ void Magic::draw_magic_seven(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int
 // ----------- Begin of function Magic::draw_magic_eight -----//
 void Magic::draw_magic_eight(VgaBuf *vgabuf, int x1, int y1, int x2, int y2, int count) 
 {
-//	draw_circle2(vgabuf, x1-100, y1,		 100, 100, 255, 055, 055, 1);
-//	draw_circle2(vgabuf, x1-100, y1+200, 100, 100, 255, 055, 055, 1);
-
-//	draw_circle2(vgabuf, x1-100, y1+400, 100, 100, 255, 055, 055, 1);
-//	draw_circle2(vgabuf, x1+100, y1+200, 100, 100, 255, 055, 055, 0);
-//	draw_circle2(vgabuf, x1+100, y1,		 100, 100, 255, 055, 055, 0);
-
-//1. why circle can't use 0,1 
-//2. why when 0,1 occurs clipping problem
-
-// ----------- End of function Magic::draw_magic_eight -----//
-
 	draw_circle2(vgabuf, x1, y1, 80, config.frame_speed /3, 0, 255,   0,   0, 1);
 	draw_circle2(vgabuf, x1, y1, 80, 0, config.frame_speed /3,   0, 255,   0, 1);
 	draw_circle2(vgabuf, x1, y1, 80, 0, 0,   0,   0, 255, 1);
@@ -2904,9 +2592,6 @@ void Magic::draw_magic_twelve(VgaBuf *vgabuf, int x1, int y1, int curStep, int n
 		draw_light_beam(vgabuf, x1, y1, x1-(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, 2);
 		draw_light_beam(vgabuf, x1, y1, x1+(curStep*20-180), y1, 3, 1, 255, 255, 255, 255, 255, 255, 2);
 	}
-			
-//	draw_circle2(vgabuf, x1, y1, 40 * curStep, 0, 0, (curStep<<4)>>intensity, 255>>intensity,
-//		(255-(curStep<<4))>>intensity, 1);
 }
 // ----------- End of function Magic::draw_magic_twelve -----//
 

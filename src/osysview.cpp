@@ -99,8 +99,6 @@ void Sys::disp_view_mode(int observeMode)
 	const int darkenHeight = 21;
 	char scrollName[] = "SR1024-B";
 	
-	help.short_front_buf.hide_area(SCROLL_MENU_X1, SCROLL_MENU_Y1, SCROLL_MENU_X2, SCROLL_MENU_Y2);
-	
 //	if (current_display_mode.mode_id == MODE_ID_800x600x16)
 	{
 		for (int i = 0 ; i < 8 ; i ++)
@@ -132,8 +130,6 @@ void Sys::disp_view_mode(int observeMode)
 				darkenY[j-MIN_MODE_TO_DISPLAY]+darkenHeight-1, -5 );
 		}
 	}
-
-	help.short_front_buf.show_area();
 }
 //--------- End of funtion Sys::disp_view_mode ---------//
 

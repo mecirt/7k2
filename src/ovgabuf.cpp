@@ -280,6 +280,20 @@ void VgaBuf::put_bitmapW(int x, int y, short *bitmapWBuf )
 }
 //------- End of function VgaBuf::put_bitmapW --------//
 
+void VgaBuf::read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapPtr)
+{
+  short *imageBuf = cur_buf_ptr;
+  long pitch = cur_pitch;
+  long w = x2 - x1 + 1, h = y2 - y1 + 1;
+  *bitmapPtr = w;
+  ++bitmapPtr;
+  *bitmapPtr = h;
+  ++bitmapPtr;
+  for (long y = y1; y <= y2; ++y) {
+    memcpy (bitmapPtr, ((char *) imageBuf) + y * pitch + x1 * 2, 2 * w);
+    bitmapPtr += w;
+  }
+}
 
 //---------- Begin of function VgaBuf::save_area_common_buf ----------//
 //

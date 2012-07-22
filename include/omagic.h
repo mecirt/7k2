@@ -76,10 +76,7 @@ public:
 
 	void		straight_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 									int thickness, int lightness, short R1, short G1, short B1, 
-									short R2, short G2, short B2, char angle);
-	void		straight_light_beam2(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
-									int thickness, int lightness, short R1, short G1, short B1, 
-									short R2, short G2, short B2, char angle);
+									short R2, short G2, short B2, char angle, bool fast);
 	void		draw_light_beam(VgaBuf *vgabuf, int x1, int y1, int x2, int y2,
 								int thickness, int lightness, short R1, short G1, short B1, 
 								short R2, short G2, short B2, char angle, char fast = 1);

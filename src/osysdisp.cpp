@@ -167,9 +167,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 	}
 	else
 	{
-			// ###### begin Gilbert 4/1 ######//
-			help.short_front_buf.clear();
-			// ###### end Gilbert 4/1 ######//
 			info.disp_panel();
 			world.paint();
 			disp_button();
@@ -217,8 +214,7 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 		//--------- display the map and info area --------//
 
-		help.disp_short_help(&vga_back);
-
+		help.disp();
 	#ifdef DEBUG
 			flipTime = m.get_time();
 	#endif
@@ -226,12 +222,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 	#ifdef DEBUG
 			flipTime = m.get_time() - flipTime;
 	#endif
-
-		help.hide_short_help(&vga_back);
-
-		//---------- display help ----------//
-
-		help.disp();
 	}
 
 	anim_line.inc_phase();		// originally in Sys::process()

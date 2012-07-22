@@ -376,7 +376,6 @@ struct LocationCorners
 	Corner *top_left, *top_right, *bottom_left, *bottom_right;
 
 	int	interpolate_z(int curX, int curY);
-	void	render(Blob2DW *, char *texturePtr, BYTE drawState );
 	void	render(BitmapW *, char *texturePtr, int x, int y, BYTE drawState);
 	void	render_special(Blob2DW *, int effectId, char *texturePtr, int color1, int color2);
 	void	render_special(BitmapW *, int effectId, char *texturePtr, int color1, int color2, int x, int y);

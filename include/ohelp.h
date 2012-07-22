@@ -128,9 +128,6 @@ public:
 	char        *help_text_buf;
 	int			help_text_buf_size;
 
-	HelpSaveScreen	long_save_buf;
-	HelpSaveScreen	short_front_buf;
-
 	short			last_mouse_x;
 	short			last_mouse_y;
 	unsigned long mouse_still_time;
@@ -158,8 +155,6 @@ public:
 
 	void			disp_short_help(VgaBuf *);
 	void			hide_short_help(VgaBuf *);
-	void			hide_area(int x1, int y1, int x2, int y2);
-	void			show_area();
 
 	void			flip();
 };

@@ -372,10 +372,6 @@ void Info::disp()
 	if( option_menu.is_active() )
 		return;
 	
-	// ######## begin Gilbert 23/12 #######//
-	help.hide_area(INFO_X1, INFO_Y1, INFO_X2, INFO_Y2);
-	// ######## end Gilbert 23/12 #######//
-
 	vga.active_buf->put_bitmapW( INFO_X1, INFO_Y1, info_background_bitmap );
 
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
@@ -423,10 +419,6 @@ void Info::disp()
 		scenario_editor.disp(INFO_REPAINT);
 	}
 	// ####### end Gilbert 23/2 ########//
-
-	// ######## begin Gilbert 23/12 #######//
-	help.show_area();
-	// ######## end Gilbert 23/12 #######//
 }
 //-------- End of function Info::disp --------//
 
