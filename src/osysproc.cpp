@@ -70,6 +70,7 @@
 #include <otips.h>
 #include <oprofile.h>
 #include <ot_gmenu.h>
+#include <obox.h>
 #include <unistd.h>
 
 //----------- Define static variables ------------//
@@ -945,6 +946,7 @@ void Sys::process()
   // nothing if we're in a menu
   if (option_menu.is_active()) return;
   if (in_game_menu.is_active()) return;
+  if (Box::opened_flag) return;
 
 	//---- if any of the DirectDraw buffers is lost, restore it ----//
 

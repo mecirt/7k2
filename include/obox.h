@@ -44,9 +44,8 @@ class Box
 {
 public:
    int  box_x1, box_y1, box_x2, box_y2;
-   int  arrow_x, arrow_y;
-	int  save_scr_flag;
-	short *save_scr_area;
+   int down_centre;
+   char *button1, *button2;
 
 	static char opened_flag;
 
@@ -64,7 +63,7 @@ public:
 
    void open(int,int,int,int,int=1);
    void open(int,int,int=1);
-   void paint(int);
+   void paint();
    void close();
 
    void calc_size(const char*,int,int= -1, int= -1);
