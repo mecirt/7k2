@@ -215,14 +215,14 @@ void Sys::disp_frame(int dispCampaignMsg)
 		//--------- display the map and info area --------//
 
 		help.disp();
+        }
 	#ifdef DEBUG
-			flipTime = m.get_time();
+	flipTime = m.get_time();
 	#endif
-			vga.flip();
+	vga.flip();
 	#ifdef DEBUG
-			flipTime = m.get_time() - flipTime;
+	flipTime = m.get_time() - flipTime;
 	#endif
-	}
 
 	anim_line.inc_phase();		// originally in Sys::process()
 

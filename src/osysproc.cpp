@@ -942,6 +942,10 @@ int Sys::should_next_frame()
 //
 void Sys::process()
 {
+  // nothing if we're in a menu
+  if (option_menu.is_active()) return;
+  if (in_game_menu.is_active()) return;
+
 	//---- if any of the DirectDraw buffers is lost, restore it ----//
 
 	if( vga_front.is_buf_lost() || vga_back.is_buf_lost() )

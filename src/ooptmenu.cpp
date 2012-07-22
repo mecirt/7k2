@@ -365,11 +365,12 @@ void OptionMenu::enter(char untilExitFlag)
 	mouse_cursor.set_frame(0);
 
    power.win_opened = 1;
-
+/*
 	if( untilExitFlag )
 	{
 		while( is_active() )
 		{
+                  vga.flip();
 			sys.yield();
 			mouse.get_event();
 			if( config.music_flag )
@@ -385,6 +386,7 @@ void OptionMenu::enter(char untilExitFlag)
 			detect();
 		}
 	}
+*/
 }
 
 
@@ -395,8 +397,7 @@ void OptionMenu::disp(int needRepaint)
 
 	err_when( !color_remap_table || !background_bitmap );		// call set_active to load palette and bitmap
 
-	if( needRepaint )
-		refresh_flag = IGOPTION_ALL;
+	refresh_flag = IGOPTION_ALL;
 
 	int bx = (VGA_WIDTH - PAGE_WIDTH) / 2;
 	int by = (VGA_HEIGHT - PAGE_HEIGHT) / 2;
@@ -490,7 +491,6 @@ void OptionMenu::disp(int needRepaint)
 		}
 
 		refresh_flag = 0;
-                vga.flip();
 	}
 }
 

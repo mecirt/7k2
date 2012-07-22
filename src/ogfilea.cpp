@@ -324,7 +324,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 	}
 
 	int retFlag = 0;
-	int refreshFlag = LSOPTION_ALL;
 
 #define SLOT_Y_SPACING 80
 #define SLOT_X1(n) (bx + 119)
@@ -384,10 +383,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 
 		// --------- display ----------//
 
-		if( refreshFlag )
-		{
-			if( refreshFlag & LSOPTION_PAGE )
-			{
 				// ------ hide cursor ----//
 
 				mouse.hide();
@@ -468,12 +463,9 @@ int GameFileArray::menu(int actionMode, int *recno)
 				// ------ show cursor ----//
 
 				mouse.show();
-			}
 
 			for( i = 0; i < MAX_BROWSE_DISP_REC; ++i )
 			{
-				if( refreshFlag & LSOPTION_SLOT(i) )
-				{
 					int browseSlotX1 = SLOT_X1(i);
 					int browseSlotY1 = SLOT_Y1(i);
 					int browseSlotX2 = SLOT_X2(i);
@@ -505,11 +497,8 @@ int GameFileArray::menu(int actionMode, int *recno)
 					}
 
 					mouse.show_area();
-				}
 			}
 
-			if( refreshFlag & LSOPTION_PAGE_NO )
-			{
 				mouse.hide_area( pageNoX1, pageNoY1, pageNoX2, pageNoY2 );
 //				String str;
 //				str = "page ";
@@ -533,10 +522,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 				else
 					vga.active_buf->put_bitmapW( pageDownX1, pageDownY1, pageDownArea.bitmap_ptr() );
 				mouse.show_area();
-			}
-
-			refreshFlag = 0;
-		}
 
 		// ------ detect slots -------//
 
@@ -559,7 +544,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 				if( browse_recno == rec )
 				{
 					browse_recno = rec;
-					refreshFlag |= LSOPTION_SLOT(i);
 					if( recno )
 						*recno = browse_recno;
 					breakWhileFlag = 1;	// signal to break while(1) loop
@@ -577,12 +561,9 @@ int GameFileArray::menu(int actionMode, int *recno)
 				{
 					// refresh old slot
 					int oldSlot = browse_recno - page * MAX_BROWSE_DISP_REC - minRecno;
-					if( oldSlot >= 0 && oldSlot < MAX_BROWSE_DISP_REC )
-						refreshFlag |= LSOPTION_SLOT(oldSlot);
 
 					// refresh new slot
 					browse_recno = rec;
-					refreshFlag |= LSOPTION_SLOT(i);
 					break;
 				}
 			}
@@ -593,13 +574,11 @@ int GameFileArray::menu(int actionMode, int *recno)
 		if( page > 0 && mouse.any_click( bx+LSCROLL_X1, by+LSCROLL_Y1, bx+LSCROLL_X2, by+LSCROLL_Y2 ) )
 		{
 			page--;
-			refreshFlag |= LSOPTION_ALL_SLOTS | LSOPTION_SCROLL | LSOPTION_PAGE_NO;
 		}
 
 		if( page < maxPage-1 && mouse.any_click( bx+RSCROLL_X1, by+RSCROLL_Y1, bx+RSCROLL_X2, by+RSCROLL_Y2 ) )
 		{
 			page++;
-			refreshFlag |= LSOPTION_ALL_SLOTS | LSOPTION_SCROLL | LSOPTION_PAGE_NO;
 		}
 
 		// -------- detect button at bottom -------//
@@ -608,7 +587,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 			|| mouse.key_code == KEY_ESC || mouse.any_click(RIGHT_BUTTON) > 0)		// also when ESC key is pressed or right button
 		{
 			// cancel button or escape key
-			refreshFlag = LSOPTION_ALL;
 			retFlag = 0;
 			breakWhileFlag = 1;
 			break;		// break while(1)
@@ -617,7 +595,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 			&& (pre_game ? mouse.single_click(bx+BUTTON2_X1, by+BUTTON2_Y1, bx+BUTTON2_X2, by+BUTTON2_Y2) : startButton.detect()) )
 		{
 			// save / load button
-			refreshFlag = LSOPTION_ALL;
 			if( recno )
 				*recno = browse_recno;
 			retFlag = process_action(0);
@@ -633,7 +610,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 			&& (pre_game ? mouse.single_click( bx+BUTTON3_X1, by+BUTTON3_Y1, bx+BUTTON3_X2, by+BUTTON3_Y2) : saveNewButton.detect()) )
 		{
 			// save new button
-			refreshFlag = LSOPTION_ALL;
 			retFlag = process_action(1);
 			if( retFlag != 0 )
 			{
@@ -668,7 +644,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 					if( page < 0 )
 						page = 0;
 				}
-				refreshFlag |= LSOPTION_ALL_SLOTS | LSOPTION_SCROLL | LSOPTION_PAGE_NO;
 
 				if( action_mode == 2 && size()==0 )
 				{
@@ -681,6 +656,7 @@ int GameFileArray::menu(int actionMode, int *recno)
 				box.msg( text_game_menu.str_cannot_delete_slot()); // "Cannot delete this slot");
 			}
 		}
+                vga.flip();
 
 		if( breakWhileFlag )
 			break;
@@ -1165,14 +1141,13 @@ int GameFile::ask_desc()
 	// --------------------------------//
 
 	int retFlag = 0;
-	int refreshFlag = 1;
 
 	while(1)
 	{
 		sys.yield();
 		mouse.get_event();
 
-		if( refreshFlag )
+		if( 1 )
 		{
 			// ------ display message Box ------//
 
@@ -1200,8 +1175,6 @@ int GameFile::ask_desc()
 			button_cancel.paint();
 
 			// --------------------------------//
-
-			refreshFlag = 0;
 		}
 
 		// ------- detect --------//

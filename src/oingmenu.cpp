@@ -266,6 +266,7 @@ void InGameMenu::enter(char untilExitFlag)
 
    power.win_opened = 1;
 
+/*
    if( untilExitFlag )
    {
       while( is_active() )
@@ -279,6 +280,7 @@ void InGameMenu::enter(char untilExitFlag)
          detect();
       }
    }
+*/
 }
 
 void InGameMenu::disp(int needRepaint)
@@ -367,7 +369,6 @@ void InGameMenu::disp(int needRepaint)
       }
 
 		mouse.show();
-vga.flip();
 
       refresh_flag = 0;
    }
