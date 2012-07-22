@@ -96,16 +96,16 @@ int GameFile::save_game(const char *path, const char* fileName, const char *game
         struct statvfs free;
         if (statvfs(path, &free) == 0)
 	{
-		long freeSpace = free.f_bavail * free.f_bsize;
+		long freeSpace = free.f_bavail;
 
 		if( m.is_file_exist(file_name) )
 		{	
 			// if overwritting existing file, count the file size of the existing file
 			file.file_open(file_name);
-			freeSpace += file.file_size() / 1024;		// count the existing space
+			freeSpace += file.file_size() / free.f_bsize;
 			file.file_close();
 		}
-		if( !(rc = freeSpace >= MIN_FREE_SPACE) )
+		if( !(rc = freeSpace >= MIN_FREE_SPACE / free.f_bsize) )
 		{
 			errStr = text_game_menu.str_out_of_disk_space(); // "Insufficient disk space ! The game is not saved.";
 			lowDiskSpaceFlag = 1;

@@ -1195,6 +1195,7 @@ int GameFile::ask_desc()
 			retFlag = 0;
 			break;
 		}
+                vga.flip();
 	}
 
 	// ------ restore save buffer ---------//
