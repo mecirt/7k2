@@ -345,11 +345,9 @@ void Sys::disp_zoom()
 
 #ifdef DEBUG
 	miscTime = m.get_time() - miscTime;
-	vga_front.temp_unlock();
-	vga_back.temp_unlock();
+	vga_buffer.temp_unlock();
 	// set break point here
-	vga_back.temp_restore_lock();
-	vga_front.temp_restore_lock();
+	vga_buffer.temp_restore_lock();
 #endif
 }
 //-------- End of function Sys::disp_zoom --------//
@@ -409,12 +407,9 @@ int Sys::change_display_mode(int modeId)
 	if( modeId == current_display_mode.mode_id )
 		return 0;
 	
-	UCHAR	tempVgaFrontLockStackCount = vga_front.lock_stack_count;
-	WORD	tempVgaFrontLockBitStack =   vga_front.lock_bit_stack;
-	UCHAR	tempVgaBackLockStackCount = vga_back.lock_stack_count;
-	WORD	tempVgaBackLockBitStack =   vga_back.lock_bit_stack;
-	BOOL    tempVgaFrontBufLocked = vga_front.buf_locked;
-	BOOL    tempVgaBackBufLocked = vga_back.buf_locked;
+	UCHAR	tempVgaLockStackCount = vga_buffer.lock_stack_count;
+	WORD	tempVgaLockBitStack =   vga_buffer.lock_bit_stack;
+	BOOL    tempVgaBufLocked = vga_buffer.buf_locked;
 
 	if( mouse.init_flag )
 	{
@@ -423,29 +418,18 @@ int Sys::change_display_mode(int modeId)
 
 	// unlock surface
 
-	if( vga_back.vptr_dd_buf && vga_back.buf_locked )
+	if( vga_buffer.vptr_dd_buf && vga_buffer.buf_locked )
 	{
-		DEBUG_LOG("Attempt vga_back.unlock_buf()");
-		vga_back.unlock_buf();
-		DEBUG_LOG("vga_back.unlock_buf() finish");
-	}
-
-	if( vga_front.vptr_dd_buf && vga_front.buf_locked )
-	{
-		DEBUG_LOG("Attempt vga_front.unlock_buf()");
-		vga_front.unlock_buf();
-		DEBUG_LOG("vga_front.unlock_buf() finish");
+		DEBUG_LOG("Attempt vga_buffer.unlock_buf()");
+		vga_buffer.unlock_buf();
+		DEBUG_LOG("vga_buffer.unlock_buf() finish");
 	}
 
 	// deinit surface
 
-	DEBUG_LOG("Attempt vga_back.deinit()");
-	vga_back.deinit();
-   DEBUG_LOG("vga_back.deinit() finish");
-
-   DEBUG_LOG("Attempt vga_front.deinit()");
-   vga_front.deinit();
-   DEBUG_LOG("Attempt vga_front.deinit() finish");
+	DEBUG_LOG("Attempt vga_buffer.deinit()");
+	vga_buffer.deinit();
+   DEBUG_LOG("vga_buffer.deinit() finish");
 
 	// ##### begin Gilbert 30/10 ######//
 	// show mouse
@@ -495,19 +479,12 @@ int Sys::change_display_mode(int modeId)
 	// update the boundary of anim_line
    anim_line.init(ZOOM_X1, ZOOM_Y1, ZOOM_X2, ZOOM_Y2);
 
-	vga_front.lock_stack_count = tempVgaFrontLockStackCount;
-	vga_front.lock_bit_stack =   tempVgaFrontLockBitStack;
-	vga_back.lock_stack_count = tempVgaBackLockStackCount;
-	vga_back.lock_bit_stack =   tempVgaBackLockBitStack;
-	if ((tempVgaFrontBufLocked) && (!vga_front.buf_locked))
-		vga_front.lock_buf();
-	if ((!tempVgaFrontBufLocked) && (vga_front.buf_locked))
-		vga_front.unlock_buf();
-
-	if ((tempVgaBackBufLocked) && (!vga_back.buf_locked))
-		vga_back.lock_buf();
-	if ((!tempVgaBackBufLocked) && (vga_back.buf_locked))
-		vga_back.unlock_buf();
+	vga_buffer.lock_stack_count = tempVgaLockStackCount;
+	vga_buffer.lock_bit_stack =   tempVgaLockBitStack;
+	if ((tempVgaBufLocked) && (!vga_buffer.buf_locked))
+		vga_buffer.lock_buf();
+	if ((!tempVgaBufLocked) && (vga_buffer.buf_locked))
+		vga_buffer.unlock_buf();
 
 	// ##### begin Gilbert 30/10 #######//
 	need_redraw_flag = 1;
@@ -543,7 +520,7 @@ void Sys::capture_screen()
    if( i>99 )        // all file names from DWORLD00 to DWORLD99 have been occupied
       return;
 
-   vga_front.write_bmp_file(str);
+   vga_buffer.write_bmp_file(str);
 
    //------ display msg --------//
 

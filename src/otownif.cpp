@@ -1401,7 +1401,6 @@ int Town::input_town_name()
 	char gameDesc[SAVE_GAME_DESC_LEN+1];
 	strcpy( gameDesc,	town_name() );
 
-	Blob2DW saveArea;
 	Blob2DW keyFieldArea;
 
 	int boxWidth = 500;
@@ -1412,17 +1411,9 @@ int Town::input_town_name()
 	int boxY1 = INFO_Y1;
 	int boxY2 = boxY1 + boxHeight - 1 + 15;
 
-	// ------ capture save area -------//
-
-	mouse.hide_area( boxX1, boxY1, boxX2, boxY2 );
-	saveArea.clear();
-	saveArea.resize( boxX1, boxY1, boxWidth, boxHeight );
-	mouse.show_area();
-
 	// ------ init get field -------//
 
 	GetA descTextBox;
-	vga_back.put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("VILLNAME") );
 	descTextBox.init( boxX1+26, boxY1+12, boxX2-22, gameDesc, SAVE_GAME_DESC_LEN, &font_town, 1, 0 );
 				
 	// ------ ok cancel button --------//
@@ -1447,8 +1438,7 @@ int Town::input_town_name()
 		sys.yield();
 		mouse.get_event();
 		
-		if( refreshFlag || 1 )
-		{
+    vga_buffer.put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("VILLNAME") );
 			descTextBox.paint(1);
 
 			// ------- paint button --------//
@@ -1456,11 +1446,7 @@ int Town::input_town_name()
 			button_ok.paint();
 			button_cancel.paint();
 
-			// --------------------------------//
-
-			refreshFlag = 0;
-		}
-
+                vga.flip();
 		// ------- detect --------//
 
 		if( descTextBox.detect() )
@@ -1480,10 +1466,6 @@ int Town::input_town_name()
 			break;
 		}
 	}
-
-	// ------ restore save buffer ---------//
-
-	vga_front.put_bitmapW( boxX1, boxY1, saveArea.bitmap_ptr() );
 
 	// ------ update game_desc ----------//
 

@@ -58,7 +58,7 @@ HWND main_hwnd = NULL;
 
 void ShowMessageBox (const char *text) {
   OutputDebugString(text);
-  if( vga_front.vptr_dd_buf )
+  if( vga_buffer.vptr_dd_buf )
   {
     VgaFrontLock vgaLock;
 

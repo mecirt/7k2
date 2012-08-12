@@ -950,7 +950,7 @@ void Sys::process()
 
 	//---- if any of the DirectDraw buffers is lost, restore it ----//
 
-	if( vga_front.is_buf_lost() || vga_back.is_buf_lost() )
+	if( vga_buffer.is_buf_lost() )
 	{
 		if (!restore())
 			pause();

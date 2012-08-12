@@ -415,7 +415,7 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 				if( browseRecno && m.is_file_exist(str) )
 				{
-					jpeg.put_to_buf( &vga_front, PIC_AREA_X1, PIC_AREA_Y1, str );
+					jpeg.put_to_buf( &vga_buffer, PIC_AREA_X1, PIC_AREA_Y1, str );
 				}
 			}
 
@@ -695,18 +695,18 @@ static void disp_scroll_bar_func(SlideVBar *scroll, int)
 {
 	short rectTop = scroll->rect_top();
 	short rectBottom = scroll->rect_bottom();
-	vga_front.bar( scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom, VGA_YELLOW+1);
+	vga_buffer.bar( scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom, VGA_YELLOW+1);
 	if( rectBottom - rectTop > 10 )
 	{
-		vga_front.d3_panel_up(scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom,2,0);
+		vga_buffer.d3_panel_up(scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom,2,0);
 	}
 	if( rectTop > scroll->scrn_y1 )		// fill regin above the scroll button
 	{
-		vga_front.bar( scroll->scrn_x1, scroll->scrn_y1, scroll->scrn_x2, rectTop-1, V_BLACK );
+		vga_buffer.bar( scroll->scrn_x1, scroll->scrn_y1, scroll->scrn_x2, rectTop-1, V_BLACK );
 	}
 	if( scroll->scrn_y2 > rectBottom )		// fill regin above the scroll button
 	{
-		vga_front.bar( scroll->scrn_x1, rectBottom+1, scroll->scrn_x2, scroll->scrn_y2, V_BLACK );
+		vga_buffer.bar( scroll->scrn_x1, rectBottom+1, scroll->scrn_x2, scroll->scrn_y2, V_BLACK );
 	}
 }
 

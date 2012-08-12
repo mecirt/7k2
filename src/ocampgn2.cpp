@@ -667,7 +667,7 @@ void Campaign::disp_intro()
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
                 vga.flip();
 		sys.sleep(100);
 	}
@@ -747,7 +747,7 @@ void Campaign::disp_monster_defeated()
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
 		sys.sleep(100);
 	}
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
@@ -814,7 +814,7 @@ void Campaign::disp_final_victory()
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-		vga_front.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
 		sys.sleep(100);
 	}
 	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
@@ -1149,7 +1149,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 	int i, j;
 	unsigned level;
 
-	short *saveBuf = vga_front.save_area(0, 0, VGA_WIDTH-1, ZOOM_Y1-1);
+	short *saveBuf = vga_buffer.save_area(0, 0, VGA_WIDTH-1, ZOOM_Y1-1);
 
 	//------- get text substitution arguments -----//
 
@@ -1179,7 +1179,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 //	char darkness = info.display_campaign_mission_briefing > 0 ? 3 : 1;
 	char darkness = 3;
 
-	vga_front.bar_alpha( x1, y1, x2, y2, darkness, V_BLACK );
+	vga_buffer.bar_alpha( x1, y1, x2, y2, darkness, V_BLACK );
 	
 	int barWidth = 15;
 
@@ -1191,7 +1191,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 			rand_seed();
 			if ((seed%barWidth) < level)
 			{
-				vga_front.bar_alpha( i, j, i, j, darkness, V_BLACK );
+				vga_buffer.bar_alpha( i, j, i, j, darkness, V_BLACK );
 			}
 		}
 	}
@@ -1204,7 +1204,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 			rand_seed();
 			if ((seed%barWidth) < level)
 			{
-				vga_front.bar_alpha( i, j, i, j, darkness, V_BLACK );
+				vga_buffer.bar_alpha( i, j, i, j, darkness, V_BLACK );
 			}
 		}
 	}
@@ -1217,7 +1217,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 			rand_seed();
 			if ((seed%barWidth) < level)
 			{
-				vga_front.bar_alpha( j, i, j, i, darkness, V_BLACK );
+				vga_buffer.bar_alpha( j, i, j, i, darkness, V_BLACK );
 			}
 		}
 	}
@@ -1230,7 +1230,7 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 			rand_seed();
 			if ((seed%barWidth) < level)
 			{
-				vga_front.bar_alpha( j, i, j, i, darkness, V_BLACK );
+				vga_buffer.bar_alpha( j, i, j, i, darkness, V_BLACK );
 			}
 		}
 	}
@@ -1246,7 +1246,7 @@ vga.flip();
 	mouse.wait_press();
 
 	if (saveBuf)
-		vga_front.rest_area(saveBuf, 1);
+		vga_buffer.rest_area(saveBuf, 1);
 }
 //------- End of function Campaign::disp_in_game_msg -------//
 
@@ -1787,7 +1787,7 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 		{
 			int textWidth = font_cmpa.text_width(text_block_array[lastReplyChoice-1].text_ptr );
 
-			vga_front.adjust_brightness( text_block_array[lastReplyChoice-1].x1-3, text_block_array[lastReplyChoice-1].y1-3,
+			vga_buffer.adjust_brightness( text_block_array[lastReplyChoice-1].x1-3, text_block_array[lastReplyChoice-1].y1-3,
 				text_block_array[lastReplyChoice-1].x2+3, text_block_array[lastReplyChoice-1].y2+3, -3 );
 		}
 

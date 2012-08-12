@@ -116,10 +116,10 @@ void Box::paint()
 {
   if (!opened_flag) return;
 
-	vga_front.d3_panel_up( box_x1, box_y1, box_x2, box_y2, 2 );
+	vga_buffer.d3_panel_up( box_x1, box_y1, box_x2, box_y2, 2 );
 
 	if( down_centre )
-		vga_front.d3_panel_down( box_x1+4, box_y1+4, box_x2-4, box_y2-4, 1 );
+		vga_buffer.d3_panel_down( box_x1+4, box_y1+4, box_x2-4, box_y2-4, 1 );
 }
 //------------ End of function Box::paint -----------//
 

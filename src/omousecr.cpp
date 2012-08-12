@@ -193,7 +193,7 @@ void MouseCursor::set_icon(int cursorId)
 	if( !hideAllFlag )
 	{
 		// ####### begin Gilbert 10/3 #######//
-		if( vga_front.vptr_dd_buf )
+		if( vga_buffer.vptr_dd_buf )
 		{
 			mouse.show();
 		}
@@ -259,7 +259,7 @@ void MouseCursor::process(int curX, int curY)
 		return;                          // when another instance of process is
 													// being run.
 
-	if( !vga_front.vptr_dd_buf )			// vga deinited
+	if( !vga_buffer.vptr_dd_buf )			// vga deinited
 		return;
 
 	processing_flag = 1;    				// Prevent nested call

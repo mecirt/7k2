@@ -155,7 +155,6 @@ void Game::disp_gen_game_status(int addStep)
     int res = ProcessNextEvent();
     if (res == 0) {
       sys.signal_exit_flag = 1;
-      // BUGHERE : vga_front is unlocked
       return;
     }
   }
@@ -175,20 +174,14 @@ void Game::disp_gen_game_status(int addStep)
 		POPUP_WINDOW_HEIGHT = 386;
 	}	
 
-	const int POPUP_WINDOW_X1 = (vga_front.buf_width() - POPUP_WINDOW_WIDTH) / 2;
-	const int POPUP_WINDOW_Y1 = (vga_front.buf_height() - POPUP_WINDOW_HEIGHT) / 2;
+	const int POPUP_WINDOW_X1 = (vga_buffer.buf_width() - POPUP_WINDOW_WIDTH) / 2;
+	const int POPUP_WINDOW_Y1 = (vga_buffer.buf_height() - POPUP_WINDOW_HEIGHT) / 2;
 
 	const int BAR_X1 = POPUP_WINDOW_X1 + 105;
 	const int BAR_Y1 = POPUP_WINDOW_Y1 + 198;
 
 	static int genGameProgress=0;
 	
-	//	int hasLocked=0;
-	//	if( !vga_front.buf_locked )		// lock buffer 
-	//	{
-	//		vga_front.temp_lock();
-	//		hasLocked = 1;
-	//	}
 	VgaFrontReLock vgaReLock;
 
 	// ------- draw status background ------ //
@@ -217,7 +210,7 @@ void Game::disp_gen_game_status(int addStep)
 
 	int hasLocked=0;
 
-	if( vga_front.vptr_dd_buf )
+	if( vga_buffer.vptr_dd_buf )
 	{
 		if (game.is_campaign_mode())
 		{
@@ -293,7 +286,6 @@ int Game::process_messages()
     int res = ProcessNextEvent ();
     if (res == 0) {
       sys.signal_exit_flag = 1;
-      // BUGHERE : vga_front is unlocked
       return 0;
     }
     if (res == 1) continue;
@@ -332,7 +324,7 @@ void Game::main_menu()
 	int emptyProfileTesting = 1;
 
 	mouse_cursor.set_icon(CURSOR_NORMAL);
-	vga_front.bar(0,0,VGA_WIDTH-1,VGA_HEIGHT-1,V_BLACK);
+	vga_buffer.bar(0,0,VGA_WIDTH-1,VGA_HEIGHT-1,V_BLACK);
 
 	unsigned long lastRedrawTime = m.get_time();
 

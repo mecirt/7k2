@@ -72,14 +72,10 @@ void ImageRes::put_front(int x, int y, const char* imageName, int compressFlag)
 	if(!bitmapPtr)
 		return;
 
-	mouse.hide_area( x, y, x+*((short*)bitmapPtr)-1, y+*(((short*)bitmapPtr)+1)-1 );
-
 	if( compressFlag )
-		vga_front.put_bitmap_trans_decompress( x, y, bitmapPtr );
+		vga_buffer.put_bitmap_trans_decompress( x, y, bitmapPtr );
 	else
-		vga_front.put_bitmap_trans( x, y, bitmapPtr );
-
-	mouse.show_area();
+		vga_buffer.put_bitmap_trans( x, y, bitmapPtr );
 }
 //---------- End of function ImageRes::put_front --------//
 
@@ -93,15 +89,7 @@ void ImageRes::put_front(int x, int y, const char* imageName, int compressFlag)
 //
 void ImageRes::put_back(int x, int y, const char* imageName, int compressFlag)
 {
-	char* bitmapPtr = ResourceIdx::read(imageName);
-
-	if( bitmapPtr )
-	{
-		if( compressFlag )
-			vga_back.put_bitmap_trans_decompress( x, y, bitmapPtr );
-		else
-			vga_back.put_bitmap_trans( x, y, bitmapPtr );
-	}
+  put_front(x, y, imageName, compressFlag);
 }
 //---------- End of function ImageRes::put_back --------//
 
@@ -120,14 +108,10 @@ void ImageRes::put_front(int x, int y, int bitmapId, int compressFlag)
 	if( !bitmapPtr )
 		return;
 
-	mouse.hide_area( x, y, x+*((short*)bitmapPtr)-1, y+*(((short*)bitmapPtr)+1)-1 );
-
 	if( compressFlag )
-		vga_front.put_bitmap_trans_decompress( x, y, bitmapPtr );
+		vga_buffer.put_bitmap_trans_decompress( x, y, bitmapPtr );
 	else
-		vga_front.put_bitmap_trans( x, y, bitmapPtr );
-
-	mouse.show_area();
+		vga_buffer.put_bitmap_trans( x, y, bitmapPtr );
 }
 //---------- End of function ImageRes::put_front --------//
 
@@ -141,15 +125,7 @@ void ImageRes::put_front(int x, int y, int bitmapId, int compressFlag)
 //
 void ImageRes::put_back(int x, int y, int bitmapId, int compressFlag)
 {
-	char* bitmapPtr = ResourceIdx::get_data(bitmapId);
-
-	if( bitmapPtr )
-	{
-		if( compressFlag )
-			vga_back.put_bitmap_trans_decompress( x, y, bitmapPtr );
-		else
-			vga_back.put_bitmap_trans( x, y, bitmapPtr );
-	}
+  put_front(x, y, bitmapId, compressFlag);
 }
 //---------- End of function ImageRes::put_back --------//
 
@@ -166,12 +142,8 @@ void ImageRes::put_join(int x, int y, const char* imageName)
 	if( !bitmapPtr )
 		return;
 
-	mouse.hide_area( x, y, x+((Bitmap *)bitmapPtr)->get_width()-1, y+((Bitmap *)bitmapPtr)->get_height()-1 );
-
 	if( bitmapPtr )
-		vga_front.join_trans( &vga_back, x, y, bitmapPtr );
-
-	mouse.show_area();
+		vga_buffer.join_trans( &vga_back, x, y, bitmapPtr );
 }
 //---------- End of function ImageRes::put_join --------//
 

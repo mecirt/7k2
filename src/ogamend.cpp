@@ -378,7 +378,7 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 
 	if( !retireFlag && !game.is_campaign_mode() && !remote.is_enable() )		// can't stay in the game in a multiplayer game
 	{
-		vga_front.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_BLACK );		// clear the screen
+		vga_buffer.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_BLACK );		// clear the screen
 
 		char powerWinFlag = power.win_opened;
 
@@ -654,7 +654,7 @@ static int disp_score(int winFlag)
 		font_scre.right_put( x+330, y, m.format(rankScore) );
 	}
 
-	vga_front.bar( x, y, x+340, y+1, V_BLACK );
+	vga_buffer.bar( x, y, x+340, y+1, V_BLACK );
 //	y+=7;
 	y+=2;
 
@@ -665,7 +665,7 @@ static int disp_score(int winFlag)
 //	y+=28;
 	y+=20;
 
-	vga_front.bar( x, y, x+340, y+1, V_BLACK );
+	vga_buffer.bar( x, y, x+340, y+1, V_BLACK );
 	y+=4;
 
 	//-------- display the final score ---------//
@@ -687,7 +687,7 @@ static int disp_score(int winFlag)
 	str += ")";
 
 	font_scre.center_put( x, y+4, x+170, y+1+font_scre.height(), str );
-	vga_front.bar( x, y+27, x+170, y+28, V_BLACK );
+	vga_buffer.bar( x, y+27, x+170, y+28, V_BLACK );
 	font_scre.put( x+70, y+30, 100 );
 
 	//---- if this is a scenario and there are score bonus ----//

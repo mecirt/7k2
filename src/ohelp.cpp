@@ -457,12 +457,10 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 
 	//------- Draw box (and arrow if specified object) ------//
 
-//	while(1)
-//	{
-	vga_front.bar( x1, y1, x2-3, y2-3, VgaBuf::color_up );
-	vga_front.rect( x1, y1, x2-3, y2-3, 3, HELP_BOX_COLOR );
-	vga_front.bar_alpha( x2-2, y1+2, x2, y2-3, 1, V_BLACK );
-	vga_front.bar_alpha( x1+2, y2-2, x2, y2, 1, V_BLACK );
+	vga_buffer.bar( x1, y1, x2-3, y2-3, VgaBuf::color_up );
+	vga_buffer.rect( x1, y1, x2-3, y2-3, 3, HELP_BOX_COLOR );
+	vga_buffer.bar_alpha( x2-2, y1+2, x2, y2-3, 1, V_BLACK );
+	vga_buffer.bar_alpha( x1+2, y2-2, x2, y2, 1, V_BLACK );
 
 	//--------- disp help detail -----------//
 
@@ -472,8 +470,7 @@ void Help::disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail
 	{
 		int y = y1 + Y_MARGIN + font_san.height() + 4;
 
-		// vga_front.bar( x1, y, x2, y+1, HELP_BOX_COLOR );  // line between description and help text
-		vga_front.bar( x1, y, x2-3, y+1, 185 );  // line between description and help text
+		vga_buffer.bar( x1, y, x2-3, y+1, 185 );  // line between description and help text
 
 		font_san.put_paragraph( x1+X_MARGIN, y+4, x2-X_MARGIN, y2-Y_MARGIN, helpDetail, MSG_LINE_SPACE );
 	}
@@ -827,7 +824,7 @@ void HelpSaveScreen::save_scr(int x1, int y1, int x2, int y2, VgaBuf* vgaBuf )
 	err_when( saveSize > HELP_SCR_BUF_SIZE );
 
 	if( !vgaBuf )
-		vgaBuf = &vga_front;
+		vgaBuf = &vga_buffer;
 
 	save_scr_x1 = x1;
 	save_scr_y1 = y1;
@@ -854,7 +851,7 @@ void HelpSaveScreen::rest_scr(VgaBuf* vgaBuf, int keepUnclear )
 				 save_scr_x1<0 || save_scr_y1<0 || save_scr_x2>=VGA_WIDTH || save_scr_y2>=VGA_HEIGHT );
 
 	if( !vgaBuf )
-		vgaBuf = &vga_front;
+		vgaBuf = &vga_buffer;
 
 //	mouse.hide_area( save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2 );
 
@@ -898,7 +895,7 @@ void HelpSaveScreen::show_area()
 
 	if( hiding_flag && hiding_flag == hide_area_count )
 	{
-		vga_front.read_bitmapW( save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2,
+		vga_buffer.read_bitmapW( save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2,
 			save_scr_buf->bitmap_ptr() );
 		hiding_flag = 0;
 	}

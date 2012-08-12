@@ -174,7 +174,7 @@ void WallRes::disp_info(int refreshFlag)
 	if( refreshFlag == INFO_REPAINT )
 	{
 		font_san.d3_put( INFO_X1, INFO_Y1, INFO_X2, INFO_Y1+17, "Defense Wall" );
-		vga_front.d3_panel_up( INFO_X1, INFO_Y1+20, INFO_X2, INFO_Y1+40, 1 );
+		vga_buffer.d3_panel_up( INFO_X1, INFO_Y1+20, INFO_X2, INFO_Y1+40, 1 );
 	}
 
 	int x=INFO_X1+3, y=INFO_Y1+23;

@@ -144,11 +144,11 @@ void MapMatrix::disp_mode_button()
 		image_button.put_front( MAP_MODE_BUTTON_X1, MAP_MODE_BUTTON_Y1, iconName, 1 );
 
 		if (button_filter_object.pushed_flag)
-			vga_front.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+55, MAP_MODE_BUTTON_Y1+7,
+			vga_buffer.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+55, MAP_MODE_BUTTON_Y1+7,
 				image_button.read("O-LOCK") );
 	
 		if (button_filter_nation.pushed_flag)
-			vga_front.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+30, MAP_MODE_BUTTON_Y1+7,
+			vga_buffer.put_bitmap_trans_decompress( MAP_MODE_BUTTON_X1+30, MAP_MODE_BUTTON_Y1+7,
 				image_button.read("N-LOCK") );
 
 		button_filter_object.paint( filter_object_flag );

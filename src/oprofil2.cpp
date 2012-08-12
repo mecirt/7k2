@@ -823,14 +823,14 @@ static void disp_scroll_bar_func(SlideBar *scroll, int)
 	short rectLeft = scroll->rect_left();
 	short rectRight = scroll->rect_right();
 	if( rectLeft > scroll->scrn_x1 )		// fill region above scroll button
-		vga_front.bar( scroll->scrn_x1, scroll->scrn_y1, rectLeft-1, scroll->scrn_y2, V_BLACK );
-	vga_front.bar( rectLeft, scroll->scrn_y1, rectRight, scroll->scrn_y2, VGA_YELLOW+1);
+		vga_buffer.bar( scroll->scrn_x1, scroll->scrn_y1, rectLeft-1, scroll->scrn_y2, V_BLACK );
+	vga_buffer.bar( rectLeft, scroll->scrn_y1, rectRight, scroll->scrn_y2, VGA_YELLOW+1);
 	if( rectRight - rectLeft > 6 )
 	{
-		vga_front.d3_panel_up(rectLeft, scroll->scrn_y1, rectRight, scroll->scrn_y2, 2,0);
+		vga_buffer.d3_panel_up(rectLeft, scroll->scrn_y1, rectRight, scroll->scrn_y2, 2,0);
 	}
 	if( rectRight < scroll->scrn_x2 )		// fill region below scroll button
-		vga_front.bar( rectRight+1, scroll->scrn_y1, scroll->scrn_x2, scroll->scrn_y2, V_BLACK );
+		vga_buffer.bar( rectRight+1, scroll->scrn_y1, scroll->scrn_x2, scroll->scrn_y2, V_BLACK );
 }
 
 

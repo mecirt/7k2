@@ -201,12 +201,8 @@ int GameFileArray::menu(int actionMode, int *recno)
 		scrnX2 = scrnX1 + PAGE_WIDTH - 1;
 		scrnY2 = scrnY1 + PAGE_HEIGHT - 1;
 
-		mouse.hide_area( scrnX1, scrnY1, scrnX2, scrnY2);
-
 		if( actionMode != -2 )
 			sys.need_redraw_flag = 1;
-
-		mouse.show_area();
 
 		return 1;
 	}
@@ -383,10 +379,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 
 		// --------- display ----------//
 
-				// ------ hide cursor ----//
-
-				mouse.hide();
-
 				// ------- display image --------//
 
 				File imageFile;
@@ -460,10 +452,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 				pageNoArea.resize( pageNoX1, pageNoY1, pageNoX2-pageNoX1+1, pageNoY2-pageNoY1+1 );
 				vga.active_buf->read_bitmapW( pageNoX1, pageNoY1, pageNoX2, pageNoY2, pageNoArea.bitmap_ptr() );
 
-				// ------ show cursor ----//
-
-				mouse.show();
-
 			for( i = 0; i < MAX_BROWSE_DISP_REC; ++i )
 			{
 					int browseSlotX1 = SLOT_X1(i);
@@ -471,10 +459,8 @@ int GameFileArray::menu(int actionMode, int *recno)
 					int browseSlotX2 = SLOT_X2(i);
 					int browseSlotY2 = SLOT_Y2(i);
 
-					mouse.hide_area( browseSlotX1, browseSlotY1, browseSlotX2, browseSlotY2 );
-
 					// draw save bitmap area
-					vga_front.put_bitmapW_fast( browseSlotX1, browseSlotY1, browseArea[i].bitmap_ptr() );
+					vga_buffer.put_bitmapW_fast( browseSlotX1, browseSlotY1, browseArea[i].bitmap_ptr() );
 
 					// draw slot content
 					int rec = page * MAX_BROWSE_DISP_REC + i + minRecno;
@@ -493,13 +479,10 @@ int GameFileArray::menu(int actionMode, int *recno)
 					if( rec == browse_recno )
 					{
 						// draw black frame
-						vga_front.rect( browseSlotX1, browseSlotY1, browseSlotX2, browseSlotY2, 2, V_BLACK );
+						vga_buffer.rect( browseSlotX1, browseSlotY1, browseSlotX2, browseSlotY2, 2, V_BLACK );
 					}
-
-					mouse.show_area();
 			}
 
-				mouse.hide_area( pageNoX1, pageNoY1, pageNoX2, pageNoY2 );
 //				String str;
 //				str = "page ";
 //				str += page+1;
@@ -507,21 +490,16 @@ int GameFileArray::menu(int actionMode, int *recno)
 //				str += maxPage;
 				vga.active_buf->put_bitmapW( pageNoX1, pageNoY1, pageNoArea.bitmap_ptr() );		
 				font_snds.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, text_game_menu.str_page_str(page+1, maxPage) );
-				mouse.show_area();
 
-				mouse.hide_area( pageUpX1, pageUpY1, pageUpX2, pageUpY2 );
 				if( page > 0 )
 					vga.active_buf->put_bitmap_trans_decompress_hmirror( pageUpX1, pageUpY1, arrowBitmap );
 				else
 					vga.active_buf->put_bitmapW( pageUpX1, pageUpY1, pageUpArea.bitmap_ptr() );
-				mouse.show_area();
 
-				mouse.hide_area( pageDownX1, pageDownY1, pageDownX2, pageDownY2 );
 				if( page < maxPage-1 )
 					vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
 				else
 					vga.active_buf->put_bitmapW( pageDownX1, pageDownY1, pageDownArea.bitmap_ptr() );
-				mouse.show_area();
 
 		// ------ detect slots -------//
 
@@ -702,12 +680,6 @@ void GameFileArray::disp_browse()
 //
 void GameFile::disp_info(int x, int y)
 {
-//	if( race_id > 0 )
-//		vga_front.put_bitmap(x+10, y+10,	unit_res[ race_res[race_id]->infantry_unit_id ]->king_icon_ptr);
-//	else
-//		vga_front.put_bitmap(x+10, y+10,	unit_res[ monster_res[-race_id]->unit_id ]->king_icon_ptr);
-//	x+=60;
-
 	//------ display player color -----//
 
 	nation_array.disp_nation_color( x+6, y+14, nation_color );
@@ -1100,7 +1072,6 @@ int GameFile::ask_desc()
 	char gameDesc[SAVE_GAME_DESC_LEN+1];
 	strcpy( gameDesc, game_desc );
 
-	Blob2DW saveArea;
 	Blob2DW keyFieldArea;
 
 	int boxWidth = 700;
@@ -1109,14 +1080,6 @@ int GameFile::ask_desc()
 	int boxX2 = boxX1 + boxWidth - 1;
 	int boxY1 = (VGA_HEIGHT - boxHeight) / 2;
 	int boxY2 = boxY1 + boxHeight - 1;
-
-	// ------ capture save area -------//
-
-	mouse.hide_area( boxX1, boxY1, boxX2, boxY2 );
-	saveArea.clear();
-	saveArea.resize( boxX1, boxY1, boxWidth, boxHeight );
-	vga_front.read_bitmapW( boxX1, boxY1, boxX2, boxY2, saveArea.bitmap_ptr() );
-	mouse.show_area();
 
 	// ------ init get field -------//
 
@@ -1151,8 +1114,8 @@ int GameFile::ask_desc()
 		{
 			// ------ display message Box ------//
 
-			vga_front.d3_panel_up( boxX1, boxY1, boxX2, boxY2 );
-			vga_front.d3_panel_down( boxX1+4, boxY1+4, boxX2-4, boxY2-4 );
+			vga_buffer.d3_panel_up( boxX1, boxY1, boxX2, boxY2 );
+			vga_buffer.d3_panel_down( boxX1+4, boxY1+4, boxX2-4, boxY2-4 );
 
 			// ------ display box title ------//
 
@@ -1160,12 +1123,10 @@ int GameFile::ask_desc()
 
 			// ------ set get field background -------//
 
-			mouse.hide_area( boxX1, boxY1, boxX2, boxY2 );
-			vga_front.read_bitmapW( keyFieldArea.left_edge, keyFieldArea.top_edge, 
+			vga_buffer.read_bitmapW( keyFieldArea.left_edge, keyFieldArea.top_edge, 
 				keyFieldArea.left_edge+keyFieldArea.width-1, keyFieldArea.top_edge+keyFieldArea.height-1,
 				keyFieldArea.bitmap_ptr() );
 			descTextBox.set_background( keyFieldArea.ptr );
-			mouse.show_area();
 
 			descTextBox.paint(1);
 
@@ -1197,10 +1158,6 @@ int GameFile::ask_desc()
 		}
                 vga.flip();
 	}
-
-	// ------ restore save buffer ---------//
-
-	vga_front.put_bitmapW( boxX1, boxY1, saveArea.bitmap_ptr() );
 
 	// ------ update game_desc ----------//
 
@@ -1279,10 +1236,10 @@ static void disp_scroll_bar_func(SlideVBar *scroll, int)
 	short rectTop = scroll->rect_top();
 	short rectBottom = scroll->rect_bottom();
 
-	vga_front.bar( scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom, VGA_YELLOW+1);
+	vga_buffer.bar( scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom, VGA_YELLOW+1);
 	if( rectBottom - rectTop > 6 )
 	{
-		vga_front.d3_panel_up(scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom,2,0);
+		vga_buffer.d3_panel_up(scroll->scrn_x1, rectTop, scroll->scrn_x2, rectBottom,2,0);
 	}
 }
 //------- End of static function disp_scroll_bar_func --------//

@@ -105,7 +105,7 @@ void Spinner::disp(int refreshFlag)
 
 		vga.d3_panel_down( x2+3, y1, x3, y2 );
 
-		vga_front.put_bitmap( x3+5, y1, spinner_icon );
+		vga_buffer.put_bitmap( x3+5, y1, spinner_icon );
 	}
 
 	font_ptr->disp( x2+6, y1+3, option_des_array[selected_id-1], x3-2 );

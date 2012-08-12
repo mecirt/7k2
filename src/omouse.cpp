@@ -544,7 +544,7 @@ void Mouse::set_boundary(int x1, int y1, int x2, int y2, int boundType)
 		err_here();
 	}
 
-	if( vga_front.vptr_dd_buf			// front buffer inited
+	if( vga_buffer.vptr_dd_buf			// front buffer inited
 		&& (oldCurX != cur_x || oldCurY != cur_y) )
 	{
 		mouse_cursor.process(cur_x, cur_y);     // repaint mouse cursor
@@ -1117,8 +1117,7 @@ MouseDispCount::MouseDispCount()
 	// show cursor
 	mouse.hide();
 	// #### begin Gilbert 9/1 #######//
-	vga_front.temp_unlock();
-	vga_back.temp_unlock();
+	vga_buffer.temp_unlock();
 	// #### end Gilbert 9/1 #######//
 	ShowMouseCursor(true);
 }
@@ -1131,8 +1130,7 @@ MouseDispCount::~MouseDispCount()
 	// hide cursor
 	ShowMouseCursor(false);
 	// #### begin Gilbert 9/1 #######//
-	vga_front.temp_restore_lock();
-	vga_back.temp_restore_lock();
+	vga_buffer.temp_restore_lock();
 	// #### end Gilbert 9/1 #######//
 	mouse.show();
 	int ev = mouse.get_event();

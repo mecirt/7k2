@@ -123,7 +123,7 @@ void Remote::free_msg(RemoteMsg* remoteMsgPtr)
 void Remote::send_msg(RemoteMsg* remoteMsgPtr, int receiverId)
 {
 	if( handle_vga_lock )
-		vga_front.temp_unlock();
+		vga_buffer.temp_unlock();
 
 	// structure : <short>, <RemoteMsg>
    char* memPtr = (char*)remoteMsgPtr - sizeof(short);   // the preceeding <short> is the size of RemoteMsg
@@ -135,7 +135,7 @@ void Remote::send_msg(RemoteMsg* remoteMsgPtr, int receiverId)
    packet_send_count++;
 
    if( handle_vga_lock )
-      vga_front.temp_restore_lock();
+      vga_buffer.temp_restore_lock();
 }
 //--------- End of function Remote::send_msg ---------//
 
@@ -153,7 +153,7 @@ void Remote::send_msg(RemoteMsg* remoteMsgPtr, int receiverId)
 void Remote::send_free_msg(RemoteMsg* remoteMsgPtr, int receiverId)
 {
    if( handle_vga_lock )
-		vga_front.temp_unlock();
+		vga_buffer.temp_unlock();
 
    char* memPtr = (char*)remoteMsgPtr - sizeof(short);   // the preceeding <short> is the size of RemoteMsg
    int msgSize = *(short *)memPtr + sizeof(short);
@@ -167,7 +167,7 @@ void Remote::send_free_msg(RemoteMsg* remoteMsgPtr, int receiverId)
       mem_del( memPtr );
 
    if( handle_vga_lock )
-      vga_front.temp_restore_lock();
+      vga_buffer.temp_restore_lock();
 }
 //--------- End of function Remote::send_free_msg ---------//
 
@@ -222,7 +222,7 @@ int Remote::send_queue_now(int receiverId)
 		err.run( "Queue Corrupted, Remote::send_queue_now()" );
 
 	if( handle_vga_lock )
-		vga_front.temp_unlock();
+		vga_buffer.temp_unlock();
 
 	//----------------------------------------------//
 	int sendFlag = 1;
@@ -234,7 +234,7 @@ int Remote::send_queue_now(int receiverId)
 	//---------------------------------------------//
 
 	if( handle_vga_lock )
-		vga_front.temp_restore_lock();
+		vga_buffer.temp_restore_lock();
 
 	return sendFlag;
 }
@@ -287,7 +287,7 @@ int Remote::poll_msg()
 #endif
 
    if( handle_vga_lock )
-      vga_front.temp_unlock();
+      vga_buffer.temp_unlock();
 
 	ec_remote.yield();
 
@@ -396,7 +396,7 @@ int Remote::poll_msg()
 	}
 
 	if( handle_vga_lock )
-		vga_front.temp_restore_lock();
+		vga_buffer.temp_restore_lock();
 
 	return receivedFlag;
 }
@@ -643,12 +643,12 @@ int Remote::send_backup_now(int receiverId, DWORD requestFrameCount)
 			if( send_queue[n].length() > 0 )
 			{
 				if( handle_vga_lock )
-					vga_front.temp_unlock();
+					vga_buffer.temp_unlock();
 				// retFlag = mp_ptr->send(receiverId, send_queue[n].queue_buf, send_queue[n].length());
 				retFlag = ec_remote.send(ec_remote.get_ec_player_id(receiverId), send_queue[n].queue_buf, send_queue[n].length()) > 0;
 				packet_send_count++;
 				if( handle_vga_lock )
-					vga_front.temp_restore_lock();
+					vga_buffer.temp_restore_lock();
 			}
 			return retFlag;
 		}

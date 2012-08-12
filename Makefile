@@ -236,7 +236,6 @@ LIBRARIES             =
 			src/oc_pld5.cpp \
 			src/oitemres.cpp \
 			src/oplant.cpp \
-			src/olzw.cpp \
 			src/ot_news.cpp \
 			src/oai_main.cpp \
 			src/osnow2.cpp \

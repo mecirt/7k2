@@ -158,9 +158,6 @@ public:
 	short* 	save_area(int,int,int,int,short* =0L);
 	void  	rest_area(short*,int=1 );
 
-	void  	save_area_common_buf(int,int,int,int);
-	void  	rest_area_common_buf();
-
 	//------- large bitmap displaying functions -------//
 
 	void 		put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTable=0);

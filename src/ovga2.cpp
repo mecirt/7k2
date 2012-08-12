@@ -119,6 +119,6 @@ void Vga::finish_disp_image_file()
 {
 	//------- exiting: turn dark --------//
 
-	vga_front.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
+	vga_buffer.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 0 );
 }
 //----------- End of function Vga::finish_disp_image_file ---------//

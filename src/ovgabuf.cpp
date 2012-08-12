@@ -295,54 +295,6 @@ void VgaBuf::read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapPtr)
   }
 }
 
-//---------- Begin of function VgaBuf::save_area_common_buf ----------//
-//
-// Save screen area to sys.common_data_buf.
-//
-void VgaBuf::save_area_common_buf(int x1, int y1, int x2, int y2)
-{
-	err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	long saveSize = sizeof(short)*4 + BitmapW::size(x2-x1+1, y2-y1+1);
-
-	err_if( saveSize > COMMON_DATA_BUF_SIZE )
-		err_now( "VgaBuf::save_area_common_buf()" );
-
-	short* shortPtr = (short*) sys.common_data_buf;
-
-	*shortPtr++ = x1;
-	*shortPtr++ = y1;
-	*shortPtr++ = x2;
-	*shortPtr++ = y2;
-
-	//-------- read screen ---------//
-
-	read_bitmapW( x1,y1,x2,y2, shortPtr );
-}
-//------------ End of function VgaBuf::save_area_common_buf ----------//
-
-
-//---------- Begin of function VgaBuf::rest_area_common_buf ----------//
-//
-// Restore screen area to the screen from Vga image buffer.
-// This screen should be previously saved by save_area()
-//
-void VgaBuf::rest_area_common_buf()
-{
-	short* shortPtr = (short*) sys.common_data_buf;
-
-	int x1 = *shortPtr++;
-	int y1 = *shortPtr++;
-	int x2 = *shortPtr++;
-	int y2 = *shortPtr++;
-
-	// ##### begin Gilbert 30/10 ########//
-	put_bitmapW( x1, y1, shortPtr );
-	// ##### end Gilbert 30/10 ########//
-}
-//------------ End of function VgaBuf::rest_area_common_buf ----------//
-
-
 //---------- Begin of function VgaBuf::save_area ---------//
 //
 // save_area() differs from save_area() as :

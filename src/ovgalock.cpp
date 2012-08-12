@@ -19,7 +19,7 @@
  */
 
 // Filename    : OVGALOCK.CPP
-// Description : object to vga_front.temp_unlock and temp_restore_lock
+// Description : object to vga_buffer.temp_unlock and temp_restore_lock
 // Onwer       : Gilbert Luis
 
 #include <platform.h>
@@ -28,34 +28,26 @@
 
 VgaFrontLock::VgaFrontLock()
 {
-	if( vga_front.vptr_dd_buf )
-		vga_front.temp_unlock();
-	if( vga_back.vptr_dd_buf )
-		vga_back.temp_unlock();
+	if( vga_buffer.vptr_dd_buf )
+		vga_buffer.temp_unlock();
 }
 
 VgaFrontLock::~VgaFrontLock()
 {
-	if( vga_back.vptr_dd_buf )
-		vga_back.temp_restore_lock();
-	if( vga_front.vptr_dd_buf )
-		vga_front.temp_restore_lock();
+	if( vga_buffer.vptr_dd_buf )
+		vga_buffer.temp_restore_lock();
 }
 
 VgaFrontReLock::VgaFrontReLock()
 {
-	if( vga_front.vptr_dd_buf )
-		vga_front.temp_lock();
-	if( vga_back.vptr_dd_buf )
-		vga_back.temp_lock();
+	if( vga_buffer.vptr_dd_buf )
+		vga_buffer.temp_lock();
 }
 
 VgaFrontReLock::~VgaFrontReLock()
 {
-	if( vga_back.vptr_dd_buf )
-		vga_back.temp_restore_unlock();
-	if( vga_front.vptr_dd_buf )
-		vga_front.temp_restore_unlock();
+	if( vga_buffer.vptr_dd_buf )
+		vga_buffer.temp_restore_unlock();
 }
 
 

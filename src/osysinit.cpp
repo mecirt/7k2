@@ -129,11 +129,8 @@ void Sys::deinit()
 
    //-------------------------------------//
 
-   if( vga_back.buf_locked )
-      vga_back.unlock_buf();
-
-   if( vga_front.buf_locked )
-      vga_front.unlock_buf();
+   if( vga_buffer.buf_locked )
+      vga_buffer.unlock_buf();
 
    init_flag = 0;
    CloseMainWindow();
