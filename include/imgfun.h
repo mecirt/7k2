@@ -121,8 +121,6 @@ extern "C"
 	void IMGcall IMGbltW( short *imageBuf, int pitch, int x, int y, short *bitmapBuf ) __asmsym__("_IMGbltW");
 	void IMGcall IMGbltWArea( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWArea");
-	void IMGcall IMGscrollW( short *imageBuf, int truePitch, int srcX1, int srcY1, int srcX2, int srcY2,
-		int destX1, int destY1 ) __asmsym__("_IMGscrollW");	// see scroll_buffer() for complete usage
 
 	// functions with transparent color keying
 

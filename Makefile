@@ -509,8 +509,7 @@ LIBRARIES             =
 			src/asm/i_read.asm \
 			src/asm/ib_ahrd.asm \
 			src/asm/ib_ahrdm.asm \
-			src/asm/ib_hrd.asm \
-			src/asm/i_scroll.asm
+			src/asm/ib_hrd.asm
 		
 7k2_OBJS      = $(7k2_C_SRCS:.c=.o) \
 			$(7k2_CXX_SRCS:.cpp=.o)

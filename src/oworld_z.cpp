@@ -102,14 +102,8 @@ static int init_fire = -10;									// reset on new game and load game
 
 // to be moved to member of ZoomMatrix
 
-// rectangle (in abs coordinate) which is updated
-static int last_abs_x1, last_abs_y1, last_abs_x2, last_abs_y2;
-static int last_top_row, last_left_col, last_bottom_row, last_right_col;
 // rectangle which need to be update
 static int update_abs_x1, update_abs_y1, update_abs_x2, update_abs_y2;
-// if a location touch update_abs_x/y,
-// draw unless it is also touch last_abs_x/y
-
 
 //-------- Declare static functions ---------//
 
@@ -122,8 +116,6 @@ static int sort_display_function( const void *a, const void *b );
 static void draw_cubic_plane(int x, int y, LocationCorners, UCHAR);
 
 static int test_inside_polygon(int x, int y, POINT *vertex, int verCount);
-
-static void scroll_buffer( short *imageBuf, int truePitch, int srcX1, int srcY1, int srcX2, int srcY2, int shiftX, int shiftY, int fillColor=-1 );
 
 // ------- define constant and variable for scanning hidden object
 
@@ -347,17 +339,6 @@ void ZoomMatrix::init_para()
 	vibration = -1;
 	init_magic = 0;
 	init_magic2 = 0;
-
-
-	// invalidate last_abs_x/y
-	last_abs_x1 = 0; 
-	last_abs_x2 = -1;
-	last_abs_y1 = -0x1000;
-	last_abs_y2 = -0x2000;		// such that touch testing always fails
-	last_top_row = -1;
-	last_left_col = 0;
-	last_bottom_row = -2;
-	last_right_col = -1;
 }
 //---------- End of function ZoomMatrix::init_para ----------//
 
@@ -411,38 +392,21 @@ void ZoomMatrix::draw()
 
 	sys.yield();
 
-	//----------------------------------------------------//
-
 	// set update region all
 	update_abs_x1 = get_base_x();
 	update_abs_y1 = get_base_y();
 	update_abs_x2 = update_abs_x1 + image_width - 1;
 	update_abs_y2 = update_abs_y1 + image_height - 1;
 
-	if( update_abs_x1 == last_abs_x1 && update_abs_y1 == last_abs_y1 )
-	{
-		// no scrolling
-	}
-	else if( m.is_touch( update_abs_x1, update_abs_y1, update_abs_x2, update_abs_y2,
-		last_abs_x1, last_abs_y1, last_abs_x2, last_abs_y2) )
-	{
-		// scrolling
-		scroll_buffer( ((BitmapW *)save_image_buf)->get_ptr(), ((BitmapW *)save_image_buf)->get_true_pitch(),
-			0, 0, ((BitmapW *)save_image_buf)->get_width() - 1, ((BitmapW *)save_image_buf)->get_height() - 1,	// full buffer
-			last_abs_x1 - update_abs_x1, last_abs_y1 - update_abs_y1, vga_back.translate_color(V_BLACK) );
-	}
-	else
-	{
-		// complete new screen
+	// complete new screen
 
-		// skip filling if window is complete inside map
-		if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
-			|| disp_rect_type == RHOMBUS_LOCATION && (top_x_loc-disp_x_loc<0 || top_x_loc+disp_y_loc >= max_x_loc || top_y_loc-disp_y_loc<0 || top_y_loc+disp_x_loc+disp_y_loc >= max_y_loc ) )	// rhombus, this condition is prudent to prefer fill black
-		{
-			IMGbar( ((BitmapW *)save_image_buf)->get_ptr() , ((BitmapW *)save_image_buf)->get_true_pitch(),
-				0, 0, ((BitmapW *)save_image_buf)->get_width()-1, ((BitmapW *)save_image_buf)->get_height()-1, 
-				vga_back.translate_color(V_BLACK) );
-		}
+	// skip filling if window is complete inside map
+	if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
+		|| disp_rect_type == RHOMBUS_LOCATION && (top_x_loc-disp_x_loc<0 || top_x_loc+disp_y_loc >= max_x_loc || top_y_loc-disp_y_loc<0 || top_y_loc+disp_x_loc+disp_y_loc >= max_y_loc ) )	// rhombus, this condition is prudent to prefer fill black
+	{
+		IMGbar( ((BitmapW *)save_image_buf)->get_ptr() , ((BitmapW *)save_image_buf)->get_true_pitch(),
+			0, 0, ((BitmapW *)save_image_buf)->get_width()-1, ((BitmapW *)save_image_buf)->get_height()-1, 
+			vga_back.translate_color(V_BLACK) );
 	}
 
 #ifdef DEBUG
@@ -498,12 +462,7 @@ void ZoomMatrix::draw()
 
 				BYTE *lastDrawStatePtr = last_draw_state + max_x_loc * yLoc + xLoc;
 
-				if( m.is_touch( locAbsX1, locAbsY1, locAbsX2, locAbsY2, update_abs_x1, update_abs_y1, update_abs_x2, update_abs_y2)
-					&& ( !m.is_touch( locAbsX1, locAbsY1, locAbsX2, locAbsY2, last_abs_x1, last_abs_y1, last_abs_x2, last_abs_y2)
-					|| topRow+rowCount < last_top_row || topRow+rowCount > last_bottom_row 
-					|| leftCol+colCount < last_left_col || leftCol+colCount > last_right_col
-					|| *lastDrawStatePtr != newDrawState ) )
-					// so locations are simply not scanned in the loop last time, but inside last_abs_x/y
+				if( m.is_touch( locAbsX1, locAbsY1, locAbsX2, locAbsY2, update_abs_x1, update_abs_y1, update_abs_x2, update_abs_y2) )
 				{
 					if( (*lastDrawStatePtr = newDrawState) != FULL_DARK_MASK_ID )
 					{
@@ -638,16 +597,6 @@ void ZoomMatrix::draw()
 	// ##### begin Gilbert 11/2 ######//
 	sys.yield();
 	// ##### end Gilbert 11/2 ######//
-
-	// set update region all
-	last_abs_x1 = get_base_x();
-	last_abs_y1 = get_base_y();
-	last_abs_x2 = last_abs_x1 + image_width - 1;
-	last_abs_y2 = last_abs_y1 + image_height - 1;
-	last_top_row = topRow;
-	last_bottom_row = topRow + rowCount - 1;
-	last_left_col = leftCol;
-	last_right_col = leftCol + maxColCount - 1;
 
 	// put to back buffer
 
@@ -3956,63 +3905,6 @@ static int hidden_by_place(int xLoc, int yLoc, int spriteWidth, int spriteHeight
 
 
 // ##### end Gilbert 17/9 ######//
-
-// <int> winX1, winY1, winX2, winY2    - a scroll window, any scrolling cannot scroll out this window
-//                                     - usually the whole buffer
-// <int> shiftX, shiftY                - scroll size (in number of pixels), positive means move right/down
-// [int]fillColor                      - color to fill the shifted area, negative to disable (default : -1)
-static void scroll_buffer( short *imageBuf, int truePitch, int winX1, int winY1, int winX2, int winY2, int shiftX, int shiftY, int fillColor )
-{
-	if( shiftX == 0 && shiftY == 0 )
-		return;
-
-	// if shiftX is -1 or 1, the scrolling may produce unpredictable result
-	// as the scrolling is using dword copy, i.e. copy two pixels by two pixels
-
-	int srcX1 = winX1;
-	int srcY1 = winY1;
-	int srcX2 = winX2;
-	int srcY2 = winY2;
-
-	if( shiftX >= 0 )
-		srcX2 -= shiftX;		// srcX2 decrease
-	else
-		srcX1 -= shiftX;		// srcX1 increase
-
-	if( shiftY >= 0 )
-		srcY2 -= shiftY;		// srcY2 decrease
-	else
-		srcY1 -= shiftY;		// srcY1 increase
-
-	IMGscrollW( imageBuf, truePitch, srcX1, srcY1, srcX2, srcY2, srcX1+shiftX, srcY1+shiftY );
-
-	if( fillColor < 0 )
-		return;
-
-	int destX1 = srcX1 + shiftX;
-	int destY1 = srcY1 + shiftY;
-	int destX2 = srcX2 + shiftX;
-	int destY2 = srcY2 + shiftY;
-
-	if( winX1 <= winX2 )
-	{
-		if( winY1 < destY1 )		// top side (including corners)
-			IMGbar( imageBuf, truePitch, winX1, winY1, winX2, destY1-1, fillColor );
-
-		if( destY2 < winY2 )		// bottom side (including corners)
-			IMGbar( imageBuf, truePitch, winX1, destY2+1, winX2, winY2, fillColor );
-	}
-
-	if( destY1 <= destY2 )
-	{
-		if( winX1 < destX1 )		// left side (not including corners)
-			IMGbar( imageBuf, truePitch, winX1, destY1, destX1-1, destY2, fillColor );
-
-		if( destX2 < winX2 )		// right side (not including corners)
-			IMGbar( imageBuf, truePitch, destX2+1, destY1, winX2, destY2, fillColor );
-	}
-}
-
 
 // ---------- begin of function ZoomMatrix::disp_rally_point ---------//
 
