@@ -276,7 +276,6 @@ LIBRARIES             =
 			src/oinfo.cpp \
 			src/ogenmap.cpp \
 			src/osysview.cpp \
-			src/omlink.cpp \
 			src/oun_atk2.cpp \
 			src/ow_wall.cpp \
 			src/oanline.cpp \

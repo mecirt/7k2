@@ -81,9 +81,6 @@ public:
 
 //---------------------------------------------//
 
-class  MLink;
-
-extern MLink     firm_mlink;
 extern FirmArray firm_array;
 
 //---------------------------------------------//

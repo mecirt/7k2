@@ -23,7 +23,6 @@
 
 #include <ovga.h>
 #include <odate.h>
-#include <omlink.h>
 #include <oworld.h>
 #include <oworldmt.h>
 #include <opower.h>

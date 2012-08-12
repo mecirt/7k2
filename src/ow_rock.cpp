@@ -33,8 +33,6 @@
 
 //------------ Define constant ----------//
 
-#define PI 3.141592654
-
 static const int GAP=2;
 static const int HUGE_ROCK_SIZE=8;		// HILL and PONDS 6
 static const int LARGE_ROCK_SIZE=3;		// LARGE STONES 4
@@ -202,8 +200,8 @@ void World::gen_rocks(int nGrouped, int nLarge, int nSmall)
 					{
 						// sx from x-SMALL_ROCK_SIZE to x+4-1+SMALL_ROCK_SIZE
 						short r = m.random(360);
-						short sx = (short)(x+ tempwidth/2 + (tempwidth/2 +GAP) * cos(r * PI /180));
-						short sy = (short)(y+ tempheight/2 + (tempheight/2 +GAP) * sin(r * PI /180));
+						short sx = (short)(x+ tempwidth/2 + (tempwidth/2 +GAP) * cos(r * M_PI /180));
+						short sy = (short)(y+ tempheight/2 + (tempheight/2 +GAP) * sin(r * M_PI /180));
 						short sx2 = sx + LARGE_ROCK_SIZE-1;
 						short sy2 = sy + LARGE_ROCK_SIZE-1;
 
@@ -457,8 +455,8 @@ void World::gen_dirt(int nGrouped, int nLarge, int nSmall)
 					{
 						// sx from x-SMALL_ROCK_SIZE to x+4-1+SMALL_ROCK_SIZE
 						short r = m.random(360);
-						short sx = (short)(x+ tempwidth/2 + (tempwidth/2 +GAP) * cos(r * PI /180));
-						short sy = (short)(y+ tempheight/2 + (tempheight/2 +GAP) * sin(r * PI /180));
+						short sx = (short)(x+ tempwidth/2 + (tempwidth/2 +GAP) * cos(r * M_PI /180));
+						short sy = (short)(y+ tempheight/2 + (tempheight/2 +GAP) * sin(r * M_PI /180));
 						short sx2 = sx + LARGE_ROCK_SIZE-1;
 						short sy2 = sy + LARGE_ROCK_SIZE-1;
 
