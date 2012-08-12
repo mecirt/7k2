@@ -30,7 +30,6 @@
 #include <obitmap.h>
 #include <ocoltbl.h>
 #include <oraceres.h>
-#include <omouse.h>
 #include <omousecr.h>
 #include <key.h>
 #include <opower.h>
@@ -706,12 +705,10 @@ static void disp_slide_bar(SlideBar *slideBar, int)
 
 	// not using rect_left() and rect_right() because bar_width is not appropriate for this kind of slidebar
 
-	mouse.hide_area( slideBar->scrn_x1, slideBar->scrn_y1, slideBar->scrn_x2, slideBar->scrn_y2 );
 	if( w > 0 )
-		vga.active_buf->put_bitmap_area_trans_decompress( slideBar->scrn_x1, slideBar->scrn_y1, bitmap0, 0, 0, w-1, hBase-1 );
+		vga_buffer.put_bitmap_area_trans_decompress( slideBar->scrn_x1, slideBar->scrn_y1, bitmap0, 0, 0, w-1, hBase-1 );
 	if( w < wBase )
-		vga.active_buf->put_bitmap_area_trans_decompress( slideBar->scrn_x1, slideBar->scrn_y1, bitmap1, w, 0, wBase-1, hBase-1 );
-	mouse.show_area();
+		vga_buffer.put_bitmap_area_trans_decompress( slideBar->scrn_x1, slideBar->scrn_y1, bitmap1, w, 0, wBase-1, hBase-1 );
 }
 // ---------- end of static function disp_slide_bar  -----//
 

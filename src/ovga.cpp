@@ -286,8 +286,6 @@ void Vga::d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBo
    if( !drawBorderOnly )
       vgaBuf->bar_alpha(x1+2, y1+2, x2-3, y2-3, IF_DOWN_BRIGHTNESS_ADJUST/2-1, V_WHITE);
 
-   mouse.hide_area( x1,y1,x2,y2 );
-
    //--------- black border on top and left sides -----------//
 
    vgaBuf->bar_fast( x1,y1,x2-3,y1+1,0x90 );
@@ -311,8 +309,6 @@ void Vga::d3_panel2_down(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBo
    //--------- remove shadow, copy from back  -----------//
    vgaBuf->bar_fast( x2, y1+1, x2, y2, 0x9c);
    vgaBuf->bar_fast( x1+1, y2, x2-1, y2, 0x9c);
-
-   mouse.show_area();
 }
 //------------- End of function Vga::d3_panel2_down ------------//
 

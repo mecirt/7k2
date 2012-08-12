@@ -502,27 +502,6 @@ void Unit::disp_basic_info(int dispY1, int refreshFlag)
 //
 int Unit::detect_basic_info()
 {
-/*
-	//--- detect pressing on the name to center the unit on the screen ---//
-
-	if( is_visible() && mouse.single_click( INFO_X1, INFO_Y1, INFO_X2, INFO_Y1+21 ) )
-	{
-		world.go_loc( next_x_loc(), next_y_loc() );
-		return 1;
-	}
-
-	//-------- detect resign button ----------//
-
-	// if( is_own() && rank_id != RANK_KING )
-	if( nation_recno == nation_array.player_recno && rank_id != RANK_KING )
-	{
-		if( button_resign.detect(KEY_DEL) )
-		{
-			group_resign();
-			return 1;
-		}
-	}
-*/
 	return 0;
 }
 //----------- End of function Unit::detect_basic_info -----------//
@@ -857,10 +836,8 @@ void Unit::disp_hit_point()
 		err_when( ((Bitmap *)bitmapLeft)->get_height() != 35 );
 		err_when( xCut <= 0 );
 
-		mouse.hide_area( x, y, x+106-1, y+35-1);
 		vga.active_buf->put_bitmap_area_trans( x, y, bitmapLeft, 0, 0, xCut-1, 35-1 );
 		vga.active_buf->put_bitmap_area_trans( x, y, bitmapRight, xCut, 0, 106-1, 35-1 );
-		mouse.show_area();
 
 		if ( barType == 0)
 		{

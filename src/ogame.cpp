@@ -342,9 +342,7 @@ void Game::deinit(int loadGameCall)
 		mouse_cursor.restore_icon(oldCursor);
 
 		// ------ change mode ----------//
-		mouse.hide();
 		sys.change_display_mode(MODE_ID_DEFAULT);
-		mouse.show();
 	}
 	// ####### end Gilbert 19/2 ########//
 

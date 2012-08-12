@@ -1179,8 +1179,6 @@ void Info::save_game_scr()
 void Info::rest_game_scr()
 {
 	// restore area outside front buffer
-	mouse.hide();
-
 	if(save_buf_4)
 		vga_front.rest_area(save_buf_4, 1);
 	save_buf_4 = NULL;
@@ -1195,7 +1193,6 @@ void Info::rest_game_scr()
 	save_buf_1 = NULL;
 
 	info.disp();
-	mouse.show();
 }
 //---------- End of function Info::rest_game_scr ---------//
 

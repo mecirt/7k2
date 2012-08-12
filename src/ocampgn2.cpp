@@ -581,7 +581,6 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 		int dispWidth = INTRO_MAP_WIDTH;
 		int dispHeight = INTRO_MAP_HEIGHT;
 											
-		mouse.hide_area( dispX1, dispY1, dispX1+dispWidth-1, dispY1+dispHeight-1 );
 		for (int i = 0; i< dispWidth; i++)
 		{
 			for (int j = 0; j< dispHeight; j++)
@@ -627,7 +626,6 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 				}
 			}
 		}
-		mouse.show_area();
 	}
 	else
 	{
@@ -640,15 +638,8 @@ void Campaign::disp_state_map(int dispX, int dispY, int dispWidt, int dispHeigh,
 		mouse_cursor.set_icon(CURSOR_WAITING);
 		mouse_cursor.set_frame(0);
 		sys.yield();
-//		mouse.hide_area( dispX1, dispY1, dispX1+dispWidth-1, dispY1+dispHeight-1 );
-	
-//		int shift = -40;
-//		render_terrain(START_X_POS + 8 + ((shift*COS_LOOK(START_HEADING)) >> FIXP_SHIFT), 
-//			START_Y_POS + ((shift*SIN_LOOK(START_HEADING)) >> FIXP_SHIFT), //START_Y_POS
-//			7900, 0, 10 + START_HEADING, 0, par); //START_Z_POS START_PITCH
 		render_terrain(par);
 		mouse_cursor.set_icon(CURSOR_NORMAL);
-//		mouse.show_area();
 	}
 }
 //------ End of function Campaign::disp_state_map ------//
@@ -743,14 +734,15 @@ void Campaign::disp_monster_defeated()
 	int counter = VGA_HEIGHT;
 	
 	mouse.hide();
-	vga.disp_image_file("Huwin02");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
+	vga.disp_image_file("Huwin02");
 		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+                vga.flip();
 		sys.sleep(100);
 	}
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+        vga.flip();
 	sys.sleep(500);
 	
 	music.stop();
@@ -810,14 +802,15 @@ void Campaign::disp_final_victory()
 	int counter = VGA_HEIGHT;
 	
 	mouse.hide();
-	vga.disp_image_file("BRIEF01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
+	vga.disp_image_file("BRIEF01");
 		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
+                vga.flip();
 		sys.sleep(100);
 	}
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+        vga.flip();
 	sys.sleep(500);
 
 	music.stop();
@@ -1348,9 +1341,7 @@ void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
 			}
 			else
 			{
-				mouse.hide();
 				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-				mouse.show();
 			}
 
 			game.process_messages();

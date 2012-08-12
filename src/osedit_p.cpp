@@ -115,7 +115,7 @@ void ScenarioEditor::disp_players_main(int refreshFlag)
 
 	if( !nation_array.is_deleted(brush_player_recno) )
 	{
-		vga.active_buf->d3_panel_up( INFO_X1+5, y, INFO_X2-5, y+8+font_cara_w.max_font_height );
+		vga_buffer.d3_panel_up( INFO_X1+5, y, INFO_X2-5, y+8+font_cara_w.max_font_height );
 		font_cara_w.center_put( INFO_X1+5, y, INFO_X2-5, y+8+font_cara_w.max_font_height,
 			nation_array[brush_player_recno]->nation_name() );
 	}
@@ -141,7 +141,7 @@ void ScenarioEditor::disp_players_main(int refreshFlag)
 
 	if( !nation_array.is_deleted(brush_player_recno) )
 	{
-		vga.active_buf->bar( INFO_X1+15, y, INFO_X2-10, y+66, V_BLACK );
+		vga_buffer.bar( INFO_X1+15, y, INFO_X2-10, y+66, V_BLACK );
 
 		Nation *nationPtr = nation_array[brush_player_recno];
 
@@ -230,17 +230,13 @@ void ScenarioEditor::detect_players_main()
 		const int lrMargin = 5;
 		const unsigned int FIELD_LEN = 30;
 
-		mouse.hide();
-
 		// paint the background again
 		int y2 = y+8+font_cara_w.max_font_height;
-		vga.active_buf->d3_panel_up( INFO_X1+5, y, INFO_X2-5, y2 );
+		vga_buffer.d3_panel_up( INFO_X1+5, y, INFO_X2-5, y2 );
 		Blob2DW backGroundBuf;
 		backGroundBuf.resize( 0, 0, (INFO_X2-5)-(INFO_X1+5+lrMargin)+1, y2-(y+yOffs)+1 );
-		vga.active_buf->read_bitmapW( INFO_X1+5+lrMargin, y+yOffs, INFO_X2-5, y2, 
+		vga_buffer.read_bitmapW( INFO_X1+5+lrMargin, y+yOffs, INFO_X2-5, y2, 
 			backGroundBuf.bitmap_ptr() );		// get a wider background
-
-		mouse.show();
 
 		char nationStr[FIELD_LEN+1];
 		strncpy( nationStr, nationPtr->nation_name(), FIELD_LEN );
@@ -257,6 +253,7 @@ void ScenarioEditor::detect_players_main()
 			sys.yield();
 			mouse.get_event();
 			music.yield();
+                        vga.flip();
 
 			int rc = nation_name_field.detect();
 			if( rc == KEY_RETURN )
@@ -362,7 +359,7 @@ static void disp_nation_rec(int recNo,int x,int y,int refreshFlag)
 		Nation *nationPtr = nation_array[recNo];
 
 		int x2;
-		vga.active_buf->bar( x+2, y+2, x+15, y+17, nationPtr->nation_color );
+		vga_buffer.bar( x+2, y+2, x+15, y+17, nationPtr->nation_color );
 		font_snds.put( x+6, y+2, recNo );
 		font_snds.put( x+18,  y+2, nationPtr->king_name(), 0, x+130 );
 
@@ -401,7 +398,7 @@ static void disp_nation_rec(int recNo,int x,int y,int refreshFlag)
 //
 static void disp_color_button(ButtonCustom *button, int )
 {
-	vga.active_buf->bar( button->x1, button->y1, button->x2, button->y2, 
+	vga_buffer.bar( button->x1, button->y1, button->x2, button->y2, 
 		game.color_remap_array[button->custom_para.value].main_color);
 
 	if( button->custom_para.value == 0 )
@@ -411,11 +408,11 @@ static void disp_color_button(ButtonCustom *button, int )
 
 	if( !button->pushed_flag )
 	{
-		vga.active_buf->d3_panel_up( button->x1, button->y1, button->x2, button->y2, 2, 0 );
+		vga_buffer.d3_panel_up( button->x1, button->y1, button->x2, button->y2, 2, 0 );
 	}
 	else
 	{
-		vga.active_buf->d3_panel_down( button->x1, button->y1, button->x2, button->y2, 2, 0 );
+		vga_buffer.d3_panel_down( button->x1, button->y1, button->x2, button->y2, 2, 0 );
 	}
 }
 // ----- end of function ScenarioEditor::disp_color_button ------//

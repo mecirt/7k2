@@ -96,8 +96,6 @@ void Slider::refresh()
 	if( barWidth > bar_width )
 		barWidth = bar_width;
 
-	mouse.hide_area(slider_x1, slider_y1, slider_x2, slider_y2);
-
 	//----- paint the bar area ---------//
 
 	if( barWidth > 0 )
@@ -110,7 +108,7 @@ void Slider::refresh()
 
 			err_when( slider_x1+2 > slider_x1+1+min(barWidth,stdBarWidth) );
 
-			Vga::active_buf->bar( slider_x1+2, slider_y1+2, slider_x1+1+min(barWidth,stdBarWidth),
+			vga_buffer.bar( slider_x1+2, slider_y1+2, slider_x1+1+min(barWidth,stdBarWidth),
 				 slider_y2-2, bar_color );
 
 			//--- use bar_color2 for the area > std_value ---//
@@ -119,7 +117,7 @@ void Slider::refresh()
 			{
 				err_when( slider_x1+2+stdBarWidth > slider_x1+1+barWidth );
 
-				Vga::active_buf->bar( slider_x1+2+stdBarWidth, slider_y1+2, slider_x1+1+barWidth,
+				vga_buffer.bar( slider_x1+2+stdBarWidth, slider_y1+2, slider_x1+1+barWidth,
 					 slider_y2-2, bar_color2 );
 			}
 		}
@@ -127,7 +125,7 @@ void Slider::refresh()
 		{
 			err_when( slider_x1+2 > slider_x1+1+barWidth );
 
-			Vga::active_buf->bar( slider_x1+2, slider_y1+2, slider_x1+1+barWidth,
+			vga_buffer.bar( slider_x1+2, slider_y1+2, slider_x1+1+barWidth,
 				slider_y2-2, bar_color );
 		}
 	}
@@ -138,14 +136,12 @@ void Slider::refresh()
 	{
       err_when( slider_x1+2+barWidth > slider_x2-2 );
 
-		Vga::active_buf->bar( slider_x1+2+barWidth, slider_y1+2, slider_x2-2, slider_y2-2, Vga::active_buf->color_down );
+		vga_buffer.bar( slider_x1+2+barWidth, slider_y1+2, slider_x2-2, slider_y2-2, vga_buffer.color_down );
 	}
 
 	// ##### begin Gilbert 14/10 ######//
-	vga_back.bar( slider_x1, slider_y1, slider_x2, slider_y2, V_RED );
+	vga_buffer.bar( slider_x1, slider_y1, slider_x2, slider_y2, V_RED );
 	// ##### end Gilbert 14/10 ######//
-
-	mouse.show_area();
 }
 //--------- End of function Slider::refresh ---------//
 

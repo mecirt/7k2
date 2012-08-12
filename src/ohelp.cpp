@@ -853,11 +853,7 @@ void HelpSaveScreen::rest_scr(VgaBuf* vgaBuf, int keepUnclear )
 	if( !vgaBuf )
 		vgaBuf = &vga_buffer;
 
-//	mouse.hide_area( save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2 );
-
 	vgaBuf->put_bitmapW( save_scr_x1, save_scr_y1, save_scr_buf->bitmap_ptr() );
-
-//	mouse.show_area();
 
 	if( !keepUnclear )
 		clear();       // state that it has been restored.

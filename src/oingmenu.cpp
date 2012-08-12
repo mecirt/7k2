@@ -305,7 +305,6 @@ void InGameMenu::disp(int needRepaint)
 		int y=by+80;
 		int ySpacing = font_bold_black.max_font_height + 6;
 
-		mouse.hide();
 		vga.active_buf->put_bitmap_trans_remap(bx, by, background_bitmap, color_remap_table );
 
       for( int b = 0; b < GAME_OPTION_COUNT; ++b)
@@ -367,8 +366,6 @@ void InGameMenu::disp(int needRepaint)
 					str );
          }
       }
-
-		mouse.show();
 
       refresh_flag = 0;
    }
