@@ -152,7 +152,6 @@ IMGbltAreaHalfRemapDecompressHMirror PROC imageBuf,pitch,x,y,bitmapPtr,x1,y1,x2,
 		; --------- start of each point -----------
 		MOV	AL, [ESI]
 		INC	ESI
-		PRE_REMAP
 		JUMP_IF_TRANS_OR_EFFECT al, @@transOrEffect
 @@nonTrans:
 		; ------- non-transparent data -----------
@@ -243,7 +242,6 @@ IMGbltAreaHalfRemapDecompressHMirror PROC imageBuf,pitch,x,y,bitmapPtr,x1,y1,x2,
 @@lastLoopX:
 		MOV	AL, [ESI]
 		INC	ESI
-		PRE_REMAP
 		; JUMP_IF_TRANS al, @@lastClipCompress1
 		JUMP_IF_TRANS_OR_EFFECT al, @@lastTransOrEffect
 @@lastNonTrans:

@@ -103,7 +103,6 @@ IMGbltHalfRemapDecompress PROC imageBuf,pitch,x,y,bitmapPtr,colorTable
 @@loopX:
 		MOVZX	EAX, BYTE PTR [ESI]
 		INC	ESI
-		PRE_REMAP
 		JUMP_IF_TRANS_OR_EFFECT al, @@transOrEffect
 		; JUMP_IF_TRANS al, @@compressed1
 @@nonTrans:

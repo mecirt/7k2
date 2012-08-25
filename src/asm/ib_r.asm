@@ -92,7 +92,6 @@ IMGbltRemap   	PROC	imageBuf, pitch, x, y, bitmapPtr, colorTable
 @@putPoint:
 		MOVZX	EAX, BYTE PTR [ESI]
 		ADD	EDI,2
-		PRE_REMAP
 		POST_REMAP
 		INC	ESI
 		MOV	[EDI-2], AX

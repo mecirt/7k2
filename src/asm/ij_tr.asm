@@ -98,7 +98,6 @@ IMGjoinTransRemap	PROC	imageBuf, imgPitch, backBuf, backPitch, x, y, bitmapPtr, 
 @@moreColumns:
 		MOVZX	EAX, BYTE PTR [EDX]
 		INC	EDX
-		PRE_REMAP
 		CMP	AL, TRANSPARENT_CODE
 		JNE	@@notrans
 

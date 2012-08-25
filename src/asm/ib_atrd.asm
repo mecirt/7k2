@@ -146,7 +146,6 @@ IMGbltAreaTransRemapDecompress PROC imageBuf,pitch,x,y,bitmapPtr,x1,y1,x2,y2,col
 		; -------- start of each point -----------
 		MOV	AL, BYTE PTR [ESI]
 		INC	ESI
-		PRE_REMAP
 		JUMP_IF_TRANS_OR_EFFECT al, @@transOrEffect
 @@nonTrans:
 		; ------- non-transparent data -----------
@@ -226,7 +225,6 @@ IMGbltAreaTransRemapDecompress PROC imageBuf,pitch,x,y,bitmapPtr,x1,y1,x2,y2,col
 @@lastLoopX:
 		MOV	AL, [ESI]
 		INC	ESI
-		PRE_REMAP
 		; JUMP_IF_TRANS al, @@lastClipCompress1
 		JUMP_IF_TRANS_OR_EFFECT al, @@lastTransOrEffect
 @@lastNonTrans:
@@ -279,7 +277,6 @@ IMGbltAreaTransRemapDecompress   	ENDP
 
 
 
-; BUGHERE : do not PRE_REMAP here, as some function do not need remap
 ;----------- BEGIN OF FUNCTION SeekForward -----
 ; change ESI, bytes started in compression key in AH
 ; to forward ECX points

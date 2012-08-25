@@ -111,7 +111,6 @@ IMGbltAreaRemap	PROC   	  imageBuf, pitch, desX, desY, bitmapPtr, srcX1, srcY1, 
 @@putPoint:
 		MOVZX	EAX, BYTE PTR [ESI]
 		ADD	EDI,2
-		PRE_REMAP
 		POST_REMAP
 		INC	ESI
 		MOV	[EDI-2], AX

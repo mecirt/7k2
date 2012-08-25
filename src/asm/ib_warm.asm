@@ -123,7 +123,6 @@ IMGbltWeakblendAreaRemapHMirror	PROC   	  imageBuf, pitch, desX, desY, bitmapPtr
 		PUSH	ECX
 		MOV	DX, [EDI]
 		MOVSX	ECX, AH
-		PRE_REMAP
 		POST_REMAP
 		SHR	DX, CL
 		AND	DX, log_alpha_mask[ECX*2]

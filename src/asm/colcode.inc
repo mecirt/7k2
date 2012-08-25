@@ -49,10 +49,6 @@ SHADOW_CODE             =  000h
 ; OUTLINE_CODE            =  0f2h
 ; OUTLINE_SHADOW_CODE     =  0f3h
 
-; do not remap colour
-PRE_REMAP MACRO
-	ENDM
-
 POST_REMAP MACRO
 	MOV	AX, [EBX+2*EAX]
 	ENDM

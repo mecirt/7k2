@@ -92,7 +92,6 @@ IMGbltTransRemap   	PROC	imageBuf, pitch, x, y, bitmapPtr, colorTable
 @@putPoint:
 		MOVZX	EAX, BYTE PTR [ESI]
 		ADD	EDI,2
-		PRE_REMAP
 		CMP	AL, TRANSPARENT_CODE
 		JE	@@skipPoint
 		POST_REMAP

@@ -99,7 +99,6 @@ IMGbltWeakblendRemap   	PROC	imageBuf, pitch, x, y, bitmapPtr, colorTable
 		PUSH	ECX
 		MOV	DX, WORD PTR [EDI]
 		MOVSX	ECX, AH
-		PRE_REMAP
 		POST_REMAP
 		SHR	DX, CL
 		AND	DX, log_alpha_mask[ECX*2]

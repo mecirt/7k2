@@ -121,7 +121,6 @@ IMGbltBlendAreaRemapHMirror	PROC   	  imageBuf, pitch, desX, desY, bitmapPtr, sr
 		ADD	ESI, 2
 		MOV	DX, [EDI]
 		MOVSX	ECX, AH
-		PRE_REMAP
 		POST_REMAP
 		SHR	DX, CL
 		AND	DX, log_alpha_mask[ECX*2]

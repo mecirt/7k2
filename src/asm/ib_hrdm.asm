@@ -107,7 +107,6 @@ IMGbltHalfRemapDecompressHMirror PROC imageBuf,pitch,x,y,bitmapPtr,colorTable
 @@loopX:
 		MOVZX	EAX, BYTE PTR [ESI]
 		INC	ESI
-		PRE_REMAP
 		JUMP_IF_TRANS_OR_EFFECT al, @@transOrEffect
 @@nonTrans:
 		; ----- 00-F7, simply blit the point on video memory -----
