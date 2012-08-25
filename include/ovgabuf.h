@@ -183,9 +183,6 @@ public:
 	void		put_bitmap_trans_fast(int x,int y,char* bitmapBuf)
 				{ IMGbltTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
 
-	void		put_bitmap_trans_hmirror( int x, int y, char *bitmapBuf )
-				{ IMGbltTransRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
 	void		put_bitmap_area_trans( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
 				{ IMGbltAreaTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
 

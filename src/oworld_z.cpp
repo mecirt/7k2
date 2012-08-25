@@ -3380,6 +3380,8 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 	if( x1 >= image_width || x2 < 0 || y1 >= image_height || y2 < 0)
 		return;
 
+  if (!colorRemapTable) colorRemapTable = vga.default_remap_table;
+
 	// ------------- test if whole bitmap inside window ----------//
 
 	if( x1 >= 0 && x2 < image_width && y1 >= 0 && y2 < image_height)
@@ -3398,33 +3400,21 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 		case 0:		// uncompressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_trans_remap(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans_hmirror(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			break;
 		case 1:		// compressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans_decompress(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap_decompress(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_trans_remap_decompress(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans_decompress_hmirror(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			break;
 		case 2:		// uncompressed, blending bitmap
@@ -3444,17 +3434,11 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 		case 1 | 4:		// compressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_half_decompress(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_half_remap_decompress(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_half_remap_decompress(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_half_decompress_hmirror(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_half_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
+				vga_back.put_bitmap_half_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
 			}
 			break;
 		case 2 | 4:		// uncompressed, blending bitmap
@@ -3493,41 +3477,25 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 		case 0:		// uncompressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_trans_remap(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_trans_remap_decompress_hmirror(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			break;
 		case 1:		// compressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_trans_remap_decompress(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_trans_remap_decompress_hmirror(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			break;
 		case 2:		// uncompressed, blending
@@ -3549,21 +3517,13 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 		case 1 | 4:		// compressed
 			if( !mirror )
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_half_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_half_remap_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_half_remap_decompress(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			else
 			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_half_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_half_remap_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+				vga_back.put_bitmap_area_half_remap_decompress_hmirror(x1, y1, bitmapPtr,
+					srcX1, srcY1, srcX2, srcY2, colorRemapTable);
 			}
 			break;
 		case 2 | 4:		// uncompressed, blending
