@@ -125,14 +125,6 @@ extern "C"
 	void IMGcall IMGbltWAreaTrans( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWAreaTrans");
 
-	// ##### begin Gilbert 20/10 #######//
-	// functions with drawing black mask 
-
-	void IMGcall IMGbltWTransBlacken( short *imageBuf, int pitch, int x, int y, short *bitmapWBuf ) __asmsym__("_IMGbltWTransBlacken");
-	void IMGcall IMGbltWAreaTransBlacken( short *imageBuf, int pitch, int x, int y, short *bitmapWBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWAreaTransBlacken");
-	// ##### end Gilbert 20/10 #######//
-
 	void IMGcall IMGbrightBar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int brightness) __asmsym__("_IMGbrightBar");
 
 };

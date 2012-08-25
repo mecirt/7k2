@@ -250,7 +250,7 @@ void Unit::draw_selected()
 	SpriteInfo* spriteInfo = sprite_res[unit_res[unit_id]->sprite_id];
 
 	world.zoom_matrix->put_bitmapW_offset( cur_x, cur_y, get_z(), (short *)sys.common_data_buf,
-		-maxHitBarWidth/2, spriteInfo->max_height + (spriteInfo->loc_width + spriteInfo->loc_height) * 6, 0, 0);
+		-maxHitBarWidth/2, spriteInfo->max_height + (spriteInfo->loc_width + spriteInfo->loc_height) * 6);
 
 	//----- display rank icon (only for own units) -----//
 

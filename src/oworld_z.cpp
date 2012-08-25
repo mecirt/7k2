@@ -1323,7 +1323,7 @@ void ZoomMatrix::draw_build_marker()
 			}
 
 			put_bitmapW_offset(xLoc * LOCATE_WIDTH, yLoc * LOCATE_HEIGHT, lc.top_left->altitude,
-				maskBitmap.bitmap_ptr(), maskBitmap.left_edge, maskBitmap.top_edge, 0, 0);
+				maskBitmap.bitmap_ptr(), maskBitmap.left_edge, maskBitmap.top_edge);
 		}
 	}
 	// ###### end Gilbert 3/11 #####//
@@ -1752,7 +1752,7 @@ void ZoomMatrix::put_center_text(int x, int y, int z, const char* str, char blac
 			vga_back.bar_alpha( scrnX1, scrnY1, scrnX2, scrnY2, 1, V_BLACK );
 
 		put_bitmapW_offset(x, y, z, tempBuffer.bitmap_ptr(),
-			tempBuffer.left_edge, tempBuffer.top_edge, 0, 0);
+			tempBuffer.left_edge, tempBuffer.top_edge);
 	}
 }
 //----------- End of function ZoomMatrix::put_center_text ------------//
@@ -3594,13 +3594,10 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 // <int> curX, curY, curZ     pixel coorinate relative to map
 // <char *>bitmapPtr          bitmap
 // <int> offsetX, offsetY     offset in screen coorindate
-// [int] mirror               need mirroring
-// [int] compressed           0=uncompressed, bit3=black mask
 
 //
 void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
-	short *bitmapPtr, int offsetX, int offsetY,
-	int mirror, int compressed)
+	short *bitmapPtr, int offsetX, int offsetY)
 {
 	short bitmapWidth = ((BitmapW *)bitmapPtr)->get_width();
 	short bitmapHeight = ((BitmapW *)bitmapPtr)->get_height();
@@ -3627,33 +3624,7 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 		y2 += image_y1;
 #endif
 
-		switch(compressed)
-		{
-		case 0:		// uncompressed
-			if( !mirror )
-			{
-				vga_back.put_bitmapW_trans(x1, y1, bitmapPtr);
-			}
-			else
-			{
-				err_here();
-			}
-			break;
-
-		case 0 | 8:		// uncompressed, draw black mask
-			if( !mirror )
-			{
-				vga_back.put_bitmapW_trans_blacken( x1, y1, bitmapPtr);
-			}
-			else
-			{
-				err_here();
-			}
-			break;
- 
-		default:
-			err_here();
-		}
+		vga_back.put_bitmapW_trans(x1, y1, bitmapPtr);
 	}
 	else
 	{
@@ -3671,35 +3642,8 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 		y2 += image_y1;
 #endif
 
-		switch(compressed)
-		{
-		case 0:		// uncompressed
-			if( !mirror )
-			{
-				vga_back.put_bitmapW_area_trans(x1, y1, bitmapPtr,
-					srcX1, srcY1, srcX2, srcY2);
-			}
-			else
-			{
-				err_here();
-			}
-			break;
-
-		case 0 | 8:		// uncompressed, draw black mask
-			if( !mirror )
-			{
-				vga_back.put_bitmapW_area_trans_blacken( x1, y1, bitmapPtr,
-					srcX1, srcY1, srcX2, srcY2);
-			}
-			else
-			{
-				err_here();
-			}
-			break;
-
-		default:
-			err_here();
-		}
+		vga_back.put_bitmapW_area_trans(x1, y1, bitmapPtr,
+			srcX1, srcY1, srcX2, srcY2);
 	}
 }
 //----------- End of function ZoomMatrix::put_bitmapW_offset ----------//

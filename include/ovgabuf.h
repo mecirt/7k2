@@ -309,21 +309,6 @@ public:
 	void		put_bitmapW_area_trans( int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
 				{ IMGbltWAreaTrans( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
 
-	// ##### begin Gilbert 20/10 #######//
-	// functions with drawing black mask
-
-	void		put_bitmapW_trans_blacken( int x, int y, short *bitmapWBuf )
-				{ IMGbltWTransBlacken( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf ); }
-	void		put_bitmapW_trans_blacken( int x, int y, BitmapW *bitmapWBuf )
-				{ IMGbltWTransBlacken( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf ); }
-
-	void		put_bitmapW_area_trans_blacken( int x, int y, short *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWAreaTransBlacken( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-	void		put_bitmapW_area_trans_blacken( int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWAreaTransBlacken( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-
-	// ##### end Gilbert 20/10 #######//
-
 };
 
 extern VgaBuf vga_buffer;

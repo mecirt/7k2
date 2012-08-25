@@ -167,13 +167,7 @@ public:
 	}
 
 	void	put_bitmapW_offset(int curX, int curY, int curZ, short *bitmapPtr,
-			int offsetX, int offsetY, int hMirror=0, int compressedFlag=0);
-
-	void	put_bitmapW(int curX, int curY, int curZ, short *bitmapPtr,
-		int hMirror=0, int compressed=0)
-	{
-		put_bitmapW_offset(curX, curY, curZ, bitmapPtr, 0, 0, hMirror, compressed);
-	}
+			int offsetX, int offsetY);
 
 	// reverse of calc_abs_x/y when z=0
 	static	int calc_cur_x(int absX, int absY, int curZ=0);

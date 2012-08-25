@@ -484,7 +484,6 @@ LIBRARIES             =
 			src/asm/ib_ahrdm.asm \
 			src/asm/ib_ar.asm \
 			src/asm/ib_at.asm \
-			src/asm/ib_atk.asm \
 			src/asm/ib_atr.asm \
 			src/asm/ib_atrd.asm \
 			src/asm/ib_atrdm.asm \
@@ -497,7 +496,6 @@ LIBRARIES             =
 			src/asm/ib_hrdm.asm \
 			src/asm/ib_r.asm \
 			src/asm/ib_t.asm \
-			src/asm/ib_tk.asm \
 			src/asm/ib_tr.asm \
 			src/asm/ib_trd.asm \
 			src/asm/ib_trdm.asm \
