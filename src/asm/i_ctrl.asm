@@ -35,30 +35,5 @@ image_height    DD      ?
 ;--------------------------------------------------
 
 
-.CODE
-
-;------- BEGIN OF FUNCTION IMGinit ------------
-;
-; Initialize the settings of the image buffer
-;
-; Syntax : IMGinit(char*, int, int, int)
-;
-; int  imageWidth  - width and height of the image buffer
-; int  imageHeight
-;
-		PUBLIC  IMGinit
-IMGinit         PROC    imageWidth, imageHeight
-		STARTPROC
-
-		MOV	EAX, imageWidth
-		MOV	image_width, EAX
-
-		MOV	EAX, imageHeight
-		MOV	image_height, EAX
-
-		ENDPROC
-IMGinit         ENDP
-
-;---------- END OF FUNCTION IMGinit ---------
 
 END
