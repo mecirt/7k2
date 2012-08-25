@@ -44,8 +44,6 @@ public:
 	void  put_front(int,int,int, int compressFlag=0);
 	void  put_back(int,int,int, int compressFlag=0);
 
-	void  put_join(int,int,const char*);
-
 	char* get_ptr(const char* imageName)   { return ResourceIdx::read(imageName); }
 
 	void  put_large(VgaBuf*,int,int,const char*);  // put a large image, over 64K

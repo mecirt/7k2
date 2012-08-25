@@ -324,10 +324,6 @@ public:
 
 	// ##### end Gilbert 20/10 #######//
 
-	// --------- VgaBuf to VgaBuf copy ------------ //
-
-	void		join_trans( VgaBuf *srcBuf, int x, int y, char *bitmapBuf )
-				{ IMGjoinTransRemap( cur_buf_ptr, cur_pitch, srcBuf->cur_buf_ptr, srcBuf->cur_pitch, x, y, bitmapBuf, default_remap_table ); }
 };
 
 extern VgaBuf vga_buffer;

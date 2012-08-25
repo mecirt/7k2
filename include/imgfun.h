@@ -57,8 +57,6 @@ extern "C"
 		short *colorTable ) __asmsym__("_IMGbltRemap");
 	void IMGcall IMGbltAreaRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltAreaRemap");
-	void IMGcall IMGbltAreaRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltAreaRemapHMirror");
 
 	// functions with transparent color keying
 
@@ -117,7 +115,6 @@ extern "C"
 
 	// 16->16 blt
 
-	void IMGcall IMGreadW( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, short *bitmapBuf ) __asmsym__("_IMGreadW");
 	void IMGcall IMGbltW( short *imageBuf, int pitch, int x, int y, short *bitmapBuf ) __asmsym__("_IMGbltW");
 	void IMGcall IMGbltWArea( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWArea");
@@ -138,10 +135,6 @@ extern "C"
 
 	void IMGcall IMGbrightBar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int brightness) __asmsym__("_IMGbrightBar");
 
-	// join bitmap and back buffer to front buffer
-
-	void IMGcall IMGjoinTransRemap( short *imageBuf, int imgPitch, short *backBuf, int backPitch,
-		int x, int y, char *bitmapBuf, short *colorRemapTable ) __asmsym__("_IMGjoinTransRemap");
 };
 
 #endif

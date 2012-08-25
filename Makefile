@@ -472,14 +472,17 @@ LIBRARIES             =
 7k2_ASM_SRCSO  =         \
 
 7k2_ASM_SRCS  =         \
-			src/asm/ib_r.asm \
-			src/asm/ib_tr.asm \
 			src/asm/i_alpha.asm \
-			src/asm/ib_a.asm \
-			src/asm/ib_ar.asm \
 			src/asm/i_bar.asm \
-			src/asm/ib_arm.asm \
+			src/asm/i_bright.asm \
+			src/asm/i_ctrl.asm \
+			src/asm/i_effect.asm \
+			src/asm/i_line.asm \
 			src/asm/ib.asm \
+			src/asm/ib_a.asm \
+			src/asm/ib_ahrd.asm \
+			src/asm/ib_ahrdm.asm \
+			src/asm/ib_ar.asm \
 			src/asm/ib_at.asm \
 			src/asm/ib_atk.asm \
 			src/asm/ib_atr.asm \
@@ -490,9 +493,12 @@ LIBRARIES             =
 			src/asm/ib_barm.asm \
 			src/asm/ib_br.asm \
 			src/asm/ib_brm.asm \
+			src/asm/ib_hrd.asm \
 			src/asm/ib_hrdm.asm \
+			src/asm/ib_r.asm \
 			src/asm/ib_t.asm \
 			src/asm/ib_tk.asm \
+			src/asm/ib_tr.asm \
 			src/asm/ib_trd.asm \
 			src/asm/ib_trdm.asm \
 			src/asm/ib_trm.asm \
@@ -500,16 +506,9 @@ LIBRARIES             =
 			src/asm/ib_warm.asm \
 			src/asm/ib_wr.asm \
 			src/asm/ib_wrm.asm \
-			src/asm/i_bright.asm \
-			src/asm/i_ctrl.asm \
-			src/asm/i_effect.asm \
-			src/asm/ij_tr.asm \
-			src/asm/i_line.asm \
-			src/asm/i_read.asm \
-			src/asm/ib_ahrd.asm \
-			src/asm/ib_ahrdm.asm \
-			src/asm/ib_hrd.asm
-		
+
+
+
 7k2_OBJS      = $(7k2_C_SRCS:.c=.o) \
 			$(7k2_CXX_SRCS:.cpp=.o)
 

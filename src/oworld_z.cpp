@@ -3637,7 +3637,6 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 			else
 			{
 				err_here();
-				// vga_back.put_bitmapW_trans_hmirror(x1, y1, bitmapPtr);
 			}
 			break;
 

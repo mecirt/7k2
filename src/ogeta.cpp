@@ -334,7 +334,6 @@ void GetA::paint(int paintCursor)
 	{
 	case 0:		// left justified
 		// ##### begin Gilbert 22/2 ########//
-		// Vga::active_buf->put_bitmapW_trans(x, y, bitmap );
 		Vga::active_buf->put_bitmapW(x, y, bitmap );
 		// ##### end Gilbert 22/2 ########//
 		break;
@@ -343,7 +342,6 @@ void GetA::paint(int paintCursor)
 		{
 			int l = x + (x_limit - x + 1 - textWidth ) / 2;
 			// ##### begin Gilbert 22/2 ########//
-			// Vga::active_buf->put_bitmapW_trans(l, y, bitmap );
 			Vga::active_buf->put_bitmapW(l, y, bitmap );
 			// ##### end Gilbert 22/2 ########//
 		}
@@ -351,7 +349,6 @@ void GetA::paint(int paintCursor)
 
 	case -1:		// right justified
 		// ##### begin Gilbert 22/2 ########//
-		// Vga::active_buf->put_bitmapW_trans(x_limit-textWidth+1, y, bitmap );
 		Vga::active_buf->put_bitmapW(x_limit-textWidth+1, y, bitmap );
 		// ##### end Gilbert 22/2 ########//
 		break;

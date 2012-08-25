@@ -129,25 +129,6 @@ void ImageRes::put_back(int x, int y, int bitmapId, int compressFlag)
 }
 //---------- End of function ImageRes::put_back --------//
 
-
-//-------- Start of function ImageRes::put_join --------//
-//
-// int 	x,y       = the location of the image
-// char* imageName = name of the image
-//
-void ImageRes::put_join(int x, int y, const char* imageName)
-{
-	char* bitmapPtr = ResourceIdx::read(imageName);
-
-	if( !bitmapPtr )
-		return;
-
-	if( bitmapPtr )
-		vga_buffer.join_trans( &vga_back, x, y, bitmapPtr );
-}
-//---------- End of function ImageRes::put_join --------//
-
-
 //-------- Start of function ImageRes::put_large --------//
 //
 // When a picture file is > 64K, which cannot be read into a single
