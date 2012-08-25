@@ -61,28 +61,4 @@ IMGinit         ENDP
 
 ;---------- END OF FUNCTION IMGinit ---------
 
-
-;------- BEGIN OF FUNCTION IMGgetState ------------
-;
-; Initialize the settings of the image buffer
-;
-; Syntax : IMGgetState(VgaFunState *)
-;
-; VgaFunState     - pointer to hold the image_width and image_height
-;
-		PUBLIC  IMGgetState
-IMGgetState	PROC    vgaState
-		STARTPROC
-
-		MOV	EDI, vgaState
-		MOV	EAX, image_width
-		STOSD
-		MOV	EAX, image_height
-		STOSD
-
-		ENDPROC
-IMGgetState         ENDP
-
-;---------- END OF FUNCTION IMGgetState ---------
-
 END
