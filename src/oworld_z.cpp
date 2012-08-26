@@ -3536,7 +3536,7 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 		y2 += image_y1;
 #endif
 
-		vga_back.put_bitmapW_trans(x1, y1, bitmapPtr);
+		vga_back.put_bitmapW(x1, y1, bitmapPtr, true);
 	}
 	else
 	{
@@ -3554,8 +3554,8 @@ void ZoomMatrix::put_bitmapW_offset(int curX, int curY, int curZ,
 		y2 += image_y1;
 #endif
 
-		vga_back.put_bitmapW_area_trans(x1, y1, bitmapPtr,
-			srcX1, srcY1, srcX2, srcY2);
+		vga_back.put_bitmapW_area(x1, y1, bitmapPtr,
+			srcX1, srcY1, srcX2, srcY2, true);
 	}
 }
 //----------- End of function ZoomMatrix::put_bitmapW_offset ----------//

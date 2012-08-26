@@ -86,15 +86,8 @@ extern "C"
 
 	// 16->16 blt
 
-	void IMGcall IMGbltW( short *imageBuf, int pitch, int x, int y, short *bitmapBuf ) __asmsym__("_IMGbltW");
 	void IMGcall IMGbltWArea( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWArea");
-
-	// functions with transparent color keying
-
-	void IMGcall IMGbltWTrans( short *imageBuf, int pitch, int x, int y, short *bitmapBuf ) __asmsym__("_IMGbltWTrans");
-	void IMGcall IMGbltWAreaTrans( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWAreaTrans");
 
 	void IMGcall IMGbrightBar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int brightness) __asmsym__("_IMGbrightBar");
 

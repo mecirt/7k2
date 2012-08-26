@@ -478,15 +478,12 @@ LIBRARIES             =
 			src/asm/i_ctrl.asm \
 			src/asm/i_effect.asm \
 			src/asm/i_line.asm \
-			src/asm/ib.asm \
 			src/asm/ib_a.asm \
-			src/asm/ib_at.asm \
 			src/asm/ib_bar.asm \
 			src/asm/ib_barm.asm \
 			src/asm/ib_br.asm \
 			src/asm/ib_brm.asm \
 			src/asm/ib_r.asm \
-			src/asm/ib_t.asm \
 			src/asm/ib_tr.asm \
 			src/asm/ib_trm.asm \
 			src/asm/ib_war.asm \

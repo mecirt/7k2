@@ -229,7 +229,6 @@ void VgaBuf::temp_restore_unlock()
 }
 //------------- End of function VgaBuf::temp_restore_unlock --------------//
 
-// transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha
 void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, int transparency, bool hmirror)
 {
   put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror);
@@ -239,8 +238,10 @@ void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, i
 #define MULTITRANS_CODE 0xf8
 #define EFFECT_CODE 0xef
 
+// transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha, 4=blend, no transparency, 5=weak blend, no transparency
 void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror)
 {
+  // TODO: codes 4 and 5 (blending)
   bool crop = true;
   if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
 
@@ -261,9 +262,9 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
         continue;
       }
       unsigned char pixel = (unsigned char) *bitmapBuf++;
-      if (transparency && (pixel == TRANSCODE)) continue;
+      if (transparency && (transparency <= 3) && (pixel == TRANSCODE)) continue;
       // skip multiple pixels at once (a sort-of RLE with transparency)
-      if ((transparency >= 2) && (pixel >= MULTITRANS_CODE)) {
+      if (((transparency == 2) || (transparency == 3)) && (pixel >= MULTITRANS_CODE)) {
         if (pixel == MULTITRANS_CODE)
           skip = (unsigned char) *bitmapBuf++;
         else
@@ -275,7 +276,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 
       short *bufptr = buf_ptr(x + (hmirror?width-xx:xx), y + yy);
 
-      if ((transparency >= 2) && (pixel >= EFFECT_CODE)) {
+      if (((transparency == 2) || (transparency == 3)) && (pixel >= EFFECT_CODE)) {
         doIMGeffect(pixel - EFFECT_CODE, bufptr);
         continue;
       }
@@ -292,15 +293,34 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 }
 
 
-//------- Begin of function VgaBuf::put_bitmapW --------//
-//
-void VgaBuf::put_bitmapW(int x, int y, short *bitmapWBuf )
+void VgaBuf::put_bitmapW(int x, int y, short *bitmapBuf, bool transparency)
 {
-	err_when( !buf_locked );
+  put_bitmapW_area(x, y, bitmapBuf, -1, -1, -1, -1, transparency);
 
-	IMGbltW( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf );
 }
-//------- End of function VgaBuf::put_bitmapW --------//
+
+void VgaBuf::put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency)
+{
+  bool crop = true;
+  if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
+
+  // first four bytes hold width/height, so pull them
+  int width = *bitmapBuf;
+  bitmapBuf++;
+  int height = *bitmapBuf;
+  bitmapBuf++;
+
+  for (int yy = 0; yy < height; ++yy) {
+    for (int xx = 0; xx < width; ++xx) {
+      short pixel = *bitmapBuf++;
+      if (transparency && (pixel == transparent_code_w)) continue;
+      if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
+
+      short *bufptr = buf_ptr(x + xx, y + yy);
+      *bufptr = pixel;
+    }
+  }
+}
 
 void VgaBuf::read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapPtr)
 {

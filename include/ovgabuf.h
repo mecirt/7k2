@@ -222,35 +222,16 @@ public:
 
 	// 16->16 blt
 
+        void put_bitmapW(int x, int y, short *bitmapBuf, bool transparency = false);
+        void put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false);
+	void put_bitmapW(int x, int y, BitmapW *bitmapWBuf, bool transparency = false)
+		{ put_bitmapW(x, y, (short *)bitmapWBuf, transparency); }
+	void put_bitmapW_area(int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false)
+		{ put_bitmapW_area(x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2, transparency); }
+
 	void		read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapWBuf);
 	void		read_bitmapW(int x1,int y1,int x2,int y2, BitmapW* bitmapWBuf)
 				{ read_bitmapW(x1, y1, x2, y2, (short *)bitmapWBuf); }
-
-	void		put_bitmapW(int x, int y, short *bitmapWBuf );
-	void		put_bitmapW(int x, int y, BitmapW *bitmapWBuf )
-				{ put_bitmapW(x, y, (short *)bitmapWBuf ); }
-	void		put_bitmapW_fast(int x, int y, short *bitmapWBuf )
-				{ IMGbltW( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf ); }
-	void		put_bitmapW_fast(int x, int y, BitmapW *bitmapWBuf )
-				{ IMGbltW( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf ); }
-
-	void		put_bitmapW_area( int x, int y, short *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWArea( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-	void		put_bitmapW_area( int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWArea( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-
-	// functions with transparent color keying
-
-	void		put_bitmapW_trans( int x, int y, short *bitmapWBuf )
-				{ IMGbltWTrans( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf ); }
-	void		put_bitmapW_trans( int x, int y, BitmapW *bitmapWBuf )
-				{ IMGbltWTrans( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf ); }
-
-	void		put_bitmapW_area_trans( int x, int y, short *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWAreaTrans( cur_buf_ptr, cur_pitch, x, y, bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-	void		put_bitmapW_area_trans( int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltWAreaTrans( cur_buf_ptr, cur_pitch, x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2 ); }
-
 };
 
 extern VgaBuf vga_buffer;

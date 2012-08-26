@@ -918,7 +918,7 @@ void Campaign::put_center_text(int x, int y, const char* str, char black, Font* 
 		srcY1 = y1 >= 0 ? 0 : -y1;
 		srcX2 = x2 < VGA_WIDTH ? x2 - x1 : VGA_WIDTH - x1 - 1;
 		srcY2 = y2 < VGA_HEIGHT ? y2 - y1 : VGA_HEIGHT - y1 - 1;
-		vga.active_buf->put_bitmapW_area_trans(x1, y1, tempBuffer.bitmap_ptr(),	srcX1, srcY1, srcX2, srcY2);
+		vga.active_buf->put_bitmapW_area(x1, y1, tempBuffer.bitmap_ptr(), srcX1, srcY1, srcX2, srcY2, true);
 	}
 	else
 	{

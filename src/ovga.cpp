@@ -110,7 +110,7 @@ BOOL Vga::init()
    memcpy( default_remap_table, vga_color_table->get_table(0), 0x100 * 2 );
 
    default_blend_table = 0;
-  
+   transparent_code_w = translate_color(TRANSPARENT_CODE);
    return TRUE;
 }
 //-------- End of function Vga::init ----------//

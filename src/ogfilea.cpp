@@ -460,7 +460,7 @@ int GameFileArray::menu(int actionMode, int *recno)
 					int browseSlotY2 = SLOT_Y2(i);
 
 					// draw save bitmap area
-					vga_buffer.put_bitmapW_fast( browseSlotX1, browseSlotY1, browseArea[i].bitmap_ptr() );
+					vga_buffer.put_bitmapW( browseSlotX1, browseSlotY1, browseArea[i].bitmap_ptr() );
 
 					// draw slot content
 					int rec = page * MAX_BROWSE_DISP_REC + i + minRecno;

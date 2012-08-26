@@ -261,7 +261,7 @@ void Game::disp_gen_game_status(int addStep)
 			imageFile.file_read( backgroundBitmap, imageFile.file_size() );
 			vga.active_buf->put_bitmap_trans_remap(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, backgroundBitmap, colorRemapTable );
 
-			vga.active_buf->put_bitmapW_trans( BAR_X1, BAR_Y1, progressBitmap );
+			vga.active_buf->put_bitmapW(BAR_X1, BAR_Y1, progressBitmap, true);
 						
 			mem_del( backgroundBitmap );
 			mem_del( colorRemapTable );

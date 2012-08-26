@@ -874,7 +874,7 @@ void HelpSaveScreen::hide_area(int x1, int y1, int x2, int y2 )
 		save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2 ) )
 	{
 		// don't handle mouse cursor
-		vga.active_buf->put_bitmapW_fast( save_scr_x1, save_scr_y1, save_scr_buf->bitmap_ptr() );
+		vga.active_buf->put_bitmapW( save_scr_x1, save_scr_y1, save_scr_buf->bitmap_ptr() );
 
 		hiding_flag = hide_area_count;
 	}
