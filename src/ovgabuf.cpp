@@ -232,39 +232,7 @@ void VgaBuf::temp_restore_unlock()
 // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha
 void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, int transparency, bool hmirror)
 {
-  if (transparency < 3) {
-    put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror);
-    return;
-  }
-
-  if (!colorRemapTable) colorRemapTable = default_remap_table;
-  switch (transparency) {
-    case 0:
-      if (hmirror)
-        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      else
-        IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      break;
-    case 1:
-      if (hmirror)
-        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      else
-        IMGbltTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      break;
-    case 2:
-      if (hmirror)
-        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      else
-        IMGbltTransRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      break;
-    case 3:
-      if (hmirror)
-        IMGbltHalfRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      else
-        IMGbltHalfRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
-      break;
-    default: err_here();
-  }
+  put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror);
 }
 
 #define TRANSCODE 0xff
@@ -278,74 +246,48 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 
   if (!colorRemapTable) colorRemapTable = default_remap_table;
 
-  if (transparency < 3) {
-    // first four bytes hold width/height, so pull them
-    int width = *((short*)bitmapBuf);
-    bitmapBuf += 2;
-    int height = *((short*)bitmapBuf);
-    bitmapBuf += 2;
+  // first four bytes hold width/height, so pull them
+  int width = *((short*)bitmapBuf);
+  bitmapBuf += 2;
+  int height = *((short*)bitmapBuf);
+  bitmapBuf += 2;
 
-    int skip = 0;
+  int skip = 0;
 
-    for (int yy = 0; yy < height; ++yy) {
-      for (int xx = 0; xx < width; ++xx) {
-        if (skip) {
-          skip--;
-          continue;
-        }
-        unsigned char pixel = (unsigned char) *bitmapBuf++;
-        if (transparency && (pixel == TRANSCODE)) continue;
-        // skip multiple pixels at once (a sort-of RLE with transparency)
-        if ((transparency >= 2) && (pixel >= MULTITRANS_CODE)) {
-          if (pixel == MULTITRANS_CODE)
-            skip = (unsigned char) *bitmapBuf++;
-          else
-            skip = TRANSCODE - pixel + 1;
-          skip--;  // this one is already skipped
-          continue;
-        }
-        if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
-
-        short *bufptr = buf_ptr(x + (hmirror?width-xx:xx), y + yy);
-
-        if ((transparency >= 2) && (pixel >= EFFECT_CODE)) {
-          doIMGeffect(pixel - EFFECT_CODE, bufptr);
-          continue;
-        }
-
-        *bufptr = colorRemapTable[pixel];
+  for (int yy = 0; yy < height; ++yy) {
+    for (int xx = 0; xx < width; ++xx) {
+      if (skip) {
+        skip--;
+        continue;
       }
+      unsigned char pixel = (unsigned char) *bitmapBuf++;
+      if (transparency && (pixel == TRANSCODE)) continue;
+      // skip multiple pixels at once (a sort-of RLE with transparency)
+      if ((transparency >= 2) && (pixel >= MULTITRANS_CODE)) {
+        if (pixel == MULTITRANS_CODE)
+          skip = (unsigned char) *bitmapBuf++;
+        else
+          skip = TRANSCODE - pixel + 1;
+        skip--;  // this one is already skipped
+        continue;
+      }
+      if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
+
+      short *bufptr = buf_ptr(x + (hmirror?width-xx:xx), y + yy);
+
+      if ((transparency >= 2) && (pixel >= EFFECT_CODE)) {
+        doIMGeffect(pixel - EFFECT_CODE, bufptr);
+        continue;
+      }
+
+      if (transparency == 3)  // alpha-adjust
+      {
+        short mask = getAlphaMask(1);
+        *bufptr = ((colorRemapTable[pixel] >> 1) & mask) + ((((*bufptr) + 1) >> 1) & mask);
+      }
+      else
+        *bufptr = colorRemapTable[pixel];
     }
-    return;
-  }
-
-
-  switch (transparency) {
-    case 0:
-      if (hmirror)
-        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      else
-        IMGbltAreaRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      break;
-    case 1:
-      if (hmirror)
-        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      else
-        IMGbltAreaTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      break;
-    case 2:
-      if (hmirror)
-        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      else
-        IMGbltAreaTransRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      break;
-    case 3:
-      if (hmirror)
-        IMGbltAreaHalfRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      else
-        IMGbltAreaHalfRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-      break;
-    default: err_here();
   }
 }
 

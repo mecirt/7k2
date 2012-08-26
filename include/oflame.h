@@ -45,7 +45,6 @@ public:
 	unsigned char* heat_map;				// array of size map_width * map_height
 	unsigned char* bitmap;					// array of size map_width * map_height +4
 	short color_remap_table[0x100];
-														// to be drawn by IMGbltTrans and IMGbltAreaTrans
 	unsigned seed;
 	short	map_width;
 	short map_height;

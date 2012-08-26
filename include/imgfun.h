@@ -44,6 +44,7 @@ extern "C"
 	void IMGcall INITeffect(int pixelFormatFlag) __asmsym__("_INITeffect");
 	void IMGcall INITbright(int pixelFormatFlag) __asmsym__("_INITbright");
 	void IMGcall doIMGeffect(char effect, short *buffer) __asmsym__("_doIMGeffect");
+	short IMGcall getAlphaMask(char id) __asmsym__("_getAlphaMask");
 	void IMGcall IMGbar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int color) __asmsym__("_IMGbar");
 	void IMGcall IMGline( short *imageBuf, int pitch, int w, int h, int x1, int y1, int x2, int y2, int color) __asmsym__("_IMGline");
 	void IMGcall IMGbarAlpha( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int logAlpha, int color) __asmsym__("_IMGbarAlpha");
@@ -54,43 +55,12 @@ extern "C"
 
 	// 8->16 blt
 
-	void IMGcall IMGbltRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltRemap");
-	void IMGcall IMGbltAreaRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltAreaRemap");
-
 	// functions with transparent color keying
 
 	void IMGcall IMGbltTransRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		short *colorRemapTable ) __asmsym__("_IMGbltTransRemap");
 	void IMGcall IMGbltTransRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		short *colorRemapTable ) __asmsym__("_IMGbltTransRemapHMirror");
-	void IMGcall IMGbltAreaTransRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltAreaTransRemap");
-	void IMGcall IMGbltAreaTransRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable) __asmsym__("_IMGbltAreaTransRemapHMirror");
-
-	// functions with run-length transparent key decompression
-
-	void IMGcall IMGbltTransRemapDecompress( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable) __asmsym__("_IMGbltTransRemapDecompress");
-	void IMGcall IMGbltTransRemapDecompressHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable) __asmsym__("_IMGbltTransRemapDecompressHMirror");
-	void IMGcall IMGbltAreaTransRemapDecompress( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable) __asmsym__("_IMGbltAreaTransRemapDecompress");
-	void IMGcall IMGbltAreaTransRemapDecompressHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable) __asmsym__("_IMGbltAreaTransRemapDecompressHMirror");
-
-	// functions with run-length transparency key decompression, half-alpha
-
-	void IMGcall IMGbltHalfRemapDecompress( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable) __asmsym__("_IMGbltHalfRemapDecompress");
-	void IMGcall IMGbltHalfRemapDecompressHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable) __asmsym__("_IMGbltHalfRemapDecompressHMirror");
-	void IMGcall IMGbltAreaHalfRemapDecompress( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable) __asmsym__("_IMGbltAreaHalfRemapDecompress");
-	void IMGcall IMGbltAreaHalfRemapDecompressHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable) __asmsym__("_IMGbltAreaHalfRemapDecompressHMirror");
 
 	// functions with blend bitmap
 

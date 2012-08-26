@@ -480,25 +480,14 @@ LIBRARIES             =
 			src/asm/i_line.asm \
 			src/asm/ib.asm \
 			src/asm/ib_a.asm \
-			src/asm/ib_ahrd.asm \
-			src/asm/ib_ahrdm.asm \
-			src/asm/ib_ar.asm \
 			src/asm/ib_at.asm \
-			src/asm/ib_atr.asm \
-			src/asm/ib_atrd.asm \
-			src/asm/ib_atrdm.asm \
-			src/asm/ib_atrm.asm \
 			src/asm/ib_bar.asm \
 			src/asm/ib_barm.asm \
 			src/asm/ib_br.asm \
 			src/asm/ib_brm.asm \
-			src/asm/ib_hrd.asm \
-			src/asm/ib_hrdm.asm \
 			src/asm/ib_r.asm \
 			src/asm/ib_t.asm \
 			src/asm/ib_tr.asm \
-			src/asm/ib_trd.asm \
-			src/asm/ib_trdm.asm \
 			src/asm/ib_trm.asm \
 			src/asm/ib_war.asm \
 			src/asm/ib_warm.asm \

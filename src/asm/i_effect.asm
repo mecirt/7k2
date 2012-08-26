@@ -343,6 +343,13 @@ doIMGeffect PROC id,pixel
   RET
 doIMGeffect ENDP
 
+; so is this one
+PUBLIC getAlphaMask
+getAlphaMask PROC id
+  XOR EAX,EAX
+  MOV AX, log_alpha_mask[0*2]
+  RET
+getAlphaMask ENDP
 
 ;------- BEGIN OF FUNCTION IMGmakePixel ------------
 ;
