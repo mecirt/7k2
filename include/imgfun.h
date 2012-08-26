@@ -55,13 +55,6 @@ extern "C"
 
 	// 8->16 blt
 
-	// functions with transparent color keying
-
-	void IMGcall IMGbltTransRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorRemapTable ) __asmsym__("_IMGbltTransRemap");
-	void IMGcall IMGbltTransRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorRemapTable ) __asmsym__("_IMGbltTransRemapHMirror");
-
 	// functions with blend bitmap
 
 	void IMGcall IMGbltBlendRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
@@ -83,11 +76,6 @@ extern "C"
 		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltWeakblendAreaRemap");
 	void IMGcall IMGbltWeakblendAreaRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
 		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltWeakblendAreaRemapHMirror");
-
-	// 16->16 blt
-
-	void IMGcall IMGbltWArea( short *imageBuf, int pitch, int x, int y, short *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2 ) __asmsym__("_IMGbltWArea");
 
 	void IMGcall IMGbrightBar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int brightness) __asmsym__("_IMGbrightBar");
 

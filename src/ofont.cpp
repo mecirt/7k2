@@ -1460,7 +1460,7 @@ void Font::put_char_to_bufferW(short* dest, int destTruePitch, int x, int y, uns
 		FontInfo* fontInfo = font_info_array+textChar-first_char;
 		char *fontBitmap = font_bitmap_buf + fontInfo->bitmap_offset;
 
-		IMGbltTransRemap( dest, destTruePitch, x, y + fontInfo->offset_y, fontBitmap, vga.default_remap_table );
+                vga_buffer.put_bitmap(x, y + fontInfo->offset_y, fontBitmap, 0, 1, false, dest, destTruePitch);
 	}
 }
 //--------- End of function Font::put_char_to_bufferW ---------//

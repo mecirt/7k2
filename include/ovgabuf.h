@@ -167,8 +167,8 @@ public:
 
 	// 8->16 blt
         // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha
-        void put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false);
-        void put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false);
+        void put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false, short *custom_buffer = 0, int custom_pitch = 0);
+        void put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false, short *custom_buffer = 0, int custom_pitch = 0);
 
         // Wrappers - these just call the above two functions. For compatibility with code
 
@@ -222,12 +222,12 @@ public:
 
 	// 16->16 blt
 
-        void put_bitmapW(int x, int y, short *bitmapBuf, bool transparency = false);
-        void put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false);
-	void put_bitmapW(int x, int y, BitmapW *bitmapWBuf, bool transparency = false)
-		{ put_bitmapW(x, y, (short *)bitmapWBuf, transparency); }
-	void put_bitmapW_area(int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false)
-		{ put_bitmapW_area(x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2, transparency); }
+        void put_bitmapW(int x, int y, short *bitmapBuf, bool transparency = false, short *custom_buffer = 0, int custom_pitch = 0);
+        void put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false, short *custom_buffer = 0, int custom_pitch = 0);
+	void put_bitmapW(int x, int y, BitmapW *bitmapWBuf, bool transparency = false, short *custom_buffer = 0, int custom_pitch = 0)
+		{ put_bitmapW(x, y, (short *)bitmapWBuf, transparency, custom_buffer, custom_pitch); }
+	void put_bitmapW_area(int x, int y, BitmapW *bitmapWBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency = false, short *custom_buffer = 0, int custom_pitch = 0)
+		{ put_bitmapW_area(x, y, (short *)bitmapWBuf, srcX1, srcY1, srcX2, srcY2, transparency, custom_buffer, custom_pitch); }
 
 	void		read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapWBuf);
 	void		read_bitmapW(int x1,int y1,int x2,int y2, BitmapW* bitmapWBuf)

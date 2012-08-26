@@ -269,23 +269,20 @@ void GetA::paint(int paintCursor)
 		switch(align_flag)
 		{
 		case 0:
-			IMGbltWArea(bitmap->get_ptr(), bitmap->get_true_pitch(), 0, 0, (short *)back_ground_bitmap, 
-				0, 0, min(textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1 );
+			vga_buffer.put_bitmapW_area(0, 0, (short *)back_ground_bitmap, 0, 0, min(textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1, false, bitmap->get_ptr(), bitmap->get_true_pitch());
 			break;
 		case 1:
 			{
 				int l = (x_limit - x + 1 - textWidth ) / 2;
 				if( l >= 0 && l < backGroundWidth )
-				IMGbltWArea(bitmap->get_ptr(), bitmap->get_true_pitch(), -l, 0, (short *)back_ground_bitmap, 
-					l, 0, min(l+textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1 );
+				vga_buffer.put_bitmapW_area(-l, 0, (short *)back_ground_bitmap, l, 0, min(l+textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1, false, bitmap->get_ptr(), bitmap->get_true_pitch());
 			}
 			break;
 		case -1:
 			{
 				int l = x_limit - textWidth + 1 - x;
 				if( l < backGroundWidth )
-					IMGbltWArea(bitmap->get_ptr(), bitmap->get_true_pitch(), -l, 0, (short *)back_ground_bitmap, 
-						l, 0, min(l+textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1 );
+					vga_buffer.put_bitmapW_area(-l, 0, (short *)back_ground_bitmap, l, 0, min(l+textWidth, backGroundWidth)-1, min(textHeight, backGroundHeight)-1, false, bitmap->get_ptr(), bitmap->get_true_pitch());
 			}
 			break;
 		default:

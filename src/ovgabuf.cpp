@@ -229,23 +229,27 @@ void VgaBuf::temp_restore_unlock()
 }
 //------------- End of function VgaBuf::temp_restore_unlock --------------//
 
-void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, int transparency, bool hmirror)
+void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, int transparency, bool hmirror, short *custom_buffer, int custom_pitch)
 {
-  put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror);
+  put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror, custom_buffer, custom_pitch);
 }
 
 #define TRANSCODE 0xff
 #define MULTITRANS_CODE 0xf8
 #define EFFECT_CODE 0xef
+#define BUFFER_INDEX(x,y) ((short *) ((char *)buffer + pitch * (y)) + (x))
 
 // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha, 4=blend, no transparency, 5=weak blend, no transparency
-void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror)
+void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror, short *custom_buffer, int custom_pitch)
 {
   // TODO: codes 4 and 5 (blending)
   bool crop = true;
   if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
 
   if (!colorRemapTable) colorRemapTable = default_remap_table;
+
+  short *buffer = custom_buffer ? custom_buffer : cur_buf_ptr;
+  int pitch = custom_buffer ? custom_pitch : cur_pitch;
 
   // first four bytes hold width/height, so pull them
   int width = *((short*)bitmapBuf);
@@ -274,7 +278,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
       }
       if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
 
-      short *bufptr = buf_ptr(x + (hmirror?width-xx:xx), y + yy);
+      short *bufptr = BUFFER_INDEX(x + (hmirror?width-xx:xx), y + yy);
 
       if (((transparency == 2) || (transparency == 3)) && (pixel >= EFFECT_CODE)) {
         doIMGeffect(pixel - EFFECT_CODE, bufptr);
@@ -293,16 +297,19 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 }
 
 
-void VgaBuf::put_bitmapW(int x, int y, short *bitmapBuf, bool transparency)
+void VgaBuf::put_bitmapW(int x, int y, short *bitmapBuf, bool transparency, short *custom_buffer, int custom_pitch)
 {
   put_bitmapW_area(x, y, bitmapBuf, -1, -1, -1, -1, transparency);
 
 }
 
-void VgaBuf::put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency)
+void VgaBuf::put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, bool transparency, short *custom_buffer, int custom_pitch)
 {
   bool crop = true;
   if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
+
+  short *buffer = custom_buffer ? custom_buffer : cur_buf_ptr;
+  int pitch = custom_buffer ? custom_pitch : cur_pitch;
 
   // first four bytes hold width/height, so pull them
   int width = *bitmapBuf;
@@ -316,7 +323,8 @@ void VgaBuf::put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int src
       if (transparency && (pixel == transparent_code_w)) continue;
       if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
 
-      short *bufptr = buf_ptr(x + xx, y + yy);
+      short *bufptr = BUFFER_INDEX(x + xx, y + yy);
+      buf_ptr(x + xx, y + yy);
       *bufptr = pixel;
     }
   }
