@@ -382,9 +382,6 @@ void ZoomMatrix::draw()
 	int       xLoc, yLoc, dispPower;
 	char*     nationColorArray = nation_array.nation_power_color_array;
 
-	int maxXLoc = top_x_loc + disp_x_loc;        // divide by 2 for world_info
-	int maxYLoc = top_y_loc + disp_y_loc;
-
 	dispPower = (world.map_matrix->map_mode == MAP_MODE_POWER &&
 					 world.map_matrix->power_mode ) ||
 					power.command_id == COMMAND_BUILD_FIRM ||
@@ -946,7 +943,6 @@ void ZoomMatrix::draw_weather_effects()
 	}
 	if( newBrightness != last_brightness )
 	{
-//		vga.adjust_brightness(newBrightness);
 		last_brightness = newBrightness;
 	}
 	
