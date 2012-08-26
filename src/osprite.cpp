@@ -271,20 +271,7 @@ void Sprite::draw_abs(int colorSchemeId, int scrnX, int scrnY, int clipX1, int c
 		switch( sprite_info->remap_bitmap_flag )
 		{
 		case 0:		// compressed
-			if( !needMirror )
-			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans_decompress(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap_decompress(x1, y1, bitmapPtr, colorRemapTable);
-			}
-			else
-			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_trans_decompress_hmirror(x1, y1, bitmapPtr);
-				else
-					vga_back.put_bitmap_trans_remap_decompress_hmirror(x1, y1, bitmapPtr, colorRemapTable);
-			}
+			vga_back.put_bitmap(x1, y1, bitmapPtr, colorRemapTable, 2, needMirror);
 			break;
 		case 1:		// uncompressed, blending bitmap
 			// ignore coloRemapTable
@@ -312,24 +299,7 @@ void Sprite::draw_abs(int colorSchemeId, int scrnX, int scrnY, int clipX1, int c
 		switch(sprite_info->remap_bitmap_flag)
 		{
 		case 0:		// compressed
-			if( !needMirror )
-			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap_decompress(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-			}
-			else
-			{
-				if( !colorRemapTable )
-					vga_back.put_bitmap_area_trans_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2);
-				else
-					vga_back.put_bitmap_area_trans_remap_decompress_hmirror(x1, y1, bitmapPtr,
-						srcX1, srcY1, srcX2, srcY2, colorRemapTable);
-			}
+			vga_back.put_bitmap_area(x1, y1, bitmapPtr, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 2, needMirror);
 			break;
 		case 1:		// uncompressed, blending
 			// ignore coloRemapTable

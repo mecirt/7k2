@@ -316,7 +316,6 @@ INITeffect	PROC	pixelFormatFlag
 INITeffect	ENDP
 
 
-
 ; AL = effect id, [EDI] = pixel to be affected
 IMGeffect	PROC
 		PUSH	EAX
@@ -329,6 +328,20 @@ IMGeffect	PROC
 		POP	EAX
 		RET
 IMGeffect	ENDP
+
+; This one is called from C
+PUBLIC doIMGeffect
+doIMGeffect PROC id,pixel
+  PUSH EAX
+  PUSH EDI
+  MOV EAX, id
+  ADD AL, MIN_EFFECT_CODE
+  MOV EDI, pixel
+  CALL IMGeffect
+  POP EDI
+  POP EAX
+  RET
+doIMGeffect ENDP
 
 
 ;------- BEGIN OF FUNCTION IMGmakePixel ------------

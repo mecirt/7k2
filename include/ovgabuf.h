@@ -163,89 +163,34 @@ public:
 	void 		put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTable=0);
 	void 		put_large_bitmap_trans(int x1, int y1, File* filePtr, short *colorRemapTable=0);
 
-	//---------- assembly bitmap manipulation functions ----------//
+	//---------- bitmap manipulation functions ----------//
 
 	// 8->16 blt
+        // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha
+        void put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false);
+        void put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable = 0, int transparency = 0, bool hmirror = false);
 
-	void		put_bitmap(int x,int y,char* bitmapBuf);
-
-	void		put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_remap(int desX, int desY, char* bitmapBuf, short *colorRemapTable);
-	void		put_bitmap_remap_fast( int x, int y, char *bitmapBuf, short *colorRemapTable )
-				{ IMGbltRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
+        // Wrappers - these just call the above two functions. For compatibility with code
 
 	// functions with transparent color keying
 
-	void		put_bitmap_trans(int x,int y,char* bitmapBuf);
-
-	void		put_bitmap_trans_fast(int x,int y,char* bitmapBuf)
-				{ IMGbltTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
+	void		put_bitmap_trans(int x,int y,char* bitmapBuf)
+				{ put_bitmap(x, y, bitmapBuf, 0, 1); }
 
 	void		put_bitmap_area_trans( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_area_trans_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaTransRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
+				{ put_bitmap_area(x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, 0, 1); }
 
 	void		put_bitmap_trans_remap( int x, int y, char *bitmapBuf, short *colorRemapTable )
-				{ IMGbltTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_area_trans_remap( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable )
-				{ IMGbltAreaTransRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	// functions with run-length transparent key decompression
+				{ put_bitmap(x, y, bitmapBuf, colorRemapTable, 1); }
 
 	void		put_bitmap_trans_decompress( int x, int y, char *bitmapBuf )
-				{ IMGbltTransRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
-	void		put_bitmap_trans_decompress_hmirror( int x, int y, char *bitmapBuf )
-				{ IMGbltTransRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
-	void		put_bitmap_area_trans_decompress( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaTransRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_area_trans_decompress_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaTransRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
+				{ put_bitmap(x, y, bitmapBuf, 0, 2); }
 
 	void		put_bitmap_trans_remap_decompress( int x, int y, char *bitmapBuf, short *colorRemapTable)
-				{ IMGbltTransRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_trans_remap_decompress_hmirror( int x, int y, char *bitmapBuf, short *colorRemapTable)
-				{ IMGbltTransRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
+				{ put_bitmap(x, y, bitmapBuf, colorRemapTable, 2); }
 
 	void		put_bitmap_area_trans_remap_decompress( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaTransRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	void		put_bitmap_area_trans_remap_decompress_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaTransRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	// functions with run-length transparent key decompression, half alpha
-
-	void		put_bitmap_half_decompress( int x, int y, char *bitmapBuf )
-				{ IMGbltHalfRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
-	void		put_bitmap_half_decompress_hmirror( int x, int y, char *bitmapBuf )
-				{ IMGbltHalfRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_remap_table ); }
-
-	void		put_bitmap_area_half_decompress( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaHalfRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_area_half_decompress_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-				{ IMGbltAreaHalfRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_remap_table ); }
-
-	void		put_bitmap_half_remap_decompress( int x, int y, char *bitmapBuf, short *colorRemapTable)
-				{ IMGbltHalfRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_half_remap_decompress_hmirror( int x, int y, char *bitmapBuf, short *colorRemapTable)
-				{ IMGbltHalfRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable ); }
-
-	void		put_bitmap_area_half_remap_decompress( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaHalfRemapDecompress( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
-
-	void		put_bitmap_area_half_remap_decompress_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
-				{ IMGbltAreaHalfRemapDecompressHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable ); }
+				{ put_bitmap_area(x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 2); }
 
 	// functions with blend bitmap
 

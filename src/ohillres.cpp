@@ -259,115 +259,13 @@ short HillRes::scan(char patternId, char searchPriority, char specialFlag, char 
 //
 void HillBlockInfo::draw(int xLoc, int yLoc, int layerMask)
 {
-	return;		// no more hill in 7k2
-/*
-	if(!(layerMask & layer))
-		return;
-
-	//----------- calculate absolute positions ------------//
-
-	int absX1   = xLoc*ZOOM_LOC_WIDTH + offset_x;
-	int absY1   = yLoc*ZOOM_LOC_HEIGHT + offset_y;
-
-	//-------- check if the firm is within the view area --------//
-
-	int x1 = absX1 - World::view_top_x;
-
-	if( x1 <= -bitmap_width() || x1 >= ZOOM_WIDTH )	// out of the view area, not even a slight part of it appears in the view area
-		return;
-
-	int y1 = absY1 - World::view_top_y;
-
-	if( y1 <= -bitmap_height() || y1 >= ZOOM_HEIGHT )
-		return;
-
-	if( bitmap_type == 'W')
-	{
-		vga_back.put_bitmap_32x32(x1+ZOOM_X1,y1+ZOOM_Y1, bitmap_ptr);
-		return;
-	}
-
-	//------- decide which approach to use for displaying -----//
-
-	int x2 = absX1 + bitmap_width() - 1 - World::view_top_x;
-	int y2 = absY1 + bitmap_height()- 1 - World::view_top_y;
-
-	//---- only portion of the sprite is inside the view area ------//
-
-	if( x1 < 0 || x2 >= ZOOM_WIDTH || y1 < 0 || y2 >= ZOOM_HEIGHT )
-	{
-		vga_back.put_bitmap_area_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-			max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1 );
-	}
-
-	//---- the whole sprite is inside the view area ------//
-
-	else
-	{
-		vga_back.put_bitmap_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr );
-	}
-*/
+// no more hill in 7k2
 }
 //--------- End of function HillBlockInfo::draw -----------//
 
 
 //------- Begin of function HillBlockInfo::draw_at -----------//
-//
-// Draw the hill on the zoom map, given the exact pixel position to put
-// the bitmap.
-//
-// <int> absX1, absY1 - the absolute base (center-bottom) coordination
-//										of the building.
-//
-// Draw the current plant on the map
-//
 void HillBlockInfo::draw_at(int absX1, int absY1, int layerMask)
 {
-	if(!(layerMask & layer))
-		return;
-
-	/*
-	//-------- check if the firm is within the view area --------//
-
-	absX1 += offset_x;
-	absY1 += offset_y;
-
-	int x1 = absX1 - World::view_top_x;
-
-	if( x1 <= -bitmap_width() || x1 >= ZOOM_WIDTH )	// out of the view area, not even a slight part of it appears in the view area
-		return;
-
-	int y1 = absY1 - World::view_top_y;
-
-	if( y1 <= -bitmap_height() || y1 >= ZOOM_HEIGHT )
-		return;
-
-	if( bitmap_type == 'W')
-	{
-		vga_back.put_bitmap_32x32(x1+ZOOM_X1,y1+ZOOM_Y1, bitmap_ptr);
-		return;
-	}
-
-	//------- decide which approach to use for displaying -----//
-
-	int x2 = absX1 + bitmap_width() - 1 - World::view_top_x;
-	int y2 = absY1 + bitmap_height()- 1 - World::view_top_y;
-
-	//---- only portion of the sprite is inside the view area ------//
-
-	if( x1 < 0 || x2 >= ZOOM_WIDTH || y1 < 0 || y2 >= ZOOM_HEIGHT )
-	{
-		vga_back.put_bitmap_area_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr,
-			max(0,x1)-x1, max(0,y1)-y1, min(ZOOM_WIDTH-1,x2)-x1, min(ZOOM_HEIGHT-1,y2)-y1 );
-	}
-
-	//---- the whole sprite is inside the view area ------//
-
-	else
-	{
-		vga_back.put_bitmap_trans_decompress( x1+ZOOM_X1, y1+ZOOM_Y1, bitmap_ptr );
-	}
-	*/
-
 }
 //--------- End of function HillBlockInfo::draw_at -----------//

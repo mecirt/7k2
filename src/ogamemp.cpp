@@ -1292,7 +1292,7 @@ int Game::mp_select_session()
 				int arrowY2 = arrowY1 + bitmapHeight-1;
 				if( page > 0 )
 				{
-					vga.active_buf->put_bitmap_trans_decompress_hmirror( arrowX1, arrowY1, bitmapPtr );
+					vga.active_buf->put_bitmap( arrowX1, arrowY1, bitmapPtr, 0, 2, true );
 				}
 
 				// centering
@@ -1300,7 +1300,7 @@ int Game::mp_select_session()
 				arrowX2 = arrowX1 + bitmapWidth-1;
 				if( page < maxPage-1 )
 				{
-					vga.active_buf->put_bitmap_trans_decompress( arrowX1, arrowY1, bitmapPtr );
+					vga.active_buf->put_bitmap( arrowX1, arrowY1, bitmapPtr, 0, 2 );
 				}
 			}
 

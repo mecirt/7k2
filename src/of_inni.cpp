@@ -758,7 +758,7 @@ static void disp_item_button(ButtonCustom *button, int )
 
 	if( !button->enable_flag )
 	{
-		vga.active_buf->put_bitmap_remap(button->x1, button->y1, bitmapPtr, 
+		vga.active_buf->put_bitmap(button->x1, button->y1, bitmapPtr, 
 			(short *)vga.vga_color_table->get_table(-MAX_BRIGHTNESS_ADJUST_DEGREE*3/4) );
 	}
 	else

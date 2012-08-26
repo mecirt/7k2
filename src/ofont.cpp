@@ -307,7 +307,7 @@ int Font::put(int x,int y,const char* textPtr, char clearBack, int x2, int cap )
 
 			if( fontInfo->width > 0 )
 			{
-				Vga::active_buf->put_bitmap_trans_fast(x, y+fontInfo->offset_y, font_bitmap_buf + fontInfo->bitmap_offset);
+				Vga::active_buf->put_bitmap_trans(x, y+fontInfo->offset_y, font_bitmap_buf + fontInfo->bitmap_offset);
 
 				x += fontInfo->width;		// inter-character space
 			}
@@ -692,7 +692,7 @@ void Font::put_paragraph(int x1, int y1, int x2, int y2, const char *textPtr,
 //							if( flag_hyper_field )
 //								mainColor = HYPER_FIELD_COLOR;
 
-							Vga::active_buf->put_bitmap_trans_fast(x,	y+fontInfo->offset_y,
+							Vga::active_buf->put_bitmap_trans(x,	y+fontInfo->offset_y,
 								font_bitmap_buf + fontInfo->bitmap_offset);
 						}
 

@@ -492,12 +492,12 @@ int GameFileArray::menu(int actionMode, int *recno)
 				font_snds.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, text_game_menu.str_page_str(page+1, maxPage) );
 
 				if( page > 0 )
-					vga.active_buf->put_bitmap_trans_decompress_hmirror( pageUpX1, pageUpY1, arrowBitmap );
+					vga.active_buf->put_bitmap(pageUpX1, pageUpY1, arrowBitmap, 0, 2, true);
 				else
 					vga.active_buf->put_bitmapW( pageUpX1, pageUpY1, pageUpArea.bitmap_ptr() );
 
 				if( page < maxPage-1 )
-					vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
+					vga.active_buf->put_bitmap(pageDownX1, pageDownY1, arrowBitmap, 0, 2);
 				else
 					vga.active_buf->put_bitmapW( pageDownX1, pageDownY1, pageDownArea.bitmap_ptr() );
 

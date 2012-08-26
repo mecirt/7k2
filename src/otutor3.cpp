@@ -333,7 +333,6 @@ int Tutor::select_learning_campaign_menu()
 						font_cara_w.center_put( pageNoX1, pageNoY1+15, pageNoX2, pageNoY2+15, str );
 
 						if( browseRecno > minTutorialRecno )
-						//	vga.active_buf->put_bitmap_trans_decompress_hmirror( pageUpX1, pageUpY1, arrowBitmap );
 							vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
 
 						if( browseRecno < maxTutorialRecno )

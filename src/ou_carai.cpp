@@ -371,7 +371,7 @@ static void i_button_go_stop(ButtonCustom *button, int repaintBody)
 		firmPtr = firm_array[button->custom_para.value];
 	}
 
-	vga.active_buf->put_bitmap_remap( button->x1, button->y1, 
+	vga.active_buf->put_bitmap( button->x1, button->y1, 
 
 		// button resource name
 		image_button.read( button->pushed_flag ? (char*)"CARA-STD" :

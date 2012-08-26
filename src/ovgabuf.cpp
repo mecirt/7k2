@@ -229,45 +229,125 @@ void VgaBuf::temp_restore_unlock()
 }
 //------------- End of function VgaBuf::temp_restore_unlock --------------//
 
-
-
-//------------- Begin of function VgaBuf::put_bitmap --------------//
-//
-// Put a bitmap on the surface buffer
-//
-void VgaBuf::put_bitmap(int x,int y,char* bitmapPtr)
-{ 
-	err_when( !buf_locked );
-
-	IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, default_remap_table);
-}
-//--------------- End of function VgaBuf::put_bitmap --------------//
-
-
-//------- Begin of function VgaBuf::put_bitmap_trans --------//
-//
-// Put a bitmap on the surface buffer and hide the mouse cursor while displaying
-//
-void VgaBuf::put_bitmap_trans(int x,int y,char* bitmapPtr)
+// transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha
+void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, int transparency, bool hmirror)
 {
-	err_when( !buf_locked );
+  if (transparency < 3) {
+    put_bitmap_area(x, y, bitmapBuf, -1, -1, -1, -1, colorRemapTable, transparency, hmirror);
+    return;
+  }
 
-	IMGbltTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, default_remap_table);
+  if (!colorRemapTable) colorRemapTable = default_remap_table;
+  switch (transparency) {
+    case 0:
+      if (hmirror)
+        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      else
+        IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      break;
+    case 1:
+      if (hmirror)
+        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      else
+        IMGbltTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      break;
+    case 2:
+      if (hmirror)
+        IMGbltTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      else
+        IMGbltTransRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      break;
+    case 3:
+      if (hmirror)
+        IMGbltHalfRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      else
+        IMGbltHalfRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, colorRemapTable);
+      break;
+    default: err_here();
+  }
 }
-//--------- End of function VgaBuf::put_bitmap_trans --------//
 
+#define TRANSCODE 0xff
+#define MULTITRANS_CODE 0xf8
+#define EFFECT_CODE 0xef
 
-//------- Begin of function VgaBuf::put_bitmap_remap --------//
-//
-// Put a bitmap on the surface buffer and hide the mouse cursor while displaying
-//
-void VgaBuf::put_bitmap_remap(int x,int y,char* bitmapPtr,short *colorTable)
+void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror)
 {
-	err_when( !buf_locked );
+  bool crop = true;
+  if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
 
-	IMGbltRemap(cur_buf_ptr, cur_pitch, x, y, bitmapPtr, colorTable);
+  if (!colorRemapTable) colorRemapTable = default_remap_table;
+
+  if (transparency < 3) {
+    // first four bytes hold width/height, so pull them
+    int width = *((short*)bitmapBuf);
+    bitmapBuf += 2;
+    int height = *((short*)bitmapBuf);
+    bitmapBuf += 2;
+
+    int skip = 0;
+
+    for (int yy = 0; yy < height; ++yy) {
+      for (int xx = 0; xx < width; ++xx) {
+        if (skip) {
+          skip--;
+          continue;
+        }
+        unsigned char pixel = (unsigned char) *bitmapBuf++;
+        if (transparency && (pixel == TRANSCODE)) continue;
+        // skip multiple pixels at once (a sort-of RLE with transparency)
+        if ((transparency >= 2) && (pixel >= MULTITRANS_CODE)) {
+          if (pixel == MULTITRANS_CODE)
+            skip = (unsigned char) *bitmapBuf++;
+          else
+            skip = TRANSCODE - pixel + 1;
+          skip--;  // this one is already skipped
+          continue;
+        }
+        if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
+
+        short *bufptr = buf_ptr(x + (hmirror?width-xx:xx), y + yy);
+
+        if ((transparency >= 2) && (pixel >= EFFECT_CODE)) {
+          doIMGeffect(pixel - EFFECT_CODE, bufptr);
+          continue;
+        }
+
+        *bufptr = colorRemapTable[pixel];
+      }
+    }
+    return;
+  }
+
+
+  switch (transparency) {
+    case 0:
+      if (hmirror)
+        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      else
+        IMGbltAreaRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      break;
+    case 1:
+      if (hmirror)
+        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      else
+        IMGbltAreaTransRemap(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      break;
+    case 2:
+      if (hmirror)
+        IMGbltAreaTransRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      else
+        IMGbltAreaTransRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      break;
+    case 3:
+      if (hmirror)
+        IMGbltAreaHalfRemapDecompressHMirror(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      else
+        IMGbltAreaHalfRemapDecompress(cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable);
+      break;
+    default: err_here();
+  }
 }
-//--------- End of function VgaBuf::put_bitmap_remap --------//
 
 
 //------- Begin of function VgaBuf::put_bitmapW --------//
@@ -424,7 +504,7 @@ void VgaBuf::put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTa
 
 		filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, pictSize );
 
-		put_bitmap_remap_fast( x1, y1, (char *)sys.common_data_buf, colorRemapTable );
+		put_bitmap( x1, y1, (char *)sys.common_data_buf, colorRemapTable );
 	}
 	else //----- if the picture size > 64K, read in line by line -----//
 	{
@@ -439,7 +519,7 @@ void VgaBuf::put_large_bitmap(int x1, int y1, File* filePtr, short *colorRemapTa
 			((Bitmap *)sys.common_data_buf)->init( pictWidth, (ty-y1+1) );
 			filePtr->file_read( ((Bitmap *)sys.common_data_buf)->bitmap, (unsigned)pictWidth * (ty-y1+1) );
 
-			put_bitmap_remap_fast( x1, y1, sys.common_data_buf, colorRemapTable );
+			put_bitmap( x1, y1, sys.common_data_buf, colorRemapTable );
 
 			y1 += bufferLine;
 

@@ -1514,7 +1514,7 @@ void Campaign::play_speech_animation(int raceId)
 			}
 
 			flc.get_area( blob.buf_ptr(), 0, 0, flc.width()-1, flc.height()-1);
-			vga_back.put_bitmap_remap( DIALOG_TEXT_X1-155, DIALOG_TEXT_Y1+3 , blob.bitmap_ptr(), hiColorPal );
+			vga_back.put_bitmap( DIALOG_TEXT_X1-155, DIALOG_TEXT_Y1+3 , blob.bitmap_ptr(), hiColorPal );
 			// wait
 
                         vga.flip();
