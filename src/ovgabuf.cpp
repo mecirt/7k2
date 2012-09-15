@@ -239,6 +239,49 @@ void VgaBuf::put_bitmap(int x, int y, char *bitmapBuf, short *colorRemapTable, i
 #define EFFECT_CODE 0xef
 #define BUFFER_INDEX(x,y) ((short *) ((char *)buffer + pitch * (y)) + (x))
 
+short doIMGeffect(unsigned char id, short color)
+{
+  RGBColor c;
+
+  vga.decode_pixel(id, &c);
+
+  c.red >>= 1;
+  c.green >>= 1;
+  c.blue >>= 1;
+  switch (id) {
+    case 0:    // shadow filter, nothing more to do here
+      break;
+    case 1:    // blue filter
+      c.blue |= 0x80;
+      break;
+    case 2:    // green filter
+      c.green |= 0x80;
+      break;
+    case 3:    // cyan filter
+      c.green |= 0x80;
+      c.blue |= 0x80;
+      break;
+    case 4:    // red filter
+      c.red |= 0x80;
+      break;
+    case 5:    // purple filter
+      c.red |= 0x80;
+      c.blue |= 0x80;
+      break;
+    case 6:    // yellow filter
+      c.red |= 0x80;
+      c.green |= 0x80;
+      break;
+    case 7:    // grey scale filter
+      c.red |= 0x80;
+      c.blue |= 0x80;
+      c.green |= 0x80;
+      break;
+  }
+
+  return vga.make_pixel(&c);
+}
+
 // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha, 4=blend, no transparency, 5=weak blend, no transparency
 void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror, short *custom_buffer, int custom_pitch)
 {
@@ -281,14 +324,14 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
       short *bufptr = BUFFER_INDEX(x + (hmirror?width-xx:xx), y + yy);
 
       if (((transparency == 2) || (transparency == 3)) && (pixel >= EFFECT_CODE)) {
-        doIMGeffect(pixel - EFFECT_CODE, bufptr);
+        *bufptr = doIMGeffect(pixel - EFFECT_CODE, *bufptr);
         continue;
       }
 
       if (transparency == 3)  // alpha-adjust
       {
         short mask = getAlphaMask(1);
-        *bufptr = ((colorRemapTable[pixel] >> 1) & mask) + ((((*bufptr) + 1) >> 1) & mask);
+        *bufptr = ((colorRemapTable[pixel]) & mask) + (((*bufptr)) & mask);
       }
       else
         *bufptr = colorRemapTable[pixel];

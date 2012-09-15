@@ -122,15 +122,12 @@ public:
 	void	generate_table_fast(int absScale, PalDesc &palD, RGBColor (*fp)(RGBColor, int, int));
 	void	generate_table(PalDesc &sPalD, PalDesc &palD);
 	WORD *get_table(int scale=0);
-	WORD **get_table_array(int scale=0)	{ return remap_table_array + scale + abs_scale; }
 	void	patch_table(BYTE from, WORD to);
 
 	int	write_file(File *);
 	int	read_file(File *);
 
 private:
-	void	create_table_array();
-
 	static int	color_dist(RGBColor, RGBColor);
 	static int	color_dist_hsv(RGBColor, RGBColor);
 	static HSVColor rgb2hsv(RGBColor &);

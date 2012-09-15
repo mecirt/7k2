@@ -105,7 +105,7 @@ BOOL Vga::init()
 
    //-------- create color remap table ---------//
 
-   vga_color_table->generate_table_fast( 0, palBufDesc, ColorTable::bright_func );
+   vga_color_table->generate_table_fast( MAX_BRIGHTNESS_ADJUST_DEGREE, palBufDesc, ColorTable::bright_func );
    default_remap_table = (short *) malloc(0x100 * 2);
    memcpy( default_remap_table, vga_color_table->get_table(0), 0x100 * 2 );
 
@@ -342,24 +342,18 @@ void Vga::separator(int x1, int y1, int x2, int y2)
 
 int Vga::make_pixel(BYTE red, BYTE green, BYTE blue)
 {
-	// ##### begin Gilbert 19/10 #######//
-	return IMGmakePixel( (blue << 16) + (green << 8) + red);
-	// ##### end Gilbert 19/10 #######//
+  return MakePixel (red, green, blue);
 }
 
 int Vga::make_pixel(RGBColor *rgb)
 {
-	int u;
-	memcpy(&u, rgb, sizeof(RGBColor));
-	return IMGmakePixel(u);
+  return MakePixel (rgb->red, rgb->green, rgb->blue);
 }
 
 void Vga::decode_pixel(int p, RGBColor *rgb)
 {
-	int u = IMGdecodePixel(p);
-	memcpy(rgb, &u, sizeof(RGBColor));
+  DecodePixel(p, &rgb->red, &rgb->green, &rgb->blue);
 }
-
 
 
 // --------- begin of static function log_alpha_func -------//

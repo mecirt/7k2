@@ -66,6 +66,9 @@ int BufferSize (const VgaBuf *buf);
 int BufferWidth (const VgaBuf *buf);
 int BufferHeight (const VgaBuf *buf);
 
+int MakePixel (unsigned char r, unsigned char g, unsigned char b);
+void DecodePixel (int pixel, unsigned char *r, unsigned char *g, unsigned char *b);
+
 int WriteBitmapFile (const VgaBuf *buf, const char *name);
 
 // mouse

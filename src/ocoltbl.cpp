@@ -68,6 +68,7 @@ ColorTable::ColorTable()
 {
 	remap_table = NULL;
 	remap_table_array = NULL;
+	init();
 }
 
 
@@ -88,8 +89,6 @@ ColorTable::ColorTable(const ColorTable& ct) : abs_scale(ct.abs_scale),
 	{
 		remap_table = (WORD *)mem_add(table_size * (2*abs_scale+1) * sizeof(WORD) );
 		memcpy(remap_table, ct.remap_table, table_size * (2*abs_scale+1) * sizeof(WORD) );
-		remap_table_array = (WORD **)mem_add(sizeof(WORD *) * (2*abs_scale+1) );
-		create_table_array();
 	}
 	else
 	{
@@ -127,8 +126,6 @@ void ColorTable::init(int absScale, int tableSize, WORD *customTable)
 	table_size = table_size;
 	remap_table = (WORD *)mem_add(table_size * (2*absScale+1) * sizeof(WORD) );
 	memcpy(remap_table, customTable, tableSize * (2*absScale+1) * sizeof(WORD) );
-	remap_table_array = (WORD **)mem_add(sizeof(WORD *) * (2*absScale+1) );
-	create_table_array();
 }
 // ---------- end of function ColorTable::init ----------//
 
@@ -140,11 +137,6 @@ void ColorTable::deinit()
 	{
 		mem_del( remap_table );
 		remap_table = NULL;
-	}
-	if( remap_table_array)
-	{
-		mem_del( remap_table_array);
-		remap_table_array = NULL;
 	}
 }
 // ---------- end of function ColorTable::deinit ----------//
@@ -162,8 +154,6 @@ ColorTable& ColorTable::operator=(const ColorTable& ct)
 	{
 		remap_table = (WORD *)mem_add(table_size * (2*abs_scale+1) );
 		memcpy(remap_table, ct.remap_table, table_size * (2*abs_scale+1) * sizeof(WORD) );
-		remap_table_array = (WORD **)mem_add(sizeof(WORD *) * (2*abs_scale+1) );
-		create_table_array();
 	}
 	else
 	{
@@ -201,7 +191,6 @@ void ColorTable::generate_table(int absScale, PalDesc & palD, RGBColor (*fp)(RGB
 	abs_scale = absScale;
 	table_size = palSize;
 	WORD *remapEntry = remap_table = (WORD *)mem_add(table_size * (2*absScale+1) * sizeof(WORD) );
-	remap_table_array = (WORD **)mem_add(sizeof(WORD *) * (2*absScale+1) );
 
 	int scale, c;
 
@@ -220,8 +209,6 @@ void ColorTable::generate_table(int absScale, PalDesc & palD, RGBColor (*fp)(RGB
 			*remapEntry = vga.make_pixel(&rgb);
 		}
 	}
-
-	create_table_array();
 }
 // ---------- end of function ColorTable::generate_table ----------//
 
@@ -239,7 +226,6 @@ void ColorTable::generate_table_fast (int absScale, PalDesc &palD, RGBColor (*fp
 	abs_scale = absScale;
 	table_size = palSize;
 	WORD *remapEntry = remap_table = (WORD *)mem_add(table_size * (2*absScale+1) * sizeof(WORD) );
-	remap_table_array = (WORD **)mem_add(sizeof(WORD *) * (2*absScale+1) );
 
 	int scale, c;
 
@@ -252,8 +238,6 @@ void ColorTable::generate_table_fast (int absScale, PalDesc &palD, RGBColor (*fp
 			*remapEntry = vga.make_pixel(&rgb);
 		}
 	}
-
-	create_table_array();
 }
 // ---------- end of function ColorTable::generate_table_fast ----------//
 
@@ -281,7 +265,6 @@ void ColorTable::generate_table(PalDesc &sPalD, PalDesc &palD)
 	abs_scale = 0;
 	table_size = sPalSize;
 	WORD *remapEntry = remap_table = (WORD *)mem_add(sPalSize);
-	remap_table_array = (WORD **)mem_add(sizeof(WORD *));
 
 	int sReservedIndex = 0;
 	for(int c=0; c < sPalSize; ++c, ++remapEntry)
@@ -352,8 +335,6 @@ void ColorTable::generate_table(PalDesc &sPalD, PalDesc &palD)
 			}
 		}
 	}
-
-	create_table_array();
 }
 // ---------- end of function ColorTable::generate_table ----------//
 
@@ -366,19 +347,6 @@ WORD *ColorTable::get_table(int scale)
 	return remap_table + table_size * (scale + abs_scale);
 }
 // ---------- end of function ColorTable::get_table ----------//
-
-
-// ---------- begin of function ColorTable::create_table_array ----------//
-void ColorTable::create_table_array()
-{
-	err_when( !remap_table );
-	for( int j = 0; j < 2*abs_scale+1; ++j)
-	{
-		remap_table_array[j] = remap_table + table_size * j;
-	}	
-}
-// ---------- end of function ColorTable::create_table_array ----------//
-
 
 // ---------- begin of function ColorTable::bright_func ---------//
 RGBColor ColorTable::bright_func(RGBColor c, int scale, int absScale)
@@ -609,8 +577,6 @@ int ColorTable::read_file(File *f)
 		remap_table = 0;
 		return 0;
 	}
-	remap_table_array = (WORD **)mem_add(sizeof(remap_table_array[0]) * (2*abs_scale+1) );
-	create_table_array();
 	return 1;
 }
 // -------- end of function ColorTable::read_file ---------//

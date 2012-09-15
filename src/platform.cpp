@@ -273,6 +273,15 @@ int BufferHeight (const VgaBuf *buf)
   return s->h;
 }
 
+int MakePixel (unsigned char r, unsigned char g, unsigned char b)
+{
+  return SDL_MapRGB(screen->format, r, g, b);
+}
+
+void DecodePixel (int pixel, unsigned char *r, unsigned char *g, unsigned char *b)
+{
+  SDL_GetRGB(pixel, screen->format, r, g, b);
+}
 
 // mouse
 
