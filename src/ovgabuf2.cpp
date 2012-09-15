@@ -80,24 +80,6 @@ char VgaBuf::color_border=(char)0x98;    // color of the border
 #define D3_PANEL_L4_COLOR 108
 
 
-//------------- Begin of function VgaBuf::bar --------------//
-//
-// Draw a bar without bliting
-//
-// Syntax : bar( x1, y1, x2, y2, color )
-//
-// <int> x1,y1       - the top left vertex of the bar
-// <int> x2,y2       - the bottom right vertex of the bar
-// <int> color index - the index of a 256 color palette
-//
-void VgaBuf::bar(int x1,int y1,int x2,int y2,int colorCode)
-{
-	err_when( !buf_locked );
-
-	IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, translate_color(colorCode) );
-}
-//--------------- End of function VgaBuf::bar --------------//
-
 //------------- Begin of function VgaBuf::rect --------------//
 //
 // Draw a rect on VGA screen
@@ -670,35 +652,3 @@ void VgaBuf::draw_d3_down_border(int x1,int y1,int x2,int y2)
 //------------- End of function VgaBuf::draw_d3_down_border ------------//
 
 
-//------------- Begin of function VgaBuf::bar_alpha --------------//
-//
-// Draw a bar with alpha-blendinig
-//
-// Syntax : bar( x1, y1, x2, y2, color )
-//
-// <int> x1,y1       - the top left vertex of the bar
-// <int> x2,y2       - the bottom right vertex of the bar
-// <int> logAlpha    - negative log alpha (right bit shift count, 0 to 5)
-// <int> color index - the index of a 256 color palette
-//
-// logAlpha : 0=transparent ... 5=opaque colorCode
-//
-void VgaBuf::bar_alpha(int x1,int y1,int x2,int y2,int logAlpha, int colorCode)
-{
-	err_when( !buf_locked );
-
-	if( logAlpha <= 0 )
-	{
-		err_when(logAlpha < 0);
-		// if logAlpha == 0, no change
-	}
-	else if( logAlpha < 5 )
-	{
-		IMGbarAlpha(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, logAlpha, translate_color(colorCode) );
-	}
-	else	// logAlpha >= 5, equivalence to VgaBuf::bar
-	{
-		IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, translate_color(colorCode) );
-	}
-}
-//--------------- End of function VgaBuf::bar_alpha --------------//

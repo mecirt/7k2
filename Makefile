@@ -472,8 +472,6 @@ LIBRARIES             =
 7k2_ASM_SRCSO  =         \
 
 7k2_ASM_SRCS  =         \
-			src/asm/i_alpha.asm \
-			src/asm/i_bar.asm \
 			src/asm/i_bright.asm \
 			src/asm/i_ctrl.asm \
 			src/asm/i_effect.asm \

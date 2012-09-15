@@ -318,13 +318,12 @@ void GetA::paint(int paintCursor)
 		// horizontal bar for selected area
 		if( leftX < textWidth )
 		{
-			IMGbar( bitmap->get_ptr(), bitmap->get_true_pitch(),
-				leftX, font_ptr->height()-1, min(rightX, textWidth-1), font_ptr->height()-1, 0);
+			vga_buffer.put_bar(leftX, font_ptr->height()-1, min(rightX, textWidth-1), font_ptr->height()-1, 0, 5, bitmap->get_ptr(), bitmap->get_true_pitch());
 		}
 
 		// vertical bar
 		if( cursorX < textWidth )
-			IMGbar( bitmap->get_ptr(), bitmap->get_true_pitch(), cursorX, 0, cursorX, font_ptr->height()-1, 0);
+			vga_buffer.put_bar(cursorX, 0, cursorX, font_ptr->height()-1, 0, 5, bitmap->get_ptr(), bitmap->get_true_pitch());
 	}
 
 	switch( align_flag )

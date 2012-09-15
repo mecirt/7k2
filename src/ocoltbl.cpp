@@ -67,7 +67,6 @@ inline int sq(int a)
 ColorTable::ColorTable()
 {
 	remap_table = NULL;
-	remap_table_array = NULL;
 	init();
 }
 
@@ -75,7 +74,6 @@ ColorTable::ColorTable()
 ColorTable::ColorTable(int absScale, int tableSize, WORD *customTable)
 {
 	remap_table = NULL;
-	remap_table_array = NULL;
 	init(absScale, tableSize, customTable);
 }
 // ---------- end of function ColorTable::ColorTable ----------//
@@ -93,7 +91,6 @@ ColorTable::ColorTable(const ColorTable& ct) : abs_scale(ct.abs_scale),
 	else
 	{
 		remap_table = NULL;
-		remap_table_array = NULL;
 	}
 }
 // ---------- end of function ColorTable::ColorTable ----------//
@@ -158,7 +155,6 @@ ColorTable& ColorTable::operator=(const ColorTable& ct)
 	else
 	{
 		remap_table = NULL;
-		remap_table_array = NULL;
 	}
 
 	return *this;

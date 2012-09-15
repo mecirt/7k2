@@ -43,10 +43,7 @@ extern "C"
 
 	void IMGcall INITeffect(int pixelFormatFlag) __asmsym__("_INITeffect");
 	void IMGcall INITbright(int pixelFormatFlag) __asmsym__("_INITbright");
-	short IMGcall getAlphaMask(char id) __asmsym__("_getAlphaMask");
-	void IMGcall IMGbar( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int color) __asmsym__("_IMGbar");
 	void IMGcall IMGline( short *imageBuf, int pitch, int w, int h, int x1, int y1, int x2, int y2, int color) __asmsym__("_IMGline");
-	void IMGcall IMGbarAlpha( short *imageBuf, int pitch, int x1, int y1, int x2, int y2, int logAlpha, int color) __asmsym__("_IMGbarAlpha");
 
 	// 8->16 blt
 

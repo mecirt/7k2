@@ -123,14 +123,18 @@ public:
 	static int	translate_color(unsigned char c)		// calc 8-bit color to 16-bit color // new for 16 bit
 				{ return default_remap_table[c]; }
 
-	void		bar(int x1,int y1,int x2,int y2,int colorCode);
+	void		bar(int x1,int y1,int x2,int y2,int colorCode)
+				{ put_bar(x1, y1, x2, y2, translate_color(colorCode)); }
 	void		bar_fast(int x1,int y1,int x2,int y2,int colorCode)
-				{ IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, translate_color(colorCode)); } 
+				{ put_bar(x1, y1, x2, y2, translate_color(colorCode)); }
 	void		barW_fast(int x1,int y1,int x2,int y2,int colorCode)
-				{ IMGbar(cur_buf_ptr, cur_pitch, x1, y1, x2, y2, colorCode); } 
-	void		bar_up(int x1,int y1,int x2,int y2)		{ bar( x1, y1, x2, y2, color_up); }
-	void		bar_down(int x1,int y1,int x2,int y2)		{ bar( x1, y1, x2, y2, color_down); }
-	void		bar_alpha(int x1, int y1, int x2, int y2, int logAlpha, int colorColor );
+				{ put_bar(x1, y1, x2, y2, colorCode); }
+	void		bar_up(int x1,int y1,int x2,int y2)		{ put_bar( x1, y1, x2, y2, translate_color(color_up)); }
+	void		bar_down(int x1,int y1,int x2,int y2)		{ put_bar( x1, y1, x2, y2, translate_color(color_down)); }
+	void		bar_alpha(int x1, int y1, int x2, int y2, int logAlpha, int colorColor )
+				{ put_bar(x1, y1, x2, y2, translate_color(colorColor), logAlpha); }
+
+	void put_bar(int X1, int Y1, int X2, int Y2, short color, char transparency = 5, short *custom_buffer = 0, int custom_pitch = 0);
 
 	void		draw_pixel(int x1,int y1,int colorCode)
 				{ *buf_ptr(x1, y1) = translate_color(colorCode); }

@@ -330,8 +330,10 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 
       if (transparency == 3)  // alpha-adjust
       {
-        short mask = getAlphaMask(1);
-        *bufptr = ((colorRemapTable[pixel]) & mask) + (((*bufptr)) & mask);
+        RGBColor c, c2;
+        vga.decode_pixel(colorRemapTable[pixel], &c);
+        vga.decode_pixel(*bufptr, &c2);
+        *bufptr = vga.make_pixel(c.red / 2 + c2.red / 2, c.green / 2 + c2.green / 2, c.blue / 2 + c2.blue / 2);
       }
       else
         *bufptr = colorRemapTable[pixel];
@@ -367,7 +369,6 @@ void VgaBuf::put_bitmapW_area(int x, int y, short *bitmapBuf, int srcX1, int src
       if (crop && ((yy < srcY1) || (yy > srcY2) || (xx < srcX1) || (xx > srcX2))) continue;
 
       short *bufptr = BUFFER_INDEX(x + xx, y + yy);
-      buf_ptr(x + xx, y + yy);
       *bufptr = pixel;
     }
   }
@@ -387,6 +388,43 @@ void VgaBuf::read_bitmapW(int x1,int y1,int x2,int y2, short* bitmapPtr)
     bitmapPtr += w;
   }
 }
+
+// transparency: 0=transparent, 5+ = solid
+void VgaBuf::put_bar(int X1, int Y1, int X2, int Y2, short color, char transparency, short *custom_buffer, int custom_pitch)
+{
+  if (transparency <= 0) return;
+
+  short *buffer = custom_buffer ? custom_buffer : cur_buf_ptr;
+  int pitch = custom_buffer ? custom_pitch : cur_pitch;
+
+  RGBColor c;
+  int alpha;
+  if (transparency < 5) {
+    vga.decode_pixel(color, &c);
+    alpha = 128 + 128 * transparency / 5;  // reduce transparency to make things readable
+    c.red = c.red * alpha / 256;
+    c.green = c.green * alpha / 256;
+    c.blue = c.blue * alpha / 256;
+  }
+
+  for (int yy = Y1; yy <= Y2; ++yy) {
+    for (int xx = X1; xx <= X2; ++xx) {
+      short *bufptr = BUFFER_INDEX(xx, yy);
+      if (transparency >= 5)
+        *bufptr = color;
+      else
+      {
+        RGBColor c2;
+        vga.decode_pixel(*bufptr, &c2);
+        c2.red = c2.red * (256 - alpha) / 256 + c.red;
+        c2.green = c2.green * (256 - alpha) / 256 + c.green;
+        c2.blue = c2.blue * (256 - alpha) / 256 + c.blue;
+        *bufptr = vga.make_pixel(&c2);
+      }
+    }
+  }
+}
+
 
 //---------- Begin of function VgaBuf::save_area ---------//
 //

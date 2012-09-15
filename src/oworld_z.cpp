@@ -401,9 +401,8 @@ void ZoomMatrix::draw()
 	if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
 		|| disp_rect_type == RHOMBUS_LOCATION && (top_x_loc-disp_x_loc<0 || top_x_loc+disp_y_loc >= max_x_loc || top_y_loc-disp_y_loc<0 || top_y_loc+disp_x_loc+disp_y_loc >= max_y_loc ) )	// rhombus, this condition is prudent to prefer fill black
 	{
-		IMGbar( ((BitmapW *)save_image_buf)->get_ptr() , ((BitmapW *)save_image_buf)->get_true_pitch(),
-			0, 0, ((BitmapW *)save_image_buf)->get_width()-1, ((BitmapW *)save_image_buf)->get_height()-1, 
-			vga_back.translate_color(V_BLACK) );
+		BitmapW *b = (BitmapW *)save_image_buf;
+		vga_buffer.put_bar(0, 0, b->get_width()-1, b->get_height()-1, vga_buffer.translate_color(V_BLACK), 5, b->get_ptr(), b->get_true_pitch());
 	}
 
 #ifdef DEBUG

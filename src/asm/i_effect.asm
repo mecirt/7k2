@@ -114,12 +114,4 @@ INITeffect	PROC	pixelFormatFlag
 INITeffect	ENDP
 
 
-; called from C
-PUBLIC getAlphaMask
-getAlphaMask PROC id
-  XOR EAX,EAX
-  MOV AX, log_alpha_mask[0*2]
-  RET
-getAlphaMask ENDP
-
 END

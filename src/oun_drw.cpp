@@ -223,27 +223,27 @@ void Unit::draw_selected()
 
 	//--------- draw the hit bar ------------//
 
-	IMGbar( dataPtr, truePitch, 0, 0, pointX, 0, vga_back.translate_color(hitBarColor+HIT_BAR_LIGHT_BORDER) );		// top - with hit
+	vga_buffer.put_bar(0, 0, pointX, 0, vga_buffer.translate_color(hitBarColor+HIT_BAR_LIGHT_BORDER), 5, dataPtr, truePitch);   // top - with hit
 
 	if( pointX < curBarWidth-1 )
-		IMGbar( dataPtr, truePitch, pointX+1, 0, curBarWidth-1, 0, vga_back.translate_color(NO_BAR_LIGHT_BORDER) );		// top - without hit
+		vga_buffer.put_bar(0, 0, pointX+1, 0, vga_buffer.translate_color(NO_BAR_LIGHT_BORDER), 5, dataPtr, truePitch);   // top - without hit
 
-	IMGbar( dataPtr, truePitch, 0, 0, 0, 2, vga_back.translate_color(hitBarColor+HIT_BAR_LIGHT_BORDER) );					// left - with hit
+	vga_buffer.put_bar(0, 0, 0, 2, vga_buffer.translate_color(hitBarColor+HIT_BAR_LIGHT_BORDER), 5, dataPtr, truePitch);   // left - with hit
 
-	IMGbar( dataPtr, truePitch, 1, 2, pointX, 2, vga_back.translate_color(hitBarColor+HIT_BAR_DARK_BORDER) );	// bottom - with hit
+	vga_buffer.put_bar(1, 2, pointX, 2, vga_buffer.translate_color(hitBarColor+HIT_BAR_DARK_BORDER), 5, dataPtr, truePitch);   // bottom - with hit
 
 	if( pointX < curBarWidth-1 )
-		IMGbar( dataPtr, truePitch, pointX+1, 2, curBarWidth-1, 2, vga_back.translate_color(NO_BAR_DARK_BORDER) );		// bottom - without hit
+		vga_buffer.put_bar(pointX+1, 2, curBarWidth-1, 2, vga_buffer.translate_color(NO_BAR_DARK_BORDER), 5, dataPtr, truePitch);   // bottom - without hit
 
 	if( pointX == curBarWidth - 1 )
-		IMGbar( dataPtr, truePitch, curBarWidth-1, 1, curBarWidth-1, 1, vga_back.translate_color(hitBarColor+HIT_BAR_DARK_BORDER) );	// right -with hit
+		vga_buffer.put_bar(curBarWidth-1, 1, curBarWidth-1, 1, vga_buffer.translate_color(hitBarColor+HIT_BAR_DARK_BORDER), 5, dataPtr, truePitch);   // right - with hit
 	else
-		IMGbar( dataPtr, truePitch, curBarWidth-1, 1, curBarWidth-1, 1, vga_back.translate_color(NO_BAR_DARK_BORDER) );				// right -without hit
+		vga_buffer.put_bar(curBarWidth-1, 1, curBarWidth-1, 1, vga_buffer.translate_color(NO_BAR_DARK_BORDER), 5, dataPtr, truePitch);   // right - with hit
 
-	IMGbar( dataPtr, truePitch, 1, 1, min(pointX,curBarWidth-2), 1, vga_back.translate_color(hitBarColor+HIT_BAR_BODY) );	// bar body
+	vga_buffer.put_bar(1, 1, min(pointX,curBarWidth-2), 1, vga_buffer.translate_color(hitBarColor+HIT_BAR_BODY), 5, dataPtr, truePitch);   // bar body
 
 	if( pointX < curBarWidth - 2 )
-		IMGbar( dataPtr, truePitch, pointX+1, 1, curBarWidth-2, 1, vga_back.translate_color(NO_BAR_BODY) );	// bar body
+		vga_buffer.put_bar(pointX+1, 1, curBarWidth-2, 1, vga_buffer.translate_color(NO_BAR_BODY), 5, dataPtr, truePitch);   // bar body
 
 	//--------- display the bar now ---------//
 

@@ -24,7 +24,7 @@
 #include <oblob2w.h>
 #include <all.h>
 #include <colcode.h>
-#include <imgfun.h>
+#include <ovgabuf.h>
 
 
 // ------- define constant -------//
@@ -103,7 +103,7 @@ void Blob2DW::resize(short destLeft, short destTop, short destWidth, short destH
 			ptr = (BitmapW *)mem_add((alloc_size = siz + DEFAULT_BLOB2DW_INC));
 		}
 		ptr->init(destWidth, destHeight);
-		IMGbar(ptr->get_ptr(), ptr->get_true_pitch(), 0, 0, destWidth-1, destHeight-1, BACKGROUND_COLOR);
+		vga_buffer.put_bar(0, 0, destWidth-1, destHeight-1, BACKGROUND_COLOR, 5, ptr->get_ptr(), ptr->get_true_pitch());
 	}
 	else if( destWidth == 0 && destHeight == 0 )
 	{
@@ -161,7 +161,7 @@ void Blob2DW::resize(short destLeft, short destTop, short destWidth, short destH
 			size_t siz = BitmapW::size(destWidth, destHeight);
 			BitmapW *newPtr = (BitmapW *)mem_add(siz + DEFAULT_BLOB2DW_INC);
 			newPtr->init(destWidth, destHeight);
-			IMGbar(newPtr->get_ptr(), newPtr->get_true_pitch(), 0, 0, destWidth-1, destHeight-1, BACKGROUND_COLOR);
+			vga_buffer.put_bar(0, 0, destWidth-1, destHeight-1, BACKGROUND_COLOR, 5, newPtr->get_ptr(), newPtr->get_true_pitch());
 
 			if( copyWidth > 0 && copyHeight > 0 )
 			{
@@ -339,12 +339,7 @@ void Blob2DW::fill_area(short x1, short y1, short x2, short y2, short color,
 			return;
 	}
 
-	IMGbar(ptr->get_ptr(), ptr->get_true_pitch(), x1 - left_edge, y1 - top_edge, 
-		x2 - left_edge, y2 - top_edge, color);
-// int y = y1;
-//	short *dest = ptr->get_ptr( x1 - left_edge, y - top_edge );
-//	for( ; y <= y2; ++y, dest += width )
-//		memset(dest, color, x2-x1+1);
+	vga_buffer.put_bar(x1 - left_edge, y1 - top_edge, x2 - left_edge, y2 - top_edge, color, 5, ptr->get_ptr(), ptr->get_true_pitch());
 }
 
 

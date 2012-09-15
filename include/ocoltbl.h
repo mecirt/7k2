@@ -98,7 +98,6 @@ class ColorTable
 {
 private:
 	WORD *remap_table;
-	WORD **remap_table_array;
 
 public:
 	int	abs_scale;
