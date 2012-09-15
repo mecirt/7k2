@@ -133,7 +133,6 @@ BOOL Vga::set_mode(int w, int h)
 
   // assembly functions to initalize effect processing
   INITeffect(pixel_format_flag);
-  INITbright(pixel_format_flag);
 
   return true;
 }

@@ -425,6 +425,37 @@ void VgaBuf::put_bar(int X1, int Y1, int X2, int Y2, short color, char transpare
   }
 }
 
+//----------- Begin of function VgaBuf::adjust_brightness ------------//
+//
+// clear the center of the either up or down panel
+//
+// <int> x1,y1,x2,y2  = the four vertex of the panel
+// <int> adjustDegree = the degree of brightness to adjust
+//
+void VgaBuf::adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree)
+{
+#if( MAX_BRIGHTNESS_ADJUST_DEGREE > 10 )
+  adjustDegree *= MAX_BRIGHTNESS_ADJUST_DEGREE / 10;
+#endif
+
+  err_when( adjustDegree < -MAX_BRIGHTNESS_ADJUST_DEGREE ||
+      adjustDegree >  MAX_BRIGHTNESS_ADJUST_DEGREE );
+
+  // these are for the BUFFER_INDEX macro
+  short *buffer = cur_buf_ptr;
+  int pitch = cur_pitch;
+
+   for (int yy = y1; yy <= y2; ++yy) {
+    for (int xx = x1; xx <= x2; ++xx) {
+      short *bufptr = BUFFER_INDEX(xx, yy);
+      RGBColor c;
+      vga.decode_pixel(*bufptr, &c);
+      c = ColorTable::bright_func(c, adjustDegree, MAX_BRIGHTNESS_ADJUST_DEGREE);
+      *bufptr = vga.make_pixel(&c);
+    }
+  }
+}
+//------------- End of function VgaBuf::adjust_brightness ------------//
 
 //---------- Begin of function VgaBuf::save_area ---------//
 //

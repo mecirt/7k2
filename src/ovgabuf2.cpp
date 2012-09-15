@@ -609,27 +609,6 @@ void VgaBuf::d3_panel_down_clear(int x1,int y1,int x2,int y2,int t)
 //------------- End of function VgaBuf::d3_panel_down_clear ------------//
 
 
-//----------- Begin of function VgaBuf::adjust_brightness ------------//
-//
-// clear the center of the either up or down panel
-//
-// <int> x1,y1,x2,y2  = the four vertex of the panel
-// <int> adjustDegree = the degree of brightness to adjust
-//							   (a value from -10 to 10)
-//
-void VgaBuf::adjust_brightness(int x1,int y1,int x2,int y2,int adjustDegree)
-{
-#if( MAX_BRIGHTNESS_ADJUST_DEGREE > 10 )
-	adjustDegree *= MAX_BRIGHTNESS_ADJUST_DEGREE / 10;
-#endif
-
-	err_when( adjustDegree < -MAX_BRIGHTNESS_ADJUST_DEGREE ||
-				 adjustDegree >  MAX_BRIGHTNESS_ADJUST_DEGREE );
-
-	IMGbrightBar( cur_buf_ptr, cur_pitch, x1, y1, x2, y2, adjustDegree);
-}
-//------------- End of function VgaBuf::adjust_brightness ------------//
-
 //----------- Begin of function VgaBuf::draw_d3_up_border ------------//
 //
 // Draw interface border.
