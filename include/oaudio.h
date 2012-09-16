@@ -35,10 +35,6 @@
 #define DEFAULT_WAV_BUF_SIZE   0x8000
 
 #define MAX_AUDIO_VOLUME   		 100
-#define MAX_WAV_CHANNEL        8
-#define MAX_LONG_WAV_CH        4
-
-#define MAX_LOOP_WAV_CH        4
 
 //--------------- Define class Audio ---------------//
 
@@ -51,7 +47,7 @@ public:
 
 	char  wav_flag;		  // flag determing whether WAV sound effects should be playing
 
-	char* wav_buf;
+	unsigned char* wav_buf;
 
 	int	wav_buf_size;
 
@@ -68,10 +64,8 @@ public:
 
 	// functions on short wave
 	int  	play_wav(short resIdx, DsVolume);
-	int	play_resided_wav(const char *, DsVolume);
+	int	play_resided_wav(unsigned char *, DsVolume);
 	int	get_free_wav_ch();
-	int	stop_wav(int);
-	int	is_wav_playing(int);
 
 	// functions on long wave
 	int	play_long_wav(const char*, DsVolume);
@@ -80,24 +74,18 @@ public:
 	void	volume_long_wav(int ch, DsVolume);
 
 	// functions on loop wave
-	int	play_loop_wav(const char *, int repeatOffset, DsVolume);	// return channel no.
+	int	play_loop_wav(const char *, DsVolume);	// return channel no.
 	void	stop_loop_wav(int ch);
 	void	volume_loop_wav(int ch, DsVolume);
 	void	fade_out_loop_wav(int ch, int fadeRate);
 	DsVolume get_loop_wav_volume(int ch);
 	int	is_loop_wav_fading(int ch);
 
-
 	void 	stop_wav();		// and stop also long wav
-	void	stop_long_wav();
-
-	int  	is_wav_playing();
 
 	void 	toggle_wav(int);
 
 	void 	set_wav_volume(int);			// 0 to 100
-
-	long vol_multiply(int relVolume);
 private:
   struct Private;
   Private *d;

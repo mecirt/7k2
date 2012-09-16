@@ -144,7 +144,7 @@ void CampaignEastWest::stage_25_prelude()
 
 	//---------------------------------------------//
 
-	play_speech("PRE-25.WAV");
+	play_speech("Pre-25.wav");
 	disp_narrative( res_stage.read("25PRELUD") );
 	stop_speech();
 

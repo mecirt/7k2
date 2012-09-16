@@ -654,10 +654,10 @@ void Campaign::disp_intro()
 	int counter = VGA_HEIGHT;
 	mouse.hide();
 	
-	vga.disp_image_file("Frwin01");
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
+		vga.disp_image_file("Frwin01");
 		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
                 vga.flip();
 		sys.sleep(100);
@@ -1288,10 +1288,6 @@ void Campaign::disp_narrative(char* dialogText, ...)
 	vsprintf( strBuf, dialogText, argPtr );
 
 	//--------- display the text --------//
-	short* background_bitmap = NULL;
-	background_bitmap = (short *)mem_add( BitmapW::size(NARRATIVE_TEXT_X2-NARRATIVE_TEXT_X1+1, 
-											NARRATIVE_TEXT_Y2-NARRATIVE_TEXT_Y1+1) );
-	vga_back.read_bitmapW( NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, background_bitmap );
 
 	disp_text( NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2,
 				  strBuf );
@@ -1301,10 +1297,6 @@ void Campaign::disp_narrative(char* dialogText, ...)
 vga.flip();
 	if( !auto_test_flag )
 		mouse.wait_press();
-
-	vga_back.put_bitmapW(NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, background_bitmap);
-	
-	mem_del( background_bitmap );
 }
 //------- End of function Campaign::disp_narrative -------//
 
@@ -1692,7 +1684,7 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
                 }
 
 		//---------- display the dialog ----------//
-		vga.disp_image_file("LETTERS");
+		vga.disp_image_file("Letters");
 
 		if( isMonster == 1 )
 			font_cmpf.center_put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
@@ -4621,7 +4613,7 @@ void Campaign::play_speech(const char* fileName)
 
 	String str;
 	str  = DIR_CAMPAIGN;
-	str += "\\SOUND\\";
+	str += "/sound/";
 	strcat(str, fileName);
 
 	if( !m.is_file_exist(str) )

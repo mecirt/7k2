@@ -139,7 +139,7 @@ void CampaignEastWest::stage_1_prelude()
 
 	err_when( !rc );
 
-	play_speech("PRE-01.WAV");
+	play_speech("Pre-01.wav");
 	disp_narrative( res_stage.read("1PRELUDE") );		// 1-the letter is from a Fryhtan kingdom
 	stop_speech();
 

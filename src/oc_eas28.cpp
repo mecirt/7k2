@@ -138,7 +138,7 @@ void CampaignEastWest::stage_28_prelude()
 
 	//---------------------------------------------//
 
-	play_speech("PRE-28.WAV");
+	play_speech("Pre-28.wav");
 	disp_narrative( res_stage.read("28PRELUD"), goal_population, goal_economic_score, goal_year_limit );
 	stop_speech();
 	

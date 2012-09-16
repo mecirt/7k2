@@ -28,7 +28,7 @@ LIBRARIES             =
 7k2_DLL_PATH  =
 7k2_DLLS      =
 7k2_LIBRARY_PATH=
-7k2_LIBRARIES = jpeg SDL
+7k2_LIBRARIES = jpeg SDL SDL_mixer
 
 
 

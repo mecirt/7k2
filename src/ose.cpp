@@ -189,7 +189,7 @@ void SECtrl::load_info()
 	for(j=0; j < count; ++j)
 	{
 		req_pool[j].resx_id = j+1;
-		req_pool[j].wave_ptr = res_wave.get_data(j+1);		// wave data pointer
+		req_pool[j].wave_ptr = (unsigned char *) res_wave.get_data(j+1);		// wave data pointer
 		last_cycle[j] = 0;
 	}
 

@@ -36,12 +36,12 @@ DsVolume::DsVolume(long dsVol, long dsPan) : ds_vol(dsVol), ds_pan(dsPan)
 {
 }
 
-DsVolume::DsVolume(AbsVolume &absVolume) : ds_vol(absVolume.abs_vol*100-10000), ds_pan(absVolume.ds_pan)
+DsVolume::DsVolume(AbsVolume &absVolume) : ds_vol(absVolume.abs_vol), ds_pan(absVolume.ds_pan)
 {
 }
 
 DsVolume::DsVolume(RelVolume &relVolume)
-	: ds_vol(audio.vol_multiply(relVolume.rel_vol)), ds_pan(relVolume.ds_pan)
+	: ds_vol(relVolume.rel_vol), ds_pan(relVolume.ds_pan)
 {
 }
 
@@ -52,7 +52,7 @@ AbsVolume::AbsVolume(long absVol, long dsPan)
 }
 
 AbsVolume::AbsVolume(DsVolume &dsVolume)
-	: abs_vol((dsVolume.ds_vol+10000)/100), ds_pan(dsVolume.ds_pan)
+	: abs_vol(dsVolume.ds_vol), ds_pan(dsVolume.ds_pan)
 {
 }
 

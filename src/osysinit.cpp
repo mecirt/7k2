@@ -151,27 +151,28 @@ int Sys::init_win()
 //
 int Sys::init_directx()
 {
-   DEBUG_LOG("Attempt audio.init()");
-   audio.init();
-   DEBUG_LOG(audio.wav_init_flag);
-   music.init();
-   se_ctrl.init();
+  DisplayModeInfo::set_current_display_mode(MODE_ID_DEFAULT);
 
-   //---------------------------------------//
+  //-------- initialize graphics --------//
 
-	DisplayModeInfo::set_current_display_mode(MODE_ID_DEFAULT);
-
-   //-------- initialize DirectDraw --------//
-
-   DEBUG_LOG("Attempt vga.init()");
-   if( !vga.init() )
-      return FALSE;
-   DEBUG_LOG("vga.init() ok");
+  DEBUG_LOG("Attempt vga.init()");
+  if( !vga.init() )
+    return FALSE;
+  DEBUG_LOG("vga.init() ok");
 
   init_display();
-   ShowMouseCursor(false);
+  ShowMouseCursor(false);
 
-   return TRUE;
+  //---------------------------------------//
+
+  DEBUG_LOG("Attempt audio.init()");
+  audio.init();
+  DEBUG_LOG(audio.wav_init_flag);
+  music.init();
+  se_ctrl.init();
+
+
+  return TRUE;
 }
 //-------- End of function Sys::init_directx --------//
 

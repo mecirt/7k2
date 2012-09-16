@@ -131,7 +131,7 @@ void CampaignEastWest::stage_27_prelude()
 	goal_year_limit = 12 - campaign_difficulty;
 
 	//---------------------------------------------//
-	play_speech("PRE-27.WAV");
+	play_speech("Pre-27.wav");
 	disp_narrative( res_stage.read("27PRELUD") );
 	stop_speech();
 

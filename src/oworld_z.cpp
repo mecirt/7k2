@@ -329,9 +329,9 @@ void ZoomMatrix::init_para()
 	init_rain = 0;
 	rain.clear();
 	rain.stop_rain();
-	rain_channel_id = 0;
-	wind_channel_id = 0;
-	fire_channel_id = 0;
+	rain_channel_id = -1;
+	wind_channel_id = -1;
+	fire_channel_id = -1;
 	last_fire_vol = 0;
 	init_lightning = 0;
 	init_snow = 0;
@@ -743,7 +743,7 @@ void ZoomMatrix::draw_weather_effects()
 			if( config.sound_effect_flag && config.earthquake_audio)
                         {
                                 RelVolume r(config.earthquake_volume,0);
-                                audio.play_long_wav( DIR_SOUND"QUAKE.WAV", DsVolume(r) );
+                                audio.play_loop_wav( DIR_SOUND"quake.wav", DsVolume(r) );
                         }
 		}
 		int vPitch = vga_back.buf_pitch();
@@ -795,12 +795,12 @@ void ZoomMatrix::draw_weather_effects()
 			if( relVolume > 100)
 				relVolume = 100;
 
-			if( rain_channel_id == 0)	// from no rain to rain
+			if( rain_channel_id < 0)	// from no rain to rain
 			{
 				if( config.sound_effect_flag && config.rain_audio)
                                 {
                                         RelVolume r(relVolume,0);
-                                        rain_channel_id = audio.play_loop_wav(DIR_SOUND"RAIN.WAV",0, DsVolume(r));
+                                        rain_channel_id = audio.play_long_wav(DIR_SOUND"rain.wav", DsVolume(r));
                                 }
 			}
 			else
@@ -816,7 +816,7 @@ void ZoomMatrix::draw_weather_effects()
 					// can't stop rain audio immediately
 					// but at least stop it when rain change
 					audio.stop_loop_wav(rain_channel_id);
-					rain_channel_id = 0;
+					rain_channel_id = -1;
 				}
 
 			}
@@ -826,7 +826,7 @@ void ZoomMatrix::draw_weather_effects()
 		{
 			// rain stop, rain sound fade out
 			rain.stop_rain();
-			if( rain_channel_id )
+			if( rain_channel_id >= 0 )
 			{
 				audio.fade_out_loop_wav(rain_channel_id, 10);
 			}
@@ -836,14 +836,14 @@ void ZoomMatrix::draw_weather_effects()
 	else
 	{
 		// rain stopped, check rain sound fade out
-		if( newRainScale == 0 && rain_channel_id )
+		if( newRainScale == 0 && rain_channel_id >= 0 )
 		{
 			DsVolume dsVolume(audio.get_loop_wav_volume(rain_channel_id));
 			AbsVolume absVolume(dsVolume);
 			if( absVolume.abs_vol < 10 )
 			{
 				audio.stop_loop_wav(rain_channel_id);
-				rain_channel_id = 0;
+				rain_channel_id = -1;
 			}
 		}
 	}
@@ -952,13 +952,13 @@ void ZoomMatrix::draw_weather_effects()
 		int relVolume = config.wind_volume + 5 + windSpeed/4;
 		if( relVolume > 100)
 			relVolume = 100;
-		if( wind_channel_id == 0)
+		if( wind_channel_id < 0)
 		{
 			if( config.sound_effect_flag && config.wind_audio )
                         {
 				// ###### begin Gilbert 6/8 #######//
                                 RelVolume r(relVolume,0);
-                                wind_channel_id = audio.play_loop_wav(DIR_SOUND"WIND.WAV",0, DsVolume(r));
+                                wind_channel_id = audio.play_loop_wav(DIR_SOUND"wind.wav", DsVolume(r));
 				// ###### end Gilbert 6/8 #######//
                         }
 		}
@@ -972,13 +972,13 @@ void ZoomMatrix::draw_weather_effects()
 			else
 			{
 				audio.stop_loop_wav(wind_channel_id);
-				wind_channel_id = 0;
+				wind_channel_id = -1;
 			}
 		}
 	}
 	else
 	{
-		if( wind_channel_id )
+		if( wind_channel_id >= 0 )
 		{
 			if( !audio.is_loop_wav_fading(wind_channel_id) )
 			{
@@ -991,7 +991,7 @@ void ZoomMatrix::draw_weather_effects()
 				if( absVolume.abs_vol < 5 )
 				{
 					audio.stop_loop_wav(wind_channel_id);
-					wind_channel_id =0 ;
+					wind_channel_id = -1;
 
 				}
 			}
@@ -2382,11 +2382,11 @@ void ZoomMatrix::draw_objects()
 		int relVolume = 80 + dispFire/2;
 		if( relVolume > 100)
 			relVolume = 100;
-		if( fire_channel_id == 0)
+		if( fire_channel_id < 0)
 		{
 			last_fire_vol = relVolume;
                         RelVolume r(relVolume,0);
-                        fire_channel_id = audio.play_loop_wav( DIR_SOUND"FIRE.WAV",0, DsVolume(r));
+                        fire_channel_id = audio.play_loop_wav( DIR_SOUND"fire.wav", DsVolume(r));
 		}
 		else if( last_fire_vol - relVolume > 2 || last_fire_vol - relVolume < 2)
 		{
@@ -2397,10 +2397,10 @@ void ZoomMatrix::draw_objects()
 	}
 	else
 	{
-		if( fire_channel_id != 0)
+		if( fire_channel_id >= 0)
 		{
 			audio.stop_loop_wav(fire_channel_id);
-			fire_channel_id = 0;
+			fire_channel_id = -1;
 			last_fire_vol = 0;
 		}
 	}

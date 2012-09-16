@@ -125,7 +125,7 @@ void CampaignEastWest::stage_9_init_vars()
 //
 void CampaignEastWest::stage_9_prelude()
 {
-	play_speech("PRE-09.WAV");
+	play_speech("Pre-09.wav");
 	disp_narrative( res_stage.read("9PRELUDE") );
 	stop_speech();
 

@@ -133,7 +133,7 @@ void CampaignEastWest::stage_26_prelude()
 
 	//------------ display letter -------------//
 	
-	play_speech("PRE-26.WAV");
+	play_speech("Pre-26.wav");
 	disp_narrative( res_stage.read("26PRELUD"), goal_train_unit_leadership, goal_year_limit );
 	stop_speech();
 

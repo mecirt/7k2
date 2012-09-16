@@ -136,7 +136,7 @@ void CampaignEastWest::stage_2_prelude()
 {
 	goal_kill_monster_score = 50 + campaign_difficulty * 70;
 
-	play_speech("PRE-02.WAV");
+	play_speech("Pre-02.wav");
 	disp_narrative( res_stage.read("2PRELUDE"), goal_kill_monster_score );
 	stop_speech();
 

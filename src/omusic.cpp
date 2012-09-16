@@ -56,7 +56,7 @@ Music::Music()
 {
 	init_flag = 0;
 	song_id = 0;
-	music_channel = 0;
+	music_channel = -1;
 }
 // -------- end of function Music::Music ---------//
 
@@ -96,13 +96,13 @@ int Music::stop()
 {
 	if( init_flag )
 	{
-		if(music_channel)
+		if(music_channel >= 0)
 		{
 			if( play_type & MUSIC_PLAY_LOOPED )
 				audio.stop_loop_wav(music_channel);
 			else
 				audio.stop_long_wav(music_channel);
-			music_channel = 0;
+			music_channel = -1;
 			song_id = 0;
 		}
 		return 1;
@@ -133,7 +133,7 @@ int Music::play(int songId, int playType)
 			if( playType & MUSIC_PLAY_LOOPED )
                         {
                                 AbsVolume absv(config.wav_music_volume,0);
-                                music_channel = audio.play_loop_wav(waveFileStr, 0, absv );
+                                music_channel = audio.play_loop_wav(waveFileStr, absv );
                         }
 			else
                         {
@@ -142,7 +142,7 @@ int Music::play(int songId, int playType)
                         }
 			play_type = playType;
 			song_id = songId;
-			return music_channel != 0;
+			return music_channel >= 0;
 		}
 		return 0;
 }
@@ -156,7 +156,7 @@ int Music::is_playing(int songId)
 	if( !init_flag )
 		return 0;
 
-	if( !music_channel )
+	if (music_channel < 0)
 		return 0;
 
 	if( play_type & MUSIC_PLAY_LOOPED )

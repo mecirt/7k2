@@ -44,7 +44,7 @@
 
 struct SERequest
 {
-	char	*wave_ptr;
+	unsigned char	*wave_ptr;
 	short	resx_id;
 
 	short	req_used;

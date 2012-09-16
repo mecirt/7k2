@@ -81,22 +81,4 @@ int IsKey(unsigned scanCode, unsigned short skeyState, unsigned short charValue,
 void GetMousePos (int *x, int *y);
 void SetMousePos (int x, int y);
 
-// sound
-
-struct IDirectSoundBuffer;
-typedef struct IDirectSoundBuffer *LPDIRECTSOUNDBUFFER;
-
-bool init_sound();
-void deinit_sound();
-LPDIRECTSOUNDBUFFER create_sound_buffer(const char *wav_buf, unsigned int wavDataLength);
-void release_buffer (LPDIRECTSOUNDBUFFER *buffer);
-bool set_volume (LPDIRECTSOUNDBUFFER buffer, int volume);
-bool set_volume (LPDIRECTSOUNDBUFFER buffer, DsVolume volume);
-int get_volume (LPDIRECTSOUNDBUFFER buffer);
-int get_pan (LPDIRECTSOUNDBUFFER buffer);
-bool fill_buffer (LPDIRECTSOUNDBUFFER buffer, const char *wav_buf, int wav_len, int start = 0);
-bool play_buffer (LPDIRECTSOUNDBUFFER buffer, bool loop = false);
-
-bool buffer_playing (LPDIRECTSOUNDBUFFER buffer);
-
 #endif

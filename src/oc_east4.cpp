@@ -136,7 +136,7 @@ void CampaignEastWest::stage_4_init_vars()
 //
 void CampaignEastWest::stage_4_prelude()
 {
-	play_speech("PRE-04.WAV");
+	play_speech("Pre-04.wav");
 	disp_narrative( res_stage.read("4PRELUDE") );		// 0-the letter is from a human kingdom
 	stop_speech();
 

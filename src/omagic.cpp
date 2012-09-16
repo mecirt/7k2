@@ -46,9 +46,6 @@ static int bound_x1;
 static int bound_x2;
 static int bound_y1;
 static int bound_y2;
-static int color_r; 
-static int color_g;
-static int color_b;
 
 //-------- Begin of function Magic::~Magic ----------//
 Magic::Magic()
@@ -1907,7 +1904,7 @@ TD_PLUS:
 void Magic::generate_lighting_particle(int x1, int y1, int x2, int y2, int number, int lifecount,
 									   Lighting_Particle *h_l_particle) 
 {
-	int i, limit, internal_count;
+	int i, limit;
 	int temp_r1, temp_rx, temp_ry;
 	int step_x[16], step_y[16];
 	int temp_step_x = x1;
@@ -1916,7 +1913,6 @@ void Magic::generate_lighting_particle(int x1, int y1, int x2, int y2, int numbe
 	int temp_y = y1;
 	Lighting_Particle *temp_ptr;
 	temp_r1 =0;
-	internal_count = 4;
 	limit = number <<3;
 
 	step_x[0] = 0;
