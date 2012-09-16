@@ -22,12 +22,6 @@
 #ifndef _WIN32_COMPAT_H
 #define _WIN32_COMPAT_H
 
-#ifdef NEED_WINDOWS 
-
-#include <windows.h>
-
-#else
-
 #include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -114,9 +108,6 @@ typedef struct GUID {
     return (memcmp(this, &g2, sizeof(GUID) ) == 0);
   }
 } GUID;
-
-
-#endif
 
 #include <platform.h>
 
