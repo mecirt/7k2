@@ -142,7 +142,7 @@ int Audio::init_wav()
     return 1;
 
   Mix_Init(0);
-  if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 1, 1024) >= 0)
+  if (Mix_OpenAudio(11025, MIX_DEFAULT_FORMAT, 1, 1024) >= 0)
   {
     Mix_AllocateChannels(CHANNEL_COUNT);
     wav_init_flag = 1;
