@@ -993,7 +993,6 @@ void Tutor::disp_msg(char dispFlag, char darkness, char* gameMsg, ...)
 
 	if (!dispFlag)
 	{
-		vga.flip();
 		mouse.wait_press();
 	}
 }

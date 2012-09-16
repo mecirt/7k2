@@ -928,6 +928,7 @@ void Mouse::clear_event()
 //--------- Begin of Mouse::wait_press ----------//
 //
 // Wait until one of the mouse buttons is pressed.
+// Do NOT call vga.flip before calling this!!!
 //
 // [int] timeOutSecond - no. of seconds to time out. If not
 //								 given, there will be no time out.
@@ -937,52 +938,60 @@ void Mouse::clear_event()
 //
 int Mouse::wait_press(int timeOutSecond)
 {
-	// ####### begin Gilbert 7/7 #######//
-	// BUGHERE : handled not so good but safe
-	if( sys.paused_flag || !sys.active_flag )		// return immediately if switched task
-		return 0;
-	// ####### end Gilbert 7/7 #######//
-puts("wait_press is running!");
+  // ####### begin Gilbert 7/7 #######//
+  // BUGHERE : handled not so good but safe
+  if( sys.paused_flag || !sys.active_flag )		// return immediately if switched task
+    return 0;
+  // ####### end Gilbert 7/7 #######//
+  puts("wait_press is running!");
 
-	while( mouse.left_press || mouse.any_click() || mouse.key_code )		// avoid repeat clicking
-	{
-game.process_messages();
-		sys.yield();
-		mouse.get_event();
-	}
+  // Buffer the screen and show it each time. This allows us to move the mouse inside this function
+  short *screen = (short *)mem_add( BitmapW::size(VGA_WIDTH, VGA_HEIGHT));
+  vga_buffer.read_bitmapW(0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, screen);
 
-	int rc=0;
-	unsigned int timeOutTime = m.get_time() + timeOutSecond*1000;
+  while( mouse.left_press || mouse.any_click() || mouse.key_code )		// avoid repeat clicking
+  {
+    game.process_messages();
+    sys.yield();
+    mouse.get_event();
+  }
 
-	while(1)
-	{
-game.process_messages();
-		sys.yield();
-		mouse.get_event();
+  int rc=0;
+  unsigned int timeOutTime = m.get_time() + timeOutSecond*1000;
 
-		if( right_press || mouse.key_code==KEY_ESC )
-		{
-			rc = 2;
-			break;
-		}
+  while(1)
+  {
+    game.process_messages();
+    vga_buffer.put_bitmapW(0, 0, screen);
+    vga.flip();
+    sys.yield();
+    mouse.get_event();
 
-		if( left_press || mouse.key_code )
-		{
-			rc = 1;
-			break;
-		}
+    if( right_press || mouse.key_code==KEY_ESC )
+    {
+      rc = 2;
+      break;
+    }
 
-		if( timeOutSecond && m.get_time() > timeOutTime )
-			break;
-	}
+    if( left_press || mouse.key_code )
+    {
+      rc = 1;
+      break;
+    }
 
-	while( mouse.left_press || mouse.any_click() || mouse.key_code )		// avoid repeat clicking 
-	{
-		sys.yield();
-		mouse.get_event();
-	}
+    if( timeOutSecond && m.get_time() > timeOutTime )
+      break;
+  }
 
-	return rc;
+  while( mouse.left_press || mouse.any_click() || mouse.key_code )		// avoid repeat clicking 
+  {
+    sys.yield();
+    mouse.get_event();
+  }
+
+  mem_del(screen);
+
+  return rc;
 }
 //--------- End of Mouse::wait_press --------------//
 

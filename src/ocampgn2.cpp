@@ -357,10 +357,11 @@ game.process_messages();
 			if (firstRun && !isLoadedGame)
 			{
 				disp_strategic_screen(1, 1);
-                                vga.flip();
 				mouse.wait_press(1);
 				disp_strategic_screen(1, 2);
+                                vga.flip();
 				disp_strategic_screen(1, 3);
+                                vga.flip();
 				disp_strategic_screen(1, 4);
 				firstRun = 0;
 			}
@@ -1235,7 +1236,6 @@ void Campaign::disp_in_game_msg(char* gameMsg, ...)
 
 	mem_del(strBuf);
 
-vga.flip();
 	mouse.wait_press();
 
 	if (saveBuf)
@@ -1289,12 +1289,12 @@ void Campaign::disp_narrative(char* dialogText, ...)
 
 	//--------- display the text --------//
 
+	disp_strategic_screen();
 	disp_text( NARRATIVE_TEXT_X1, NARRATIVE_TEXT_Y1, NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2,
 				  strBuf );
 
 	mem_del( strBuf );
 
-vga.flip();
 	if( !auto_test_flag )
 		mouse.wait_press();
 }
@@ -1321,20 +1321,9 @@ void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
 	{
 		//-----------------------------//
 	 
-		int par = 0;
-
 		while(1)
 		{
-			par ++;
-
-			if (par > 3)
-			{
-				par = 3;
-			}
-			else
-			{
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-			}
+			disp_strategic_screen();
 
 			game.process_messages();
  			vga.flip();
@@ -1679,7 +1668,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 			//"Click to read message..." );
 
 		if( !auto_test_flag ) {
-                  vga.flip();
 			mouse.wait_press();
                 }
 
@@ -1778,7 +1766,6 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 
 		if( text_block_count==1 )		
 		{
-                        vga.flip();
 			if( !auto_test_flag )
 				mouse.wait_press();
 
@@ -1801,8 +1788,6 @@ int Campaign::detect_letter()
 
 	while(1)
 	{
-		sys.yield();
-		mouse.get_event();
 		if( config.music_flag )
 		{
 			if( !music.is_playing(3) )
@@ -1813,11 +1798,13 @@ int Campaign::detect_letter()
 
 		//-------- display the letter ---------//
 
-		letter_refresh_flag = INFO_UPDATE;
-
+		letter_refresh_flag = INFO_REPAINT;
 		disp_letter();
 
-		letter_refresh_flag = INFO_REPAINT;
+                game.process_messages();
+                vga.flip();
+		sys.yield();
+		mouse.get_event();
 
 		//-------- if auto test mode is on --------//
 
@@ -2251,7 +2238,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 		if( (!firstStep || firstStep <= 1 ) && (!lastStep || 1 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+			disp_strategic_screen();
 			// ------ draw sprite ---------//
 
 			if( attackerY2 >= targetY2 )
@@ -2347,7 +2334,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 		if( (!firstStep || firstStep <= 2 ) && (!lastStep || 2 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+			disp_strategic_screen();
 
 			// ------ draw sprite ---------//
 
@@ -2448,7 +2435,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+				disp_strategic_screen();
 
 				// ------ draw sprite ---------//
 
@@ -2588,7 +2575,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+				disp_strategic_screen();
 
 				// ------ draw sprite ---------//
 
@@ -2630,7 +2617,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 
 	if( attackResult == 1 )
 	{
-		disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 		// forced to update the background
 
 		// attackerUnit and go to take the state
@@ -2647,7 +2633,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+				disp_strategic_screen();
 
 				// ------ draw sprite ---------//
 
@@ -2859,7 +2845,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 1 ) && (!lastStep || 1 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+			disp_strategic_screen();
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3018,7 +3004,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 2 ) && (!lastStep || 2 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+			disp_strategic_screen();
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3151,7 +3137,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+			disp_strategic_screen();
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3372,7 +3358,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+				disp_strategic_screen();
 
 				// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3463,9 +3449,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 
 		// --------- third step third part ---------//
 
-		// forced to update the background
-		disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-
 		// attackerUnit and go to take the state
 
 		attackerUnit[newLord].cur_action = SPRITE_IDLE;
@@ -3480,7 +3463,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
+				disp_strategic_screen();
 
 				// ---------- sort by attackerY2 or targetY2 -----------//
 
