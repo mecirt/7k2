@@ -2003,10 +2003,6 @@ void Campaign::attack_state(int attackerStateRecno, int targetStateRecno,
 		monster_res[get_nation(attacker2Nation)->monster_id()]->unit_id;
 	}
 
-	// forced to update the background
-	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
-	// forced to update the background
-	
 	//------ determine source & destination locations -------//
 	int srcScrnX = attackerStateRecno ? state_array[attackerStateRecno]->center_x : 0;
 	int srcScrnY = attackerStateRecno ? state_array[attackerStateRecno]->center_y : 0;
@@ -2117,8 +2113,6 @@ void Campaign::rebel_attack_state(int stateRecno, int attackResult, int firstSte
 	//-------- show the attack animation now -----//
 
 	int unitSpace = 46 * state_array.max_x_loc / ( MAIN_MAP_X2-MAIN_MAP_X1+1 );
-
-	disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 	attack_animation( raceInfo->civilian_unit_id, raceInfo->infantry_unit_id,
 							0, get_nation(nationRecno)->color_scheme_id,
@@ -2235,12 +2229,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 	targetUnit.cur_dir = targetUnit.final_dir
 		= (targetUnit.final_dir + 7) % 8;	// cancel the adjustment made by display_dir
 
-	// ----- declare save buffer -------//
-
-	HelpSaveScreen attackerSaveScr, targetSaveScr;
-	attackerSaveScr.init();
-	targetSaveScr.init();
-
 	int attackerX1, attackerY1, attackerX2, attackerY2;
 	int targetX1, targetY1, targetX2, targetY2;
 	int lastAttackerX1, lastAttackerY1, lastAttackerX2, lastAttackerY2;
@@ -2263,29 +2251,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 		if( (!firstStep || firstStep <= 1 ) && (!lastStep || 1 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-
-			// -------- save area first --------//
-
-			if( attackerUnit.get_abs_rect( attackerUnit.cur_x, attackerUnit.cur_y, 
-				clipX1, clipY1, clipX2, clipY2, &attackerX1, &attackerY1, &attackerX2, &attackerY2) )
-			{
-				attackerSaveScr.save_scr(attackerX1, attackerY1, attackerX2, attackerY2, &vga_back );
-			}
-			else
-			{
-				attackerSaveScr.clear();
-			}
-
-			if( targetUnit.get_abs_rect( targetUnit.cur_x, targetUnit.cur_y, 
-				clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-			{
-				targetSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-			}
-			else
-			{
-				targetSaveScr.clear();
-			}
-
+			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 			// ------ draw sprite ---------//
 
 			if( attackerY2 >= targetY2 )
@@ -2317,11 +2283,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			lastTargetY1 = targetY1;
 			lastTargetX2 = targetX2;
 			lastTargetY2 = targetY2;
-
-			// ----- restore back buffer --------//
-
-			attackerSaveScr.rest_scr(&vga_back);
-			targetSaveScr.rest_scr(&vga_back);
 
 			sys.yield();
                         vga.flip();
@@ -2386,28 +2347,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 		if( (!firstStep || firstStep <= 2 ) && (!lastStep || 2 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-
-			// -------- save area first --------//
-
-			if( attackerUnit.get_abs_rect( attackerUnit.cur_x, attackerUnit.cur_y, 
-				clipX1, clipY1, clipX2, clipY2, &attackerX1, &attackerY1, &attackerX2, &attackerY2) )
-			{
-				attackerSaveScr.save_scr(attackerX1, attackerY1, attackerX2, attackerY2, &vga_back );
-			}
-			else
-			{
-				attackerSaveScr.clear();
-			}
-
-			if( targetUnit.get_abs_rect( targetUnit.cur_x, targetUnit.cur_y, 
-				clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-			{
-				targetSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-			}
-			else
-			{
-				targetSaveScr.clear();
-			}
+			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 			// ------ draw sprite ---------//
 
@@ -2442,9 +2382,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			lastTargetY2 = targetY2;
 
 			// ----- restore back buffer --------//
-
-			attackerSaveScr.rest_scr(&vga_back);
-			targetSaveScr.rest_scr(&vga_back);
 
                         vga.flip();
 			sys.yield();
@@ -2511,28 +2448,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-
-				// -------- save area first --------//
-
-				if( attackerUnit.get_abs_rect( attackerUnit.cur_x, attackerUnit.cur_y, 
-					clipX1, clipY1, clipX2, clipY2, &attackerX1, &attackerY1, &attackerX2, &attackerY2) )
-				{
-					attackerSaveScr.save_scr(attackerX1, attackerY1, attackerX2, attackerY2, &vga_back );
-				}
-				else
-				{
-					attackerSaveScr.clear();
-				}
-
-				if( targetUnit.get_abs_rect( targetUnit.cur_x, targetUnit.cur_y, 
-					clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-				{
-					targetSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-				}
-				else
-				{
-					targetSaveScr.clear();
-				}
+				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 				// ------ draw sprite ---------//
 
@@ -2565,11 +2481,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				lastTargetY1 = targetY1;
 				lastTargetX2 = targetX2;
 				lastTargetY2 = targetY2;
-
-				// ----- restore back buffer --------//
-
-				attackerSaveScr.rest_scr(&vga_back);
-				targetSaveScr.rest_scr(&vga_back);
 
                                 vga.flip();
 				sys.yield();
@@ -2677,20 +2588,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-
-				// -------- save area first --------//
-
-				if( attackerUnit.get_abs_rect( attackerUnit.cur_x, attackerUnit.cur_y, 
-					clipX1, clipY1, clipX2, clipY2, &attackerX1, &attackerY1, &attackerX2, &attackerY2) )
-				{
-					attackerSaveScr.save_scr(attackerX1, attackerY1, attackerX2, attackerY2, &vga_back );
-				}
-				else
-				{
-					attackerSaveScr.clear();
-				}
-
-				targetSaveScr.clear();
+				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 				// ------ draw sprite ---------//
 
@@ -2708,10 +2606,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				lastTargetY1 = targetY1;
 				lastTargetX2 = targetX2;
 				lastTargetY2 = targetY2;
-
-				// ----- restore back buffer --------//
-
-				attackerSaveScr.rest_scr(&vga_back);
 
                                 vga.flip();
 				sys.yield();
@@ -2753,18 +2647,7 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-
-				// -------- save area first --------//
-
-				if( attackerUnit.get_abs_rect( attackerUnit.cur_x, attackerUnit.cur_y, 
-					clipX1, clipY1, clipX2, clipY2, &attackerX1, &attackerY1, &attackerX2, &attackerY2) )
-				{
-					attackerSaveScr.save_scr(attackerX1, attackerY1, attackerX2, attackerY2, &vga_back );
-				}
-				else
-				{
-					attackerSaveScr.clear();
-				}
+				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 				// ------ draw sprite ---------//
 
@@ -2782,10 +2665,6 @@ void Campaign::attack_animation(int attackerUnitId, int targetUnitId,
 				lastTargetY1 = targetY1;
 				lastTargetX2 = targetX2;
 				lastTargetY2 = targetY2;
-
-				// ----- restore back buffer --------//
-
-				attackerSaveScr.rest_scr(&vga_back);
 
                                 vga.flip();
 				sys.yield();
@@ -2948,13 +2827,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 	}
 	defenderAttackDelay = unit_res.get_attack_info( unit_res[defender->unit_id]->first_attack )->attack_delay;
 
-	// ----- declare save buffer -------//
-
-	HelpSaveScreen attackerSaveScr[MAX_ATTACKER], defenderSaveScr;
-	for( a = 0; a < attackerCount; ++a )
-		attackerSaveScr[a].init();
-	defenderSaveScr.init();
-
 	int attackerX1[MAX_ATTACKER], attackerY1[MAX_ATTACKER], attackerX2[MAX_ATTACKER], attackerY2[MAX_ATTACKER];
 	int targetX1, targetY1, targetX2, targetY2;
 	int lastAttackerX1[MAX_ATTACKER], lastAttackerY1[MAX_ATTACKER], lastAttackerX2[MAX_ATTACKER], lastAttackerY2[MAX_ATTACKER];
@@ -2987,31 +2859,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 1 ) && (!lastStep || 1 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-
-			// -------- save area first --------//
-
-			for( a = 0; a < attackerCount; ++a )
-			{
-				if( attackerUnit[a].get_abs_rect( attackerArray[a].scrn_x, attackerArray[a].scrn_y,
-					clipX1, clipY1, clipX2, clipY2, &attackerX1[a], &attackerY1[a], &attackerX2[a], &attackerY2[a]) )
-				{
-					attackerSaveScr[a].save_scr(attackerX1[a], attackerY1[a], attackerX2[a], attackerY2[a], &vga_back );
-				}
-				else
-				{
-					attackerSaveScr[a].clear();
-				}
-			}	// end for
-
-			if( defenderUnit.get_abs_rect(defender->scrn_x, defender->scrn_y,
-				clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-			{
-				defenderSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-			}
-			else
-			{
-				defenderSaveScr.clear();
-			}
+			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3040,10 +2888,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 						clipX1, clipY1, clipX2, clipY2 );
 				}
 			}
-
-			for( a = 0; a < attackerCount; ++a )
-				attackerSaveScr[a].rest_scr(&vga_back);
-			defenderSaveScr.rest_scr(&vga_back);
 
                         vga.flip();
 			sys.yield();
@@ -3174,31 +3018,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 2 ) && (!lastStep || 2 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-
-			// -------- save area first --------//
-
-			for( a = 0; a < attackerCount; ++a )
-			{
-				if( attackerUnit[a].get_abs_rect( attackerArray[a].scrn_x, attackerArray[a].scrn_y,
-					clipX1, clipY1, clipX2, clipY2, &attackerX1[a], &attackerY1[a], &attackerX2[a], &attackerY2[a]) )
-				{
-					attackerSaveScr[a].save_scr(attackerX1[a], attackerY1[a], attackerX2[a], attackerY2[a], &vga_back );
-				}
-				else
-				{
-					attackerSaveScr[a].clear();
-				}
-			}	// end for
-
-			if( defenderUnit.get_abs_rect(defender->scrn_x, defender->scrn_y,
-				clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-			{
-				defenderSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-			}
-			else
-			{
-				defenderSaveScr.clear();
-			}
+			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3227,10 +3047,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 						clipX1, clipY1, clipX2, clipY2 );
 				}
 			}
-
-			for( a = 0; a < attackerCount; ++a )
-				attackerSaveScr[a].rest_scr(&vga_back);
-			defenderSaveScr.rest_scr(&vga_back);
 
                         vga.flip();
 			sys.yield();
@@ -3335,33 +3151,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 		if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 		{
 			DWORD startTime = m.get_time();
-
-			// -------- save area first --------//
-
-			for( a = 0; a < attackerCount; ++a )
-			{
-				if( !attackerFinishedDieFlags[a] && 
-					attackerUnit[a].get_abs_rect( attackerArray[a].scrn_x, attackerArray[a].scrn_y,
-					clipX1, clipY1, clipX2, clipY2, &attackerX1[a], &attackerY1[a], &attackerX2[a], &attackerY2[a]) )
-				{
-					attackerSaveScr[a].save_scr(attackerX1[a], attackerY1[a], attackerX2[a], attackerY2[a], &vga_back );
-				}
-				else
-				{
-					attackerSaveScr[a].clear();
-				}
-			}	// end for
-
-			if( !defenderFinishedDieFlag &&
-				defenderUnit.get_abs_rect(defender->scrn_x, defender->scrn_y,
-				clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-			{
-				defenderSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-			}
-			else
-			{
-				defenderSaveScr.clear();
-			}
+			disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 			// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3396,10 +3186,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 					}
 				}
 			}
-
-			for( a = 0; a < attackerCount; ++a )
-				attackerSaveScr[a].rest_scr(&vga_back);
-			defenderSaveScr.rest_scr(&vga_back);
 
                         vga.flip();
 			sys.yield();
@@ -3586,33 +3372,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-
-				// -------- save area first --------//
-
-				for( a = 0; a < attackerCount; ++a )
-				{
-					if( !attackerFinishedDieFlags[a] && 
-						attackerUnit[a].get_abs_rect( attackerArray[a].scrn_x, attackerArray[a].scrn_y,
-						clipX1, clipY1, clipX2, clipY2, &attackerX1[a], &attackerY1[a], &attackerX2[a], &attackerY2[a]) )
-					{
-						attackerSaveScr[a].save_scr(attackerX1[a], attackerY1[a], attackerX2[a], attackerY2[a], &vga_back );
-					}
-					else
-					{
-						attackerSaveScr[a].clear();
-					}
-				}	// end for
-
-				if( !defenderFinishedDieFlag &&
-					defenderUnit.get_abs_rect(defender->scrn_x, defender->scrn_y,
-					clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-				{
-					defenderSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-				}
-				else
-				{
-					defenderSaveScr.clear();
-				}
+				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 				// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3647,10 +3407,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 						}
 					}
 				}
-
-				for( a = 0; a < attackerCount; ++a )
-					attackerSaveScr[a].rest_scr(&vga_back);
-				defenderSaveScr.rest_scr(&vga_back);
 
                                 vga.flip();
 				sys.yield();
@@ -3724,33 +3480,7 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 			if( (!firstStep || firstStep <= 3 ) && (!lastStep || 3 <= lastStep) )
 			{
 				DWORD startTime = m.get_time();
-
-				// -------- save area first --------//
-
-				for( a = 0; a < attackerCount; ++a )
-				{
-					if( !attackerFinishedDieFlags[a] && 
-						attackerUnit[a].get_abs_rect( attackerArray[a].scrn_x, attackerArray[a].scrn_y,
-						clipX1, clipY1, clipX2, clipY2, &attackerX1[a], &attackerY1[a], &attackerX2[a], &attackerY2[a]) )
-					{
-						attackerSaveScr[a].save_scr(attackerX1[a], attackerY1[a], attackerX2[a], attackerY2[a], &vga_back );
-					}
-					else
-					{
-						attackerSaveScr[a].clear();
-					}
-				}	// end for
-
-				if( !defenderFinishedDieFlag &&
-					defenderUnit.get_abs_rect(defender->scrn_x, defender->scrn_y,
-					clipX1, clipY1, clipX2, clipY2, &targetX1, &targetY1, &targetX2, &targetY2) )
-				{
-					defenderSaveScr.save_scr(targetX1, targetY1, targetX2, targetY2, &vga_back );
-				}
-				else
-				{
-					defenderSaveScr.clear();
-				}
+				disp_state_map( INTRO_MAP_X1, INTRO_MAP_Y1, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, (3<<1) +1 );
 
 				// ---------- sort by attackerY2 or targetY2 -----------//
 
@@ -3785,10 +3515,6 @@ void Campaign::attack_animation( CampaignAnimationUnit *attackerArray,
 						}
 					}
 				}
-
-				for( a = 0; a < attackerCount; ++a )
-					attackerSaveScr[a].rest_scr(&vga_back);
-				defenderSaveScr.rest_scr(&vga_back);
 
                                 vga.flip();
 				sys.yield();
