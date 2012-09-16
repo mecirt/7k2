@@ -46,6 +46,14 @@ struct Audio::Private {
     int v = vol.ds_vol * MIX_MAX_VOLUME / 100 * wav_volume / 100;
     Mix_Volume(channel, v);
   }
+
+  void set_channel(int ch, Mix_Chunk *data)
+  {
+    if (channel[ch].data)
+      Mix_FreeChunk(channel[ch].data);
+    channel[ch].data = data;
+  }
+
 };
 
 //--------- Begin of function Audio::Audio ----------//
@@ -230,7 +238,7 @@ int Audio::play_resided_wav(unsigned char* wavBuf, DsVolume dsVolume)
   Mix_Chunk *chunk = Mix_QuickLoad_WAV(wavBuf);
   int channel = Mix_PlayChannel(-1, chunk, 0);
   if (channel < 0) return -1;
-  d->channel[channel].data = chunk;
+  d->set_channel (channel, chunk);
   d->set_volume(channel, dsVolume);
   return channel;
 }
@@ -255,7 +263,7 @@ int Audio::play_long_wav(const char *wavName, DsVolume dsVolume)
   Mix_Chunk *chunk = Mix_LoadWAV(wavName);
   int channel = Mix_PlayChannel(-1, chunk, 0);
   if (channel < 0) return -1;
-  d->channel[channel].data = chunk;
+  d->set_channel (channel, chunk);
   d->set_volume(channel, dsVolume);
   return channel;
 }
@@ -291,7 +299,7 @@ int	Audio::play_loop_wav(const char *wavName, DsVolume dsVolume)
   Mix_Chunk *chunk = Mix_LoadWAV(wavName);
   int channel = Mix_PlayChannel(-1, chunk, -1);
   if (channel < 0) return -1;
-  d->channel[channel].data = chunk;
+  d->set_channel (channel, chunk);
   d->set_volume(channel, dsVolume);
   return channel;
 }
