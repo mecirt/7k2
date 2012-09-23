@@ -663,9 +663,6 @@ void Campaign::disp_intro()
                 vga.flip();
 		sys.sleep(100);
 	}
-	vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
-        vga.flip();
-	sys.sleep(500);
 
 	music.stop();
 	play_speech("Poem1.wav");
@@ -678,7 +675,8 @@ void Campaign::disp_intro()
 		//	counter = VGA_HEIGHT;
 			break;
 
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+		vga.disp_image_file("Frwin01");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_intro_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -714,9 +712,13 @@ void Campaign::disp_intro()
 	}
 
 	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+	{
+		vga.disp_image_file("Frwin01");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, i + 1, V_BLACK );
+                vga.flip();
+		sys.sleep(100);
 	}
+
         vga.flip();
 	
 	mouse.show();
@@ -738,13 +740,11 @@ void Campaign::disp_monster_defeated()
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-	vga.disp_image_file("Huwin02");
+		vga.disp_image_file("Huwin02");
 		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
                 vga.flip();
 		sys.sleep(100);
 	}
-        vga.flip();
-	sys.sleep(500);
 	
 	music.stop();
 	play_speech("Poem2.wav");
@@ -756,6 +756,8 @@ void Campaign::disp_monster_defeated()
 		//	counter = VGA_HEIGHT;
 			break;
 
+		vga.disp_image_file("Huwin02");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_monster_fall_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -783,8 +785,11 @@ void Campaign::disp_monster_defeated()
 	}
 
 	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+	{
+		vga.disp_image_file("Huwin02");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, i + 1, V_BLACK );
+                vga.flip();
+		sys.sleep(100);
 	}
 	
 	mouse.show();
@@ -806,13 +811,11 @@ void Campaign::disp_final_victory()
 	sys.yield();
 	for (i = 0; i < 4; i++)
 	{
-	vga.disp_image_file("BRIEF01");
+		vga.disp_image_file("BRIEF01");
 		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 4 - i, V_BLACK );
                 vga.flip();
 		sys.sleep(100);
 	}
-        vga.flip();
-	sys.sleep(500);
 
 	music.stop();
 	play_speech("Poem3.wav");	
@@ -824,6 +827,8 @@ void Campaign::disp_final_victory()
 		//	counter = VGA_HEIGHT;
 			break;
 
+		vga.disp_image_file("BRIEF01");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
 		font_cmpo.space_width -= 4;	
 		put_center_text(VGA_WIDTH>>1, tempCounter, text_campaign.str_victory_1(), 1, &font_cmpo);
 		tempCounter += font_cmpo.text_height();
@@ -861,10 +866,13 @@ void Campaign::disp_final_victory()
 	}
 
 	for (i = 0; i < 4; i++)
-	{	
-		vga_back.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, 1, V_BLACK );
+	{
+		vga.disp_image_file("BRIEF01");
+		vga_buffer.bar_alpha( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, i + 1, V_BLACK );
+                vga.flip();
+		sys.sleep(100);
 	}
-	
+
 	mouse.show();
 	stop_speech();
 }
