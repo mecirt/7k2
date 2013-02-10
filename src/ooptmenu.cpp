@@ -82,25 +82,6 @@ static void disp_text_button(ButtonCustom *button, int);
 static void disp_slide_bar(SlideBar *slideBar, int);
 
 
-// return 1 if ok, config is changed
-#define IGOPTION_SE_VOL          0x00000001
-#define IGOPTION_MUSIC_VOL       0x00000002
-#define IGOPTION_RACE            0x00000004
-#define IGOPTION_HELP            0x00000008
-#define IGOPTION_NEWS            0x00000010
-#define IGOPTION_GAME_SPEED      0x00000020
-#define IGOPTION_SCROLL_SPEED    0x00000040
-#define IGOPTION_REPORT          0x00000080
-#define IGOPTION_SHOW_ICON       0x00000100
-#define IGOPTION_DRAW_PATH       0x00000200
-#define IGOPTION_MAP_ID          0x00000400
-#define IGOPTION_INSIDE_INFO     0x00000800
-#define IGOPTION_SCROLL_METHOD	0x00001000
-#define IGOPTION_PAGE            0x40000000
-#define IGOPTION_ALL             0x7FFFFFFF
-
-
-
 OptionMenu::OptionMenu() : music_group(2), help_group(3), news_group(2), report_group(2) ,
 	show_icon_group(2), show_path_group(4), inside_info_group(3),
 	scroll_method_group(2)
@@ -204,7 +185,6 @@ void OptionMenu::enter(char untilExitFlag)
 	int by = (VGA_HEIGHT - PAGE_HEIGHT) / 2;
 
 	int i;
-	refresh_flag = IGOPTION_ALL;
 	update_flag = 0;
 	// active_flag = 1;
 	set_active();
@@ -396,8 +376,6 @@ void OptionMenu::disp(int needRepaint)
 
 	err_when( !color_remap_table || !background_bitmap );		// call set_active to load palette and bitmap
 
-	refresh_flag = IGOPTION_ALL;
-
 	int bx = (VGA_WIDTH - PAGE_WIDTH) / 2;
 	int by = (VGA_HEIGHT - PAGE_HEIGHT) / 2;
 
@@ -405,92 +383,45 @@ void OptionMenu::disp(int needRepaint)
 	Config &tempConfig = config;
 
 	// ------- display --------//
-	if(refresh_flag)
-	{
-		if( refresh_flag & IGOPTION_PAGE )
-		{
-			vga_back.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_BLACK );
+	vga_back.bar( 0, 0, VGA_WIDTH-1, VGA_HEIGHT-1, V_BLACK );
 
-			// image_interface.put_to_buf( &vga_back, "OPTIONS");
-			vga_back.put_bitmap_trans_remap( bx, by, background_bitmap, color_remap_table );
+	// image_interface.put_to_buf( &vga_back, "OPTIONS");
+	vga_back.put_bitmap_trans_remap( bx, by, background_bitmap, color_remap_table );
 
-			font_bold_black.put( bx+124, by+98,  text_game_menu.str_se_vol()); // "Sound Effects Volume" );
-//			font_bold_black.put( bx+124, by+153, "Music Volume" );
-			font_bold_black.put( bx+124, by+153, text_game_menu.str_music()); // "Music" );
-			font_bold_black.put( bx+124, by+208, text_game_menu.str_help()); // "Help" );
-			font_bold_black.put( bx+124, by+263, text_game_menu.str_display_news()); // "Display News" );
-			font_bold_black.put( bx+124, by+318, text_game_menu.str_game_speed()); //"Game Speed" );
-			font_bold_black.put( bx+124, by+378, text_game_menu.str_scroll_speed()); //"Scrolling Speed" );
+	font_bold_black.put( bx+124, by+98,  text_game_menu.str_se_vol()); // "Sound Effects Volume" );
+//	font_bold_black.put( bx+124, by+153, "Music Volume" );
+	font_bold_black.put( bx+124, by+153, text_game_menu.str_music()); // "Music" );
+	font_bold_black.put( bx+124, by+208, text_game_menu.str_help()); // "Help" );
+	font_bold_black.put( bx+124, by+263, text_game_menu.str_display_news()); // "Display News" );
+	font_bold_black.put( bx+124, by+318, text_game_menu.str_game_speed()); //"Game Speed" );
+	font_bold_black.put( bx+124, by+378, text_game_menu.str_scroll_speed()); //"Scrolling Speed" );
 
-			font_bold_black.put( bx+417, by+98, text_game_menu.str_report_bg()); // "Reports Background" );
-			font_bold_black.put( bx+417, by+163, text_game_menu.str_show_unit_id()); // "Show Unit Identities" );
-			font_bold_black.put( bx+417, by+238, text_game_menu.str_show_unit_path()); //"Show Unit Paths" );
-			font_bold_black.put( bx+417, by+313, text_game_menu.str_inside_info()); //"Inside Information" ); 
-			font_bold_black.put( bx+417, by+373, text_game_menu.str_scroll_method()); //"Scrolling Method" ); 
+	font_bold_black.put( bx+417, by+98, text_game_menu.str_report_bg()); // "Reports Background" );
+	font_bold_black.put( bx+417, by+163, text_game_menu.str_show_unit_id()); // "Show Unit Identities" );
+	font_bold_black.put( bx+417, by+238, text_game_menu.str_show_unit_path()); //"Show Unit Paths" );
+	font_bold_black.put( bx+417, by+313, text_game_menu.str_inside_info()); //"Inside Information" ); 
+	font_bold_black.put( bx+417, by+373, text_game_menu.str_scroll_method()); //"Scrolling Method" ); 
 
-			start_button.paint();
-			cancel_button.paint();
-		}
+	start_button.paint();
+	cancel_button.paint();
 
-		if( refresh_flag & IGOPTION_SE_VOL )
-		{
-			se_vol_slide.paint(tempConfig.sound_effect_flag ? (tempConfig.sound_effect_volume) : 0);
-		}
-		if( refresh_flag & IGOPTION_MUSIC_VOL )
-		{
-			// music_vol_slide.paint(tempConfig.music_flag ? percent_to_slide_volume(tempConfig.wav_music_volume) : 0);
-			music_group.paint(tempConfig.music_flag);
-		}
-//		if( refresh_flag & IGOPTION_RACE )
-//		{
-//			for( i = 0; i < MAX_RACE; ++i )
-//				race_button[i].paint();
-//		}
-		if( refresh_flag & IGOPTION_HELP )
-		{
-			help_group.paint(tempConfig.help_mode);
-		}
-		if( refresh_flag & IGOPTION_NEWS )
-		{
-			news_group.paint(tempConfig.disp_news_flag);
-		}
-		if( refresh_flag & IGOPTION_GAME_SPEED )
-		{
-			frame_speed_slide.paint(tempConfig.frame_speed <= 30 ? tempConfig.frame_speed: 31);
-		}
-		if( refresh_flag & IGOPTION_SCROLL_SPEED )
-		{
-			scroll_speed_slide.paint(tempConfig.scroll_speed);
-		}
-		if( refresh_flag & IGOPTION_REPORT )
-		{
-			report_group.paint(tempConfig.opaque_report);
-		}
-		if( refresh_flag & IGOPTION_SHOW_ICON )
-		{
-			show_icon_group.paint(tempConfig.show_all_unit_icon);
-		}
-		if( refresh_flag & IGOPTION_DRAW_PATH )
-		{
-			show_path_group.paint(tempConfig.show_unit_path);
-		}
-		if( refresh_flag & IGOPTION_INSIDE_INFO )
-		{
-			inside_info_group.paint(tempConfig.disp_extend_info);
-		}
-		if( refresh_flag & IGOPTION_SCROLL_METHOD )
-		{
-			scroll_method_group.paint(tempConfig.scroll_method);
-		}
-		if( refresh_flag & IGOPTION_MAP_ID )
-		{
-			//int x2;
-			//x2 = font_san.put(521, 64, "Map ID : ", 1);
-			//x2 = font_san.put(x2, 64, info.random_seed, 1);
-		}
-
-		refresh_flag = 0;
-	}
+	se_vol_slide.paint(tempConfig.sound_effect_flag ? (tempConfig.sound_effect_volume) : 0);
+	// music_vol_slide.paint(tempConfig.music_flag ? percent_to_slide_volume(tempConfig.wav_music_volume) : 0);
+	music_group.paint(tempConfig.music_flag);
+//	for( i = 0; i < MAX_RACE; ++i )
+//		race_button[i].paint();
+	help_group.paint(tempConfig.help_mode);
+	news_group.paint(tempConfig.disp_news_flag);
+	frame_speed_slide.paint(tempConfig.frame_speed <= 30 ? tempConfig.frame_speed: 31);
+	scroll_speed_slide.paint(tempConfig.scroll_speed);
+	report_group.paint(tempConfig.opaque_report);
+	show_icon_group.paint(tempConfig.show_all_unit_icon);
+	show_path_group.paint(tempConfig.show_unit_path);
+	inside_info_group.paint(tempConfig.disp_extend_info);
+	scroll_method_group.paint(tempConfig.scroll_method);
+	//int x2;
+	//x2 = font_san.put(521, 64, "Map ID : ", 1);
+	//x2 = font_san.put(x2, 64, info.random_seed, 1);
 }
 
 
@@ -570,42 +501,37 @@ int OptionMenu::detect()
 	if( help_group.detect() >= 0)
 	{
 		tempConfig.help_mode = help_group[help_group()].custom_para.value;
-		//refresh_flag |= IGOPTION_HELP;
-		update_flag |= IGOPTION_HELP;
+		update_flag = 1;
 	}
 	else if( news_group.detect() >= 0)
 	{
 		tempConfig.disp_news_flag = news_group[news_group()].custom_para.value;
-		//refresh_flag |= IGOPTION_HELP;
-		update_flag |= IGOPTION_HELP;
+		update_flag = 1;
 	}
 	else if( report_group.detect() >= 0)
 	{
 		tempConfig.opaque_report = report_group[report_group()].custom_para.value;
-		//refresh_flag |= IGOPTION_REPORT;
-		update_flag |= IGOPTION_REPORT;
+		update_flag = 1;
 	}
 	else if( show_icon_group.detect() >= 0)
 	{
 		tempConfig.show_all_unit_icon = show_icon_group[show_icon_group()].custom_para.value;
-		//refresh_flag |= IGOPTION_SHOW_ICON;
-		update_flag |= IGOPTION_SHOW_ICON;
+		update_flag = 1;
 	}
 	else if( show_path_group.detect() >= 0)
 	{
 		tempConfig.show_unit_path = show_path_group[show_path_group()].custom_para.value;
-		//refresh_flag |= IGOPTION_DRAW_PATH;
-		update_flag |= IGOPTION_DRAW_PATH;
+		update_flag = 1;
 	}
 	else if( inside_info_group.detect() >= 0)
 	{
 		tempConfig.disp_extend_info = inside_info_group[inside_info_group()].custom_para.value;
-		update_flag |= IGOPTION_INSIDE_INFO;
+		update_flag = 1;
 	}
 	else if( scroll_method_group.detect() >= 0)
 	{
 		tempConfig.scroll_method = scroll_method_group[scroll_method_group()].custom_para.value;
-		update_flag |= IGOPTION_SCROLL_METHOD;
+		update_flag = 1;
 	}
 	else if( start_button.detect(KEY_RETURN) )
 	{

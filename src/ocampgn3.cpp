@@ -468,14 +468,6 @@ char* CampaignMember::unit_name(int nationRecno, int withTitle, int firstNameOnl
 
 
 
-#define DROPTION_PAGE           0x40000000
-#define DROPTION_UNIT_INFO      0x00000001
-#define DROPTION_UNITS          0x00000008
-#define DROPTION_SPARE_ITEM     0x00000010
-#define DROPTION_PAGE_NO        0x00000020
-#define DROPTION_FRYHTAN_FORCE  0x00000040
-#define DROPTION_ALL            0x7fffffff
-
 // ----- Begin of function Campaign::select_royal_menu ------//
 //
 // mode = 1  - select MAX_NOBLE royals to stay in the game
@@ -510,7 +502,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 //	char *helpText = text_campaign.str_select_royal_help_1(); // "Check the units that you wish to use in this scenario. You may Click on an Artifact and move it to another unit.";
 	int selectedRecno = 0;
 
-	int refreshFlag = DROPTION_ALL;
 //	int page = 0;
 //	int maxPage = (royalCount + UNIT_PAGE - 1) / UNIT_PAGE;	// ceiling
 //	if( maxPage <= 0 )
@@ -569,7 +560,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 		while(1)
 		{
 			if (!game.process_messages()) return;
-			refreshFlag = DROPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
@@ -586,182 +576,165 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 
 			// -------- display ----------//
 
-			if( refreshFlag )
+			vga.disp_image_file("CHOOSE");
+
+			// ----- display "Royal Units" --------//
+
+			font_bold_black.center_put(SCROLL_SHEET_X1+10, 81, SCROLL_SHEET_X1+210, 116, 
+				text_campaign.str_royal_units() );
+				//"Royal Units");
+			font_cara.put_paragraph( SCROLL_SHEET_X1+210, 81, SCROLL_SHEET_X2-10, 116, 
+				text_campaign.str_select_royal_help_1(), // helpText,
+				0, 0 );
+
+			// ----- display frame ---------//
+
 			{
-				if( refreshFlag & DROPTION_PAGE )
-				{
-					vga.disp_image_file("CHOOSE");
-
-					// ----- display "Royal Units" --------//
-
-					font_bold_black.center_put(SCROLL_SHEET_X1+10, 81, SCROLL_SHEET_X1+210, 116, 
-						text_campaign.str_royal_units() );
-						//"Royal Units");
-					font_cara.put_paragraph( SCROLL_SHEET_X1+210, 81, SCROLL_SHEET_X2-10, 116, 
-						text_campaign.str_select_royal_help_1(), // helpText,
-						0, 0 );
-
-					// ----- display frame ---------//
-
-					{
-						int frameX1 = UNIT_ICON_X1-5;
-						int frameY1 = UNIT_ICON_Y1-5;
-						int frameX2 = UNIT_ICON_X1+UNIT_ICON_WIDTH*(UNIT_ROW+1)+5;
-						int frameY2 = UNIT_ICON_Y1+UNIT_MAX_ROW*UNIT_ICON_HEIGHT+5;
-						vga.active_buf->bar( frameX1, frameY1, frameX2, frameY2, V_BLACK );
-						vga.active_buf->draw_d3_up_border( frameX1, frameY1, frameX2, frameY2 );
-					}
-
-					// ----- display done, restore button ------//
-
-					font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-						text_campaign.str_done() ); // "Done" );
-					font_thin_black.center_put_paragraph( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-						text_campaign.str_restore() ); // "Restore" );
-					font_thin_black.center_put_paragraph( BUTTON7_X1, BUTTON7_Y1, BUTTON7_X2, BUTTON7_Y2,
-						text_campaign.str_random_select() ); // "Random Select" );
-					font_thin_black.center_put_paragraph( BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2,
-						text_campaign.str_deselect_all() ); // "Deselect All" );
-					font_thin_black.center_put_paragraph( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2,
-						text_campaign.str_delete_royal() ); // "Delete" );
-				}
-
-				if( refreshFlag & DROPTION_UNITS )
-				{
-					for( int r = king?0:1; r <= (UNIT_ROW*UNIT_MAX_ROW); ++r )
-					{
-						int x1, y1, x2, y2;
-						CampaignMember *unit = NULL;
-
-						if( r == 0 )		// king slot
-						{
-							err_when(!king);
-							x1 = UNIT_ICON_X1;
-							y1 = UNIT_ICON_Y1;
-							unit = king;
-						}
-						else
-						{
-							x1 = ((r-1)%UNIT_ROW +1) * UNIT_ICON_WIDTH + UNIT_ICON_X1;
-							y1 = ((r-1)/UNIT_ROW) * UNIT_ICON_HEIGHT + UNIT_ICON_Y1;
-							if( r <= royalCount )
-								unit = royalList + r - 1;
-						}
-
-						x2 = x1 + UNIT_ICON_WIDTH-1;
-						y2 = y1 + UNIT_ICON_HEIGHT-1;
-
-						// ------ clear page from back buffer ------//
-
-						if( unit )
-						{
-							// ------ display unit info --------//
-
-							// draw unit info
-							info.draw_unit_icon( x1+UNIT_ICON_OFFSET_X, y1+UNIT_ICON_OFFSET_Y,
-								unit->unit_id, -colorSchemeId, 
-								x1, y1, x2, y2, 1 );
-
-							// display item
-
-							if( unit->item.id )
-							{
-								vga.active_buf->put_bitmap_trans( x1+ITEM_OFFSET_X, y1+ITEM_OFFSET_Y, item_res.item_unit_interface(unit->item.id) );
-							}
-
-							// display combat level
-							font_whbl.right_put( x1+26, y1+2, m.format(unit->combat_level()) );
-
-							// display leadership
-							if( unit->skill_level() > 0 )
-							{
-								font_whbl.right_put( x1+26, y1+16, m.format(unit->skill_level()) );
-							}
-
-							// display spy skill
-
-							if( unit->is_spy )
-							{
-								font_whbl.right_put( x1+26, y1+30, m.format(unit->spy_skill) );
-							}
-
-							// frame if selected
-
-							if( r == 0 || selectedFlagArray[r-1] > 0 )	// king is always selected
-							{
-								vga.active_buf->put_bitmap_trans_decompress( x1+TICK_OFFSET_X+4, y1+TICK_OFFSET_Y+4, image_button.read("TICK") );
-								vga.active_buf->d3_panel_down( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1, 4, 0 );
-							}
-							else if( selectedFlagArray[r-1] == 0 )
-								vga.active_buf->d3_panel_up( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1 );
-							else
-							{
-								vga.active_buf->d3_panel_up( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1 );
-								font_cara.center_put( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1, "X" );
-							}
-
-							if( selectedRecno == r )
-							{
-								vga.active_buf->rect( x1, y1, x2, y2, 1, VGA_DARK_BLUE );
-							}
-						}
-					}
-				}	// end for r
-
-				// ------ display unit information -------//
-
-				if( refreshFlag & DROPTION_UNIT_INFO )
-				{
-					vga.active_buf->d3_panel_down( UNIT_INFO_X1, UNIT_INFO_Y1, UNIT_INFO_X2, UNIT_INFO_Y2 );
-
-					if( selectedRecno == 0 && king
-						|| selectedRecno > 0 && selectedRecno <= royalCount )
-					{
-						CampaignMember *unit;
-						if( selectedRecno == 0 )
-							unit = king;
-						else
-							unit = royalList + selectedRecno - 1;
-
-						font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+6, unit_res[unit->unit_id]->name );
-						font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+22, unit->unit_name(CAMPAIGN_PLAYER_NATION_RECNO) );
-						int x2 = font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+38, unit->item.item_name() );
-						if( unit->item.id )
-						{
-							x2 = font_cara.put( x2+8, UNIT_INFO_Y1+38, "(" );
-							x2 = font_cara.put( x2+2, UNIT_INFO_Y1+38, unit->item.item_desc() );
-							x2 = font_cara.put( x2+2, UNIT_INFO_Y1+38, ")" );
-						}
-
-						font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+6, text_unit.str_combat_level() ); // "Combat Level" );
-						font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+6, unit->combat_level() );
-
-						if( unit->skill_level() > 0 )
-						{
-							font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+22, text_unit.str_leadership() ); //"Leadership" );
-							font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+22, unit->skill_level() );
-						}
-						if( unit->is_spy )
-						{
-							font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+38, text_unit.str_spy_skill() ); // "Spying" );
-							font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+38, unit->spy_skill );
-						}
-					}
-				}
-
-				if( refreshFlag & DROPTION_FRYHTAN_FORCE )
-				{
-					if( needSelectFryhtan )
-					{
-						font_thin_black.center_put_paragraph( BUTTON3_X1+1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2,
-							this_battle_use_fryhtan ? text_campaign.str_fryhtan_force() : text_campaign.str_human_force() );
-						// fryhtanForceStr : humanForceStr );
-					}
-				}
-
-				refreshFlag = 0;
-                                vga.flip();
+				int frameX1 = UNIT_ICON_X1-5;
+				int frameY1 = UNIT_ICON_Y1-5;
+				int frameX2 = UNIT_ICON_X1+UNIT_ICON_WIDTH*(UNIT_ROW+1)+5;
+				int frameY2 = UNIT_ICON_Y1+UNIT_MAX_ROW*UNIT_ICON_HEIGHT+5;
+				vga.active_buf->bar( frameX1, frameY1, frameX2, frameY2, V_BLACK );
+				vga.active_buf->draw_d3_up_border( frameX1, frameY1, frameX2, frameY2 );
 			}
+
+			// ----- display done, restore button ------//
+
+			font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+				text_campaign.str_done() ); // "Done" );
+			font_thin_black.center_put_paragraph( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+				text_campaign.str_restore() ); // "Restore" );
+			font_thin_black.center_put_paragraph( BUTTON7_X1, BUTTON7_Y1, BUTTON7_X2, BUTTON7_Y2,
+				text_campaign.str_random_select() ); // "Random Select" );
+			font_thin_black.center_put_paragraph( BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2,
+				text_campaign.str_deselect_all() ); // "Deselect All" );
+			font_thin_black.center_put_paragraph( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2,
+				text_campaign.str_delete_royal() ); // "Delete" );
+
+			for( int r = king?0:1; r <= (UNIT_ROW*UNIT_MAX_ROW); ++r )
+			{
+				int x1, y1, x2, y2;
+				CampaignMember *unit = NULL;
+
+				if( r == 0 )		// king slot
+				{
+					err_when(!king);
+					x1 = UNIT_ICON_X1;
+					y1 = UNIT_ICON_Y1;
+					unit = king;
+				}
+				else
+				{
+					x1 = ((r-1)%UNIT_ROW +1) * UNIT_ICON_WIDTH + UNIT_ICON_X1;
+					y1 = ((r-1)/UNIT_ROW) * UNIT_ICON_HEIGHT + UNIT_ICON_Y1;
+					if( r <= royalCount )
+						unit = royalList + r - 1;
+				}
+
+				x2 = x1 + UNIT_ICON_WIDTH-1;
+				y2 = y1 + UNIT_ICON_HEIGHT-1;
+
+				// ------ clear page from back buffer ------//
+
+				if( unit )
+				{
+					// ------ display unit info --------//
+
+					// draw unit info
+					info.draw_unit_icon( x1+UNIT_ICON_OFFSET_X, y1+UNIT_ICON_OFFSET_Y,
+						unit->unit_id, -colorSchemeId, 
+						x1, y1, x2, y2, 1 );
+
+					// display item
+
+					if( unit->item.id )
+					{
+						vga.active_buf->put_bitmap_trans( x1+ITEM_OFFSET_X, y1+ITEM_OFFSET_Y, item_res.item_unit_interface(unit->item.id) );
+					}
+
+					// display combat level
+					font_whbl.right_put( x1+26, y1+2, m.format(unit->combat_level()) );
+
+					// display leadership
+					if( unit->skill_level() > 0 )
+					{
+						font_whbl.right_put( x1+26, y1+16, m.format(unit->skill_level()) );
+					}
+
+					// display spy skill
+
+					if( unit->is_spy )
+					{
+						font_whbl.right_put( x1+26, y1+30, m.format(unit->spy_skill) );
+					}
+
+					// frame if selected
+
+					if( r == 0 || selectedFlagArray[r-1] > 0 )	// king is always selected
+					{
+						vga.active_buf->put_bitmap_trans_decompress( x1+TICK_OFFSET_X+4, y1+TICK_OFFSET_Y+4, image_button.read("TICK") );
+						vga.active_buf->d3_panel_down( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1, 4, 0 );
+					}
+					else if( selectedFlagArray[r-1] == 0 )
+						vga.active_buf->d3_panel_up( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1 );
+					else
+					{
+						vga.active_buf->d3_panel_up( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1 );
+						font_cara.center_put( x1+TICK_OFFSET_X, y1+TICK_OFFSET_Y, x1+TICK_OFFSET_X+tickWidth-1, y1+TICK_OFFSET_Y+tickHeight-1, "X" );
+					}
+
+					if( selectedRecno == r )
+					{
+						vga.active_buf->rect( x1, y1, x2, y2, 1, VGA_DARK_BLUE );
+					}
+				}
+			}
+
+			// ------ display unit information -------//
+			vga.active_buf->d3_panel_down( UNIT_INFO_X1, UNIT_INFO_Y1, UNIT_INFO_X2, UNIT_INFO_Y2 );
+
+			if( selectedRecno == 0 && king
+				|| selectedRecno > 0 && selectedRecno <= royalCount )
+			{
+				CampaignMember *unit;
+				if( selectedRecno == 0 )
+					unit = king;
+				else
+					unit = royalList + selectedRecno - 1;
+
+				font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+6, unit_res[unit->unit_id]->name );
+				font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+22, unit->unit_name(CAMPAIGN_PLAYER_NATION_RECNO) );
+				int x2 = font_cara.put( UNIT_INFO_X1+6, UNIT_INFO_Y1+38, unit->item.item_name() );
+				if( unit->item.id )
+				{
+					x2 = font_cara.put( x2+8, UNIT_INFO_Y1+38, "(" );
+					x2 = font_cara.put( x2+2, UNIT_INFO_Y1+38, unit->item.item_desc() );
+					x2 = font_cara.put( x2+2, UNIT_INFO_Y1+38, ")" );
+				}
+
+				font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+6, text_unit.str_combat_level() ); // "Combat Level" );
+				font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+6, unit->combat_level() );
+
+				if( unit->skill_level() > 0 )
+				{
+					font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+22, text_unit.str_leadership() ); //"Leadership" );
+					font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+22, unit->skill_level() );
+				}
+				if( unit->is_spy )
+				{
+					font_cara.put( UNIT_INFO_X1+300, UNIT_INFO_Y1+38, text_unit.str_spy_skill() ); // "Spying" );
+					font_cara.put( UNIT_INFO_X1+450, UNIT_INFO_Y1+38, unit->spy_skill );
+				}
+			}
+
+			if( needSelectFryhtan )
+			{
+				font_thin_black.center_put_paragraph( BUTTON3_X1+1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2,
+					this_battle_use_fryhtan ? text_campaign.str_fryhtan_force() : text_campaign.str_human_force() );
+				// fryhtanForceStr : humanForceStr );
+			}
+
+                        vga.flip();
 
 			// ------ detect ---------//
 
@@ -778,7 +751,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 					text_campaign.str_ask_fryhtan(),
 					text_campaign.str_human_force(),
 					text_campaign.str_fryhtan_force() );	// use ! to reverse the order
-				refreshFlag |= DROPTION_FRYHTAN_FORCE;
 
 				if( askFryhtanForceFirst )
 				{
@@ -816,8 +788,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 				{
 					if( ++selectedFlagArray[r-1] > 1)
 						selectedFlagArray[r-1] = 0;
-
-					refreshFlag |= DROPTION_UNITS | DROPTION_UNIT_INFO;
 				}
 
 				// click at item area
@@ -842,8 +812,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 					{
 						mouse_cursor.set_icon(CURSOR_NORMAL);
 					}
-
-					refreshFlag |= DROPTION_UNITS | DROPTION_UNIT_INFO;
 				}
 				// right click at item area
 				else if( unit->item.id && mouse.any_click(x1+ITEM_OFFSET_X, y1+ITEM_OFFSET_X,
@@ -852,14 +820,12 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 					// delete item
 
 					unit->item.clear();
-					refreshFlag |= DROPTION_UNITS | DROPTION_UNIT_INFO;
 				}
 
 				// click at the unit icon
 				if( mouse.any_click(x1, y1, x2, y2) )
 				{
 					selectedRecno = r;
-					refreshFlag |= DROPTION_UNITS | DROPTION_UNIT_INFO;
 				}
 			}
 
@@ -883,8 +849,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 
 				freeSlot.clear();
 				mouse_cursor.set_icon( CURSOR_NORMAL);
-
-				refreshFlag |= DROPTION_ALL & ~DROPTION_PAGE;
 			}
 
 			// detect random select
@@ -908,7 +872,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 						selectedFlagArray[i-1] = 0;
 					}
 				}
-				refreshFlag |= DROPTION_UNITS;
 			}
 
 			// detect deselect all
@@ -919,7 +882,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 				{
 					selectedFlagArray[i-1] = 0;
 				}
-				refreshFlag |= DROPTION_UNITS;
 			}
 
 			// detect delete
@@ -933,7 +895,6 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 				--royalCount;
 				if( selectedRecno > royalCount )
 					selectedRecno = royalCount;
-				refreshFlag |= DROPTION_UNITS | DROPTION_UNIT_INFO;
 			}
 
 			// detect finish

@@ -36,7 +36,6 @@ class OptionMenu
 {
 public:
 	int	active_flag;
-	int	refresh_flag;
 	int	update_flag;
 
 	Config	old_config;

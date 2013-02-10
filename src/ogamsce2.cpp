@@ -108,21 +108,6 @@ enum { TITLE_TEXT_X1 = 136,
 };
 
 
-#define TUOPTION_BROWSE(s)     (1 << (s))
-#define TUOPTION_ALL_BROWSE    0x0000ffff
-#define TUOPTION_PAGE          0x40000000
-#define TUOPTION_TEXT_AREA     0x00020000
-#define TUOPTION_PIC_AREA      0x00040000
-#define TUOPTION_SCROLL        0x00080000
-#define TUOPTION_TEXT_SCROLL   0x00100000
-#define TUOPTION_TEXT_BUFFER   0x00200000
-// ##### begin Gilbert 2/7 ########//
-#define TUOPTION_SCEN_DETAIL   0x00ff0000
-#define TUOPTION_NAME_FIELD    0x10000000
-#define TUOPTION_ENUMERATE     0x20000000
-// ##### end Gilbert 2/7 ########//
-#define TUOPTION_ALL           0xffffffff
-
 //---------- Begin of function Game::select_scenario ----------//
 //
 // Select a scenario. 
@@ -239,7 +224,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 	//--------------------------------------//
 //	Button3D scrollUp, scrollDown, startButton, cancelButton;
 	int retFlag = 0;
-	int refreshFlag = TUOPTION_ALL;
 
 //	char *arrowBitmap = image_button.read("TRI-R");
 	char *arrowBitmap = image_button.read("SCROLL-R");
@@ -298,7 +282,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 	while(1)
 	{
 		if (!game.process_messages()) return 0;
-		refreshFlag = TUOPTION_ALL;
 
 		VgaFrontReLock vgaReLock;
 
@@ -318,229 +301,201 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 		// --------- display ----------//
 
-		if( refreshFlag )
+		vga.disp_image_file("CHOOSE");
+
+		font_bold_black.right_put( playerNameField.x, playerNameField.y,
+			text_game_menu.str_kingdom_of() ); // "Kingdom of " );
+
+		// ----- display start, cancel button ------//
+
+		font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+			text_game_menu.str_start() ); // "Start" );
+		font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+			text_game_menu.str_cancel() ); // "Cancel" );
+
+		// ----- display level, bonus ---------//
+
+		font_bld.center_put( TITLE_TEXT_X2-100, TITLE_TEXT_Y1-25, TITLE_TEXT_X2-50, TITLE_TEXT_Y2-8, text_game_menu.str_level_in_score() );
+		font_bld.center_put( TITLE_TEXT_X2-50, TITLE_TEXT_Y1-25, TITLE_TEXT_X2, TITLE_TEXT_Y2-8, text_game_menu.str_bonus() );
+
+		for(j = 0; j < MAX_SCENARIO_PATH; ++j )
 		{
-			if( refreshFlag & TUOPTION_PAGE )
-			{
-				vga.disp_image_file("CHOOSE");
-
-				font_bold_black.right_put( playerNameField.x, playerNameField.y,
-					text_game_menu.str_kingdom_of() ); // "Kingdom of " );
-
-				// ----- display start, cancel button ------//
-
-				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-					text_game_menu.str_start() ); // "Start" );
-				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-					text_game_menu.str_cancel() ); // "Cancel" );
-
-				// ----- display level, bonus ---------//
-
-				font_bld.center_put( TITLE_TEXT_X2-100, TITLE_TEXT_Y1-25, TITLE_TEXT_X2-50, TITLE_TEXT_Y2-8, text_game_menu.str_level_in_score() );
-				font_bld.center_put( TITLE_TEXT_X2-50, TITLE_TEXT_Y1-25, TITLE_TEXT_X2, TITLE_TEXT_Y2-8, text_game_menu.str_bonus() );
-
-				for(j = 0; j < MAX_SCENARIO_PATH; ++j )
-				{
-					groupEnableButton[j].paint();
-				}
-
-				briefModeButton.set_body( text_game_menu.str_brief_mode(briefMode) );
-				briefModeButton.paint(briefMode);
-			}
-
-			if( refreshFlag & TUOPTION_ENUMERATE )
-			{
-				// now count number of scenario in each path
-				int selectedScenario = scenIndex[browseRecno-1];	// need to set the new browseRecno
-				browseRecno = 1;		// reset new browseRecno
-				currentScenCount = 0;
-				for( i = 0; i < scenCount; ++i )
-				{
-					j = scenInfoArray[i].dir_id;
-
-					// drop auto.scn and auto2.scn in dir 0
-					if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "auto.scn") == 0
-						|| strcasecmp( scenInfoArray[i].file_name, "auto2.scn") == 0) )
-						continue;
-
-					if( j >= 0 && j < MAX_SCENARIO_PATH )
-					{
-						if( groupEnableButton[j].is_pushed )
-						{
-							scenIndex[currentScenCount] = i;
-							currentScenCount++;
-
-							// update browseRecno
-							if( i == selectedScenario )
-								browseRecno = currentScenCount;		// set new browseRecno to the one before change
-						}
-					}
-				}
-				err_when( currentScenCount > scenCount );
-
-				// recalcuate maxPage
-
-				maxPage = (currentScenCount+itemPerPage[briefMode]-1) / itemPerPage[briefMode];
-				if( maxPage <= 1 )
-					maxPage = 1;			// at least one page				
-
-				// set page, depend of browseRecno
-				if( browseRecno > 0 )
-					page = (browseRecno-1) / itemPerPage[briefMode];
-				else
-					page = 0;
-			}
-
-			char* scenFileName;
-			char	pictName[20];
-			char	textName[20];
-			char* pathName;
-
-			scenFileName = scenInfoArray[scenIndex[browseRecno-1]].file_name;
-			m.change_file_ext( pictName, scenFileName, "scp" );
-			m.change_file_ext( textName, scenFileName, "sct" );
-			pathName = DIR_SCENARIO_PATH(scenInfoArray[scenIndex[browseRecno-1]].dir_id);
-			err_when( ! *pathName );
-
-			if( (refreshFlag & TUOPTION_PIC_AREA) && briefMode == 0 )
-			{
-				String str;
-
-				str = pathName;
-				str += pictName;
-
-				if( browseRecno && m.is_file_exist(str) )
-				{
-					jpeg.put_to_buf( &vga_buffer, PIC_AREA_X1, PIC_AREA_Y1, str );
-				}
-			}
-
-			if( refreshFlag & TUOPTION_TEXT_BUFFER )
-			{
-				// load text buffer
-				String str;
-
-				str = pathName;
-				str += textName;
-
-				if( browseRecno && m.is_file_exist(str) )
-				{
-					File textFile;
-					int dataSize;
-					textFile.file_open(str);
-					// ##### patch begin Gilbert 2/2 ####//
-					dataSize = textFile.file_size();
-
-					FileTxt fileTxt( &textFile, dataSize );  // initialize fileTxt with an existing file stream
-
-					fileTxt.next_line();		// skip the title lines
-					fileTxt.next_line();
-					fileTxt.next_line();
-					fileTxt.next_line();
-
-					textBuffer.clear();
-					fileTxt.read_paragraph(textBuffer.reserve(dataSize+8), dataSize);
-					// ##### end begin Gilbert 2/2 ####//
-
-			      int dispLines;    // no. of lines can be displayed on the area
-			      int totalLines;   // total no. of lines of the text
-
-					textFont.count_line( TEXT_AREA_X1, TEXT_AREA_Y1,
-						TEXT_AREA_X2, TEXT_AREA_Y2,
-						textBuffer.queue_buf, TEXT_LINE_SPACE, dispLines, totalLines );
-
-					// textScrollBar.view_size = dispLines;
-					textScrollBar.set(1, totalLines ,1);
-					refreshFlag |= TUOPTION_TEXT_SCROLL;
-				}
-				else
-				{
-					// clear the text buffer
-					textBuffer.clear();
-					*textBuffer.reserve(1) = '\0';
-					textScrollBar.set(1, 1 ,1);
-					refreshFlag |= TUOPTION_TEXT_SCROLL;
-				}
-			}
-
-			if( refreshFlag & TUOPTION_TEXT_AREA )
-			{
-				if( textBuffer.queue_buf[0] != '\0' )
-				{
-					textFont.put_paragraph(TEXT_AREA_X1, TEXT_AREA_Y1, TEXT_AREA_X2, TEXT_AREA_Y2,
-						textBuffer.queue_buf, TEXT_LINE_SPACE, textScrollBar.view_recno );		// 4 - space between lines
-				}
-			}
-
-			if( refreshFlag & TUOPTION_TEXT_SCROLL )
-			{
-				// display scroll bar
-				if( textScrollBar.max_recno > ESTIMATED_LINE_IN_TEXT_AREA )
-					textScrollBar.paint();
-			}
-
-			if( refreshFlag & TUOPTION_SCROLL )
-			{
-				// display scroll bar
-				// scrollBar.paint();
-			}
-
-			if( refreshFlag & TUOPTION_ALL_BROWSE )
-			{
-				int rec = page * itemPerPage[briefMode] + 1; // browseRecno;
-				int x1 = TITLE_TEXT_X1;
-				int y1 = TITLE_TEXT_Y1;
-				int x2 = TITLE_TEXT_X2;
-				int y2 = TITLE_TEXT_Y2;
-				int rowHeight = TITLE_TEXT_Y2 - TITLE_TEXT_Y1 + 9;
-
-				for( i = itemPerPage[briefMode]; i > 0; --i, ++rec, (y1+=rowHeight), (y2+=rowHeight) )
-				{
-					if( rec >= 1 && rec <= currentScenCount )
-					{
-						ScenInfo *scenInfo = &scenInfoArray[scenIndex[rec-1]];
-
-						//----- display the scenario name -----//
-
-						if( scenInfo->scen_name[0] )
-						{
-							(browseRecno==rec?font_bold_red:font_bold_black).center_put(
-								x1, y1, x2-50, y2, scenInfo->scen_name );
-
-							//---- display the scenario difficulty and bonus points ----//
-
-							textFont.center_put( x2-100, y1, x2-50, y2, m.format(scenInfo->goal_difficulty), 1 );
-							textFont.center_put( x2-50, y1, x2, y2, m.format(scenInfo->goal_score_bonus), 1 );
-						}
-						else		// description not found, display file name
-						{
-							(browseRecno==rec?font_bold_red:font_bold_black).center_put(
-								x1, y1, x2-50, y2,	scenInfo->file_name );
-						}
-					}
-				}
-			}
-
-			if( refreshFlag & TUOPTION_NAME_FIELD )
-				playerNameField.paint();
-
-			String str;
-			str = page+1; //browseRecno;
-			str += "/";
-			str += maxPage; // currentScenCount;
-			font_cara_w.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, str, 1 );
-
-			if( page > 0 )
-			{
-				vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
-			}
-
-			if( page < maxPage-1)
-				vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
-
-			refreshFlag = 0;
-                        vga.flip();
+			groupEnableButton[j].paint();
 		}
+
+		briefModeButton.set_body( text_game_menu.str_brief_mode(briefMode) );
+		briefModeButton.paint(briefMode);
+
+		// now count number of scenario in each path
+		int selectedScenario = scenIndex[browseRecno-1];	// need to set the new browseRecno
+		browseRecno = 1;		// reset new browseRecno
+		currentScenCount = 0;
+		for( i = 0; i < scenCount; ++i )
+		{
+			j = scenInfoArray[i].dir_id;
+
+			// drop auto.scn and auto2.scn in dir 0
+			if( j == 0 && (strcasecmp( scenInfoArray[i].file_name, "auto.scn") == 0
+				|| strcasecmp( scenInfoArray[i].file_name, "auto2.scn") == 0) )
+				continue;
+
+			if( j >= 0 && j < MAX_SCENARIO_PATH )
+			{
+				if( groupEnableButton[j].is_pushed )
+				{
+					scenIndex[currentScenCount] = i;
+					currentScenCount++;
+
+					// update browseRecno
+					if( i == selectedScenario )
+						browseRecno = currentScenCount;		// set new browseRecno to the one before change
+				}
+			}
+		}
+		err_when( currentScenCount > scenCount );
+
+		// recalcuate maxPage
+
+		maxPage = (currentScenCount+itemPerPage[briefMode]-1) / itemPerPage[briefMode];
+		if( maxPage <= 1 )
+			maxPage = 1;			// at least one page				
+
+		// set page, depend of browseRecno
+		if( browseRecno > 0 )
+			page = (browseRecno-1) / itemPerPage[briefMode];
+		else
+			page = 0;
+
+		char* scenFileName;
+		char	pictName[20];
+		char	textName[20];
+		char* pathName;
+
+		scenFileName = scenInfoArray[scenIndex[browseRecno-1]].file_name;
+		m.change_file_ext( pictName, scenFileName, "scp" );
+		m.change_file_ext( textName, scenFileName, "sct" );
+		pathName = DIR_SCENARIO_PATH(scenInfoArray[scenIndex[browseRecno-1]].dir_id);
+		err_when( ! *pathName );
+
+		if( briefMode == 0 )
+		{
+			String str;
+
+			str = pathName;
+			str += pictName;
+
+			if( browseRecno && m.is_file_exist(str) )
+			{
+				jpeg.put_to_buf( &vga_buffer, PIC_AREA_X1, PIC_AREA_Y1, str );
+			}
+		}
+
+		// load text buffer
+		String str;
+
+		str = pathName;
+		str += textName;
+
+		if( browseRecno && m.is_file_exist(str) )
+		{
+			File textFile;
+			int dataSize;
+			textFile.file_open(str);
+			// ##### patch begin Gilbert 2/2 ####//
+			dataSize = textFile.file_size();
+
+			FileTxt fileTxt( &textFile, dataSize );  // initialize fileTxt with an existing file stream
+
+			fileTxt.next_line();		// skip the title lines
+			fileTxt.next_line();
+			fileTxt.next_line();
+			fileTxt.next_line();
+
+			textBuffer.clear();
+			fileTxt.read_paragraph(textBuffer.reserve(dataSize+8), dataSize);
+			// ##### end begin Gilbert 2/2 ####//
+
+	      int dispLines;    // no. of lines can be displayed on the area
+	      int totalLines;   // total no. of lines of the text
+
+			textFont.count_line( TEXT_AREA_X1, TEXT_AREA_Y1,
+				TEXT_AREA_X2, TEXT_AREA_Y2,
+				textBuffer.queue_buf, TEXT_LINE_SPACE, dispLines, totalLines );
+
+			// textScrollBar.view_size = dispLines;
+			textScrollBar.set(1, totalLines ,1);
+		}
+		else
+		{
+			// clear the text buffer
+			textBuffer.clear();
+			*textBuffer.reserve(1) = '\0';
+			textScrollBar.set(1, 1 ,1);
+		}
+
+		if( textBuffer.queue_buf[0] != '\0' )
+		{
+			textFont.put_paragraph(TEXT_AREA_X1, TEXT_AREA_Y1, TEXT_AREA_X2, TEXT_AREA_Y2,
+				textBuffer.queue_buf, TEXT_LINE_SPACE, textScrollBar.view_recno );		// 4 - space between lines
+		}
+
+		// display scroll bar
+		if( textScrollBar.max_recno > ESTIMATED_LINE_IN_TEXT_AREA )
+			textScrollBar.paint();
+
+		// display scroll bar
+		// scrollBar.paint();
+
+		int rec = page * itemPerPage[briefMode] + 1; // browseRecno;
+		int x1 = TITLE_TEXT_X1;
+		int y1 = TITLE_TEXT_Y1;
+		int x2 = TITLE_TEXT_X2;
+		int y2 = TITLE_TEXT_Y2;
+		int rowHeight = TITLE_TEXT_Y2 - TITLE_TEXT_Y1 + 9;
+
+		for( i = itemPerPage[briefMode]; i > 0; --i, ++rec, (y1+=rowHeight), (y2+=rowHeight) )
+		{
+			if( rec >= 1 && rec <= currentScenCount )
+			{
+				ScenInfo *scenInfo = &scenInfoArray[scenIndex[rec-1]];
+
+				//----- display the scenario name -----//
+
+				if( scenInfo->scen_name[0] )
+				{
+					(browseRecno==rec?font_bold_red:font_bold_black).center_put(
+						x1, y1, x2-50, y2, scenInfo->scen_name );
+
+					//---- display the scenario difficulty and bonus points ----//
+
+					textFont.center_put( x2-100, y1, x2-50, y2, m.format(scenInfo->goal_difficulty), 1 );
+					textFont.center_put( x2-50, y1, x2, y2, m.format(scenInfo->goal_score_bonus), 1 );
+				}
+				else		// description not found, display file name
+				{
+					(browseRecno==rec?font_bold_red:font_bold_black).center_put(
+						x1, y1, x2-50, y2,	scenInfo->file_name );
+				}
+			}
+		}
+
+		playerNameField.paint();
+
+		String str;
+		str = page+1; //browseRecno;
+		str += "/";
+		str += maxPage; // currentScenCount;
+		font_cara_w.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, str, 1 );
+
+		if( page > 0 )
+		{
+			vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
+		}
+
+		if( page < maxPage-1)
+			vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
+
+                vga.flip();
 
 		if( mouse.any_click(LSCROLL_X1, LSCROLL_Y1, LSCROLL_X2, LSCROLL_Y2) )
 		{
@@ -549,7 +504,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 				--page;
 				if( itemPerPage[briefMode] == 1 )		// change browseRecno as well
 					browseRecno = page+1;
-				refreshFlag |= TUOPTION_ALL & ~TUOPTION_ENUMERATE;
 			}
 		}
 		else if( mouse.any_click(RSCROLL_X1, RSCROLL_Y1, RSCROLL_X2, RSCROLL_Y2) )
@@ -559,44 +513,37 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 				++page;
 				if( itemPerPage[briefMode] == 1 )		// change browseRecno as well
 					browseRecno = page+1;
-				refreshFlag |= TUOPTION_ALL & ~TUOPTION_ENUMERATE;
 			}
 		}
 		else if( textScrollBar.max_recno > ESTIMATED_LINE_IN_TEXT_AREA
 			&& textScrollBar.detect() == 1 )
 		{
-			refreshFlag |= TUOPTION_TEXT_SCROLL | TUOPTION_TEXT_AREA;
 		}
 		else if( textScrollUp.detect() )
 		{
 			// click on scroll up
 			int oldValue = textScrollBar.view_recno;
-			if( oldValue != textScrollBar.set_view_recno(oldValue-1) )
-				refreshFlag |= TUOPTION_TEXT_SCROLL | TUOPTION_TEXT_AREA;
+			textScrollBar.set_view_recno(oldValue-1);
 		}
 		else if( textScrollDown.detect() )
 		{
 			// click on scroll down
 			int oldValue = textScrollBar.view_recno;
-			if( oldValue != textScrollBar.set_view_recno(oldValue+1) )
-				refreshFlag |= TUOPTION_TEXT_SCROLL | TUOPTION_TEXT_AREA;
+			textScrollBar.set_view_recno(oldValue+1);
 		}
 		else if( playerNameField.detect() )
 		{
 			// load button
-			refreshFlag = TUOPTION_NAME_FIELD;
 		}
 		else if( mouse.single_click( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) )
 		{
 			// cancel button or escape key
-			refreshFlag = TUOPTION_ALL;
 			retFlag = 0;
 			break;		// break while(1)
 		}
 		else if( mouse.single_click( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 		{
 			// load button
-			refreshFlag = TUOPTION_ALL;
 			retFlag = scenIndex[browseRecno-1]+1;
 			break;
 		}
@@ -627,10 +574,7 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 				{
 					if( rec != browseRecno )
 					{
-						if( browseRecno-recBegin >= 0 && browseRecno-recBegin < itemPerPage[briefMode] )
-							refreshFlag |= TUOPTION_BROWSE(browseRecno-recBegin);
 						browseRecno = rec;
-						refreshFlag |= TUOPTION_SCEN_DETAIL | TUOPTION_BROWSE(browseRecno-recBegin);
 					}
 				}
 			}
@@ -667,8 +611,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 					}
 				}
 
-				// update currentScenCount and scenIndex
-				refreshFlag = TUOPTION_ALL;
 				break;		// j may be overwritten, must break now
 			}
 		}
@@ -676,7 +618,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 		if( briefModeButton.detect() )
 		{
 			briefMode = briefModeButton.is_pushed ? 1 : 0;
-			refreshFlag = TUOPTION_ALL;
 		}
 	}
 

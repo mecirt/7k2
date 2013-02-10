@@ -162,14 +162,6 @@ void GameFileArray::deinit()
 //-------- End of function GameFileArray::deinit ------//
 
 
-#define LSOPTION_SLOT(n) (1 << (n))
-#define LSOPTION_ALL_SLOTS       0x0000ffff
-#define LSOPTION_SCROLL          0x00010000
-#define LSOPTION_PAGE_NO         0x00020000
-#define LSOPTION_PAGE            0x40000000
-#define LSOPTION_ALL             0x7fffffff
-
-
 //-------- Begin of function GameFileArray::menu --------//
 //
 // <int> actionMode = -2 - save screen to back buffer
