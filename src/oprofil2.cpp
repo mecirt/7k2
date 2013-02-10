@@ -320,6 +320,7 @@ int PlayerProfile::register_menu()
 		if( menuMode == PROFILE_MENU_MAIN && profileCount == 0 )
 			menuMode = PROFILE_MENU_NEW; 
 
+		int columns = min( profileColumnCount, SCROLL_MAX_COLUMN );
 		switch( menuMode )
 		{
 		case PROFILE_MENU_MAIN:
@@ -333,7 +334,6 @@ int PlayerProfile::register_menu()
 			fontThin.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, text_game_menu.str_cancel() );		// cancel button
 
 			// scroll bar
-			int columns = min( profileColumnCount, SCROLL_MAX_COLUMN );
 			if( columns > 0 )
 			{
 				int columnWidth = (BROWSE_X2 - BROWSE_X1 + 1) / columns;	// column width
@@ -379,7 +379,6 @@ int PlayerProfile::register_menu()
 
 			getGroup.paint();
 			playerNameField.paint(0);
-			}
 			break;
 		case PROFILE_MENU_DEL:
 			vga.disp_image_file("CHOOSE");
@@ -402,7 +401,6 @@ int PlayerProfile::register_menu()
 			{		
 				// ------ detect player name list ------//
 
-				int columns = min( profileColumnCount, SCROLL_MAX_COLUMN );
 				if( columns > 0 )
 				{
 					int columnWidth = (BROWSE_X2 - BROWSE_X1 + 1) / columns;	// column width

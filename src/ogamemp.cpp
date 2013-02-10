@@ -1274,9 +1274,6 @@ int Game::mp_select_session()
 			return choice;
 		}
 
-		char *bitmapPtr = image_button.read("TRI-R");
-		int bitmapWidth = ((Bitmap *)bitmapPtr)->get_width();
-		int bitmapHeight = ((Bitmap *)bitmapPtr)->get_height();
 		if( page > 0 && mouse.any_click( 
 			(LSCROLL_X2 + LSCROLL_X1 - bitmapWidth) / 2,
 			(LSCROLL_Y2 + LSCROLL_Y1 - bitmapHeight) / 2,
@@ -5021,7 +5018,6 @@ int Game::mp_select_load_option(char *fileName)
 				vga.active_buf->d3_panel_down( 126, y1, 665, y2 );
 				int ny = y1 + 4;
 				int lineDisp = (y2-4 - ny + 1 ) / font_cara.max_font_height;
-				int p;
 				p = messageList.size() - lineDisp + 1;		// display 4 lines
 				if( p <= 0 )
 					p = 1;

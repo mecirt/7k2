@@ -481,7 +481,6 @@ int Game::select_scenario(int scenCount, ScenInfo* scenInfoArray)
 
 		playerNameField.paint();
 
-		String str;
 		str = page+1; //browseRecno;
 		str += "/";
 		str += maxPage; // currentScenCount;
