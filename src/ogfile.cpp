@@ -233,6 +233,7 @@ int GameFile::load_game(const char *path, const char* fileName)
 
    if( rc )
    {
+     puts("Reading GameFile");
 		if( !file.file_read(this, sizeof(GameFile)) )	// read the whole object from the saved game file
 		{
 			rc = 0;

@@ -67,7 +67,9 @@
 #include <orle.h>
 #include <oc_east.h>
 
-#define Dump(x)
+// #define Dump(x)
+void Dump(int x) { printf("%d\n", x); }
+void Dump(const char *x) { printf("%s", x); }
 
 //-------- Define constant ----------//
 
@@ -194,8 +196,10 @@ int GameFile::read_file(File* filePtr)
 
 	int originalRandomSeed = m.get_random_seed();
 
+  short ver = filePtr->file_get_short() / 100;
+  Dump(ver);
 	// compare major version
-	if( filePtr->file_get_short()/100 != (game_file_array.demo_format ? -(GAME_VERSION/100) : GAME_VERSION/100) )
+	if( ver != (game_file_array.demo_format ? -(GAME_VERSION/100) : GAME_VERSION/100) )
 		return -1;
 
 	//------------------------------------------------//
@@ -487,6 +491,7 @@ int GameFile::write_file_3(File* filePtr)
 //
 int GameFile::read_file_1(File* filePtr)
 {
+  Dump("starting 1\n");
 	if( !read_book_mark( BOOK_MARK+1 ) )
 		return 0;
 
@@ -599,6 +604,7 @@ int GameFile::read_file_1(File* filePtr)
 //
 int GameFile::read_file_2(File* filePtr)
 {
+  Dump("starting 2\n");
 	if( !read_book_mark( BOOK_MARK+101 ) )
 		return 0;
 

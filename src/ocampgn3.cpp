@@ -569,11 +569,7 @@ void Campaign::select_royal_menu(CampaignMember *king, CampaignMember *royalList
 		while(1)
 		{
 			if (!game.process_messages()) return;
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = DROPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
+			refreshFlag = DROPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 

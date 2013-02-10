@@ -38,7 +38,7 @@
 
 //---------- Define constant ---------//
 
-enum { INFO_REPAINT=10, INFO_UPDATE, INFO_SPECIAL };
+enum { INFO_REPAINT=10, INFO_UPDATE };
 
 #define INFO_DEFAULT_YEAR 1000
 #define INFO_DEFAULT_MONTH 1

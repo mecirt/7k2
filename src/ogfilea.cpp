@@ -201,9 +201,6 @@ int GameFileArray::menu(int actionMode, int *recno)
 		scrnX2 = scrnX1 + PAGE_WIDTH - 1;
 		scrnY2 = scrnY1 + PAGE_HEIGHT - 1;
 
-		if( actionMode != -2 )
-			sys.need_redraw_flag = 1;
-
 		return 1;
 	}
 

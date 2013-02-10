@@ -32,7 +32,7 @@ struct ResIndex
 {
    char name[9];
    long pointer;
-} __attribute__((packed));
+} __attribute__((packed)); // do not remove this or the game crashes at start
 
 //--------- Define class ResourceIdx ----------//
 

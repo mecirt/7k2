@@ -226,8 +226,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 	anim_line.inc_phase();		// originally in Sys::process()
 
-	need_redraw_flag = 0;
-
 #ifdef DEBUG
 	startTime = m.get_time() - startTime;
 //	{
@@ -485,10 +483,6 @@ int Sys::change_display_mode(int modeId)
 		vga_buffer.lock_buf();
 	if ((!tempVgaBufLocked) && (vga_buffer.buf_locked))
 		vga_buffer.unlock_buf();
-
-	// ##### begin Gilbert 30/10 #######//
-	need_redraw_flag = 1;
-	// ##### end Gilbert 30/10 #######//
 
 	return rc;
 }

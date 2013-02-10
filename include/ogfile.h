@@ -107,7 +107,7 @@ private:
 
    void  write_book_mark(short bookMark);
    int   read_book_mark(short bookMark);
-} __attribute__((packed)) ;
+};
 
 //------- Define class GameFileArray --------//
 

@@ -158,7 +158,6 @@ int Tutor::select_learning_campaign_menu()
 	int w, h;
 	int cx, cy;
 	String str;
-	long refreshFlag = SGOPTION_ALL;
 	int retFlag = 0;
 
 	// -------- generate palette ------//
@@ -249,12 +248,6 @@ int Tutor::select_learning_campaign_menu()
 		{
 			if (!game.process_messages()) return 0;
 
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SGOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
-
 			VgaFrontReLock vgaReLock;
 
 			sys.yield();
@@ -270,89 +263,81 @@ int Tutor::select_learning_campaign_menu()
 
 			// -------- display ----------//
 
-			if( refreshFlag )
+			if( optionMode == OPTION_SPECIES )
 			{
-				if( optionMode == OPTION_SPECIES )
+				vga.disp_image_file("CHOOSE");
+
+				font_bold_black.put( 230, 406, text_game_menu.str_building_set() );
+
+				int tutorId = campaign_id_array[browseRecno-1] * 2 + specy_array[browseRecno-1] + 1;
+				if( browseRecno && image_tutorial.get_index(this->operator[](tutorId)->code) )
 				{
-					if( refreshFlag & SGOPTION_PAGE )
+					char *bitmapPtr = image_tutorial.read(this->operator[](tutorId)->code);
+
+					vga.active_buf->put_bitmap((VGA_WIDTH-((Bitmap *)bitmapPtr)->get_width())>>1,
+						SCROLL_SHEET_Y1 +10, bitmapPtr);
+					font_bold_black.center_put(0, SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
+						VGA_WIDTH, SCROLL_SHEET_Y1 +40 +((Bitmap *)bitmapPtr)->get_height(), this->operator[](tutorId)->des);
+
+				//	if (!(tutorial_finish_count[specy_array[browseRecno-1]] >= campaign_id_array[browseRecno-1] ||
+				//			(campaign_id_array[browseRecno-1]%2) == 0))
+					if (!((tutorial_finish_count+1) >= ((browseRecno-1)>>1)))
+						vga.active_buf->bar_alpha( (VGA_WIDTH-((Bitmap *)bitmapPtr)->get_width())>>1,
+															SCROLL_SHEET_Y1 +10,
+															(VGA_WIDTH+((Bitmap *)bitmapPtr)->get_width())>>1,
+															SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
+															1, V_BLACK );
+
+					int   dataSize;
+					char	*text_buf = NULL;
+					int	text_buf_size = 0;
+					File* filePtr = res_tutor_text.get_file( tutor[tutorId]->des_text, dataSize);
+					if( !filePtr )       // if error getting the tutor resource
+						err_here();
+
+					//------ Open the file and allocate buffer -----//
+					FileTxt fileTxt( filePtr, dataSize );  // initialize fileTxt with an existing file stream
+					if( dataSize > text_buf_size )
 					{
-						vga.disp_image_file("CHOOSE");
-
-						font_bold_black.put( 230, 406, text_game_menu.str_building_set() );
-
-						int tutorId = campaign_id_array[browseRecno-1] * 2 + specy_array[browseRecno-1] + 1;
-						if( browseRecno && image_tutorial.get_index(this->operator[](tutorId)->code) )
-						{
-							char *bitmapPtr = image_tutorial.read(this->operator[](tutorId)->code);
-
-							vga.active_buf->put_bitmap((VGA_WIDTH-((Bitmap *)bitmapPtr)->get_width())>>1,
-								SCROLL_SHEET_Y1 +10, bitmapPtr);
-							font_bold_black.center_put(0, SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
-								VGA_WIDTH, SCROLL_SHEET_Y1 +40 +((Bitmap *)bitmapPtr)->get_height(), this->operator[](tutorId)->des);
-
-						//	if (!(tutorial_finish_count[specy_array[browseRecno-1]] >= campaign_id_array[browseRecno-1] ||
-						//			(campaign_id_array[browseRecno-1]%2) == 0))
-							if (!((tutorial_finish_count+1) >= ((browseRecno-1)>>1)))
-								vga.active_buf->bar_alpha( (VGA_WIDTH-((Bitmap *)bitmapPtr)->get_width())>>1,
-																	SCROLL_SHEET_Y1 +10,
-																	(VGA_WIDTH+((Bitmap *)bitmapPtr)->get_width())>>1,
-																	SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
-																	1, V_BLACK );
-
-							int   dataSize;
-							char	*text_buf = NULL;
-							int	text_buf_size = 0;
-							File* filePtr = res_tutor_text.get_file( tutor[tutorId]->des_text, dataSize);
-							if( !filePtr )       // if error getting the tutor resource
-								err_here();
-
-							//------ Open the file and allocate buffer -----//
-							FileTxt fileTxt( filePtr, dataSize );  // initialize fileTxt with an existing file stream
-							if( dataSize > text_buf_size )
-							{
-								text_buf      = mem_resize( text_buf, dataSize );       // allocate a buffer larger than we need for the largest size possible
-								text_buf_size = dataSize;
-							}
-							char	*textPtr = text_buf;
-							fileTxt.read_paragraph(textPtr, text_buf_size);
-							font_cara_w.center_put_paragraph( SCROLL_SHEET_X1+30, SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
-								SCROLL_SHEET_X2-30, SCROLL_SHEET_Y2, textPtr, 2, 0, 0 );
-
-							if( text_buf )
-							{
-								mem_del(text_buf);
-								text_buf = NULL;
-							}
-						}
-							
-						str = text_game_menu.str_training();
-						font_cara_w.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, str );
-						str = browseRecno;
-						str += "/";
-						str += maxTutorialRecno;
-						font_cara_w.center_put( pageNoX1, pageNoY1+15, pageNoX2, pageNoY2+15, str );
-
-						if( browseRecno > minTutorialRecno )
-							vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
-
-						if( browseRecno < maxTutorialRecno )
-							vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
+						text_buf      = mem_resize( text_buf, dataSize );       // allocate a buffer larger than we need for the largest size possible
+						text_buf_size = dataSize;
 					}
+					char	*textPtr = text_buf;
+					fileTxt.read_paragraph(textPtr, text_buf_size);
+					font_cara_w.center_put_paragraph( SCROLL_SHEET_X1+30, SCROLL_SHEET_Y1 +10 +((Bitmap *)bitmapPtr)->get_height(),
+						SCROLL_SHEET_X2-30, SCROLL_SHEET_Y2, textPtr, 2, 0, 0 );
 
-					if( refreshFlag & SGOPTION_BUILDING_SIZE )
-						buildingSizeGroup.paint(building_size-1);
+					if( text_buf )
+					{
+						mem_del(text_buf);
+						text_buf = NULL;
+					}
 				}
+					
+				str = text_game_menu.str_training();
+				font_cara_w.center_put( pageNoX1, pageNoY1, pageNoX2, pageNoY2, str );
+				str = browseRecno;
+				str += "/";
+				str += maxTutorialRecno;
+				font_cara_w.center_put( pageNoX1, pageNoY1+15, pageNoX2, pageNoY2+15, str );
 
-				refreshFlag = 0;
-                                vga.flip();
+				if( browseRecno > minTutorialRecno )
+					vga.active_buf->put_bitmap_trans_decompress( pageUpX1, pageUpY1, arrowBitmap2 );
+
+				if( browseRecno < maxTutorialRecno )
+					vga.active_buf->put_bitmap_trans_decompress( pageDownX1, pageDownY1, arrowBitmap );
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				buildingSizeGroup.paint(building_size-1);
 			}
+
+                        vga.flip();
 
 			if( config.music_flag )
 			{
@@ -371,8 +356,6 @@ int Tutor::select_learning_campaign_menu()
 				if (keyCode == 't')
 				{
 					tutorial_finish_count = 99;
-					refreshFlag |= SGOPTION_PAGE;
-					refreshFlag |= SGOPTION_BUILDING_SIZE;
 				}
          }	
          
@@ -387,15 +370,11 @@ int Tutor::select_learning_campaign_menu()
 				{
 					// previous
 					--browseRecno;
-					refreshFlag |= SGOPTION_PAGE;
-					refreshFlag |= SGOPTION_BUILDING_SIZE;
 				}
 				else if( browseRecno < maxTutorialRecno && mouse.any_click(TRSCROLL_X1, TRSCROLL_Y1, TRSCROLL_X2, TRSCROLL_Y2) )
 				{
 					// next
 					++browseRecno;
-					refreshFlag |= SGOPTION_PAGE;
-					refreshFlag |= SGOPTION_BUILDING_SIZE;
 				}
 			}
 

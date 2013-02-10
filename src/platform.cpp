@@ -623,10 +623,7 @@ int ProcessNextEvent()
     if (event.active.state & SDL_APPACTIVE) {
       sys.active_flag = event.active.gain;
       if( sys.active_flag )
-      {
         sys.unpause();
-        sys.need_redraw_flag = 1;
-      }
       else
         sys.pause();
     }

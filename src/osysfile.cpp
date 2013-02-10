@@ -69,7 +69,6 @@ void Sys::load_game()
 
    if( rc )    // if rc==0, leave signal_exit_flag 1, which the game will then quit
    {
-      need_redraw_flag = 1;
       disp_frame();
       // disp_view_mode();
 //    box.msg( "Game Loaded Successfully" );

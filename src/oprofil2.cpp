@@ -280,11 +280,7 @@ int PlayerProfile::register_menu()
 	while(1)
 	{
 		if (!game.process_messages()) return 0;
-		if( sys.need_redraw_flag || 1)
-		{
-			refreshFlag = PPOPTION_ALL;
-			sys.need_redraw_flag = 0;
-		}
+		refreshFlag = PPOPTION_ALL;
 
 		VgaFrontReLock vgaReLock;
 

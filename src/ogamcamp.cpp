@@ -326,7 +326,6 @@ int Game::select_campaign_menu()
 	int w, h;
 	int cx, cy;
 	String str;
-	long refreshFlag = SGOPTION_ALL;
 	int retFlag = 0;
 
 	// -------- generate palette ------//
@@ -523,12 +522,6 @@ int Game::select_campaign_menu()
 		{
 			if (!game.process_messages()) return 0;
 
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SGOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
-
 			VgaFrontReLock vgaReLock;
 
 			sys.yield();
@@ -545,138 +538,116 @@ int Game::select_campaign_menu()
 
 			// -------- display ----------//
 
-			if( refreshFlag )
+			if( optionMode == OPTION_CAMPAIGN )
 			{
-				if( optionMode == OPTION_CAMPAIGN )
+				vga.disp_image_file("CHOOSE");
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
 				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
 
-						// ------- display option Mode ------//
-
-						for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-
-					if( refreshFlag & SGOPTION_CAMPAIGN )
-						campaignGroup.paint();
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
 				}
 
-				// ------- display basic option ---------//
+				// ----- display start, cancel button ------//
 
-				if( optionMode == OPTION_BASIC )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-						// BUGHERE : option menu column and finger
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
 
-						font_bold_black.right_put( playerNameField.x, playerNameField.y,
-							text_game_menu.str_king_name() );
-						font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_nationality() );
-						font_bold_black.center_put( 382, 129, 600, 149, text_game_menu.str_color() );
-						font_bold_black.center_put( 341, 305, 654, 324, text_game_menu.str_difficulty_level() );
-						font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set() );
-						
-						// ------- display option Mode ------//
-
-						for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-
-					if( refreshFlag & SGOPTION_RACE )
-						raceGroup.paint( tempConfig.race_id-1 );
-					if( refreshFlag & SGOPTION_COLOR )
-					{
-						// ------ put color box ------ //
-						char *bitmapPtr = image_button.read("F-COLOR");
-						vga.active_buf->put_bitmap_trans_remap_decompress(
-							colorButtonFrameX, colorButtonFrameY, bitmapPtr,
-							game.color_remap_array[tempConfig.player_nation_color].color_table );
-						colorGroup.paint(tempConfig.player_nation_color-1);
-					}
-					if( refreshFlag & SGOPTION_DIFFICULTY )
-						campDiffGroup.paint(tempConfig.campaign_difficulty-1);
-					if( refreshFlag & SGOPTION_BUILDING_SIZE )
-						buildingSizeGroup.paint(tempConfig.building_size-1);
-					if( refreshFlag & SGOPTION_NAME_FIELD )
-						playerNameField.paint();
-				}
-
-				// ------- display advanced option ---------//
-				if( optionMode == OPTION_ADVANCED )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-
-						font_bold_black.put_paragraph( 126, 173, option3X-10, 213-1,
-							text_game_menu.str_fog_of_war() );
-
-						font_bold_black.put_paragraph( 126, 314, option3X-10, 364-1,
-							text_game_menu.str_random_events() );
-
-						// ------- display option Mode ------//
-
-						for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i,
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-					if( refreshFlag & SGOPTION_FOG )
-						fogGroup.paint(tempConfig.fog_of_war);
-
-//					if( refreshFlag & SGOPTION_SPY_METHOD )
-//						spyMethodGroup.paint(tempConfig.spy_methodology);
-
-					if( refreshFlag & SGOPTION_RANDOM_EVENT )
-						randomEventGroup.paint(tempConfig.random_event_frequency);
-				}
-
-				refreshFlag = 0;
-                                vga.flip();
+				campaignGroup.paint();
 			}
+
+			// ------- display basic option ---------//
+
+			if( optionMode == OPTION_BASIC )
+			{
+				vga.disp_image_file("CHOOSE");
+				// BUGHERE : option menu column and finger
+
+				font_bold_black.right_put( playerNameField.x, playerNameField.y,
+					text_game_menu.str_king_name() );
+				font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_nationality() );
+				font_bold_black.center_put( 382, 129, 600, 149, text_game_menu.str_color() );
+				font_bold_black.center_put( 341, 305, 654, 324, text_game_menu.str_difficulty_level() );
+				font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set() );
+				
+				// ------- display option Mode ------//
+
+				for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				raceGroup.paint( tempConfig.race_id-1 );
+				// ------ put color box ------ //
+				char *bitmapPtr = image_button.read("F-COLOR");
+				vga.active_buf->put_bitmap_trans_remap_decompress(
+					colorButtonFrameX, colorButtonFrameY, bitmapPtr,
+					game.color_remap_array[tempConfig.player_nation_color].color_table );
+				colorGroup.paint(tempConfig.player_nation_color-1);
+
+				campDiffGroup.paint(tempConfig.campaign_difficulty-1);
+				buildingSizeGroup.paint(tempConfig.building_size-1);
+				playerNameField.paint();
+			}
+
+			// ------- display advanced option ---------//
+			if( optionMode == OPTION_ADVANCED )
+			{
+				vga.disp_image_file("CHOOSE");
+
+				font_bold_black.put_paragraph( 126, 173, option3X-10, 213-1,
+					text_game_menu.str_fog_of_war() );
+
+				font_bold_black.put_paragraph( 126, 314, option3X-10, 364-1,
+					text_game_menu.str_random_events() );
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_CAMPAIGN; i <= OPTION_ADVANCED; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i,
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				fogGroup.paint(tempConfig.fog_of_war);
+
+//				spyMethodGroup.paint(tempConfig.spy_methodology);
+
+				randomEventGroup.paint(tempConfig.random_event_frequency);
+			}
+
+                        vga.flip();
 
 			if( config.music_flag )
 			{
@@ -694,7 +665,6 @@ int Game::select_campaign_menu()
 					|| campaignGroup[campaignGroup()].detect(0,0,0,1) )	// detect pushed button, but suspend pop
 				{
 					optionMode = OPTION_BASIC;		// auto change to basic mode
-					refreshFlag = SGOPTION_ALL;
 				}
 			}
 
@@ -703,26 +673,21 @@ int Game::select_campaign_menu()
 				if( raceGroup.detect() >= 0)
 				{
 					tempConfig.race_id = raceGroup[raceGroup()].custom_para.value;
-					//refreshFlag |= SGOPTION_RACE;
 				}
 				else if( colorGroup.detect() >= 0)
 				{
 					tempConfig.player_nation_color = colorGroup[colorGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_COLOR;
 				}
 				else if( campDiffGroup.detect() >= 0)
 				{
 					tempConfig.campaign_difficulty = campDiffGroup[campDiffGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( buildingSizeGroup.detect() >= 0)
 				{
 					tempConfig.building_size = buildingSizeGroup[buildingSizeGroup()].custom_para.value;
-					//refreshFlag |= SGOPTION_BUILDING_SIZE;
 				}
 				else if( playerNameField.detect() )
 				{
-					refreshFlag |= SGOPTION_NAME_FIELD;
 				}
 			}
 
@@ -731,19 +696,16 @@ int Game::select_campaign_menu()
 				if( fogGroup.detect() >= 0 )
 				{
 					tempConfig.fog_of_war = fogGroup[fogGroup()].custom_para.value;
-					// refreshFlag |= SGOPTION_FOG;
 				}
 /*
 				else if( spyMethodGroup.detect() >= 0 )
 				{
 					tempConfig.spy_methodology = spyMethodGroup[spyMethodGroup()].custom_para.value;
-					// refreshFlag |= SGOPTION_SPY_METHOD;
 				}
 */
 				else if( randomEventGroup.detect() >= 0)
 				{
 					tempConfig.random_event_frequency = randomEventGroup[randomEventGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_RANDOM_EVENT;
 				}
 			}
 
@@ -755,7 +717,6 @@ int Game::select_campaign_menu()
 					OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i) )
 				{
 					optionMode = i;
-					refreshFlag = SGOPTION_ALL;
 				}
 			}
 

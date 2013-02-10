@@ -186,13 +186,8 @@ void Game::disp_gen_game_status(int addStep)
 
 	// ------- draw status background ------ //
 
-	if( addStep == 0 || sys.need_redraw_flag || 1 )
-	{
-		if (game.is_campaign_mode())
-			image_menu.put_front(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, "NEWWORLD");
-		sys.need_redraw_flag = 0;
-	}
-
+	if (game.is_campaign_mode())
+		image_menu.put_front(POPUP_WINDOW_X1, POPUP_WINDOW_Y1, "NEWWORLD");
 
 	//---- if addStep == 0, start the game generation process ----//
 
@@ -334,10 +329,9 @@ void Game::main_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag || m.get_time() - lastRedrawTime > 50 )
+			if( m.get_time() - lastRedrawTime > 50 )
 			{
 				refreshFlag = MMOPTION_ALL;
-				sys.need_redraw_flag = 0;
 				lastRedrawTime = m.get_time();	// redraw every 8 sec. Such that if background erased at the beginning, redraw
 			}
 
@@ -570,11 +564,7 @@ void Game::single_player_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SPOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
+			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
@@ -714,11 +704,7 @@ void Game::scenario_editor_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SPOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
+			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
@@ -903,11 +889,7 @@ void Game::multi_player_menu(char *cmdLine)
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SPOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
+			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 

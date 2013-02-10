@@ -144,7 +144,6 @@ static int select_option2()
 	int w, h;
 	int cx, cy;
 	String str;
-	long refreshFlag = SGOPTION_ALL;
 	int retFlag = 0;
 
 	// -------- generate palette ------//
@@ -606,11 +605,6 @@ static int select_option2()
 		while(1)
 		{
 			if (!game.process_messages()) return 0;
-			if( sys.need_redraw_flag || 1)
-			{
-				refreshFlag = SGOPTION_ALL;
-				sys.need_redraw_flag = 0;
-			}
 
 			VgaFrontReLock vgaReLock;
 
@@ -626,372 +620,312 @@ static int select_option2()
 
 
 			// -------- display ----------//
-			if( refreshFlag )
+			if( optionMode == OPTION_SPECIES )
 			{
-				if( optionMode == OPTION_SPECIES )
+				vga.disp_image_file("CHOOSE");
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
 				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
 
-						// ------- display option Mode ------//
-
-						for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display picture -------//
-
-						const int pictureWidth = 209; // 298;
-						const int pictureHeight = 210; // 300;
-						const int pictureXoffset = 35;
-						const int pictureYoffset = 20;
-
-						image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2-pictureWidth-pictureXoffset, 
-							SCROLL_SHEET_Y2-300+pictureYoffset, "HUMANS" );
-						image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+pictureXoffset, 
-							SCROLL_SHEET_Y2-300+pictureYoffset, "FRYHTANS" );
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-
-					}
-					if( refreshFlag & SGOPTION_RACE )
-						speciesGroup.paint( tempConfig.race_id < 0 );
-
-					// other ...
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
 				}
 
-				// ------- display basic option ---------//
-				if( optionMode == OPTION_BASIC )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-						// BUGHERE : option menu column and finger
+				// ----- display picture -------//
 
-						font_bold_black.right_put( playerNameField.x, playerNameField.y,
-							text_game_menu.str_kingdom_of()); // "Kingdom of " );
+				const int pictureWidth = 209; // 298;
+				const int pictureHeight = 210; // 300;
+				const int pictureXoffset = 35;
+				const int pictureYoffset = 20;
 
-						if( tempConfig.race_id > 0 )
-							font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_nationality()); // "Nationality");
-						else
-							font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_species()); // "Fryhtan Species");
-						font_bold_black.center_put( 382, 129, 600, 149, text_game_menu.str_color()); // "Color" );
-						font_bold_black.center_put( 297, 225-20, 698, 243-20, text_game_menu.str_ai_nation_count()); // "Computer Controlled Kingdoms" );
-						font_bold_black.put( aiHumanNationGroup[MAX_NATION-1].x2+10, aiHumanNationGroup[MAX_NATION-1].y1,
-							text_game_menu.str_human() ); // "Human" );
-						font_bold_black.put( aiMonsterNationGroup[MAX_NATION-1].x2+10, aiMonsterNationGroup[MAX_NATION-1].y1,
-							text_game_menu.str_fryhtan() ); //"Fryhtan" );
-						font_bold_black.center_put( 341, 305-30, 654, 324-30, text_game_menu.str_difficulty_level()); // "Difficulty Level" );
-						font_bold_black.center_put( 370, 380-60, 633, 393-60, text_game_menu.str_terrain_set()); // "Terrain Type" );
-						font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set()); // "Building Size" );
+				image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2-pictureWidth-pictureXoffset, 
+					SCROLL_SHEET_Y2-300+pictureYoffset, "HUMANS" );
+				image_interface.put_back( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+pictureXoffset, 
+					SCROLL_SHEET_Y2-300+pictureYoffset, "FRYHTANS" );
 
-						// ------- display option Mode ------//
+				// ----- display start, cancel button ------//
 
-						for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
 
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-
-					if( refreshFlag & SGOPTION_RACE )
-					{
-						if( tempConfig.race_id >= 0 )
-							raceGroup.paint( tempConfig.race_id-1 );
-						else
-						{
-							monsterRaceGroup.paint( -tempConfig.race_id-1 );
-							if (tempConfig.race_id < 0)
-							{
-								char str[10] = "P-X";
-								str[2] = '0' - tempConfig.race_id;
-								char* bitmapPtr = image_interface.get_ptr(str);
-								// all p-x must be the same size
-								// center to 220,370
-								const int picWidth = 198;
-								const int picHeight = 121;
-								const int picX = 220-picWidth/2;
-								const int picY = 370-picHeight/2;
-								vga.active_buf->put_bitmap_trans( picX, picY, bitmapPtr );
-							}
-							else
-							{
-								// actually, need to clean background here
-							}
-						}
-					}
-					if( refreshFlag & SGOPTION_COLOR )
-					{
-						// ------ put color box ------ //
-						char *bitmapPtr = image_button.read("F-COLOR");
-						vga.active_buf->put_bitmap_trans_remap_decompress(
-							colorButtonFrameX, colorButtonFrameY, bitmapPtr,
-							game.color_remap_array[tempConfig.player_nation_color].color_table );
-						colorGroup.paint(tempConfig.player_nation_color-1);
-					}
-					if( refreshFlag & SGOPTION_AI_NATION )
-					{
-						aiHumanNationGroup.paint(tempConfig.ai_human_nation_count);
-						aiMonsterNationGroup.paint(tempConfig.ai_monster_nation_count);
-					}
-					if( refreshFlag & SGOPTION_DIFFICULTY )
-					{
-						if( tempConfig.difficulty_level != OPTION_CUSTOM )
-							diffGroup.paint(tempConfig.difficulty_level);
-						else
-							diffGroup.paint(diffGroup.button_num-1);	// last button
-					}
-					if( refreshFlag & SGOPTION_TERRAIN )
-						terrainGroup.paint(tempConfig.terrain_set-1);
-					if( refreshFlag & SGOPTION_BUILDING_SIZE )
-						buildingSizeGroup.paint(tempConfig.building_size-1);
-					if( refreshFlag & SGOPTION_NAME_FIELD )
-						playerNameField.paint();
-				}
-
-				// ------- display advanced option ---------//
-				if( optionMode == OPTION_ADVANCED )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-
-						font_bold_black.put_paragraph( 126, 99, option3X-10, 143-1,
-							text_game_menu.str_world_map()); // "World Map" );
-						font_bold_black.put_paragraph( 126, 143, option3X-10, 183-1,
-							text_game_menu.str_fog_of_war()); // "Fog of War" );
-						font_bold_black.put_paragraph( 126, 183, option3X-10, 235-1,
-						//	"Human Player's Treasure" );
-							text_game_menu.str_your_treasure()); // "Your Treasure" );
-						font_bold_black.put_paragraph( 126, 235, option3X-10, 289-1,
-							text_game_menu.str_ai_treasure()); // "Computer's Treasure" );
-						font_bold_black.put_paragraph( 126, 289, option3X-10, 339-1,
-							text_game_menu.str_ai_aggressiveness()); // "Computer's Aggressiveness" );
-						font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
-							text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
-						font_bold_black.put_paragraph( 126, 389, option3X-10, 449-1,
-							text_game_menu.str_random_kingdom()); // "Random Kingdoms" );
-
-						// ------- display option Mode ------//
-
-						for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-					if( refreshFlag & SGOPTION_EXPLORED )
-						exploreGroup.paint(tempConfig.explore_whole_map);
-					if( refreshFlag & SGOPTION_FOG )
-						fogGroup.paint(tempConfig.fog_of_war);
-					if( refreshFlag & SGOPTION_TREASURE )
-						treasureGroup.paint( tempConfig.start_up_cash-1 );
-					if( refreshFlag & SGOPTION_AI_TREASURE )
-						aiTreasureGroup.paint( tempConfig.ai_start_up_cash-1 );
-					// ####### begin Gilbert 10/2 ########//
-					if( refreshFlag & SGOPTION_AI_AGGRESSIVE )
-						aiAggressiveGroup.paint(tempConfig.ai_aggressiveness);
-					// ####### end Gilbert 10/2 ########//
-					if( refreshFlag & SGOPTION_SPY_METHOD )
-						spyMethodGroup.paint(tempConfig.spy_methodology);
-					if( refreshFlag & SGOPTION_RANDOM_STARTUP )
-						randomStartUpGroup.paint(tempConfig.random_start_up);
-				}
-
-				// ------- display advanced option ---------//
-				if( optionMode == OPTION_ADVANCE2 )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-
-						font_bold_black.put_paragraph( 126, 100, option4X-10, 152-1,
-							text_game_menu.str_start_up_raw_site()); // "Natural Resources at Start" );
-						font_bold_black.put_paragraph( 126, 152, option4X-10, 206-1,
-							text_game_menu.str_raw_nearby()); // "Natural Resources Nearby" );
-						font_bold_black.put_paragraph( 126, 206, option4X-10, 246-1,
-							text_game_menu.str_independent_town()); // "Independent Towns" );
-						font_bold_black.put_paragraph( 126, 246, option4X-10, 293-1,
-							text_game_menu.str_town_resistance()); // "Independent Town Resistance" );
-						font_bold_black.put_paragraph( 126, 293, option4X-10, 340-1,
-							text_game_menu.str_new_town_emerge()); // "New Towns Emerge" );
-						font_bold_black.put_paragraph( 126, 340, option4X-10, 384-1,
-							text_game_menu.str_new_kingdom_emerge()); // "New Kingdoms Emerge" );
-						font_bold_black.put_paragraph( 126, 384, option4X-10, 434-1,
-							text_game_menu.str_random_events()); // "Random Events" );
-
-						// ------- display option Mode ------//
-
-						for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-					if( refreshFlag & SGOPTION_RAW )
-						rawSiteGroup.paint(tempConfig.start_up_raw_site-1);
-					if( refreshFlag & SGOPTION_NEAR_RAW )
-						nearRawGroup.paint(tempConfig.start_up_has_mine_nearby);
-					if( refreshFlag & SGOPTION_START_TOWN )
-					{
-						for( i = 0; tempConfig.start_up_independent_town > startTownArray[i]; ++i );
-						townStartGroup.paint(i);
-					}
-					if( refreshFlag & SGOPTION_TOWN_STRENGTH )
-						townResistGroup.paint(tempConfig.independent_town_resistance-1);
-					if( refreshFlag & SGOPTION_TOWN_EMERGE )
-						townEmergeGroup.paint(tempConfig.new_independent_town_emerge);
-					if( refreshFlag & SGOPTION_KINGDOM_EMERGE )
-						nationEmergeGroup.paint(tempConfig.new_nation_emerge);
-					if( refreshFlag & SGOPTION_RANDOM_EVENT )
-						randomEventGroup.paint(tempConfig.random_event_frequency);
-				}
-
-				// ------- display goal option ---------//
-				if( optionMode == OPTION_GOAL )
-				{
-					if( refreshFlag & SGOPTION_PAGE )
-					{
-						vga.disp_image_file("CHOOSE");
-
-						font_bold_black.put( option5X, 112, text_game_menu.str_goal() );	// You will be victorious when you have:
-
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 145, option5X3+25, 178-1, 
-							text_game_menu.str_defeat_others()); // "Defeated All Others" );
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 178, option5X3+25, 211-1, 
-							text_game_menu.str_defeat_fryhtan_lairs()); // "Destroyed All Independent Fryhtan Lairs" );
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 211, option5X3+25, 244-1, 
-							text_game_menu.str_defeat_except_ally()); // "Defeated All except one Allied Kingdom" );
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 244, option5X2-65, 277-1, 
-							text_game_menu.str_reach_population()); // "Achieved A Population Of" );
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 277, option5X2-65, 310-1, 
-							text_game_menu.str_reach_economy()); // "Reached An Economic Score Of");
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 310, option5X2-65, 343-1, 
-							text_game_menu.str_reach_total_score()); //"Reached A Total Score Of");
-						font_thin_black.put_paragraph( option5X+tickWidth+10, 343, option5X2-100, 376-1, 
-							text_game_menu.str_goal_time_limit()); // "Achieved The Selected Within" );
-
-						// ------- display option Mode ------//
-
-						for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
-						{
-							// red font for selected
-							Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
-
-							fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
-								OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
-								m.roman_number(i+1) );
-						}
-
-						// ----- display start, cancel button ------//
-
-						font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
-							text_game_menu.str_start() );
-						font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
-							text_game_menu.str_cancel() );
-					}
-
-					font_bold_black.use_max_height();
-
-					if( refreshFlag & SGOPTION_CLEAR_ENEMY )
-						clearEnemyButton.paint();
-					if( refreshFlag & SGOPTION_CLEAR_MONSTER )
-						clearMonsterButton.paint(tempConfig.goal_destroy_monster);
-					if( refreshFlag & SGOPTION_CLEAR_ENEMY )
-						allyWinButton.paint(tempConfig.goal_alliance_win_flag);
-					if( refreshFlag & SGOPTION_ENOUGH_PEOPLE )
-					{
-						enoughPeopleButton.paint(tempConfig.goal_population_flag);
-						font_bold_black.put( peopleInc.x1-65, peopleInc.y1, 
-							m.format(tempConfig.goal_population), 1, peopleInc.x1-1);
-						peopleInc.paint();
-						peopleDec.paint();
-					}
-					if( refreshFlag & SGOPTION_ENOUGH_INCOME )
-					{
-						enoughIncomeButton.paint(tempConfig.goal_economic_score_flag);
-						font_bold_black.put( incomeInc.x1-65, incomeInc.y1, 
-							m.format(tempConfig.goal_economic_score), 1, incomeInc.x1-1 );
-						incomeInc.paint();
-						incomeDec.paint();
-					}
-					if( refreshFlag & SGOPTION_ENOUGH_SCORE )
-					{
-						enoughScoreButton.paint(tempConfig.goal_total_score_flag);
-						font_bold_black.put( scoreInc.x1-65, scoreInc.y1, 
-							m.format(tempConfig.goal_total_score), 1, scoreInc.x1-1 );
-						scoreInc.paint();
-						scoreDec.paint();
-					}
-					if( refreshFlag & SGOPTION_TIME_LIMIT )
-					{
-						timeLimitButton.paint(tempConfig.goal_year_limit_flag);
-						int x2 = font_bold_black.put( yearInc.x1-100, yearInc.y1, 
-							m.format(tempConfig.goal_year_limit), 1, yearInc.x1-60-1 );
-						font_thin_black.put( yearInc.x1-60, yearInc.y1, text_game_menu.str_goal_time_units(), 1 );	// "years"
-						yearInc.paint();
-						yearDec.paint();
-					}
-
-					font_bold_black.use_std_height();
-				}
-
-				// ----- display difficulty -------//
-
-				if( optionMode != OPTION_SPECIES && refreshFlag & SGOPTION_DIFFICULTY )
-				{
-					font_bld.center_put( 40, 85, 82, 105, text_game_menu.str_level_in_score(), 1 );	// "Level"
-					font_bold_black.center_put( 40, 105, 82, 125, m.format(tempConfig.single_player_difficulty(0)), 1 );
-				}
-
-				refreshFlag = 0;
-                                vga.flip();
 			}
+			speciesGroup.paint( tempConfig.race_id < 0 );
+
+			// ------- display basic option ---------//
+			if( optionMode == OPTION_BASIC )
+			{
+				vga.disp_image_file("CHOOSE");
+				// BUGHERE : option menu column and finger
+
+				font_bold_black.right_put( playerNameField.x, playerNameField.y,
+					text_game_menu.str_kingdom_of()); // "Kingdom of " );
+
+				if( tempConfig.race_id > 0 )
+					font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_nationality()); // "Nationality");
+				else
+					font_bold_black.center_put( 116, 126, 303, 146,	text_game_menu.str_species()); // "Fryhtan Species");
+				font_bold_black.center_put( 382, 129, 600, 149, text_game_menu.str_color()); // "Color" );
+				font_bold_black.center_put( 297, 225-20, 698, 243-20, text_game_menu.str_ai_nation_count()); // "Computer Controlled Kingdoms" );
+				font_bold_black.put( aiHumanNationGroup[MAX_NATION-1].x2+10, aiHumanNationGroup[MAX_NATION-1].y1,
+					text_game_menu.str_human() ); // "Human" );
+				font_bold_black.put( aiMonsterNationGroup[MAX_NATION-1].x2+10, aiMonsterNationGroup[MAX_NATION-1].y1,
+					text_game_menu.str_fryhtan() ); //"Fryhtan" );
+				font_bold_black.center_put( 341, 305-30, 654, 324-30, text_game_menu.str_difficulty_level()); // "Difficulty Level" );
+				font_bold_black.center_put( 370, 380-60, 633, 393-60, text_game_menu.str_terrain_set()); // "Terrain Type" );
+				font_bold_black.center_put( 341, 365, 660, 384, text_game_menu.str_building_set()); // "Building Size" );
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				// race
+				if( tempConfig.race_id >= 0 )
+					raceGroup.paint( tempConfig.race_id-1 );
+				else
+				{
+					monsterRaceGroup.paint( -tempConfig.race_id-1 );
+					if (tempConfig.race_id < 0)
+					{
+						char str[10] = "P-X";
+						str[2] = '0' - tempConfig.race_id;
+						char* bitmapPtr = image_interface.get_ptr(str);
+						// all p-x must be the same size
+						// center to 220,370
+						const int picWidth = 198;
+						const int picHeight = 121;
+						const int picX = 220-picWidth/2;
+						const int picY = 370-picHeight/2;
+						vga.active_buf->put_bitmap_trans( picX, picY, bitmapPtr );
+					}
+					else
+					{
+						// actually, need to clean background here
+					}
+				}
+				// ------ put color box ------ //
+				char *bitmapPtr = image_button.read("F-COLOR");
+				vga.active_buf->put_bitmap_trans_remap_decompress(
+					colorButtonFrameX, colorButtonFrameY, bitmapPtr,
+					game.color_remap_array[tempConfig.player_nation_color].color_table );
+				colorGroup.paint(tempConfig.player_nation_color-1);
+				aiHumanNationGroup.paint(tempConfig.ai_human_nation_count);
+				aiMonsterNationGroup.paint(tempConfig.ai_monster_nation_count);
+				if( tempConfig.difficulty_level != OPTION_CUSTOM )
+					diffGroup.paint(tempConfig.difficulty_level);
+				else
+					diffGroup.paint(diffGroup.button_num-1);	// last button
+				terrainGroup.paint(tempConfig.terrain_set-1);
+				buildingSizeGroup.paint(tempConfig.building_size-1);
+				playerNameField.paint();
+			}
+
+			// ------- display advanced option ---------//
+			if( optionMode == OPTION_ADVANCED )
+			{
+				vga.disp_image_file("CHOOSE");
+
+				font_bold_black.put_paragraph( 126, 99, option3X-10, 143-1,
+					text_game_menu.str_world_map()); // "World Map" );
+				font_bold_black.put_paragraph( 126, 143, option3X-10, 183-1,
+					text_game_menu.str_fog_of_war()); // "Fog of War" );
+				font_bold_black.put_paragraph( 126, 183, option3X-10, 235-1,
+				//	"Human Player's Treasure" );
+					text_game_menu.str_your_treasure()); // "Your Treasure" );
+				font_bold_black.put_paragraph( 126, 235, option3X-10, 289-1,
+					text_game_menu.str_ai_treasure()); // "Computer's Treasure" );
+				font_bold_black.put_paragraph( 126, 289, option3X-10, 339-1,
+					text_game_menu.str_ai_aggressiveness()); // "Computer's Aggressiveness" );
+				font_bold_black.put_paragraph( 126, 339, option3X-10, 389-1,
+					text_game_menu.str_spy_methodology()); // "Espionage Methodologies" );
+				font_bold_black.put_paragraph( 126, 389, option3X-10, 449-1,
+					text_game_menu.str_random_kingdom()); // "Random Kingdoms" );
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				exploreGroup.paint(tempConfig.explore_whole_map);
+				fogGroup.paint(tempConfig.fog_of_war);
+				treasureGroup.paint( tempConfig.start_up_cash-1 );
+				aiTreasureGroup.paint( tempConfig.ai_start_up_cash-1 );
+				// ####### begin Gilbert 10/2 ########//
+				aiAggressiveGroup.paint(tempConfig.ai_aggressiveness);
+				// ####### end Gilbert 10/2 ########//
+				spyMethodGroup.paint(tempConfig.spy_methodology);
+				randomStartUpGroup.paint(tempConfig.random_start_up);
+			}
+
+			// ------- display advanced option ---------//
+			if( optionMode == OPTION_ADVANCE2 )
+			{
+				vga.disp_image_file("CHOOSE");
+
+				font_bold_black.put_paragraph( 126, 100, option4X-10, 152-1,
+					text_game_menu.str_start_up_raw_site()); // "Natural Resources at Start" );
+				font_bold_black.put_paragraph( 126, 152, option4X-10, 206-1,
+					text_game_menu.str_raw_nearby()); // "Natural Resources Nearby" );
+				font_bold_black.put_paragraph( 126, 206, option4X-10, 246-1,
+					text_game_menu.str_independent_town()); // "Independent Towns" );
+				font_bold_black.put_paragraph( 126, 246, option4X-10, 293-1,
+					text_game_menu.str_town_resistance()); // "Independent Town Resistance" );
+				font_bold_black.put_paragraph( 126, 293, option4X-10, 340-1,
+					text_game_menu.str_new_town_emerge()); // "New Towns Emerge" );
+				font_bold_black.put_paragraph( 126, 340, option4X-10, 384-1,
+					text_game_menu.str_new_kingdom_emerge()); // "New Kingdoms Emerge" );
+				font_bold_black.put_paragraph( 126, 384, option4X-10, 434-1,
+					text_game_menu.str_random_events()); // "Random Events" );
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				rawSiteGroup.paint(tempConfig.start_up_raw_site-1);
+				nearRawGroup.paint(tempConfig.start_up_has_mine_nearby);
+				for( i = 0; tempConfig.start_up_independent_town > startTownArray[i]; ++i );
+					townStartGroup.paint(i);
+				townResistGroup.paint(tempConfig.independent_town_resistance-1);
+				townEmergeGroup.paint(tempConfig.new_independent_town_emerge);
+				nationEmergeGroup.paint(tempConfig.new_nation_emerge);
+				randomEventGroup.paint(tempConfig.random_event_frequency);
+			}
+
+			// ------- display goal option ---------//
+			if( optionMode == OPTION_GOAL )
+			{
+				vga.disp_image_file("CHOOSE");
+
+				font_bold_black.put( option5X, 112, text_game_menu.str_goal() );	// You will be victorious when you have:
+
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 145, option5X3+25, 178-1, 
+					text_game_menu.str_defeat_others()); // "Defeated All Others" );
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 178, option5X3+25, 211-1, 
+					text_game_menu.str_defeat_fryhtan_lairs()); // "Destroyed All Independent Fryhtan Lairs" );
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 211, option5X3+25, 244-1, 
+					text_game_menu.str_defeat_except_ally()); // "Defeated All except one Allied Kingdom" );
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 244, option5X2-65, 277-1, 
+					text_game_menu.str_reach_population()); // "Achieved A Population Of" );
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 277, option5X2-65, 310-1, 
+					text_game_menu.str_reach_economy()); // "Reached An Economic Score Of");
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 310, option5X2-65, 343-1, 
+					text_game_menu.str_reach_total_score()); //"Reached A Total Score Of");
+				font_thin_black.put_paragraph( option5X+tickWidth+10, 343, option5X2-100, 376-1, 
+					text_game_menu.str_goal_time_limit()); // "Achieved The Selected Within" );
+
+				// ------- display option Mode ------//
+
+				for( i = OPTION_SPECIES; i <= OPTION_GOAL; ++i )
+				{
+					// red font for selected
+					Font *fontPtr = (i == optionMode ? &font_bold_red : &font_bold_black );
+
+					fontPtr->center_put(OPTION_SWITCH_X1, OPTION_SWITCH_Y1+OPTION_SWITCH_Y_SPACING*i,
+						OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i, 
+						m.roman_number(i+1) );
+				}
+
+				// ----- display start, cancel button ------//
+
+				font_thin_black.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2,
+					text_game_menu.str_start() );
+				font_thin_black.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2,
+					text_game_menu.str_cancel() );
+
+				font_bold_black.use_max_height();
+
+				// clear enemy/monster
+				clearEnemyButton.paint();
+				clearMonsterButton.paint(tempConfig.goal_destroy_monster);
+				allyWinButton.paint(tempConfig.goal_alliance_win_flag);
+				// enough people
+				enoughPeopleButton.paint(tempConfig.goal_population_flag);
+				font_bold_black.put( peopleInc.x1-65, peopleInc.y1, 
+					m.format(tempConfig.goal_population), 1, peopleInc.x1-1);
+				peopleInc.paint();
+				peopleDec.paint();
+				// enough income
+				enoughIncomeButton.paint(tempConfig.goal_economic_score_flag);
+				font_bold_black.put( incomeInc.x1-65, incomeInc.y1, 
+					m.format(tempConfig.goal_economic_score), 1, incomeInc.x1-1 );
+				incomeInc.paint();
+				incomeDec.paint();
+				// enough score
+				enoughScoreButton.paint(tempConfig.goal_total_score_flag);
+				font_bold_black.put( scoreInc.x1-65, scoreInc.y1, 
+					m.format(tempConfig.goal_total_score), 1, scoreInc.x1-1 );
+				scoreInc.paint();
+				scoreDec.paint();
+				// time limit
+				timeLimitButton.paint(tempConfig.goal_year_limit_flag);
+				int x2 = font_bold_black.put( yearInc.x1-100, yearInc.y1, 
+					m.format(tempConfig.goal_year_limit), 1, yearInc.x1-60-1 );
+				font_thin_black.put( yearInc.x1-60, yearInc.y1, text_game_menu.str_goal_time_units(), 1 );	// "years"
+				yearInc.paint();
+				yearDec.paint();
+
+				font_bold_black.use_std_height();
+			}
+
+			// ----- display difficulty -------//
+
+			if( optionMode != OPTION_SPECIES )
+			{
+				font_bld.center_put( 40, 85, 82, 105, text_game_menu.str_level_in_score(), 1 );	// "Level"
+				font_bold_black.center_put( 40, 105, 82, 125, m.format(tempConfig.single_player_difficulty(0)), 1 );
+			}
+
+                        vga.flip();
 
 			if( config.music_flag )
 			{
@@ -1014,21 +948,18 @@ static int select_option2()
 						tempConfig.race_id = -1;	// change to the first monster race
 
 					optionMode = OPTION_BASIC;		// auto change to basic mode
-					refreshFlag = SGOPTION_ALL;
 				}
 				else if( mouse.single_click( SCROLL_SHEET_X1, SCROLL_SHEET_Y1, (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2, SCROLL_SHEET_Y2) )
 				{
 					if( tempConfig.race_id < 0 )
 						tempConfig.race_id = 1;		// change to the first human race
 					optionMode = OPTION_BASIC;		// auto change to basic mode
-					refreshFlag = SGOPTION_ALL;
 				}
 				else if( mouse.single_click( (SCROLL_SHEET_X1+SCROLL_SHEET_X2)/2+1, SCROLL_SHEET_Y1, SCROLL_SHEET_X2, SCROLL_SHEET_Y2) )
 				{
 					if( tempConfig.race_id >= 0 )
 						tempConfig.race_id = -1;	// change to the first monster race
 					optionMode = OPTION_BASIC;		// auto change to basic mode
-					refreshFlag = SGOPTION_ALL;
 				}
 			}
 
@@ -1039,17 +970,14 @@ static int select_option2()
 				if( tempConfig.race_id >= 0 && raceGroup.detect() >= 0)
 				{
 					tempConfig.race_id = raceGroup[raceGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_RACE;
 				}
 				else if( tempConfig.race_id < 0 && monsterRaceGroup.detect() >= 0 )
 				{
 					tempConfig.race_id = monsterRaceGroup[monsterRaceGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_RACE;
 				}
 				else if( colorGroup.detect() >= 0)
 				{
 					tempConfig.player_nation_color = colorGroup[colorGroup()].custom_para.value;
-					refreshFlag |= SGOPTION_COLOR;
 				}
 				else if( aiHumanNationGroup.detect() >= 0 )
 				{
@@ -1071,7 +999,6 @@ static int select_option2()
 						}
 					}
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					refreshFlag |= SGOPTION_AI_NATION | SGOPTION_DIFFICULTY;
 				}
 				else if( aiMonsterNationGroup.detect() >= 0 )
 				{
@@ -1093,20 +1020,16 @@ static int select_option2()
 						}
 					}
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					refreshFlag |= SGOPTION_AI_NATION | SGOPTION_DIFFICULTY;
 				}
 				else if( diffGroup.detect() >= 0)
 				{
 					if( diffGroup[diffGroup()].custom_para.value != OPTION_CUSTOM )
 					{
 						tempConfig.change_difficulty(diffGroup[diffGroup()].custom_para.value);
-						// all but SGOPTION_PAGE;
-						refreshFlag |= SGOPTION_ALL & ~SGOPTION_PAGE;
 					}
 					else
 					{
 						tempConfig.difficulty_level = OPTION_CUSTOM;
-						// refreshFlag |= SGOPTION_DIFFICULTY;
 					}
 				}
 				else if( terrainGroup.detect() >= 0)
@@ -1115,7 +1038,6 @@ static int select_option2()
 					static short latitudeArray[3] = { 45, 20, 70 };
 					err_when( tempConfig.terrain_set <= 0 || tempConfig.terrain_set > 3 );
 					tempConfig.latitude = latitudeArray[tempConfig.terrain_set-1];
-					//refreshFlag |= SGOPTION_TERRAIN;
 				}
 				else if( buildingSizeGroup.detect() >= 0)
 				{
@@ -1123,7 +1045,6 @@ static int select_option2()
 				}
 				else if( playerNameField.detect() )
 				{
-					refreshFlag |= SGOPTION_NAME_FIELD;
 				}
 			}
 
@@ -1135,51 +1056,37 @@ static int select_option2()
 				{
 					tempConfig.explore_whole_map = exploreGroup[exploreGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_EXPLORED;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( fogGroup.detect() >= 0 )
 				{
 					tempConfig.fog_of_war = fogGroup[fogGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_FOG
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( treasureGroup.detect() >= 0 )
 				{
 					tempConfig.start_up_cash = treasureGroup[treasureGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_TREASURE;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( aiTreasureGroup.detect() >= 0 )
 				{
 					tempConfig.ai_start_up_cash = aiTreasureGroup[aiTreasureGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_AI_TREASURE;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( aiAggressiveGroup.detect() >= 0 )
 				{
 					tempConfig.ai_aggressiveness = 
 						aiAggressiveGroup[aiAggressiveGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_AI_AGGRESSIVE;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( spyMethodGroup.detect() >= 0 )
 				{
 					tempConfig.spy_methodology = spyMethodGroup[spyMethodGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_SPY_METHOD;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( randomStartUpGroup.detect() >= 0)
 				{
 					tempConfig.random_start_up = randomStartUpGroup[randomStartUpGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_RANDOM_STARTUP;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 			}
 
@@ -1191,51 +1098,37 @@ static int select_option2()
 				{
 					tempConfig.start_up_raw_site = rawSiteGroup[rawSiteGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_RAW;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( nearRawGroup.detect() >= 0)
 				{
 					tempConfig.start_up_has_mine_nearby = nearRawGroup[nearRawGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_NEAR_RAW;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 
 				}
 				else if( townStartGroup.detect() >= 0)
 				{
 					tempConfig.start_up_independent_town = townStartGroup[townStartGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// resfreshFlag |= SGOPTION_START_TOWN;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( townResistGroup.detect() >= 0)
 				{
 					tempConfig.independent_town_resistance = townResistGroup[townResistGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// resfreshFlag |= SGOPTION_TOWN_RESIST;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( townEmergeGroup.detect() >= 0)
 				{
 					tempConfig.new_independent_town_emerge = townEmergeGroup[townEmergeGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_TOWN_EMERGE;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( nationEmergeGroup.detect() >= 0)
 				{
 					tempConfig.new_nation_emerge = nationEmergeGroup[nationEmergeGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_NATION_EMERGE;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 				else if( randomEventGroup.detect() >= 0)
 				{
 					tempConfig.random_event_frequency = randomEventGroup[randomEventGroup()].custom_para.value;
 					tempConfig.difficulty_level = OPTION_CUSTOM;
-					// refreshFlag |= SGOPTION_RANDOM_EVENT;
-					refreshFlag |= SGOPTION_DIFFICULTY;
 				}
 			}
 
@@ -1277,14 +1170,12 @@ static int select_option2()
 					tempConfig.goal_population += 100;
 					if( tempConfig.goal_population > 5000 )
 						tempConfig.goal_population = 5000;
-					refreshFlag |= SGOPTION_ENOUGH_PEOPLE;
 				}
 				else if( peopleDec.detect() )
 				{
 					tempConfig.goal_population -= 100;
 					if( tempConfig.goal_population < 100 )
 						tempConfig.goal_population = 100;
-					refreshFlag |= SGOPTION_ENOUGH_PEOPLE;
 				}
 				else if( incomeInc.detect() )
 				{
@@ -1293,7 +1184,6 @@ static int select_option2()
 					{
 						tempConfig.goal_economic_score = 5000;
 					}
-					refreshFlag |= SGOPTION_ENOUGH_INCOME;
 				}
 				else if( incomeDec.detect() )
 				{
@@ -1302,7 +1192,6 @@ static int select_option2()
 					{
 						tempConfig.goal_economic_score = 100;
 					}
-					refreshFlag |= SGOPTION_ENOUGH_INCOME;
 				}
 				else if( scoreInc.detect() )
 				{
@@ -1312,7 +1201,6 @@ static int select_option2()
 						tempConfig.goal_total_score += 100;
 					if( tempConfig.goal_total_score > 10000 )
 						tempConfig.goal_total_score = 10000;
-					refreshFlag |= SGOPTION_ENOUGH_SCORE;
 				}
 				else if( scoreDec.detect() )
 				{
@@ -1322,7 +1210,6 @@ static int select_option2()
 						tempConfig.goal_total_score -= 100;
 					if( tempConfig.goal_total_score < 100 )
 						tempConfig.goal_total_score = 100;
-					refreshFlag |= SGOPTION_ENOUGH_SCORE;
 				}
 				else if( yearInc.detect() )
 				{
@@ -1334,7 +1221,6 @@ static int select_option2()
 					{
 						tempConfig.goal_year_limit = 100;
 					}
-					refreshFlag |= SGOPTION_TIME_LIMIT;
 				}
 				else if( yearDec.detect() )
 				{
@@ -1346,7 +1232,6 @@ static int select_option2()
 					{
 						tempConfig.goal_year_limit = 1;
 					}
-					refreshFlag |= SGOPTION_TIME_LIMIT;
 				}
 			}
 
@@ -1358,7 +1243,6 @@ static int select_option2()
 					OPTION_SWITCH_X2, OPTION_SWITCH_Y2+OPTION_SWITCH_Y_SPACING*i) )
 				{
 					optionMode = i;
-					refreshFlag = SGOPTION_ALL;
 				}
 			}
 

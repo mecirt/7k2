@@ -97,7 +97,6 @@ public:
 
 	char		quick_exit_flag()  	{ return signal_exit_flag; }
 
-	char		need_redraw_flag;    // set to 1 if task switched back. After redraw, clear it
 	char		cheat_enabled_flag;
 
 	char 		view_mode;				// the view mode can be MODE_???

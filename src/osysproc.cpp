@@ -146,8 +146,6 @@ void Sys::run(int isLoadedGame)
 
    //----- sys::disp_frame() will redraw everything when this flag is set to 1 ----//
 
-   sys.need_redraw_flag = 1;
-
 	// ##### begin Gilbert 18/1 #######//
 //	option_menu.active_flag = 0;
 	option_menu.clear_active();
