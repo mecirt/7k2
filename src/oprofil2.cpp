@@ -49,16 +49,6 @@
 #include <ot_gmenu.h>
 
 
-#define PPOPTION_PAGE          0x40000000
-#define PPOPTION_ENUM_PROFILE  0x00000001
-#define PPOPTION_SCROLL_BAR    0x00000002
-#define PPOPTION_GET_FIELDS    0x00000008
-#define PPOPTION_NAME_FIELD    0x00000010
-#define PPOPTION_DESC_FILED    0x00000020
-#define PPOPTION_FILE_FIELD    0x00000040
-#define PPOPTION_DIR_FIELD     0x00000080
-#define PPOPTION_ALL           0x7fffffff
-
 #define BROWSE_X1             131
 #define BROWSE_Y1             155
 #define BROWSE_X2             665
@@ -191,8 +181,6 @@ public:
 
 int PlayerProfile::register_menu()
 {
-	long refreshFlag = PPOPTION_ALL;
-
 	// ------- set mouse cursor, useful when auto-launch ------//
 
 	mouse_cursor.set_icon(CURSOR_NORMAL);
@@ -280,7 +268,6 @@ int PlayerProfile::register_menu()
 	while(1)
 	{
 		if (!game.process_messages()) return 0;
-		refreshFlag = PPOPTION_ALL;
 
 		VgaFrontReLock vgaReLock;
 
@@ -288,165 +275,124 @@ int PlayerProfile::register_menu()
 		mouse.get_event();
 
 		// -------- display ----------//
-		if( refreshFlag )
+		profileCount = 0;
+		Directory profileDir;
+		profileDir.read( "*.PRF", 1 );		// sort file name
+		profileBlock.resize( sizeof(PlayerProfile) * profileDir.size() );
+		profileArray = (PlayerProfile *) profileBlock.p();
+		int i;
+		for( i = 1; i <= profileDir.size(); ++i )
 		{
-			if( refreshFlag & PPOPTION_ENUM_PROFILE )
+			if( profileArray[profileCount].load(profileDir[i]->name) )
 			{
-				profileCount = 0;
-				Directory profileDir;
-				profileDir.read( "*.PRF", 1 );		// sort file name
-				profileBlock.resize( sizeof(PlayerProfile) * profileDir.size() );
-				profileArray = (PlayerProfile *) profileBlock.p();
-				int i;
-				for( i = 1; i <= profileDir.size(); ++i )
-				{
-					if( profileArray[profileCount].load(profileDir[i]->name) )
-					{
-						++profileCount;
-					}
-				}
-
-				// ------ calculate column ------//
-
-				profileColumnCount = (profileCount + SCROLL_LINE_COUNT-1) / SCROLL_LINE_COUNT;
-
-				// ------ set slide bar -------//
-
-				scrollBar.set( 0, profileColumnCount-1, 0 );
-
-				// ------- find the latest profile ---------//
-
-				if( selectedProfile == 0 && profileDir.size() > 0 )
-				{
-					int latestFile = 1;
-					time_t latestTime = profileDir[1]->time;
-					for( i = 2; i <= profileDir.size(); ++i )
-					{
-						if (profileDir[i]->time > latestTime)
-						{
-							latestTime = profileDir[i]->time;
-							latestFile = i;
-						}
-					}
-					selectedProfile = latestFile;		// default to the latest file
-					scrollBar.set_view_recno( (selectedProfile-1)/SCROLL_LINE_COUNT );
-				}
-
-				// ------ go to new profile directly ------//
-
-				if( menuMode == PROFILE_MENU_MAIN && profileCount == 0 )
-					menuMode = PROFILE_MENU_NEW; 
+				++profileCount;
 			}
-
-
-			switch( menuMode )
-			{
-			case PROFILE_MENU_MAIN:
-				if( refreshFlag & PPOPTION_PAGE )
-				{
-					vga.disp_image_file("CHOOSE");
-					fontBlack.center_put( 119, 95, 678, 118, text_game_menu.str_profile_s1() );
-					// fontBlack.center_put( 113, 392, 663, 414, "If your name is not here, click on \"New Player\" below");
-					fontBlack.center_put_paragraph( 113, 392, 688, 414, text_game_menu.str_profile_s2() );
-					fontThin.center_put( BUTTON7_X1, BUTTON7_Y1, BUTTON7_X2, BUTTON7_Y2, text_game_menu.str_finish_select_profile() );	// continue button
-					fontThin.center_put_paragraph( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_new_profile() );	// new button
-					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_delete_profile() );		// delete button
-					fontThin.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, text_game_menu.str_cancel() );		// cancel button
-				}
-
-				if( refreshFlag & PPOPTION_SCROLL_BAR )
-				{
-					int columns = min( profileColumnCount, SCROLL_MAX_COLUMN );
-					if( columns > 0 )
-					{
-						int columnWidth = (BROWSE_X2 - BROWSE_X1 + 1) / columns;	// column width
-						int x1 = BROWSE_X1;
-
-						for( int c = 0; c < columns; ++c, (x1+=columnWidth) )
-						{
-							int y = BROWSE_Y1;
-							for( int i = 0; i < SCROLL_LINE_COUNT; ++i, y+= SCROLL_LINE_HEIGHT )
-							{
-								int rec = (scrollBar.view_recno + c) * SCROLL_LINE_COUNT + i + 1;
-
-								if( rec > 0 && rec <= profileCount )
-								{
-									// choose font
-									Font *fontPtr;
-
-									if( rec == selectedProfile )
-										fontPtr = &fontRed;
-									else
-										fontPtr = &fontBlack;
-
-									// put profile player name
-									fontPtr->center_put( x1, y, x1+columnWidth-1, y+SCROLL_LINE_HEIGHT-1, profileArray[rec-1].player_name );
-								}
-							}
-						}
-					}
-
-					if( profileColumnCount > SCROLL_MAX_COLUMN )
-					{
-						scrollBar.paint();		// scroll bar and button
-						scrollLeft.paint();
-						scrollRight.paint();
-					}
-				}
-				break;
-
-			case PROFILE_MENU_NEW:		// ask new player
-				if( refreshFlag & PPOPTION_PAGE )
-				{
-					vga.disp_image_file("CHOOSE");
-					fontBlack.center_put( 136, 187, 672, 217, text_game_menu.str_profile_new() );
-					fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_finish_select_profile() );
-					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_cancel() );
-				}
-
-				if( refreshFlag & PPOPTION_GET_FIELDS )
-				{
-					getGroup.paint();
-				}
-				else
-				{
-					if( refreshFlag & PPOPTION_NAME_FIELD )
-					{
-						playerNameField.paint(0);
-					}
-					if( refreshFlag & PPOPTION_DESC_FILED )
-					{
-//						descField.paint(0);
-					}
-					if( refreshFlag & PPOPTION_FILE_FIELD )
-					{
-//						fileNameField.paint(0);
-					}
-					if( refreshFlag & PPOPTION_DIR_FIELD )
-					{
-//						dirNameField.paint(0);
-					}
-				}
-				break;
-			case PROFILE_MENU_DEL:
-				if( refreshFlag & PPOPTION_PAGE )
-				{
-					vga.disp_image_file("CHOOSE");
-					fontBlack.center_put_paragraph( 136, 187, 672, 287, text_game_menu.str_profile_del() );
-					if( profileArray[selectedProfile-1].login_name[0] )
-					{
-						fontBlack.center_put_paragraph( 136, 287, 672, 387, text_game_menu.str_profile_lost_login_info() );
-					}
-					fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_profile_del_yes() );
-					fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_profile_del_no() );
-				}
-				break;
-			default:
-				err_here();
-			}
-			refreshFlag = 0;
-                        vga.flip();
 		}
+
+		// ------ calculate column ------//
+
+		profileColumnCount = (profileCount + SCROLL_LINE_COUNT-1) / SCROLL_LINE_COUNT;
+
+		// ------ set slide bar -------//
+
+		scrollBar.set( 0, profileColumnCount-1, 0 );
+
+		// ------- find the latest profile ---------//
+
+		if( selectedProfile == 0 && profileDir.size() > 0 )
+		{
+			int latestFile = 1;
+			time_t latestTime = profileDir[1]->time;
+			for( i = 2; i <= profileDir.size(); ++i )
+			{
+				if (profileDir[i]->time > latestTime)
+				{
+					latestTime = profileDir[i]->time;
+					latestFile = i;
+				}
+			}
+			selectedProfile = latestFile;		// default to the latest file
+			scrollBar.set_view_recno( (selectedProfile-1)/SCROLL_LINE_COUNT );
+		}
+
+		// ------ go to new profile directly ------//
+
+		if( menuMode == PROFILE_MENU_MAIN && profileCount == 0 )
+			menuMode = PROFILE_MENU_NEW; 
+
+		switch( menuMode )
+		{
+		case PROFILE_MENU_MAIN:
+			vga.disp_image_file("CHOOSE");
+			fontBlack.center_put( 119, 95, 678, 118, text_game_menu.str_profile_s1() );
+			// fontBlack.center_put( 113, 392, 663, 414, "If your name is not here, click on \"New Player\" below");
+			fontBlack.center_put_paragraph( 113, 392, 688, 414, text_game_menu.str_profile_s2() );
+			fontThin.center_put( BUTTON7_X1, BUTTON7_Y1, BUTTON7_X2, BUTTON7_Y2, text_game_menu.str_finish_select_profile() );	// continue button
+			fontThin.center_put_paragraph( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_new_profile() );	// new button
+			fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_delete_profile() );		// delete button
+			fontThin.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, text_game_menu.str_cancel() );		// cancel button
+
+			// scroll bar
+			int columns = min( profileColumnCount, SCROLL_MAX_COLUMN );
+			if( columns > 0 )
+			{
+				int columnWidth = (BROWSE_X2 - BROWSE_X1 + 1) / columns;	// column width
+				int x1 = BROWSE_X1;
+
+				for( int c = 0; c < columns; ++c, (x1+=columnWidth) )
+				{
+					int y = BROWSE_Y1;
+					for( int i = 0; i < SCROLL_LINE_COUNT; ++i, y+= SCROLL_LINE_HEIGHT )
+					{
+						int rec = (scrollBar.view_recno + c) * SCROLL_LINE_COUNT + i + 1;
+
+						if( rec > 0 && rec <= profileCount )
+						{
+							// choose font
+							Font *fontPtr;
+
+							if( rec == selectedProfile )
+								fontPtr = &fontRed;
+							else
+								fontPtr = &fontBlack;
+
+							// put profile player name
+							fontPtr->center_put( x1, y, x1+columnWidth-1, y+SCROLL_LINE_HEIGHT-1, profileArray[rec-1].player_name );
+						}
+					}
+				}
+			}
+
+			if( profileColumnCount > SCROLL_MAX_COLUMN )
+			{
+				scrollBar.paint();		// scroll bar and button
+				scrollLeft.paint();
+				scrollRight.paint();
+			}
+			break;
+
+		case PROFILE_MENU_NEW:		// ask new player
+			vga.disp_image_file("CHOOSE");
+			fontBlack.center_put( 136, 187, 672, 217, text_game_menu.str_profile_new() );
+			fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_finish_select_profile() );
+			fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_cancel() );
+
+			getGroup.paint();
+			playerNameField.paint(0);
+			}
+			break;
+		case PROFILE_MENU_DEL:
+			vga.disp_image_file("CHOOSE");
+			fontBlack.center_put_paragraph( 136, 187, 672, 287, text_game_menu.str_profile_del() );
+			if( profileArray[selectedProfile-1].login_name[0] )
+				fontBlack.center_put_paragraph( 136, 287, 672, 387, text_game_menu.str_profile_lost_login_info() );
+			fontThin.center_put( BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, text_game_menu.str_profile_del_yes() );
+			fontThin.center_put( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, text_game_menu.str_profile_del_no() );
+			break;
+		default:
+			err_here();
+		}
+                vga.flip();
 
 		// ------- detect ---------//
 
@@ -475,7 +421,6 @@ int PlayerProfile::register_menu()
 								if( selectedProfile != rec )
 								{
 									selectedProfile = rec;
-									refreshFlag |= PPOPTION_SCROLL_BAR;
 								}
 								if( clickCount >= 2 )
 								{
@@ -495,7 +440,6 @@ int PlayerProfile::register_menu()
 
 					if( scrollBar.detect() == 1 )
 					{
-						refreshFlag |= PPOPTION_SCROLL_BAR;
 					}
 
 					if( scrollLeft.detect() )
@@ -503,7 +447,6 @@ int PlayerProfile::register_menu()
 						int oldViewRecno = scrollBar.view_recno;
 						if( scrollBar.set_view_recno(scrollBar.view_recno -1) != oldViewRecno )
 						{
-							refreshFlag |= PPOPTION_SCROLL_BAR;
 						}
 					}
 
@@ -512,7 +455,6 @@ int PlayerProfile::register_menu()
 						int oldViewRecno = scrollBar.view_recno;
 						if( scrollBar.set_view_recno(scrollBar.view_recno +1) != oldViewRecno )
 						{
-							refreshFlag |= PPOPTION_SCROLL_BAR;
 						}
 					}
 				}
@@ -532,7 +474,6 @@ int PlayerProfile::register_menu()
 				if( mouse.single_click(BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 				{
 					menuMode = PROFILE_MENU_NEW;
-					refreshFlag = PPOPTION_ALL;
 				}
 
 				// ------ delete -------//
@@ -541,7 +482,6 @@ int PlayerProfile::register_menu()
 					&& mouse.single_click(BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) )
 				{
 					menuMode = PROFILE_MENU_DEL;
-					refreshFlag = PPOPTION_ALL;
 				}
 
 				// ------ cancel --------//
@@ -567,7 +507,6 @@ int PlayerProfile::register_menu()
 					// default_save_name( save_dir, keyinPlayerName );
 //					fileNameField.text_changed();
 //					dirNameField.text_changed();
-					refreshFlag |= PPOPTION_FILE_FIELD | PPOPTION_DIR_FIELD;
 				}
 			}
 
@@ -701,7 +640,6 @@ int PlayerProfile::register_menu()
 				{
 					// go back to profile main menu
 					menuMode = PROFILE_MENU_MAIN;
-					refreshFlag = PPOPTION_ALL;
 				}
 				else
 				{
@@ -736,7 +674,6 @@ int PlayerProfile::register_menu()
 
 				// go back to profile main menu
 				menuMode = PROFILE_MENU_MAIN;
-				refreshFlag = PPOPTION_ALL;
 			}
 
 			if( mouse.single_click(BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) 
@@ -744,7 +681,6 @@ int PlayerProfile::register_menu()
 			{
 				// go back to profile main menu
 				menuMode = PROFILE_MENU_MAIN;
-				refreshFlag = PPOPTION_ALL;
 			}
 
 			break;

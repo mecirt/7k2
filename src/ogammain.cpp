@@ -295,16 +295,8 @@ int Game::process_messages()
   return 1;
 }
 
-// ----- define const for flag of refreshFlag ------//
-
-#define MMOPTION_PAGE        0x40000000
-#define MMOPTION_RESOLUTION  0x00000001
-#define MMOPTION_ALL         0x7fffffff
-
 void Game::main_menu()
 {
-	int refreshFlag = MMOPTION_ALL;
-
 	char optionFlag[5] = 
 	{
 		1, 1, 1, 1, 1,
@@ -321,96 +313,74 @@ void Game::main_menu()
 	mouse_cursor.set_icon(CURSOR_NORMAL);
 	vga_buffer.bar(0,0,VGA_WIDTH-1,VGA_HEIGHT-1,V_BLACK);
 
-	unsigned long lastRedrawTime = m.get_time();
-
 	{
 		VgaFrontLock vgaLock;
 
 		while(1)
 		{
 			if (!process_messages()) return;
-			if( m.get_time() - lastRedrawTime > 50 )
-			{
-				refreshFlag = MMOPTION_ALL;
-				lastRedrawTime = m.get_time();	// redraw every 8 sec. Such that if background erased at the beginning, redraw
-			}
 
 			VgaFrontReLock vgaReLock;
 
 			// -------- check auto load game request ------//
 
-			if( auto_load_file_name )
-			{
-				refreshFlag = 0;
-			}
-
 			// -------- display ----------//
 
 			game_mode = GAME_PREGAME;
 
-			if( refreshFlag )
+			vga.disp_image_file("M_main");
+
+			// ------ display button -------//
+
+			if( player_profile.is_registered() )
 			{
-				if( refreshFlag & MMOPTION_PAGE )
-				{
-					vga.disp_image_file("M_main");
-
-					// ------ display button -------//
-
-					if( player_profile.is_registered() )
-					{
-						if( optionFlag[0] > 0 )		// single player
-							font_thin_black.center_put_paragraph(
-								BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2, 
-								text_game_menu.str_single_player(), 0);
-						if( optionFlag[1] > 0 )		// multi player
-							font_thin_black.center_put_paragraph(
-								BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
-								text_game_menu.str_multi_player(), 0);
-						if( optionFlag[2] > 0 )		// scenario editor
-							font_thin_black.center_put_paragraph(
-								BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2, 
-								text_game_menu.str_scenario_editor(), 0);
-					}
-					if( optionFlag[3] > 0 )
-						font_thin_black.center_put_paragraph(
-							BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
-							text_game_menu.str_hall_of_fame(), 0);
-					if( optionFlag[4] > 0 )
-						font_thin_black.center_put_paragraph(
-							BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2, 
-							text_game_menu.str_credits(), 0);
+				if( optionFlag[0] > 0 )		// single player
 					font_thin_black.center_put_paragraph(
-						BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2, 
-						text_game_menu.str_player_register(), 0);
+						BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2, 
+						text_game_menu.str_single_player(), 0);
+				if( optionFlag[1] > 0 )		// multi player
 					font_thin_black.center_put_paragraph(
-						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
-						text_game_menu.str_quit(), 0);
+						BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
+						text_game_menu.str_multi_player(), 0);
+				if( optionFlag[2] > 0 )		// scenario editor
 					font_thin_black.center_put_paragraph(
-						BUTTONA_X1, BUTTONA_Y1, BUTTONA_X2, BUTTONA_Y2, 
-						text_game_menu.str_web_site(), 0);
-
-					disp_version();
-				}
-
-				if( refreshFlag & MMOPTION_RESOLUTION )
-				{
-					String resStr;
-
-					if( !DisplayModeInfo::get_display_info(config.display_mode_id) )
-						config.display_mode_id = MODE_ID_DEFAULT;
-
-					resStr  = DisplayModeInfo::get_display_info(config.display_mode_id)->screen_width;
-					resStr += "X";
-					resStr += DisplayModeInfo::get_display_info(config.display_mode_id)->screen_height;
-
-					font_thin_black.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, resStr );
-
-					disp_version();
-				}
-
-				refreshFlag = 0;
-                                vga.flip();
+						BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2, 
+						text_game_menu.str_scenario_editor(), 0);
 			}
+			if( optionFlag[3] > 0 )
+				font_thin_black.center_put_paragraph(
+					BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
+					text_game_menu.str_hall_of_fame(), 0);
+			if( optionFlag[4] > 0 )
+				font_thin_black.center_put_paragraph(
+					BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2, 
+					text_game_menu.str_credits(), 0);
+			font_thin_black.center_put_paragraph(
+				BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2, 
+				text_game_menu.str_player_register(), 0);
+			font_thin_black.center_put_paragraph(
+				BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
+				text_game_menu.str_quit(), 0);
+			font_thin_black.center_put_paragraph(
+				BUTTONA_X1, BUTTONA_Y1, BUTTONA_X2, BUTTONA_Y2, 
+				text_game_menu.str_web_site(), 0);
+
+			disp_version();
+
+			String resStr;
+
+			if( !DisplayModeInfo::get_display_info(config.display_mode_id) )
+				config.display_mode_id = MODE_ID_DEFAULT;
+
+			resStr  = DisplayModeInfo::get_display_info(config.display_mode_id)->screen_width;
+			resStr += "X";
+			resStr += DisplayModeInfo::get_display_info(config.display_mode_id)->screen_height;
+
+			font_thin_black.center_put( BUTTON9_X1, BUTTON9_Y1, BUTTON9_X2, BUTTON9_Y2, resStr );
+
+			disp_version();
+
+                        vga.flip();
 
 			sys.yield();
 			mouse.get_event();
@@ -444,7 +414,6 @@ void Game::main_menu()
 					sys.signal_exit_flag = signalExitFlagBackup;
 				}
 
-				refreshFlag = MMOPTION_ALL;
 				continue;
 			}
 
@@ -483,36 +452,30 @@ void Game::main_menu()
 				&& mouse.single_click(BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2) )
 			{
 				run_main_menu_option(1);		// single player
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( player_profile.is_registered() && optionFlag[1] > 0
 				&& mouse.single_click(BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2) )
 			{
 				run_main_menu_option(2);		// multi player
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( player_profile.is_registered() && optionFlag[2] > 0
 				&& mouse.single_click(BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2) )
 			{
 				run_main_menu_option(3);		// scenario editor
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( optionFlag[3] > 0 
 				&& mouse.single_click( BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2) )
 			{
 				run_main_menu_option(4);		// hall of fame
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( optionFlag[4] > 0
 				&& mouse.single_click( BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2) )
 			{
 				run_main_menu_option(5);		// credits
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( mouse.single_click(BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2) )
 			{
 				run_main_menu_option(0);		// profile
-				refreshFlag = MMOPTION_ALL;
 			}
 			else if( mouse.single_click( BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2) )
 			{
@@ -525,12 +488,10 @@ void Game::main_menu()
 					++config.display_mode_id;
 				else
 					config.display_mode_id = 0;
-				refreshFlag |= MMOPTION_RESOLUTION;
 			}
 			else if( mouse.single_click( BUTTONA_X1, BUTTONA_Y1, BUTTONA_X2, BUTTONA_Y2) )
 			{
 				run_main_menu_option(6);		// home page
-				refreshFlag = MMOPTION_ALL;
 			}
 
 			// ----- check signal exit flag -------//
@@ -543,15 +504,10 @@ void Game::main_menu()
 }
 
 
-#define SPOPTION_PAGE        0x40000000
-#define SPOPTION_ALL         0x7fffffff
-
 //---------- Begin of function Game::single_player_menu ----------//
 //
 void Game::single_player_menu()
 {
-	int refreshFlag = SPOPTION_ALL;
-
 	char optionFlag[5] = { 1, 1, 1, 1, 1, };
 
 	mouse_cursor.set_icon(CURSOR_NORMAL);
@@ -564,48 +520,40 @@ void Game::single_player_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
 			// -------- display ----------//
 
-			if( refreshFlag )
-			{
-				if( refreshFlag & SPOPTION_PAGE )
-				{
-					vga.disp_image_file("M_main");
+			vga.disp_image_file("M_main");
 
-					// ------ display button ------//
+			// ------ display button ------//
 
-					if( optionFlag[0] )
-						font_thin_black.center_put_paragraph(
-							BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2, 
-							text_game_menu.str_training(), 0 );
-					if( optionFlag[1] )
-						font_thin_black.center_put_paragraph(
-							BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
-							text_game_menu.str_new_campaign(), 0 );
-					if( optionFlag[2] )
-						font_thin_black.center_put_paragraph(
-							BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2, 
-							text_game_menu.str_new_single_game(), 0 );
-					if( optionFlag[3] )
-						font_thin_black.center_put_paragraph(
-							BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
-							text_game_menu.str_load_game(), 0 );
-					if( optionFlag[4] )
-						font_thin_black.center_put_paragraph(
-							BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2, 
-							text_game_menu.str_load_scenario(), 0 );
-					font_thin_black.center_put_paragraph(
-						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
-						text_game_menu.str_cancel(), 0 );
-				}
+			if( optionFlag[0] )
+				font_thin_black.center_put_paragraph(
+					BUTTON1_X1, BUTTON1_Y1, BUTTON1_X2, BUTTON1_Y2, 
+					text_game_menu.str_training(), 0 );
+			if( optionFlag[1] )
+				font_thin_black.center_put_paragraph(
+					BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
+					text_game_menu.str_new_campaign(), 0 );
+			if( optionFlag[2] )
+				font_thin_black.center_put_paragraph(
+					BUTTON3_X1, BUTTON3_Y1, BUTTON3_X2, BUTTON3_Y2, 
+					text_game_menu.str_new_single_game(), 0 );
+			if( optionFlag[3] )
+				font_thin_black.center_put_paragraph(
+					BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
+					text_game_menu.str_load_game(), 0 );
+			if( optionFlag[4] )
+				font_thin_black.center_put_paragraph(
+					BUTTON5_X1, BUTTON5_Y1, BUTTON5_X2, BUTTON5_Y2, 
+					text_game_menu.str_load_scenario(), 0 );
+			font_thin_black.center_put_paragraph(
+				BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
+				text_game_menu.str_cancel(), 0 );
 
-				refreshFlag = 0;
-                                vga.flip();
-			}
+                        vga.flip();
 
 			sys.yield();
 			mouse.get_event();
@@ -694,8 +642,6 @@ void Game::single_player_menu()
 //
 void Game::scenario_editor_menu()
 {
-	int refreshFlag = SPOPTION_ALL;
-
 	mouse_cursor.set_icon(CURSOR_NORMAL);
 
 	{
@@ -704,34 +650,26 @@ void Game::scenario_editor_menu()
 		while(1)
 		{
 			if (!process_messages()) return;
-			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
 			// -------- display ----------//
 
-			if( refreshFlag )
-			{
-				if( refreshFlag & SPOPTION_PAGE )
-				{
-					vga.disp_image_file("M_main");
+			vga.disp_image_file("M_main");
 
-					// ------ display button ------//
+			// ------ display button ------//
 
-					font_thin_black.center_put_paragraph(
-						BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
-						text_game_menu.str_new_game(), 0 );
-					font_thin_black.center_put_paragraph(
-						BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
-						text_game_menu.str_load_game(), 0 );
-					font_thin_black.center_put_paragraph(
-						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
-						text_game_menu.str_cancel(), 0 );
-				}
+			font_thin_black.center_put_paragraph(
+				BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
+				text_game_menu.str_new_game(), 0 );
+			font_thin_black.center_put_paragraph(
+				BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
+				text_game_menu.str_load_game(), 0 );
+			font_thin_black.center_put_paragraph(
+				BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
+				text_game_menu.str_cancel(), 0 );
 
-				refreshFlag = 0;
-                                vga.flip();
-			}
+                        vga.flip();
 
 			sys.yield();
 			mouse.get_event();
@@ -880,7 +818,6 @@ void Game::multi_player_menu(char *cmdLine)
 
 //	char optionFlag[5] = { 1, 1, 1, 1, 1, };
 
-	int refreshFlag = SPOPTION_ALL;
 	bool launchMode = (cmdLine != NULL);
 
 	{
@@ -889,48 +826,40 @@ void Game::multi_player_menu(char *cmdLine)
 		while(1)
 		{
 			if (!process_messages()) return;
-			refreshFlag = SPOPTION_ALL;
 
 			VgaFrontReLock vgaReLock;
 
 			// -------- display ----------//
 
-			if( refreshFlag )
+			vga.disp_image_file("M_main");
+
+			// ------ display button ------//
+
+			if( player_profile.is_registered() )
 			{
-				if( refreshFlag & SPOPTION_PAGE )
-				{
-					vga.disp_image_file("M_main");
-
-					// ------ display button ------//
-
-					if( player_profile.is_registered() )
-					{
-						font_thin_black.center_put_paragraph(
-							BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
-							text_game_menu.str_new_game(), 0 );
-						font_thin_black.center_put_paragraph(
-							BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
-							text_game_menu.str_load_game(), 0 );
-					}
-
-					if( launchMode )
-					{
-						font_thin_black.center_put_paragraph(
-							BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2, 
-							text_game_menu.str_player_register(), 0);
-					}
-
-					// display quit in launch mode,
-					// display cancel otherwise
-					font_thin_black.center_put_paragraph(
-						BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
-						!launchMode ? text_game_menu.str_cancel() : text_game_menu.str_quit(),
-						0 );
-				}
-
-				refreshFlag = 0;
-                                vga.flip();
+				font_thin_black.center_put_paragraph(
+					BUTTON2_X1, BUTTON2_Y1, BUTTON2_X2, BUTTON2_Y2, 
+					text_game_menu.str_new_game(), 0 );
+				font_thin_black.center_put_paragraph(
+					BUTTON4_X1, BUTTON4_Y1, BUTTON4_X2, BUTTON4_Y2, 
+					text_game_menu.str_load_game(), 0 );
 			}
+
+			if( launchMode )
+			{
+				font_thin_black.center_put_paragraph(
+					BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2, 
+					text_game_menu.str_player_register(), 0);
+			}
+
+			// display quit in launch mode,
+			// display cancel otherwise
+			font_thin_black.center_put_paragraph(
+				BUTTON8_X1, BUTTON8_Y1, BUTTON8_X2, BUTTON8_Y2, 
+				!launchMode ? text_game_menu.str_cancel() : text_game_menu.str_quit(),
+				0 );
+
+                        vga.flip();
 
 			sys.yield();
 			mouse.get_event();
@@ -952,10 +881,6 @@ void Game::multi_player_menu(char *cmdLine)
 				&& mouse.single_click( BUTTON6_X1, BUTTON6_Y1, BUTTON6_X2, BUTTON6_Y2) )
 			{
 				player_profile.register_menu();
-				if( player_profile.is_registered() )
-				{
-					refreshFlag = SPOPTION_ALL;		// to display new/load game button
-				}
 			}
 
 			// detect new game
@@ -970,7 +895,6 @@ void Game::multi_player_menu(char *cmdLine)
 				{
 					// if exit from main game, signal_exit_flag is non-zero
 					// signal_exit_flag is zero usually means exit from multiplayer setup menu
-					refreshFlag = SPOPTION_ALL;
 					continue;
 				}
 				break;
@@ -1002,7 +926,6 @@ void Game::multi_player_menu(char *cmdLine)
 					{
 						// if exit from main game, signal_exit_flag is non-zero
 						// signal_exit_flag is zero usually means exit from multiplayer setup menu
-						refreshFlag = SPOPTION_ALL;
 						continue;
 					}
 				}
