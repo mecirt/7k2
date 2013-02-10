@@ -639,15 +639,10 @@ static void disp_nation_info()
 			font_bld.field( x1, y+=lineSpacing, text_reports.str_ally_food(nationPtr->nation_name()),
 				x2, nationPtr->food, 1, x3, INFO_REPAINT );
 		}
-	}
 
-	y+=lineSpacing+10;
+		y+=lineSpacing+10;
 
-	//----- display its relation status with other nations -----//
-
-	if( info.viewing_nation_recno != nationRecno )
-	{
-		// String str;
+		//----- display its relation status with other nations -----//
 
 		nationPtr->disp_nation_color(x1, y+1);
 		font_bld.put(x1+20, y, text_reports.str_enemy_relation(nationPtr->nation_name()));
