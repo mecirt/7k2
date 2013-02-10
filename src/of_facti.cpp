@@ -68,36 +68,6 @@ void FirmFactory::put_info(int refreshFlag)
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("MIFABASE") );
 
 	FirmWork::put_info(refreshFlag);
-
-	/*
-	//---------- display info ------------//
-
-	disp_basic_info(INFO_Y1, refreshFlag);
-
-	if( !should_show_info() )
-		return;
-
-	disp_factory_info(INFO_Y1+54, refreshFlag);
-	disp_worker_list(INFO_Y1+126, refreshFlag);
-	disp_worker_info(INFO_Y1+190, refreshFlag);
-
-	//------ display button -------//
-
-	int x;
-
-	if( is_own() && refreshFlag==INFO_REPAINT )
-	{
-		button_change_production.paint( INFO_X1, INFO_Y1+248, 'A', "CHGPROD" );
-		x = INFO_X1+BUTTON_ACTION_WIDTH;
-	}
-	else
-		x = INFO_X1;
-
-	//---------- display spy button ----------//
-
-	disp_spy_button(x, INFO_Y1+248, refreshFlag);
-	*/
-
 }
 //----------- End of function FirmFactory::put_info -----------//
 
@@ -105,40 +75,7 @@ void FirmFactory::put_info(int refreshFlag)
 //
 void FirmFactory::detect_info()
 {
-	
 	FirmWork::detect_info();
-
-	/*
-
-	//-------- detect basic info -----------//
-
-	if( detect_basic_info() )
-		return;
-
-	//-------- detect workers ----------//
-
-	if( detect_worker_list() )		// detect this when: it's the player's firm or the player has spies in this firm
-	{
-		disp_worker_list(INFO_Y1+126, INFO_UPDATE);
-		disp_worker_info(INFO_Y1+190, INFO_UPDATE);
-	}
-
-	//-------- detect spy button ----------//
-
-	detect_spy_button();
-
-	if( !is_own() )
-		return;
-
-	//---- detect change production button -----//
-
-	if( button_change_production.detect() )
-	{	
-		change_production();
-		disp_factory_info(INFO_Y1+54, INFO_UPDATE);
-		se_ctrl.immediate_sound("TURN_ON");
-	}
-	*/
  }
 //----------- End of function FirmFactory::detect_info -----------//
 // ##### end Gilbert 5/10 #######//
@@ -318,7 +255,6 @@ void FirmFactory::detect_firm_info()
 		{	
 			// ##### begin Gilbert 5/10 #####//
 			change_production(COMMAND_PLAYER);
-			// disp_firm_info(INFO_Y1+54, INFO_UPDATE);
 			se_ctrl.immediate_sound("TURN_ON");
 			// ##### end Gilbert 5/10 ######//
 		}

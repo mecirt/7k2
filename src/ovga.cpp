@@ -176,19 +176,19 @@ void Vga::flip()
 //
 void Vga::d3_panel_up(int x1,int y1,int x2,int y2,int vgaFrontOnly,int drawBorderOnly)
 {
-   err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
+  err_when( x1>x2 || y1>y2 || x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
 
-   if( !drawBorderOnly )
-   {
-		// ##### begin Gilbert 19/10 #####//
-      if( Vga::opaque_flag )
-         vga_back.bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_light);
-      else
-			vga_back.bar_alpha( x1+1, y1+1, x2-1, y2-1, IF_UP_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_light );
-		// ##### end Gilbert 19/10 #####//
+  if( !drawBorderOnly )
+  {
+    // ##### begin Gilbert 19/10 #####//
+    if( Vga::opaque_flag )
+      vga_back.bar(x1+1, y1+1, x2-1, y2-1, VgaBuf::color_light);
+    else
+       vga_back.bar_alpha( x1+1, y1+1, x2-1, y2-1, IF_UP_BRIGHTNESS_ADJUST/2-1, VgaBuf::color_light );
+     // ##### end Gilbert 19/10 #####//
    }
 
-	vga_back.draw_d3_up_border( x1, y1, x2, y2 );
+   vga_back.draw_d3_up_border( x1, y1, x2, y2 );
 
 }
 //------------- End of function Vga::d3_panel_up ------------//

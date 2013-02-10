@@ -138,185 +138,85 @@ void Sys::disp_view_mode(int observeMode)
 //
 // Display the view area.
 //
-void Sys::disp_view()
+void Sys::disp_view(int mode)
 {
-	disp_zoom();
+  disp_zoom();
 
-	//---- if in report mode, convert the view to gray scale ----//
+  if( view_mode!=MODE_NORMAL )
+  {
+    //------- blt the zoom area to the front screen --------//
 
-	if( view_mode!=MODE_NORMAL )
-	{
-		//------- blt the zoom area to the front screen --------//
+    Vga::opaque_flag = config.opaque_report;
 
-		Vga::opaque_flag = config.opaque_report;
+    switch( view_mode )
+    {
+      case MODE_TRADE:
+        info.disp_trade(mode);
+        break;
 
-		switch( view_mode )
-		{
-			case MODE_TRADE:
-				info.disp_trade(INFO_REPAINT);
-				break;
+      case MODE_MILITARY:
+        info.disp_military(mode);
+        break;
 
-			case MODE_MILITARY:
-				info.disp_military(INFO_REPAINT);
-				break;
+      case MODE_ECONOMY:
+        info.disp_economy(mode);
+        break;
 
-			case MODE_ECONOMY:
-				info.disp_economy(INFO_REPAINT);
-				break;
+      case MODE_TOWN:
+        info.disp_town(mode);
+        break;
 
-			case MODE_TOWN:
-				info.disp_town(INFO_REPAINT);
-				break;
+      case MODE_NATION:
+        info.disp_nation(mode);
+        break;
 
-			case MODE_NATION:
-				info.disp_nation(INFO_REPAINT);
-				break;
+      case MODE_TECH:
+        info.disp_tech(mode);
+        break;
 
-			case MODE_TECH:
-				info.disp_tech(INFO_REPAINT);
-				break;
+      case MODE_SPY:
+        info.disp_spy(mode);
+        break;
 
-			case MODE_SPY:
-				info.disp_spy(INFO_REPAINT);
-				break;
+      case MODE_RANK:
+        info.disp_rank(mode);
+        break;
 
-			case MODE_RANK:
-				info.disp_rank(INFO_REPAINT);
-				break;
+      case MODE_NEWS_LOG:
+        info.disp_news_log(mode);
+        break;
 
-			case MODE_NEWS_LOG:
-				info.disp_news_log(INFO_REPAINT);
-				break;
+      case MODE_AI_ACTION:
+        info.disp_ai_action(mode);
+        break;
+    }
+    Vga::opaque_flag = 0;
+  }
+  else
+  {
+    // display tips box
+    tips_res.disp( ZOOM_X1+50, ZOOM_Y1+8);
+  }
 
-			case MODE_AI_ACTION:
-				info.disp_ai_action(INFO_REPAINT);
-				break;
-		}
+  if( scenario_editor.is_enable() )
+  {
+    scenario_editor.disp_view();
+    scenario_editor.disp_menu_bar(mode);
+  }
 
-		Vga::opaque_flag = 0;
-	}
-	// ####### begin Gilbert 21/5 #######//
-	else
-	{
-		// display tips box
+  if( config.show_debug_info )
+  {
+    nation_array.draw_profile();
+    firm_array.draw_profile();
+    town_array.draw_profile();
+    unit_array.draw_profile();
+    unit_group.draw_profile();
+  }
 
-		tips_res.disp( ZOOM_X1+50, ZOOM_Y1+8);
-	}
-	// ####### end Gilbert 21/5 #######//
-
-	// ###### begin Gilbert 20/10 #######//
-	if( scenario_editor.is_enable() )
-	{
-		scenario_editor.disp_view();
-		scenario_editor.disp_menu_bar(INFO_REPAINT);
-	}
-	// ###### end Gilbert 20/10 #######//
+  if (in_game_menu.is_active())
+    in_game_menu.disp();
 }
 //-------- End of function Sys::disp_view --------//
-
-
-//-------- Begin of function Sys::update_view --------//
-//
-// Display the view area.
-//
-void Sys::update_view()
-{
-	if( view_mode==MODE_NORMAL )
-	{
-#ifdef DEBUG
-		unsigned dispZoomTime = m.get_time();
-#endif
-		disp_zoom();
-#ifdef DEBUG
-		dispZoomTime = m.get_time() - dispZoomTime;
-#endif
-		// display tips box
-
-		tips_res.disp( ZOOM_X1+50, ZOOM_Y1+8);
-
-		// ###### begin Gilbert 13/10 #######//
-		if( scenario_editor.is_enable() )
-		{
-			scenario_editor.disp_view();
-			scenario_editor.disp_menu_bar(INFO_UPDATE);
-		}
-		// ###### end Gilbert 13/10 #######//
-
-		//----------- draw profile information -----------//
-
-		if( config.show_debug_info )
-		{
-			nation_array.draw_profile();
-			firm_array.draw_profile();
-			town_array.draw_profile();
-			unit_array.draw_profile();
-			unit_group.draw_profile();
-		}
-
-		if( in_game_menu.is_active() )
-		{
-			in_game_menu.disp();
-		}
-
-		//------------------------------------//
-	}
-	else
-	{
-			disp_zoom();
-			Vga::opaque_flag = config.opaque_report;
-
-			switch( view_mode )
-			{
-				case MODE_TRADE:
-					info.disp_trade(INFO_UPDATE);
-					break;
-
-				case MODE_MILITARY:
-					info.disp_military(INFO_UPDATE);
-					break;
-
-				case MODE_ECONOMY:
-					info.disp_economy(INFO_UPDATE);
-					break;
-
-				case MODE_TOWN:
-					info.disp_town(INFO_UPDATE);
-					break;
-
-				case MODE_NATION:
-					info.disp_nation(INFO_UPDATE);
-					break;
-
-				case MODE_TECH:
-					info.disp_tech(INFO_UPDATE);
-					break;
-
-				case MODE_SPY:
-					info.disp_spy(INFO_UPDATE);
-					break;
-
-				case MODE_RANK:
-					info.disp_rank(INFO_UPDATE);
-					break;
-
-				case MODE_NEWS_LOG:
-					info.disp_news_log(INFO_UPDATE);
-					break;
-
-				case MODE_AI_ACTION:
-					info.disp_ai_action(INFO_UPDATE);
-					break;
-			}
-
-			if( in_game_menu.is_active() )
-			{
-				in_game_menu.disp();
-			}
-
-			Vga::opaque_flag = 0;
-	}
-}
-//-------- End of function Sys::update_view --------//
 
 //-------- Begin of function Sys::detect_view --------//
 //
@@ -515,7 +415,7 @@ void Sys::set_view_mode(int viewMode, int viewingNationRecno, int viewingSpyRecn
 	view_mode = viewMode;
 	disp_view_mode();
 
-	disp_view();
+	disp_view(INFO_REPAINT);
 }
 //--------- End of function Sys::set_view_mode ---------//
 

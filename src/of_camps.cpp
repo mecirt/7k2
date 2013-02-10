@@ -348,7 +348,6 @@ void FirmCamp::detect_spy_menu()
 			if( !remote.is_enable() )
 			{
 				spyPtr->set_next_action_mode();
-				// disp_spy_menu( INFO_UPDATE );
 			}
 			else
 			{
