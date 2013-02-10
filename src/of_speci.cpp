@@ -65,15 +65,12 @@ void FirmSpecial::disp_firm_info(int dispY1, int refreshFlag )
 
 	// ------- display train button ------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		if (!is_monster())
-			button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "S_TRAIN" );
-		else
-			button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
+	if (!is_monster())
+		button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "S_TRAIN" );
+	else
+		button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
 
-		button_train.enable_flag = 0;
-	}
+	button_train.enable_flag = 0;
 
 	// ------ display special unit icon and unit name -----//
 

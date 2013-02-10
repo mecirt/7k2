@@ -47,7 +47,6 @@
 // ------- define static variable ------//
 
 static char menu_mode;
-static char last_menu_mode;
 static char menu_mode_para;
 
 // Button3D button_magic[MAGIC_COUNT-2];
@@ -63,14 +62,6 @@ static void disp_magic_button(ButtonCustom *, int);
 
 void FirmMagic::put_info(int refreshFlag)
 {
-//	if( refreshFlag == INFO_REPAINT )
-//		last_menu_mode = menu_mode = FIRM_MAGIC_MENU_MAIN;
-	/*else*/ if( last_menu_mode != menu_mode )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_menu_mode = menu_mode;
-	}
-
 	switch( menu_mode )
 	{
 	case FIRM_MAGIC_MENU_MAIN:
@@ -112,16 +103,13 @@ void FirmMagic::disp_main_menu(int refreshFlag)
 
 	int i;
 
-	if( refreshFlag == INFO_REPAINT )
+	for(i = magic_id_lower_limit-1; i < magic_id_upper_limit; ++i ) //bug
 	{
-		for(i = magic_id_lower_limit-1; i < magic_id_upper_limit; ++i ) //bug
-		{
-			//button_magic[i].create( INFO_X1+13 + i * BUTTON_DISTANCE, INFO_Y1+235, 'A', "INVOKE" );
-			button_magic[i].create( INFO_X1+23, INFO_Y1+80+20*i, INFO_X1+210, INFO_Y1+80+20*i+17,
-				disp_magic_button, ButtonCustomPara( this, i+1 ) );
-			button_magic[i].visible_flag = 0;
-			button_magic[i].enable_flag = 0;
-		}
+		//button_magic[i].create( INFO_X1+13 + i * BUTTON_DISTANCE, INFO_Y1+235, 'A', "INVOKE" );
+		button_magic[i].create( INFO_X1+23, INFO_Y1+80+20*i, INFO_X1+210, INFO_Y1+80+20*i+17,
+			disp_magic_button, ButtonCustomPara( this, i+1 ) );
+		button_magic[i].visible_flag = 0;
+		button_magic[i].enable_flag = 0;
 	}
 
 	if( !should_show_info() )
@@ -231,10 +219,7 @@ void FirmMagic::disp_magic_menu(int refreshFlag)
 {
 	// ----- create cancel button -------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-	}
+	button_cancel.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
 
 	if( !should_show_info() )
 		return;

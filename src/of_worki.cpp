@@ -156,14 +156,11 @@ void FirmWork::disp_worker_list(int dispY1, int refreshFlag)
 			y = INFO_Y1 +178;
 		}
 	}
-	if( refreshFlag == INFO_REPAINT )
-	{
-		//								1------------------20 
-		//				X1 = 34/2 + |<----------------->| + 34/2 = X2
-		//							  Y2 - Y1 = button height
-		slide.init_slide(INFO_X1+7, INFO_Y1+220, INFO_X1+217, INFO_Y1+251, 34 , disp_slide_bar);
-		slide.set(0, MAX_WORKER, needed_worker_count);			
-	}
+	//								1------------------20 
+	//				X1 = 34/2 + |<----------------->| + 34/2 = X2
+	//							  Y2 - Y1 = button height
+	slide.init_slide(INFO_X1+7, INFO_Y1+220, INFO_X1+217, INFO_Y1+251, 34 , disp_slide_bar);
+	slide.set(0, MAX_WORKER, needed_worker_count);			
 
 	// do not use slide.paint( needed_worker_count ) 
 	// because needed_worker_count is not updated immediately

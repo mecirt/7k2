@@ -66,15 +66,12 @@ void FirmFort::disp_camp_info(int dispY1, int refreshFlag)
 
 	// ----- display train button -------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		int x2 = INFO_X1 +13;
-		int y2 = INFO_Y1 +281;
-		if (!is_monster())
-			button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "TRAIN" );
-		else
-			button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
-	}
+	int x2 = INFO_X1 +13;
+	int y2 = INFO_Y1 +281;
+	if (!is_monster())
+		button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "TRAIN" );
+	else
+		button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
 
 	// scan any available population to train
 
@@ -88,19 +85,16 @@ void FirmFort::disp_camp_info(int dispY1, int refreshFlag)
 
 	// ------- display tower count -----//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_tower_count.create( INFO_X1+13+3*BUTTON_DISTANCE+6, INFO_Y1+235+6,
-			INFO_X1+13+3*BUTTON_DISTANCE+6+TOWER_COUNT_BUTTON_WIDTH-1,
-			INFO_Y1+235+6+TOWER_COUNT_BUTTON_HEIGHT-1,
-			disp_tower_count, ButtonCustomPara( NULL, 0 ) );
+	button_tower_count.create( INFO_X1+13+3*BUTTON_DISTANCE+6, INFO_Y1+235+6,
+		INFO_X1+13+3*BUTTON_DISTANCE+6+TOWER_COUNT_BUTTON_WIDTH-1,
+		INFO_Y1+235+6+TOWER_COUNT_BUTTON_HEIGHT-1,
+		disp_tower_count, ButtonCustomPara( NULL, 0 ) );
 
 //#ifdef DEBUG
-		// BUGHERE : ARM_TOWERS is longer than 8 characters
-		// button_tower_count.set_help_code("ARM_TOWERS");
-		button_tower_count.set_help_code("ARM_TOWE");
+	// BUGHERE : ARM_TOWERS is longer than 8 characters
+	// button_tower_count.set_help_code("ARM_TOWERS");
+	button_tower_count.set_help_code("ARM_TOWE");
 //#endif
-	}
 
 	button_tower_count.enable_flag = is_own();
 	button_tower_count.custom_para = ButtonCustomPara( NULL, target_archer_count );

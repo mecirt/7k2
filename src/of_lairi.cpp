@@ -47,7 +47,6 @@
 
 // ------- declare static variable --------//
 
-static char	last_menu_mode;
 static Button3D button_train, button_select_research, button_grant;
 
 static int added_count;			// no. of buttons in button_research_array
@@ -65,14 +64,6 @@ static void i_disp_research_button(ButtonCustom *, int);
 void FirmLair::put_info(int refreshFlag)
 {
 	FirmCamp::put_info(refreshFlag);
-
-	// change refreshFlag to INFO_REPAINT if menu mode changed
-
-	if( refreshFlag == INFO_REPAINT || last_menu_mode != firm_menu_mode )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_menu_mode = firm_menu_mode;
-	}
 
 	// handle other menu mode
 
@@ -118,17 +109,14 @@ void FirmLair::disp_camp_info(int dispY1, int refreshFlag)
 
 	//------ display train button -------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ######## begin Gilbert 31/12 ######//
-//		button_train.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "TRAIN" );
-//		button_select_research.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "RESEARCH" );
+	// ######## begin Gilbert 31/12 ######//
+//	button_train.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "TRAIN" );
+//	button_select_research.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "RESEARCH" );
 
-		button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
-		button_select_research.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_RESE" );
-		button_grant.create( INFO_X1+13, INFO_Y1+235, 'A', "F_GRANT" );
-		// ######## end Gilbert 31/12 ######//
-	}
+	button_train.create( INFO_X1+13, INFO_Y1+281, 'A', "F_TRAIN" );
+	button_select_research.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_RESE" );
+	button_grant.create( INFO_X1+13, INFO_Y1+235, 'A', "F_GRANT" );
+	// ######## end Gilbert 31/12 ######//
 
 	//-------------------------------------//
 
@@ -221,21 +209,18 @@ void FirmLair::disp_research_menu(int refreshFlag)
 
 	// ---------- create research button -----------//
 
-	if( refreshFlag == INFO_REPAINT )
+	added_count = 0;
+
+	for( int techId = 1; techId <= tech_res.tech_count && added_count < MAX_LAIR_RESEARCH_OPTION; ++techId )
 	{
-		added_count = 0;
+		TechInfo *techInfo = tech_res[techId];
 
-		for( int techId = 1; techId <= tech_res.tech_count && added_count < MAX_LAIR_RESEARCH_OPTION; ++techId )
+		if( techInfo->race_id == race_id && tech_res[techId]->can_research(nation_recno, 0) )
 		{
-			TechInfo *techInfo = tech_res[techId];
+			button_research_array[added_count].create( x, y +added_count*ySpacing, x +187, y +added_count*ySpacing +34,
+				i_disp_research_button, ButtonCustomPara(this, techId) );
 
-			if( techInfo->race_id == race_id && tech_res[techId]->can_research(nation_recno, 0) )
-			{
-				button_research_array[added_count].create( x, y +added_count*ySpacing, x +187, y +added_count*ySpacing +34,
-					i_disp_research_button, ButtonCustomPara(this, techId) );
-
-				++added_count;
-			}
+			++added_count;
 		}
 	}
 
@@ -250,11 +235,7 @@ void FirmLair::disp_research_menu(int refreshFlag)
 	}
 
 	x2 +=  3 * BUTTON_DISTANCE;
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( x2, y2, 'A', "CANCEL" );
-	}
-
+	button_cancel.create( x2, y2, 'A', "CANCEL" );
 	button_cancel.paint();
 }
 //--------- End of function FirmLair::disp_research_menu ---------//

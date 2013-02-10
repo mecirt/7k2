@@ -54,7 +54,6 @@ enum	{PATROL_ALL=0,
 //----------- Define static vars -------------//
 
 static short patrol_state = PATROL_ALL;
-static char	last_menu_mode;
 static Button3D button_patrol, button_reward, button_defense, button_camp_upgrade;
 static Button3D button_promote;
 static short  	 pop_disp_y1;
@@ -92,22 +91,6 @@ static void disp_training_bar(int x1, int y1, int x2, int hitPoints, int maxHitP
 //
 void FirmCamp::put_info(int refreshFlag)
 {
-	// ##### begin Gilbert 21/9 ######//
-//	if( refreshFlag == INFO_REPAINT )
-//	{
-//		last_menu_mode = firm_menu_mode = FIRM_MENU_MAIN;
-//		disp_combat_or_skill = 0;		// display combat
-//	}
-	// ##### end Gilbert 21/9 ######//
-//	else
-	{
-		if( last_menu_mode != firm_menu_mode )		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = firm_menu_mode;
-		}
-	}
-
 	Firm::put_info(refreshFlag);
 
 	switch( firm_menu_mode )
@@ -288,11 +271,8 @@ void FirmCamp::disp_camp_upgrade(int dispY1, int refreshFlag)
 		int y2 = INFO_Y1 +281;
 		char iconName[]="CTOF-00";
 	
-		if( refreshFlag==INFO_REPAINT )
-		{
-			button_camp_upgrade.create( x2 + 162, y2, 'A', iconName );
-			button_camp_upgrade.set_help_code( "CAMPTOFORT" );
-		}
+		button_camp_upgrade.create( x2 + 162, y2, 'A', iconName );
+		button_camp_upgrade.set_help_code( "CAMPTOFORT" );
 		button_camp_upgrade.enable_flag = 1;
 
 		if ( upgrading_firm_id )
@@ -317,34 +297,32 @@ void FirmCamp::disp_camp_info(int dispY1, int refreshFlag)
 		int y1 = INFO_Y1 +235;
 		int x2 = INFO_X1 +13;
 		int y2 = INFO_Y1 +281;
-		if( refreshFlag==INFO_REPAINT )
-		{
-			// ##### begin Gilbert 31/12 #######//
-			// button_patrol.create( INFO_X1+13, INFO_Y1+235, 'A', "PATROL" );
-			// button_reward.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "REWARDCB" );
-			// button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+235, 'A', defense_flag ? "DEFENSE1" : "DEFENSE0" );
+		// ##### begin Gilbert 31/12 #######//
+		// button_patrol.create( INFO_X1+13, INFO_Y1+235, 'A', "PATROL" );
+		// button_reward.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "REWARDCB" );
+		// button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+235, 'A', defense_flag ? "DEFENSE1" : "DEFENSE0" );
 
-			if (!is_monster())
-				button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "PATROL" );
-			else
-				button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_PATROL" );
+		if (!is_monster())
+			button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "PATROL" );
+		else
+			button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_PATROL" );
 
-			if (!is_monster())
-				button_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "REWARD" );				
-			else
-				button_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "F_REWARD" );				
-							
-			if (!is_monster())
-				button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', defense_flag ? (char*)"DEFENSE1" : (char*)"DEFENSE0" );
-			else
-				button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', defense_flag ? (char*)"F_DEFEN1" : (char*)"F_DEFEN0" );
-				
-			if (!is_monster())
-				button_promote.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "PROMOTE" );
-			else
-				button_promote.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "F_PROMOT" );
-			// ##### end Gilbert 31/12 #######//
-		}
+		if (!is_monster())
+			button_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "REWARD" );				
+		else
+			button_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "F_REWARD" );				
+						
+		if (!is_monster())
+			button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', defense_flag ? (char*)"DEFENSE1" : (char*)"DEFENSE0" );
+		else
+			button_defense.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', defense_flag ? (char*)"F_DEFEN1" : (char*)"F_DEFEN0" );
+			
+		if (!is_monster())
+			button_promote.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "PROMOTE" );
+		else
+			button_promote.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "F_PROMOT" );
+		// ##### end Gilbert 31/12 #######//
+
 		if( overseer_recno )
 		{
 			button_patrol.enable_flag = 1;
@@ -518,10 +496,6 @@ void FirmCamp::disp_soldier_list(int dispY1, int refreshFlag, int dispSpyMenu)
 {
 	disp_soldier_list_y1 = dispY1;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		swap_item_src = -1;		// reset from selecting swap target
-	}
 	pointed_soldier_id = -1;
 
 	for( int inc = -1; inc <= 1; inc += 2 )
@@ -1325,8 +1299,7 @@ void FirmCamp::detect_train_menu()
 
 static void disp_debug_info(FirmCamp* firmPtr, int refreshFlag)
 {
-	if( refreshFlag == INFO_REPAINT )
-		vga.d3_panel_up( INFO_X1, INFO_Y2-40, INFO_X2, INFO_Y2 );
+	vga.d3_panel_up( INFO_X1, INFO_Y2-40, INFO_X2, INFO_Y2 );
 
 	int x=INFO_X1+3, y=INFO_Y2-37, x2=x+120;
 

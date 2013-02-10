@@ -46,7 +46,6 @@
 #include <ot_firm.h>
 
 static int animate_seqno =1;
-static char	last_menu_mode;
 
 static short edit_progress_x1, edit_progress_y1, edit_progress_x2, edit_progress_y2, edit_progress_enable;
 
@@ -81,18 +80,6 @@ static void i_disp_queue_button(ButtonCustom *button, int);
 
 void FirmWar::put_info(int refreshFlag)
 {
-//	if( refreshFlag==INFO_REPAINT )
-	//if( refreshFlag==INFO_REPAINT && !disable_refresh )
-//		last_menu_mode = war_menu_mode = WAR_MENU_MAIN;
-//	else
-//	{
-		if( last_menu_mode != war_menu_mode )		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = war_menu_mode;
-		}
-//	}
-
 	switch( war_menu_mode )
 	{
 		case WAR_MENU_MAIN:
@@ -131,23 +118,13 @@ void FirmWar::detect_info()
 //
 void FirmWar::disp_war_info(int dispY1, int refreshFlag)
 {
-	static short lastUnitId=0;
 	String str;
-
-	if( refreshFlag==INFO_UPDATE && lastUnitId != build_unit_id )
-	{
-		lastUnitId = build_unit_id;
-		info.disp();
-	}
 
 	//---------------- paint the panel --------------//
 
 	// #### begin Gilbert 5/10 ######//
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel_build.create(INFO_X1 +182, INFO_Y1 +5, "WRFC_X-U", "WRFC_X-D");
-		button_cancel_build.set_help_code( "CANCELWP" );
-	}
+	button_cancel_build.create(INFO_X1 +182, INFO_Y1 +5, "WRFC_X-U", "WRFC_X-D");
+	button_cancel_build.set_help_code( "CANCELWP" );
 	// #### end Gilbert 5/10 ######//
 
 	if( !build_unit_id )
@@ -309,10 +286,7 @@ void FirmWar::disp_build_menu(int refreshFlag)
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("BLDGWEAP") );
 
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		added_count=0;
-	}
+	added_count=0;
 	int b = 0;
 
 	TechClass *techClass = tech_res.tech_class(war_tech_class);	// war_tech_class is set the which tech class of weapon to build
@@ -330,27 +304,24 @@ void FirmWar::disp_build_menu(int refreshFlag)
 		if( unitInfo->unit_class != UNIT_CLASS_WEAPON )
 			continue;
 
-		if( refreshFlag == INFO_REPAINT )
+		err_when( b != added_count);
+
+		button_queue_weapon[added_count].create(x1+20, y1+5, x1+49, y1+34, 
+			i_disp_queue_button, ButtonCustomPara(this, unitId) );
+		button_queue_weapon[added_count].set_help_code( "WEAPNUM" );
+
+		button_weapon[added_count].create(x1, y1+35, x1+67, y1+114,
+			i_disp_build_button, ButtonCustomPara(&button_queue_weapon[added_count], unitId) );
+
+		added_count++;
+		x1 += 68;
+		if (added_count == 3)
 		{
-			err_when( b != added_count);
-
-			button_queue_weapon[added_count].create(x1+20, y1+5, x1+49, y1+34, 
-				i_disp_queue_button, ButtonCustomPara(this, unitId) );
-			button_queue_weapon[added_count].set_help_code( "WEAPNUM" );
-
-			button_weapon[added_count].create(x1, y1+35, x1+67, y1+114,
-				i_disp_build_button, ButtonCustomPara(&button_queue_weapon[added_count], unitId) );
-
-			added_count++;
-			x1 += 68;
-			if (added_count == 3)
-			{
-				x1 = INFO_X1+13;
-				y1 = INFO_Y1+121;
-			}
-
-			err_when(added_count > MAX_WEAPON_TYPE);
+			x1 = INFO_X1+13;
+			y1 = INFO_Y1+121;
 		}
+
+		err_when(added_count > MAX_WEAPON_TYPE);
 
 		if( unitInfo->get_nation_tech_level(nation_recno) > 0 )
 			button_queue_weapon[b].visible_flag = button_weapon[b].visible_flag = 1;
@@ -363,15 +334,12 @@ void FirmWar::disp_build_menu(int refreshFlag)
 		++b;
 	}
 			
-	if( refreshFlag==INFO_REPAINT )
-	{
-		// ##### begin Gilbert 8/2 ######//
-		int x1 = INFO_X1 +13 +BUTTON_DISTANCE*3;
-		int y1 = INFO_Y1 +281;
-		// button_cancel.create( x1+7, y1+9, "OK-U", "OK-D" );
-		button_cancel.create( x1, y1, 'A', "CANCEL" );
-		// ##### end Gilbert 8/2 ######//
-	}
+	// ##### begin Gilbert 8/2 ######//
+	x1 = INFO_X1 +13 +BUTTON_DISTANCE*3;
+	y1 = INFO_Y1 +281;
+	// button_cancel.create( x1+7, y1+9, "OK-U", "OK-D" );
+	button_cancel.create( x1, y1, 'A', "CANCEL" );
+	// ##### end Gilbert 8/2 ######//
 	button_cancel.paint();
 }
 //----------- End of function FirmWar::disp_build_menu -----------//
@@ -538,16 +506,13 @@ void FirmWar::disp_firm_info(int dispY1, int refreshFlag)
 {
 	String str;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_select_build.create( INFO_X1 +13, INFO_Y1 +281, 'A', "MAKEWEAP" );
-		button_select_build2.create( INFO_X1 +13 + BUTTON_DISTANCE, INFO_Y1 +281, 'A', "MAKEWEAP" );
+	button_select_build.create( INFO_X1 +13, INFO_Y1 +281, 'A', "MAKEWEAP" );
+	button_select_build2.create( INFO_X1 +13 + BUTTON_DISTANCE, INFO_Y1 +281, 'A', "MAKEWEAP" );
 
-		// ###### begin Gilbert 4/5 ########//
-		button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "RALLY-GO" );
-		button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+281, 'A', "RALLY-NO" );
-		// ###### end Gilbert 4/5 ########//
-	}
+	// ###### begin Gilbert 4/5 ########//
+	button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "RALLY-GO" );
+	button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+281, 'A', "RALLY-NO" );
+	// ###### end Gilbert 4/5 ########//
 
 	disp_war_info(INFO_Y1+54, refreshFlag);
 

@@ -83,21 +83,18 @@ void UnitCaravan::disp_info(int refreshFlag)
 
 	// display auto/manual button
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_duplicate_caravan.create( INFO_X1+13, INFO_Y1+281, 'A', "CARACOPY" );
-		
-		// manual button
-		button_auto_trade_group[0].create( INFO_X1+BUTTON_DISTANCE+13, INFO_Y1+235,
-			INFO_X1+BUTTON_DISTANCE+56-1, INFO_Y1+280,
-			i_disp_auto_trade_button, ButtonCustomPara(this, 0), 0 );
+	button_duplicate_caravan.create( INFO_X1+13, INFO_Y1+281, 'A', "CARACOPY" );
 
-		// auto button
-		button_auto_trade_group[1].create( INFO_X1+13, INFO_Y1+235,
-			INFO_X1+56-1, INFO_Y1+280,
-			i_disp_auto_trade_button, ButtonCustomPara(this, 1), 0 );
-		button_auto_trade_group[1].set_help_code( "AUTOPICK" );
-	}
+	// manual button
+	button_auto_trade_group[0].create( INFO_X1+BUTTON_DISTANCE+13, INFO_Y1+235,
+		INFO_X1+BUTTON_DISTANCE+56-1, INFO_Y1+280,
+		i_disp_auto_trade_button, ButtonCustomPara(this, 0), 0 );
+
+	// auto button
+	button_auto_trade_group[1].create( INFO_X1+13, INFO_Y1+235,
+		INFO_X1+56-1, INFO_Y1+280,
+		i_disp_auto_trade_button, ButtonCustomPara(this, 1), 0 );
+	button_auto_trade_group[1].set_help_code( "AUTOPICK" );
 	button_auto_trade_group.paint( default_market_trade_mode );
 	
 	button_duplicate_caravan.enable_flag = can_duplicate_caravan();
@@ -196,28 +193,25 @@ void UnitCaravan::disp_stop(int dispY1, int refreshFlag)
 	{
 		TradeStop *tradeStop = stop_array+i;
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_go_stop[i].create( INFO_X1+17, y+2, INFO_X1+167, y+35, i_button_go_stop,
-				ButtonCustomPara( this, tradeStop->firm_recno ) );
-			button_go_stop[i].set_help_code( "CGOSTOP" );
+		button_go_stop[i].create( INFO_X1+17, y+2, INFO_X1+167, y+35, i_button_go_stop,
+			ButtonCustomPara( this, tradeStop->firm_recno ) );
+		button_go_stop[i].set_help_code( "CGOSTOP" );
 
-			button_set_stop[i].create( INFO_X1+169, y+2, INFO_X1+215, y+20, i_button_set_stop,
-				ButtonCustomPara( NULL, 0 ) );
-			button_set_stop[i].set_help_code( "CSETSTOP" );
+		button_set_stop[i].create( INFO_X1+169, y+2, INFO_X1+215, y+20, i_button_set_stop,
+			ButtonCustomPara( NULL, 0 ) );
+		button_set_stop[i].set_help_code( "CSETSTOP" );
 
-			button_cancel_stop[i].create( INFO_X1+169, y+21, INFO_X1+215, y+39, i_button_cancel_stop,
-				ButtonCustomPara( NULL, 0 ) );
-			button_cancel_stop[i].set_help_code( "CDELSTOP" );
+		button_cancel_stop[i].create( INFO_X1+169, y+21, INFO_X1+215, y+39, i_button_cancel_stop,
+			ButtonCustomPara( NULL, 0 ) );
+		button_cancel_stop[i].set_help_code( "CDELSTOP" );
 
-			button_reset_stop[i].create( INFO_X1+169, y+42, INFO_X1+215, y+60, i_button_reset_stop,
-				ButtonCustomPara( NULL, 0 ) );
-			button_reset_stop[i].set_help_code( "CCLRSEL" );
+		button_reset_stop[i].create( INFO_X1+169, y+42, INFO_X1+215, y+60, i_button_reset_stop,
+			ButtonCustomPara( NULL, 0 ) );
+		button_reset_stop[i].set_help_code( "CCLRSEL" );
 
-			for( j = 0; j < MAX_GOODS_SELECT_BUTTON; ++j )
-				button_select_array[i][j].create( INFO_X1+17+carv_gdd_x[j], y+34, INFO_X1+17+carv_gdd_x[j+1]-1, y+61,
-				i_disp_caravan_select_button, ButtonCustomPara( NULL, j ), 0 );
-		}
+		for( j = 0; j < MAX_GOODS_SELECT_BUTTON; ++j )
+			button_select_array[i][j].create( INFO_X1+17+carv_gdd_x[j], y+34, INFO_X1+17+carv_gdd_x[j+1]-1, y+61,
+			i_disp_caravan_select_button, ButtonCustomPara( NULL, j ), 0 );
 
 		button_go_stop[i].custom_para = ButtonCustomPara( this, tradeStop->firm_recno );
 		button_go_stop[i].paint();

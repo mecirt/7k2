@@ -90,23 +90,17 @@ void Spinner::add_option(char* optionDes)
 
 //------- Begin of function Spinner::disp -------//
 //
-// [int] refreshFlag = refresh flag
-//							  (default: INFO_REPAINT)
-//
 void Spinner::disp(int refreshFlag)
 {
 	err_when( !init_flag );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		int y2 = y1+font_ptr->height()+3;
+	int y2 = y1+font_ptr->height()+3;
 
-		font_ptr->put( x1, y1+2, spinner_des );
+	font_ptr->put( x1, y1+2, spinner_des );
 
-		vga.d3_panel_down( x2+3, y1, x3, y2 );
+	vga.d3_panel_down( x2+3, y1, x3, y2 );
 
-		vga_buffer.put_bitmap( x3+5, y1, spinner_icon );
-	}
+	vga_buffer.put_bitmap( x3+5, y1, spinner_icon );
 
 	font_ptr->disp( x2+6, y1+3, option_des_array[selected_id-1], x3-2 );
 }

@@ -126,11 +126,8 @@ void FirmMarket::put_info(int refreshFlag)
 		disp_income(INFO_Y1+209, refreshFlag );	  // 1-display income figure
 	}
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_hire_caravan.create( INFO_X1+13, INFO_Y1+281, 'A', "HIRECARA" );
-		button_hire_caravan.enable_flag = 0;
-	}
+	button_hire_caravan.create( INFO_X1+13, INFO_Y1+281, 'A', "HIRECARA" );
+	button_hire_caravan.enable_flag = 0;
 
 	if( is_own() )
 	{
@@ -152,8 +149,7 @@ void FirmMarket::put_info(int refreshFlag)
 
 	disp_income(INFO_Y1+209, refreshFlag );	  // 1-display income figure
 
-	if( refreshFlag == INFO_REPAINT )
-		button_hire_caravan.paint( INFO_X1, INFO_Y1+236, 'A', "HIRECARA" );
+	button_hire_caravan.paint( INFO_X1, INFO_Y1+236, 'A', "HIRECARA" );
 
 	if( can_hire_caravan() )
 		button_hire_caravan.enable();

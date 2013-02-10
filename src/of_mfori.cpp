@@ -126,12 +126,9 @@ void FirmMonsterFortress::disp_camp_info(int dispY1, int refreshFlag)
 		int y1 = INFO_Y1 +235;
 		int x2 = INFO_X1 +13;
 		int y2 = INFO_Y1 +281;
-		if( refreshFlag==INFO_REPAINT )
-		{
-			button_patrol.create( x2, y2, 'A', "PATROL" );
-			button_transform_grokken.create( x1+BUTTON_DISTANCE, y1, 'A', "FORTRS-2" );
-			button_reward.create( x1, y1, 'A', "F_REWARD" );
-		}
+		button_patrol.create( x2, y2, 'A', "PATROL" );
+		button_transform_grokken.create( x1+BUTTON_DISTANCE, y1, 'A', "FORTRS-2" );
+		button_reward.create( x1, y1, 'A', "F_REWARD" );
 		button_patrol.enable_flag = archer_count > 0;
 		button_patrol.paint();
 
@@ -233,10 +230,7 @@ void FirmMonsterFortress::disp_soldier_list(int dispY1, int refreshFlag, int dis
 {
 	disp_soldier_list_y1 = dispY1;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		swap_item_src = -1;		// reset from selecting swap target
-	}
+	swap_item_src = -1;		// reset from selecting swap target
 	pointed_archer_id = -1;
 
 	for( int inc = -1; inc <= 1; inc += 2 )

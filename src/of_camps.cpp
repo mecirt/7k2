@@ -99,33 +99,30 @@ void FirmCamp::disp_spy_menu(int refreshFlag)
 
 	if( firm_menu_mode == FIRM_MENU_SPY )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			// ###### begin Gilbert 31/12 ######//
-			button_spy_mobilize.create( INFO_X1+13, INFO_Y1+281, 'A', "MOBILSPY" );
-			button_spy_mobilize.enable_flag = 0;
-			if (!is_monster())
-				button_spy_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "REWARD" );
-			else
-				button_spy_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "F_REWARD" );
-			button_spy_reward.enable_flag = 0;
+		// ###### begin Gilbert 31/12 ######//
+		button_spy_mobilize.create( INFO_X1+13, INFO_Y1+281, 'A', "MOBILSPY" );
+		button_spy_mobilize.enable_flag = 0;
+		if (!is_monster())
+			button_spy_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "REWARD" );
+		else
+			button_spy_reward.create( INFO_X1+13, INFO_Y1+235, 'A', "F_REWARD" );
+		button_spy_reward.enable_flag = 0;
 
-			button_spy_action.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "CHG-MISS" );
-			button_spy_action.enable_flag = 0;
-			// ###### end Gilbert 31/12 ######//
+		button_spy_action.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "CHG-MISS" );
+		button_spy_action.enable_flag = 0;
+		// ###### end Gilbert 31/12 ######//
 
-			// BUGHERE : need icon for create incident
-			// #### begin Gilbert 31/12 ######//
-			button_create_incident.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+235, 'A', "INCIDENT" );
-			button_create_incident.enable_flag = 0;
-			button_steal_tech.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+235, 'A', "STEAL_T" );
-			// #### end Gilbert 31/12 ######//
-			button_steal_tech.enable_flag = 0;
-			button_assassinate.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "ASSASSIN" );
-			button_assassinate.enable_flag = 0;
-			button_view_secret.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', "VSECRET" );
-			button_view_secret.enable_flag = 0;
-		}
+		// BUGHERE : need icon for create incident
+		// #### begin Gilbert 31/12 ######//
+		button_create_incident.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+235, 'A', "INCIDENT" );
+		button_create_incident.enable_flag = 0;
+		button_steal_tech.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+235, 'A', "STEAL_T" );
+		// #### end Gilbert 31/12 ######//
+		button_steal_tech.enable_flag = 0;
+		button_assassinate.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "ASSASSIN" );
+		button_assassinate.enable_flag = 0;
+		button_view_secret.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', "VSECRET" );
+		button_view_secret.enable_flag = 0;
 
 		if( spyPtr )
 		{
@@ -210,8 +207,7 @@ void FirmCamp::disp_spy_menu(int refreshFlag)
 
 	else if( firm_menu_mode == FIRM_MENU_SELECT_BRIBER )
 	{
-		if( refreshFlag == INFO_REPAINT )
-			button_bribe.create( INFO_X1+13, INFO_Y1+235, 'A', "BRIBE" );
+		button_bribe.create( INFO_X1+13, INFO_Y1+235, 'A', "BRIBE" );
 
 		if( spyPtr && spyPtr->spy_skill >= MIN_BRIBE_SPYING_SKILL )
 		{
@@ -228,11 +224,7 @@ void FirmCamp::disp_spy_menu(int refreshFlag)
 
 	//----------- cancel button -----------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
-
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 	button_cancel.paint();
 
 }
@@ -444,17 +436,14 @@ void FirmCamp::disp_spy_button(int, int , int refreshFlag)
 
 	//-------------------------------------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ##### begin Gilbert 31/12 ####//
-//		button_spy_menu.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "SPYMENU" );
-//		button_bribe.create( INFO_X1+13+BUTTON_DISTANCE , INFO_Y1+281, 'A', "SELBRIBE" );
+	// ##### begin Gilbert 31/12 ####//
+//	button_spy_menu.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+281, 'A', "SPYMENU" );
+//	button_bribe.create( INFO_X1+13+BUTTON_DISTANCE , INFO_Y1+281, 'A', "SELBRIBE" );
 
-		button_spy_menu.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "SPYMENU" );
-		button_bribe.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "SELBRIBE" );
-		button_capture.create( INFO_X1+13, INFO_Y1+281, 'A', "CAPTURE" );
-		// ##### end Gilbert 31/12 ####//
-	}
+	button_spy_menu.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "SPYMENU" );
+	button_bribe.create( INFO_X1+13+2*BUTTON_DISTANCE , INFO_Y1+235, 'A', "SELBRIBE" );
+	button_capture.create( INFO_X1+13, INFO_Y1+281, 'A', "CAPTURE" );
+	// ##### end Gilbert 31/12 ####//
 
 	button_spy_menu.enable_flag = 0;
 	button_bribe.enable_flag = 0;

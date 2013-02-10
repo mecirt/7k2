@@ -367,9 +367,8 @@ void FirmCamp::disp_bribe_menu(int refreshFlag)
 
 		for( int i=0 ; i<BRIBE_AMOUNT_COUNT ; i++ )
 		{
-			if( refreshFlag == INFO_REPAINT )
-				button_bribe_amount[i].create( INFO_X1+18, y, INFO_X2-14, y+BRIBE_OPTION_HEIGHT-1, 
-					i_disp_bribe_button, ButtonCustomPara( NULL, bribe_amount_array[i]), 0 );
+			button_bribe_amount[i].create( INFO_X1+18, y, INFO_X2-14, y+BRIBE_OPTION_HEIGHT-1, 
+				i_disp_bribe_button, ButtonCustomPara( NULL, bribe_amount_array[i]), 0 );
 
 			button_bribe_amount[i].enable_flag = (~nation_array)->cash >= bribe_amount_array[i];
 
@@ -378,20 +377,17 @@ void FirmCamp::disp_bribe_menu(int refreshFlag)
 			y += BRIBE_OPTION_HEIGHT+2;
 		}
 
-		if( refreshFlag == INFO_REPAINT )
+		button_bribe_amount.push(0, 0);
+
+		// spy_action_chance recalculate at button_bribe_amount.detect()
+		// here calc. for the first time
+
+		spy_action_chance = spy_bribe_succeed_chance(bribe_amount_array[button_bribe_amount()],
+			action_spy_recno, action_target_recno);
+		if( !config.show_debug_info )
 		{
-		   button_bribe_amount.push(0, 0);
-
-			// spy_action_chance recalculate at button_bribe_amount.detect()
-			// here calc. for the first time
-
-			spy_action_chance = spy_bribe_succeed_chance(bribe_amount_array[button_bribe_amount()],
-				action_spy_recno, action_target_recno);
-			if( !config.show_debug_info )
-			{
-				spy_action_chance = min( spy_action_chance, 0 );
-				spy_action_chance = max( spy_action_chance, 100 );
-			}
+			spy_action_chance = min( spy_action_chance, 0 );
+			spy_action_chance = max( spy_action_chance, 100 );
 		}
 		button_bribe_amount.paint();
 
@@ -407,10 +403,7 @@ void FirmCamp::disp_bribe_menu(int refreshFlag)
 			font_snds.put( INFO_X1+18, y+5, text_firm.str_bribe_chance(spy_action_chance) );
 		}
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "BRIBE" );
-		}
+		button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "BRIBE" );
 		button_go.enable_flag = (~nation_array)->cash >= bribe_amount_array[button_bribe_amount()];
 		button_go.paint();
 	}
@@ -419,10 +412,7 @@ void FirmCamp::disp_bribe_menu(int refreshFlag)
 		err_here();
 	}
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 	button_cancel.paint();
 }
 //----------- End of function FirmCamp::disp_bribe_menu -----------//
@@ -619,13 +609,7 @@ void FirmCamp::disp_bribe_unit(int dispY1)
 //
 void FirmCamp::disp_bribe_result(int refreshFlag)
 {
-//	if( refreshFlag != INFO_REPAINT )
-//		return;
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 
 	//------ display the bribe result -----//
 
@@ -676,11 +660,8 @@ void FirmCamp::detect_bribe_result()
 
 void FirmCamp::disp_assassinate_confirm(int refreshFlag)
 {
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_yes.create_text( INFO_X1+50, INFO_Y1+100, text_firm.str_yes() ); // "Yes" );
-		button_no.create_text( INFO_X1+155, INFO_Y1+100, text_firm.str_no() ); // "No" );
-	}
+	button_yes.create_text( INFO_X1+50, INFO_Y1+100, text_firm.str_yes() ); // "Yes" );
+	button_no.create_text( INFO_X1+155, INFO_Y1+100, text_firm.str_no() ); // "No" );
 
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("MISSBASE") );
 
@@ -749,11 +730,7 @@ void FirmCamp::detect_assassinate_confirm()
 //
 void FirmCamp::disp_assassinate_result(int refreshFlag)
 {
-//	if( refreshFlag != INFO_REPAINT )
-//		return;
-
-	if( refreshFlag == INFO_REPAINT )
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 
 //	int x=INFO_X1+4, y=INFO_Y1+4, y2=y+font_san.height()-1;
 
@@ -828,11 +805,8 @@ void FirmCamp::detect_assassinate_result()
 //
 void FirmCamp::disp_steal_tech_confirm(int refreshFlag)
 {
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_yes.create_text( INFO_X1+50, INFO_Y1+100, text_firm.str_yes() ); //"Yes" );
-		button_no.create_text( INFO_X1+155, INFO_Y1+100, text_firm.str_no() ); //"No" );
-	}
+	button_yes.create_text( INFO_X1+50, INFO_Y1+100, text_firm.str_yes() ); //"Yes" );
+	button_no.create_text( INFO_X1+155, INFO_Y1+100, text_firm.str_no() ); //"No" );
 
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("MISSBASE") );
 
@@ -902,10 +876,7 @@ void FirmCamp::disp_steal_tech_result(int refreshFlag)
 	// don't validate spy
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("MISSBASE") );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 
 	String str;
 
@@ -983,58 +954,55 @@ void FirmCamp::disp_incident_nation(int refreshFlag)
 	// US : font_whbl.center_put_paragraph( INFO_X1 +40 , INFO_Y1, INFO_X2 -30, INFO_Y1 +60, str, 2, 0, 0);
 	font_whbl.center_put_paragraph( INFO_X1 +16 , INFO_Y1, INFO_X2 -6, INFO_Y1 +60, str, 2, 0, 0);
 
-	if( refreshFlag == INFO_REPAINT )
+	int nationRecno;
+	button_nation_count = 0;
+	int defaultPushed = -1;
+
+	for( nationRecno = 1; nationRecno <= nation_array.size(); ++nationRecno)
 	{
-		int nationRecno;
-		button_nation_count = 0;
-		int defaultPushed = -1;
+		if( nation_array.is_deleted(nationRecno) )
+			continue;
 
-		for( nationRecno = 1; nationRecno <= nation_array.size(); ++nationRecno)
-		{
-			if( nation_array.is_deleted(nationRecno) )
-				continue;
+		if( nationRecno == nation_array.player_recno			// exclude target nation and own nation
+			|| nationRecno == nation_recno )
+			continue;
 
-			if( nationRecno == nation_array.player_recno			// exclude target nation and own nation
-				|| nationRecno == nation_recno )
-				continue;
+//		if( nation_array[nation_recno]->get_relation_status(nationRecno) <= RELATION_HOSTILE )
+//			continue;		// exclude nation which are already hostile
 
-//			if( nation_array[nation_recno]->get_relation_status(nationRecno) <= RELATION_HOSTILE )
-//				continue;		// exclude nation which are already hostile
+//		button_nation_group[button_nation_count].create( INFO_X1+18 + 40*button_nation_count, INFO_Y1+75, 
+//			INFO_X1+18 + 40*(button_nation_count+1) - 1, INFO_Y1+96, 
+//			disp_nation_button, ButtonCustomPara(NULL, nationRecno), 0 );
+		button_nation_group[button_nation_count].create( INFO_X1+18, INFO_Y1+55+button_nation_count*24,
+			INFO_X2-10, INFO_Y1+55+(button_nation_count+1)*24-1, 
+			disp_nation_button, ButtonCustomPara(NULL, nationRecno), 0 );
 
-//			button_nation_group[button_nation_count].create( INFO_X1+18 + 40*button_nation_count, INFO_Y1+75, 
-//				INFO_X1+18 + 40*(button_nation_count+1) - 1, INFO_Y1+96, 
-//				disp_nation_button, ButtonCustomPara(NULL, nationRecno), 0 );
-			button_nation_group[button_nation_count].create( INFO_X1+18, INFO_Y1+55+button_nation_count*24,
-				INFO_X2-10, INFO_Y1+55+(button_nation_count+1)*24-1, 
-				disp_nation_button, ButtonCustomPara(NULL, nationRecno), 0 );
+		if( action_target_recno == nationRecno )
+			defaultPushed = button_nation_count;
 
-			if( action_target_recno == nationRecno )
-				defaultPushed = button_nation_count;
-
-			++button_nation_count;
-		}
-
-		// reset unused button
-
-		for( b = button_nation_count; b < button_nation_group.button_num; ++b )
-		{
-			button_nation_group[b].reset();		// no. of button is not constant
-		}
-
-		// set pushed button
-
-		if( defaultPushed >= 0 )
-		{
-			button_nation_group.push(defaultPushed, 0);
-		}
-		action_target_recno = button_nation_group[button_nation_group()].custom_para.value;
-
-		// create cancel button
-
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-
-		button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "INCIDENT" );	// BUGHERE : create incident button
+		++button_nation_count;
 	}
+
+	// reset unused button
+
+	for( b = button_nation_count; b < button_nation_group.button_num; ++b )
+	{
+		button_nation_group[b].reset();		// no. of button is not constant
+	}
+
+	// set pushed button
+
+	if( defaultPushed >= 0 )
+	{
+		button_nation_group.push(defaultPushed, 0);
+	}
+	action_target_recno = button_nation_group[button_nation_group()].custom_para.value;
+
+	// create cancel button
+
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
+
+	button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "INCIDENT" );	// BUGHERE : create incident button
 
 	// -------- display nation button group -------//
 
@@ -1108,11 +1076,8 @@ void FirmCamp::disp_incident_confirm(int refreshFlag)
 //	String str;
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("MISSBASE") );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "INCIDENT" );		// BUGHERE : steal tech icon
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_go.create( INFO_X1+13, INFO_Y1+281, 'A', "INCIDENT" );		// BUGHERE : steal tech icon
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 	font_whbl.put_paragraph( INFO_X1+18, INFO_Y1+12, INFO_X2-14, INFO_Y1+72, 
 		text_firm.str_ask_incident() );	// "Do you really want to create an incident?" );
 
@@ -1171,10 +1136,7 @@ void FirmCamp::disp_incident_result(int refreshFlag)
 {
 	// don't validate spy
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 
 	if( create_incident_result == 0 )
 	{

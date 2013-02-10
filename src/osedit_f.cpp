@@ -54,10 +54,8 @@ static ButtonCustomGroup button_player_recno(1+MAX_NATION);
 static SpinnerSmall spinner_race_group;
 static VBrowseIF vbrowse_unit_id;
 static VBrowseIF vbrowse_firm_build;
-static int last_unit_or_struct;
 static int browse_unit_width;
 static int browse_firm_width;
-static int last_race_filter;
 
 // -------- define static function for the browser -------//
 
@@ -109,15 +107,12 @@ void ScenarioEditor::disp_monster_main(int refreshFlag)
 {
 	String str;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// unit or structure button group
+	// unit or structure button group
 
-		button_unit_or_struct[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
-			text_editor.str_unit(), 0 ); // "Unit", 0 );
-		button_unit_or_struct[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
-			text_editor.str_structure(), 0 ); //"Structure", 0 );
-	}
+	button_unit_or_struct[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
+		text_editor.str_unit(), 0 ); // "Unit", 0 );
+	button_unit_or_struct[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
+		text_editor.str_structure(), 0 ); //"Structure", 0 );
 
 	font_zoom.put( INFO_X1+10, INFO_Y2-28, text_editor.str_double_left_add(), 0, INFO_X2-5);
 	font_zoom.put( INFO_X1+10, INFO_Y2-14, text_editor.str_double_right_del(), 0, INFO_X2-5);
@@ -129,12 +124,9 @@ void ScenarioEditor::disp_monster_main(int refreshFlag)
 
 		for( int nationRecno = 0; nationRecno <= MAX_NATION; ++nationRecno )
 		{
-			if( refreshFlag == INFO_REPAINT )
-			{
-				button_player_recno[nationRecno].create( INFO_X1+16+nationRecno*25, INFO_Y1+30,
-					INFO_X1+16+(nationRecno+1)*25-2, INFO_Y1+57, i_disp_nation_button,
-					ButtonCustomPara(NULL, nationRecno), 0 );
-			}
+			button_player_recno[nationRecno].create( INFO_X1+16+nationRecno*25, INFO_Y1+30,
+				INFO_X1+16+(nationRecno+1)*25-2, INFO_Y1+57, i_disp_nation_button,
+				ButtonCustomPara(NULL, nationRecno), 0 );
 			button_player_recno[nationRecno].visible_flag = 
 				button_player_recno[nationRecno].enable_flag =
 				!nationRecno || !nation_array.is_deleted(nationRecno);		// nation 0 always enable
@@ -149,65 +141,45 @@ void ScenarioEditor::disp_monster_main(int refreshFlag)
 
 	// display browser
 
-	if( refreshFlag == INFO_REPAINT || last_race_filter != monster_race_filter )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_race_filter = monster_race_filter;
-		collect_monster_unit(monster_race_filter);
-		collect_monster_firm(monster_race_filter);
-	}
-
-	if( refreshFlag == INFO_REPAINT || last_unit_or_struct != unit_or_struct )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_unit_or_struct = unit_or_struct;
-	}
+	collect_monster_unit(monster_race_filter);
+	collect_monster_firm(monster_race_filter);
 
 	// display browser 
 
 	if( !unit_or_struct )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			// init unit browser
-			vbrowse_unit_id.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
-				-1, 20, monster_unit_id_count, disp_monster_unit_id );
-			vbrowse_unit_id.open(monster_unit_id_browse_recno);
-			browse_unit_width = vbrowse_unit_id.ix2 - vbrowse_unit_id.ix1 + 1;
-		}
+		// init unit browser
+		vbrowse_unit_id.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
+			-1, 20, monster_unit_id_count, disp_monster_unit_id );
+		vbrowse_unit_id.open(monster_unit_id_browse_recno);
+		browse_unit_width = vbrowse_unit_id.ix2 - vbrowse_unit_id.ix1 + 1;
 		vbrowse_unit_id.paint();
 		vbrowse_unit_id.refresh();
 	}
 	else
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			// init firm browser
-			vbrowse_firm_build.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
-				-1, 20, monster_firm_group_count, disp_monster_firm_group );
-			vbrowse_firm_build.open(monster_firm_group_browse_recno);
-			browse_firm_width = vbrowse_firm_build.ix2 - vbrowse_firm_build.ix1 + 1;
-		}
+		// init firm browser
+		vbrowse_firm_build.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
+			-1, 20, monster_firm_group_count, disp_monster_firm_group );
+		vbrowse_firm_build.open(monster_firm_group_browse_recno);
+		browse_firm_width = vbrowse_firm_build.ix2 - vbrowse_firm_build.ix1 + 1;
 		vbrowse_firm_build.paint();
 		vbrowse_firm_build.refresh();
 	}
 
 	// init race filter button
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-//		int raceLength = ((INFO_X2-4) - (INFO_X1+5) + 1) / (1+MAX_MONSTER_TYPE);
-//		char raceAbbr[2] = " ";
-//		for( int r = 0; r <= MAX_MONSTER_TYPE; ++r )
-//		{
-//			if( r > 0 ) 
-//				raceAbbr[0] = monster_res[r]->name[0];
-//			button_race_group[r].create_text( INFO_X1+5+r*raceLength, INFO_Y1+58,
-//				INFO_X1+5+(r+1)*raceLength-1, INFO_Y1+78, raceAbbr );
-//		}
-		spinner_race_group.create( INFO_X1+80, INFO_Y1+58, INFO_X1+210, INFO_Y1+78, 200,//146,
-			0, 1+MAX_MONSTER_TYPE, i_disp_race_spinner, -monster_race_filter );
-	}
+//	int raceLength = ((INFO_X2-4) - (INFO_X1+5) + 1) / (1+MAX_MONSTER_TYPE);
+//	char raceAbbr[2] = " ";
+//	for( int r = 0; r <= MAX_MONSTER_TYPE; ++r )
+//	{
+//		if( r > 0 ) 
+//			raceAbbr[0] = monster_res[r]->name[0];
+//		button_race_group[r].create_text( INFO_X1+5+r*raceLength, INFO_Y1+58,
+//			INFO_X1+5+(r+1)*raceLength-1, INFO_Y1+78, raceAbbr );
+//	}
+	spinner_race_group.create( INFO_X1+80, INFO_Y1+58, INFO_X1+210, INFO_Y1+78, 200,//146,
+		0, 1+MAX_MONSTER_TYPE, i_disp_race_spinner, -monster_race_filter );
 	// button_race_group.paint(-monster_race_filter);
 	spinner_race_group.paint(-monster_race_filter);
 

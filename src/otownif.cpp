@@ -133,21 +133,10 @@ void Town::disp_info(int refreshFlag)
 	// target_wall_man_power = 1;
 	// #### end Gilbert 5/2 #####//
 
-	if (refreshFlag == INFO_REPAINT)
-	//if( town_recno != last_town_recno )//||
-	//	(refreshFlag==INFO_REPAINT && !disable_refresh) )
+	if( town_recno != last_town_recno )
 	{
-		last_menu_mode = town_menu_mode  = TOWN_MENU_MAIN;
+		town_menu_mode  = TOWN_MENU_MAIN;
 		last_town_recno = town_recno;
-	}
-	else
-	{
-		if( last_menu_mode != town_menu_mode ) //|| spy_menu_repaint)		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = town_menu_mode;
-			// spy_menu_repaint = 0;
-		}
 	}
 
 	switch( town_menu_mode )
@@ -251,18 +240,15 @@ void Town::disp_main_menu(int refreshFlag)
 
 		if( nation_recno && nation_array.player_recno == nation_recno )
 		{
-			if( refreshFlag == INFO_REPAINT )
+			button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D", 1 );
+			button_destruct.set_help_code( "DESTFIRM" );
+			button_destruct.enable_flag = 1;
+
+			if (( current_wall_level > 0 ) && ( hit_points < max_hit_points() ))
 			{
-				button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D", 1 );
-				button_destruct.set_help_code( "DESTFIRM" );
-				button_destruct.enable_flag = 1;
-	
-				if (( current_wall_level > 0 ) && ( hit_points < max_hit_points() ))
-				{
-					button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
-					button_builder.set_help_code( "REPAIR" );
-					button_builder.enable_flag = 1;
-				}
+				button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
+				button_builder.set_help_code( "REPAIR" );
+				button_builder.enable_flag = 1;
 			}
 			button_destruct.paint();
 			if (( current_wall_level > 0 ) && ( hit_points < max_hit_points() ))
@@ -469,44 +455,41 @@ if (population >0)
 
 	if( nation_array.player_recno )	//player not die yet
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D", 1 );
-			button_destruct.set_help_code( "DESTFIRM" );
-			button_destruct.enable_flag = 0;
+		button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D", 1 );
+		button_destruct.set_help_code( "DESTFIRM" );
+		button_destruct.enable_flag = 0;
 
-			button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
-			button_builder.set_help_code( "REPAIR" );
-		//	button_builder.enable_flag = 0;
+		button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
+		button_builder.set_help_code( "REPAIR" );
+	//	button_builder.enable_flag = 0;
 
-			button_recruit.create( x2, y2, 'A', "RECRUIT" );
-			button_recruit.enable_flag = 0;
-			x2 += BUTTON_DISTANCE;
+		button_recruit.create( x2, y2, 'A', "RECRUIT" );
+		button_recruit.enable_flag = 0;
+		x2 += BUTTON_DISTANCE;
 
-			button_wagon.create( x2, y2, 'A', "WAGON" );
-			button_wagon.enable_flag = 0;
-			x2 += BUTTON_DISTANCE;
+		button_wagon.create( x2, y2, 'A', "WAGON" );
+		button_wagon.enable_flag = 0;
+		x2 += BUTTON_DISTANCE;
 
-			if( target_wall_level >= 1)
-				button_buildwall.create( x2, y2, 'A', "WALLS-2" );
-			else
-				button_buildwall.create( x2, y2, 'A', "WALLS-1" );
+		if( target_wall_level >= 1)
+			button_buildwall.create( x2, y2, 'A', "WALLS-2" );
+		else
+			button_buildwall.create( x2, y2, 'A', "WALLS-1" );
 
-			button_buildwall.enable_flag = 0;
-			x2 += BUTTON_DISTANCE;
+		button_buildwall.enable_flag = 0;
+		x2 += BUTTON_DISTANCE;
 
-			button_tax.create( x1, y1 , 'A', "COLLTAX" );
-			button_tax.enable_flag = 0;
-			x1 += BUTTON_DISTANCE;
-		
-			button_grant.create( x1, y1 , 'A', "GRANT" );
-			button_grant.enable_flag = 0;
-			x1 += BUTTON_DISTANCE;
+		button_tax.create( x1, y1 , 'A', "COLLTAX" );
+		button_tax.enable_flag = 0;
+		x1 += BUTTON_DISTANCE;
+	
+		button_grant.create( x1, y1 , 'A', "GRANT" );
+		button_grant.enable_flag = 0;
+		x1 += BUTTON_DISTANCE;
 
-			button_spy.create( x1, y1, 'A', "SPYMENU" );
-			button_spy.enable_flag = 0;
-			x1 += BUTTON_DISTANCE;
-		}
+		button_spy.create( x1, y1, 'A', "SPYMENU" );
+		button_spy.enable_flag = 0;
+		x1 += BUTTON_DISTANCE;
 
 		// #### begin Gilbert 24/2 ########//
 		// if( nation_recno && nation_array.player_recno == nation_recno )
@@ -812,51 +795,42 @@ void Town::disp_spy_menu(int refreshFlag)
 
 	//------------ create browser ------------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_spy.init( INFO_X1 +13, INFO_Y1+40, INFO_X1+233, INFO_Y1 +219,
-								0, 45, playerSpyCount, put_spy_rec );
+	browse_spy.init( INFO_X1 +13, INFO_Y1+40, INFO_X1+233, INFO_Y1 +219,
+							0, 45, playerSpyCount, put_spy_rec );
 
-	//	browse_spy.init( RACE_BROWSE_X1, RACE_BROWSE_Y1, RACE_BROWSE_X2, RACE_BROWSE_Y2,
-	//							0, 25, playerSpyCount, put_spy_rec );
-
-		browse_spy.open(1);
-	}
+	browse_spy.open(1);
 //	browse_spy.init_var(playerSpyCount, browse_spy.rec_no);
 	browse_spy.update(playerSpyCount);
 	browse_spy.paint();
 	
 	//----------- create the paint button ----------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		int x1 = INFO_X1 +13;
-		int y1 = INFO_Y1 +235;
-		int x2 = INFO_X1 +13;
-		int y2 = INFO_Y1 +281;
+	int x1 = INFO_X1 +13;
+	int y1 = INFO_Y1 +235;
+	int x2 = INFO_X1 +13;
+	int y2 = INFO_Y1 +281;
 
-		button_spy_mobilize.create( x2, y2, 'A', "MOBILSPY" );
-		button_spy_mobilize.enable_flag = 0;
-		x2+=BUTTON_DISTANCE;
+	button_spy_mobilize.create( x2, y2, 'A', "MOBILSPY" );
+	button_spy_mobilize.enable_flag = 0;
+	x2+=BUTTON_DISTANCE;
 
-		//--------- reward spy button --------//
+	//--------- reward spy button --------//
 
-		if (!is_monster())
-			button_spy_reward.create( x1, y1, 'A', "REWARD" );
-		else
-			button_spy_reward.create( x1, y1, 'A', "F_REWARD" );
-		button_spy_reward.enable_flag = 0;
-		x1+=BUTTON_DISTANCE;
+	if (!is_monster())
+		button_spy_reward.create( x1, y1, 'A', "REWARD" );
+	else
+		button_spy_reward.create( x1, y1, 'A', "F_REWARD" );
+	button_spy_reward.enable_flag = 0;
+	x1+=BUTTON_DISTANCE;
 
-		button_spy_action.create( x1, y1, 'A', "CHG-MISS" );
-		button_spy_action.enable_flag = 0;
-		x1+=BUTTON_DISTANCE;
-				
-		button_spy_view_secret.create( x1, y1, 'A', "VSECRET" );
-		button_spy_view_secret.enable_flag = 0;
-		
-		button_cancel.create( INFO_X1 +13 + 3*BUTTON_DISTANCE, y2, 'A', "PREVMENU" );
-	}
+	button_spy_action.create( x1, y1, 'A', "CHG-MISS" );
+	button_spy_action.enable_flag = 0;
+	x1+=BUTTON_DISTANCE;
+			
+	button_spy_view_secret.create( x1, y1, 'A', "VSECRET" );
+	button_spy_view_secret.enable_flag = 0;
+	
+	button_cancel.create( INFO_X1 +13 + 3*BUTTON_DISTANCE, y2, 'A', "PREVMENU" );
 	
 	button_spy_mobilize.enable_flag = 1;
 	button_spy_mobilize.paint();
@@ -1006,21 +980,17 @@ void Town::disp_auto_menu(int modeCollectTax, int refreshFlag)
 
 	for( i=0; i<BUTTON_LOYALTY_COUNT; i++ )
 	{
-		if ( refreshFlag == INFO_REPAINT )
-			button_loyalty_array[i].create( x +(i>>2) *94, y +(i%4) *23, x +(i>>2) *94 +91, y +(i%4) *23 +20,
-					disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
+		button_loyalty_array[i].create( x +(i>>2) *94, y +(i%4) *23, x +(i>>2) *94 +91, y +(i%4) *23 +20,
+				disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
 		button_loyalty_array[i].paint();
 	}
 	
 	i = BUTTON_LOYALTY_COUNT;
-	if ( refreshFlag == INFO_REPAINT )
-		button_loyalty_disabled.create( x +(i>>2) *94, y +(i%4) *23, x +(i>>2) *94 +91, y +(i%4) *23 +20,
-				disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
+	button_loyalty_disabled.create( x +(i>>2) *94, y +(i%4) *23, x +(i>>2) *94 +91, y +(i%4) *23 +20,
+			disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
 	button_loyalty_disabled.paint();
 
-	if ( refreshFlag == INFO_REPAINT )
-	//	button_cancel2.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-		button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
+	button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel2.paint();
 }
 //----------- End of function Town::disp_auto_menu -----------//
@@ -1045,15 +1015,12 @@ void Town::disp_man_power(int refreshFlag)
 
 	for( i=0; i<9; i++ )
 	{
-		if ( refreshFlag == INFO_REPAINT )
-			button_loyalty_array[i].create( x, y +i *19, x +187, y +i *19 +17,
-					disp_man_power_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
+		button_loyalty_array[i].create( x, y +i *19, x +187, y +i *19 +17,
+				disp_man_power_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
 		button_loyalty_array[i].paint();
 	}
 	
-	if ( refreshFlag == INFO_REPAINT )
-		button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
-	//	button_cancel2.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
+	button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel2.paint();
 }
 //----------- End of function Town::disp_man_power -----------//
@@ -1426,7 +1393,6 @@ int Town::input_town_name()
 	// --------------------------------//
 
 	int retFlag = 0;
-	int refreshFlag = 1;
 
 	while(1)
 	{

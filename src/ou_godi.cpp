@@ -68,10 +68,7 @@ void UnitGod::disp_info(int refreshFlag)
 
 	// ####### begin Gilbert 26/2 #######//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cast.create( x2+BUTTON_DISTANCE, y2-22, 'A', "GBA-1" );
-	}
+	button_cast.create( x2+BUTTON_DISTANCE, y2-22, 'A', "GBA-1" );
 
 	if( is_own() )
 	{

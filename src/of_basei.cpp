@@ -56,10 +56,7 @@ void FirmBase::disp_god_info(int dispY1, int refreshFlag)
 
 	int  x=INFO_X1, y=INFO_Y1;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		invoked_effect_text[0] = '\0';	// clear text not to show invoked effect text
-	}
+	invoked_effect_text[0] = '\0';	// clear text not to show invoked effect text
 
 	String str;
 
@@ -139,11 +136,8 @@ void FirmBase::disp_firm_info(int dispY1, int refreshFlag)
 	int x2 = INFO_X1 +13;
 	int y2 = INFO_Y1 +281;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_clear_text.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
-			
+	button_clear_text.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
+
 	if( !is_own() )
 		return;
 

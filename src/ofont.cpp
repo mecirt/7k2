@@ -1103,7 +1103,6 @@ void Font::update_field(int x1, int y1, int value, int format, int x2)
 //                  3 - 100% percentage
 //
 // <int> x2          = the x2 (right border) of the field
-// <int> refreshFlag = refresh flag, either INFO_REPAINT or INFO_UPDATE
 // [char*] helpCode  = help code
 //
 void Font::field(int xDes, int y1, const char* desStr, int xValue, int value,
@@ -1111,19 +1110,12 @@ void Font::field(int xDes, int y1, const char* desStr, int xValue, int value,
 {
 	int x2;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
+	vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
 
-		// ####### begin Gilbert 10/2 ########//
-		put( xDes+4  , y1+2, desStr, 0, xValue-4);
-		// ####### end Gilbert 10/2 ########//
-		x2 = put( xValue+4, y1+2, m.format(value,format) );
-	}
-	else
-	{
-		x2 = put( xValue+4, y1+2, m.format(value,format), 1, xEnd );
-	}
+	// ####### begin Gilbert 10/2 ########//
+	put( xDes+4  , y1+2, desStr, 0, xValue-4);
+	// ####### end Gilbert 10/2 ########//
+	x2 = put( xValue+4, y1+2, m.format(value,format) );
 
 	if( helpCode )
 		help.set_help(xDes, y1, x2, y1+font_height+3, helpCode );
@@ -1201,7 +1193,6 @@ void Font::update_field(int x1, int y1, double value, int format, int x2)
 //                  3 - 100% percentage
 //
 // <int> x2          = the x2 (right border) of the field
-// <int> refreshFlag = refresh flag, either INFO_REPAINT or INFO_UPDATE
 // [char*] helpCode  = help code
 //
 void Font::field(int xDes, int y1, const char* desStr, int xValue, double value,
@@ -1209,19 +1200,12 @@ void Font::field(int xDes, int y1, const char* desStr, int xValue, double value,
 {
 	int x2;
 
-   if( refreshFlag == INFO_REPAINT )
-   {
-		vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
+	vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
 
-		// ####### begin Gilbert 10/2 ########//
-      put( xDes+4  , y1+2, desStr, 0, xValue-4);
-		// ####### begin Gilbert 10/2 ########//
-      x2 = put( xValue+4, y1+2, m.format(value,format) );
-   }
-   else
-   {
-		x2 = put( xValue+4, y1+2, m.format(value,format), 1, xEnd );
-	}
+	// ####### begin Gilbert 10/2 ########//
+	put( xDes+4  , y1+2, desStr, 0, xValue-4);
+	// ####### begin Gilbert 10/2 ########//
+ 	x2 = put( xValue+4, y1+2, m.format(value,format) );
 
 	if( helpCode )
 		help.set_help(xDes, y1, x2, y1+font_height+3, helpCode );
@@ -1284,7 +1268,6 @@ void Font::update_field(int x1, int y1, const char* value, int x2)
 // <char*> value  = value
 //
 // <int> x3          = the x3 (right border) of the field
-// <int> refreshFlag = refresh flag, either INFO_REPAINT or INFO_UPDATE
 // [char*] helpCode  = help code
 //
 void Font::field(int xDes, int y1, const char* desStr, int xValue, const char* value,
@@ -1292,19 +1275,12 @@ void Font::field(int xDes, int y1, const char* desStr, int xValue, const char* v
 {
 	int x2;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
+	vga.d3_panel_up( xDes, y1, xValue, y1+font_height+6 );
 
-		// ####### begin Gilbert 10/2 ########//
-		put( xDes+4  , y1+2, desStr, 0, xValue-4);
-		// ####### begin Gilbert 10/2 ########//
-		x2 = put( xValue+4, y1+2, value );
-	}
-	else
-	{
-		x2 = put( xValue+4, y1+2, value, 1, xEnd );
-	}
+	// ####### begin Gilbert 10/2 ########//
+	put( xDes+4  , y1+2, desStr, 0, xValue-4);
+	// ####### begin Gilbert 10/2 ########//
+	x2 = put( xValue+4, y1+2, value );
 
 	if( helpCode )
 		help.set_help(xDes, y1, x2, y1+font_height+3, helpCode );

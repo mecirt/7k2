@@ -49,7 +49,6 @@
 // ------- define static variable ------//
 
 static char menu_mode;
-static char last_menu_mode;
 static char menu_mode_para;
 
 // Button3D button_magic[MAGIC_COUNT-2];
@@ -62,14 +61,6 @@ static Button3D button_cast;
 
 void FirmOffensive::put_info(int refreshFlag)
 {
-//	if( refreshFlag == INFO_REPAINT )
-//		last_menu_mode = menu_mode = FIRM_MAGIC_MENU_MAIN;
-	/*else*/ if( last_menu_mode != menu_mode )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_menu_mode = menu_mode;
-	}
-
 	switch( menu_mode )
 	{
 	case FIRM_MAGIC_MENU_MAIN:
@@ -109,8 +100,7 @@ void FirmOffensive::disp_main_menu(int refreshFlag)
 {
 	Firm::put_info(refreshFlag);
 
-	if( refreshFlag == INFO_REPAINT )
-		button_cast.create( INFO_X1 +13, INFO_Y1 +259, 'A', "GBA-1" );
+	button_cast.create( INFO_X1 +13, INFO_Y1 +259, 'A', "GBA-1" );
 	
 	if( !should_show_info() )
 		return;
@@ -213,11 +203,7 @@ void FirmOffensive::disp_magic_menu(int refreshFlag)
 {
 	// ----- create cancel button -------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-	}
-
+	button_cancel.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
 	if( !should_show_info() )
 		return;
 

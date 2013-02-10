@@ -380,13 +380,10 @@ void SpyArray::disp_view_secret_menu(int spyRecno, int refreshFlag)
 	int i;
 	for( i=0 ; i<SECRET_REPORT_COUNT ; i++ )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-//			button_secret_report_array[i].create( INFO_X1+18, y, INFO_X2-10, y+21, 
-//				disp_text_button, ButtonCustomPara( secret_report_str_array[i], i), 0 );
-			button_secret_report_array[i].create( INFO_X1+18, y, INFO_X2-10, y+21, 
-				disp_text_button, ButtonCustomPara( text_reports.str_report_mode(i+1), i), 0 );
-		}
+//		button_secret_report_array[i].create( INFO_X1+18, y, INFO_X2-10, y+21, 
+//			disp_text_button, ButtonCustomPara( secret_report_str_array[i], i), 0 );
+		button_secret_report_array[i].create( INFO_X1+18, y, INFO_X2-10, y+21, 
+			disp_text_button, ButtonCustomPara( text_reports.str_report_mode(i+1), i), 0 );
 
 		button_secret_report_array[i].enable_flag = 
 			tech_res[TECH_INFO_THEFT]->get_nation_tech_level(spyPtr->true_nation_recno) 
@@ -395,25 +392,19 @@ void SpyArray::disp_view_secret_menu(int spyRecno, int refreshFlag)
 		y+=23;
 	}
 
-	if( refreshFlag == INFO_REPAINT )
+	// push the first enabled button
+	for( i = 0; i < SECRET_REPORT_COUNT; i++ )
 	{
-		// push the first enabled button
-		for( i = 0; i < SECRET_REPORT_COUNT; i++ )
+		if( button_secret_report_array[i].enable_flag )
 		{
-			if( button_secret_report_array[i].enable_flag )
-			{
-				button_secret_report_array.push(i, 0);
-				break;
-			}
+			button_secret_report_array.push(i, 0);
+			break;
 		}
 	}
 	button_secret_report_array.paint();
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_view_secret.create( INFO_X1+13, INFO_Y1+281, 'A', "VSECRET" );
-		button_secret_report_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
-	}
+	button_view_secret.create( INFO_X1+13, INFO_Y1+281, 'A', "VSECRET" );
+	button_secret_report_cancel.create( INFO_X1+13+3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "PREVMENU" );
 	button_view_secret.enable_flag = button_secret_report_array[button_secret_report_array()].enable_flag;
 	button_view_secret.paint();
 	button_secret_report_cancel.paint();

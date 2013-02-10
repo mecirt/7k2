@@ -67,10 +67,7 @@ void FirmMonsterAlchemy::detect_info()
 
 void FirmMonsterAlchemy::disp_firm_info(int dispY1, int refreshFlag )
 {
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_change.create( INFO_X1+13, INFO_Y1+235, 'A', "CHG-TASK" );
-	}
+	button_change.create( INFO_X1+13, INFO_Y1+235, 'A', "CHG-TASK" );
 
 	if( should_show_info() )
 	{

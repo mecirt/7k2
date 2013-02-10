@@ -70,13 +70,6 @@ static short edit_spy_pot_x1, edit_spy_pot_y1, edit_spy_pot_x2, edit_spy_pot_y2,
 //
 void FirmTrain::put_info(int refreshFlag)
 {
-/*	if( refreshFlag == INFO_REPAINT )
-	{
-		firm_menu_mode = FIRM_TRAIN_MENU_MAIN;
-		disp_combat_or_skill = 0;
-	}
-*/
-
 	Firm::put_info(refreshFlag);
 
 	switch( firm_menu_mode )
@@ -140,20 +133,17 @@ void FirmTrain::detect_info()
 //
 void FirmTrain::disp_firm_info(int dispY1, int refreshFlag )
 {
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILIZE" );
-		button_mobilize.enable_flag = 0;
-		button_spy_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILSPY" );
-		button_spy_mobilize.enable_flag = 0;
-		button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL" );
-		button_patrol.enable_flag = 0;
+	button_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILIZE" );
+	button_mobilize.enable_flag = 0;
+	button_spy_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILSPY" );
+	button_spy_mobilize.enable_flag = 0;
+	button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL" );
+	button_patrol.enable_flag = 0;
 
-		// ###### begin Gilbert 11/3 ########//
-		button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
-		button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
-		// ###### end Gilbert 11/3 ########//
-	}
+	// ###### begin Gilbert 11/3 ########//
+	button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
+	button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
+	// ###### end Gilbert 11/3 ########//
 
 	button_mobilize_visible =  button_spy_mobilize_visible = 0;
 

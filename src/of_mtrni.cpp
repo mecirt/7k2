@@ -67,12 +67,6 @@ static short edit_spy_x1, edit_spy_y1, edit_spy_x2, edit_spy_y2, edit_spy_enable
 //
 void FirmMonsterTrain::put_info(int refreshFlag)
 {
-//	if( refreshFlag == INFO_REPAINT )
-//	{
-//		firm_menu_mode = FIRM_MONS_TRAIN_MENU_MAIN;
-//		disp_combat_or_skill = 0;
-//	}
-
 	Firm::put_info(refreshFlag);
 
 	switch( firm_menu_mode )
@@ -135,49 +129,46 @@ void FirmMonsterTrain::disp_firm_info(int dispY1, int refreshFlag )
 {
 	int i;
 
-	if( refreshFlag == INFO_REPAINT )
+	button_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILIZE" );
+	button_mobilize.enable_flag = 0;
+	if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
+		button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL-B" );
+	else
+	if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
+		button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL-T" );
+	else
+		button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL" );
+
+	button_patrol.enable_flag = 0;
+	for( i = 0; i < train_type_count; ++i )
 	{
-		button_mobilize.create( INFO_X1+13, INFO_Y1+235, 'A', "MOBILIZE" );
-		button_mobilize.enable_flag = 0;
-		if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
-			button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL-B" );
-		else
-		if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
-			button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL-T" );
-		else
-			button_patrol.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 'A', "PATROL" );
-
-		button_patrol.enable_flag = 0;
-		for( i = 0; i < train_type_count; ++i )
+		if( i < 4 )		// 4 buttons at bottom line
 		{
-			if( i < 4 )		// 4 buttons at bottom line
-			{
-				if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
-					button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-B" );
-				else
-				if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
-					button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-T" );
-				else
-					button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_TRAIN" );
-			}
+			if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
+				button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-B" );
 			else
-			{
-				if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
-					button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "TRAIN-B" );
-				else
-				if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
-					button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "TRAIN-T" );
-				else
-					button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "F_TRAIN" );
-			}
-			button_train[i].enable_flag = 0;
+			if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
+				button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-T" );
+			else
+				button_train[i].create( INFO_X1+13+i*BUTTON_DISTANCE, INFO_Y1+281, 'A', "F_TRAIN" );
 		}
-
-		// ###### begin Gilbert 11/3 ########//
-		button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
-		button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
-		// ###### end Gilbert 11/3 ########//
+		else
+		{
+			if ((train_type_count == 1) && (train_unit_id[0] == UNIT_BEE))
+				button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "TRAIN-B" );
+			else
+			if ((train_type_count == 1) && (train_unit_id[0] == UNIT_TERMITE))
+				button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "TRAIN-T" );
+			else
+				button_train[i].create( INFO_X1+13+(7-i)*BUTTON_DISTANCE, INFO_Y1+235, 'A', "F_TRAIN" );
+		}
+		button_train[i].enable_flag = 0;
 	}
+
+	// ###### begin Gilbert 11/3 ########//
+	button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
+	button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
+	// ###### end Gilbert 11/3 ########//
 
 	if( !should_show_info() )
 		return;

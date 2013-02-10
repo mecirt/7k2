@@ -45,7 +45,6 @@
 
 
 static int animate_seqno =1;
-static char	last_menu_mode;
 
 //---------- Define constant ------------//
 
@@ -74,12 +73,6 @@ static void i_disp_queue_button(ButtonCustom *button, int);
 
 void FirmIncubator::put_info(int refreshFlag)
 {
-	if( last_menu_mode != war_menu_mode )		// if changing menu mode pass repaint to sub-menu
-	{
-		refreshFlag = INFO_REPAINT;
-		last_menu_mode = war_menu_mode;
-	}
-
 	switch( war_menu_mode )
 	{
 		case WAR_MENU_MAIN:
@@ -133,15 +126,12 @@ void FirmIncubator::disp_firm_info(int dispY1, int refreshFlag)
 {
 	String str;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_select_build.create( INFO_X1 +13, INFO_Y1 +281, 'A', "MAKEWEAP" );
+	button_select_build.create( INFO_X1 +13, INFO_Y1 +281, 'A', "MAKEWEAP" );
 
-		// ###### begin Gilbert 11/3 ########//
-		button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
-		button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
-		// ###### end Gilbert 11/3 ########//
-	}
+	// ###### begin Gilbert 11/3 ########//
+	button_go_rally.create( INFO_X1+13+BUTTON_DISTANCE*2, INFO_Y1+235, 'A', "RALLY-GO" );
+	button_clear_rally.create( INFO_X1+13+BUTTON_DISTANCE*3, INFO_Y1+235, 'A', "RALLY-NO" );
+	// ###### end Gilbert 11/3 ########//
 
 	disp_war_info(INFO_Y1+54, refreshFlag);
 
@@ -227,22 +217,12 @@ void FirmIncubator::detect_firm_info()
 
 void FirmIncubator::disp_war_info(int dispY1, int refreshFlag)
 {
-	static short lastUnitId=0;
 	String str;
-
-	if( refreshFlag==INFO_UPDATE && lastUnitId != build_unit_id )
-	{
-		lastUnitId = build_unit_id;
-		info.disp();
-	}
 
 	//---------------- paint the panel --------------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel_build.create(INFO_X1 +182, INFO_Y1 +5, "WRFC_X-U", "WRFC_X-D");
-		button_cancel_build.set_help_code( "CANCELWP" );
-	}
+	button_cancel_build.create(INFO_X1 +182, INFO_Y1 +5, "WRFC_X-U", "WRFC_X-D");
+	button_cancel_build.set_help_code( "CANCELWP" );
 
 	if( !build_unit_id )
 	{
@@ -303,13 +283,10 @@ void FirmIncubator::disp_build_menu(int refreshFlag)
 		unitId = incubate_unit_id[i];
 		unitInfo = unit_res[unitId];
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_queue_weapon[added_count].create(x1+20, y1+5, x1+49, y1+34, 
-				i_disp_queue_button, ButtonCustomPara(this, unitId) );
-			button_weapon[added_count].create(x1, y1+35, x1+67, y1+114,
-				i_disp_build_button, ButtonCustomPara(&button_queue_weapon[added_count], unitId) );
-		}
+		button_queue_weapon[added_count].create(x1+20, y1+5, x1+49, y1+34, 
+			i_disp_queue_button, ButtonCustomPara(this, unitId) );
+		button_weapon[added_count].create(x1, y1+35, x1+67, y1+114,
+			i_disp_build_button, ButtonCustomPara(&button_queue_weapon[added_count], unitId) );
 
 		button_weapon[added_count].visible_flag 
 			= button_queue_weapon[added_count].visible_flag 
@@ -328,15 +305,12 @@ void FirmIncubator::disp_build_menu(int refreshFlag)
 		}
 	}
 
-	if( refreshFlag==INFO_REPAINT )
-	{
-		// ##### begin Gilbert 8/2 ######//
-		int x1 = INFO_X1 +13 +BUTTON_DISTANCE*3;
-		int y1 = INFO_Y1 +281;
-		// button_cancel.create( x1+7, y1+9, "OK-U", "OK-D" );
-		button_cancel.create( x1, y1, 'A', "CANCEL" );
-		// ##### end Gilbert 8/2 ######//
-	}
+	// ##### begin Gilbert 8/2 ######//
+	x1 = INFO_X1 +13 +BUTTON_DISTANCE*3;
+	y1 = INFO_Y1 +281;
+	// button_cancel.create( x1+7, y1+9, "OK-U", "OK-D" );
+	button_cancel.create( x1, y1, 'A', "CANCEL" );
+	// ##### end Gilbert 8/2 ######//
 	button_cancel.paint();
 }
 

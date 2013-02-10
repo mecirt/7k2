@@ -66,10 +66,6 @@ static long gold_coin_amount_array[GOLD_COIN_AMOUNT_COUNT] =
 #define PLANT_SIZE_MAX 4
 // static char *plant_size_str[PLANT_SIZE_MAX] = { "1", "2", "3", "4" };
 
-static int last_rock_or_site;
-static int last_rock_type;
-static int last_site_type;
-
 // ------- define static variable --------------//
 
 static ButtonGroup button_rock_or_site(3);	// 0=rock 1=site, 2=plant
@@ -164,70 +160,49 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 {
 	// ------ terrain object or items button group --------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_rock_or_site[0].create_text( INFO_X1+5, INFO_Y1+5, INFO_X1+74, INFO_Y1+25, 
-			text_editor.str_misc_mode(0), 0 ); // "Terrain", 0 );
-		button_rock_or_site[1].create_text( INFO_X1+76, INFO_Y1+5, INFO_X1+145, INFO_Y1+25,
-			text_editor.str_misc_mode(1), 0 ); // "Objects", 0 );
-		button_rock_or_site[2].create_text( INFO_X1+147, INFO_Y1+5, INFO_X1+216, INFO_Y1+25,
-			text_editor.str_misc_mode(2), 0 ); // "Plant", 0 );
-	}
+	button_rock_or_site[0].create_text( INFO_X1+5, INFO_Y1+5, INFO_X1+74, INFO_Y1+25, 
+		text_editor.str_misc_mode(0), 0 ); // "Terrain", 0 );
+	button_rock_or_site[1].create_text( INFO_X1+76, INFO_Y1+5, INFO_X1+145, INFO_Y1+25,
+		text_editor.str_misc_mode(1), 0 ); // "Objects", 0 );
+	button_rock_or_site[2].create_text( INFO_X1+147, INFO_Y1+5, INFO_X1+216, INFO_Y1+25,
+		text_editor.str_misc_mode(2), 0 ); // "Plant", 0 );
 
 	font_zoom.put( INFO_X1+10, INFO_Y2-28, text_editor.str_double_left_add(), 0, INFO_X2-5);
 	font_zoom.put( INFO_X1+10, INFO_Y2-14, text_editor.str_double_right_del(), 0, INFO_X2-5);
 
 	button_rock_or_site.paint(rock_or_site);
 
-	if( refreshFlag == INFO_REPAINT || last_rock_or_site != rock_or_site )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_rock_or_site = rock_or_site;
-	}
-
 	if( rock_or_site == 0)			// terrain objects mode 
 	{
 		// ------ put rock type buttons --------//
 
-		if( refreshFlag == INFO_REPAINT || last_rock_type != rock_type )
+		int j = 0;
+		for( int i = 0; i < ROCK_TYPES; ++i )
 		{
-			refreshFlag = INFO_REPAINT;
-			last_rock_type = rock_type;
-		}
-
-		if( refreshFlag == INFO_REPAINT )
-		{
-			int j = 0;
-			for( int i = 0; i < ROCK_TYPES; ++i )
+//			button_rock_type[i].create_text( INFO_X1+5+i*50, INFO_Y1+30, INFO_X1+52+i*50, INFO_Y1+50,
+//				text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
+			if( rock_browse_count[i] )
 			{
-//				button_rock_type[i].create_text( INFO_X1+5+i*50, INFO_Y1+30, INFO_X1+52+i*50, INFO_Y1+50,
-//					text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
-				if( rock_browse_count[i] )
-				{
-					button_rock_type[i].create_text( INFO_X1+5, INFO_Y1+30+j*21, INFO_X2-5, INFO_Y1+49+j*21,
-						text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
-					j++;
-				}
-				else
-				{
-					// no rock in this group, hide the button
-					// by put the button at the first place and disable it
-					button_rock_type[i].create_text( INFO_X1+5, INFO_Y1+30+0*21, INFO_X2-5, INFO_Y1+49+0*21,
-						text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
-					button_rock_type[i].visible_flag = 0;
-				}
+				button_rock_type[i].create_text( INFO_X1+5, INFO_Y1+30+j*21, INFO_X2-5, INFO_Y1+49+j*21,
+					text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
+				j++;
+			}
+			else
+			{
+				// no rock in this group, hide the button
+				// by put the button at the first place and disable it
+				button_rock_type[i].create_text( INFO_X1+5, INFO_Y1+30+0*21, INFO_X2-5, INFO_Y1+49+0*21,
+					text_editor.str_misc_mode(rock_or_site, i), 0 ); // rock_type_str[i], 0 );
+				button_rock_type[i].visible_flag = 0;
 			}
 		}
 		button_rock_type.paint(rock_type);
 
 		// ------- display rock browser ----------//
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_rock.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
-				-1, 25, rock_browse_count[rock_type], disp_rock_rec );
-			browse_rock.open(rock_browse_recno[rock_type]);
-		}
+		browse_rock.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
+			-1, 25, rock_browse_count[rock_type], disp_rock_rec );
+		browse_rock.open(rock_browse_recno[rock_type]);
 		browse_rock.paint();
 		// ####### begin Gilbert 22/2 ######//
 		// browse_rock.refresh(rock_browse_recno[rock_type]);
@@ -238,21 +213,12 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 	{
 		// ------ put site type buttons --------//
 
-		if( refreshFlag == INFO_REPAINT || last_site_type != site_type )
+		for( int i = 0; i < MAX_SITE_TYPE; ++i )
 		{
-			refreshFlag = INFO_REPAINT;
-			last_site_type = site_type;
-		}
-
-		if( refreshFlag == INFO_REPAINT )
-		{
-			for( int i = 0; i < MAX_SITE_TYPE; ++i )
-			{
-//				button_site_type[i].create_text( INFO_X1+5+i*42, INFO_Y1+30, INFO_X1+45+i*42, INFO_Y1+50,
-//					text_editor.str_misc_mode(rock_or_site, i), 0 );
-				button_site_type[i].create_text( INFO_X1+5, INFO_Y1+30+i*21, INFO_X2-5, INFO_Y1+49+i*21,
-					text_editor.str_misc_mode(rock_or_site, i), 0 );
-			}
+//			button_site_type[i].create_text( INFO_X1+5+i*42, INFO_Y1+30, INFO_X1+45+i*42, INFO_Y1+50,
+//				text_editor.str_misc_mode(rock_or_site, i), 0 );
+			button_site_type[i].create_text( INFO_X1+5, INFO_Y1+30+i*21, INFO_X2-5, INFO_Y1+49+i*21,
+				text_editor.str_misc_mode(rock_or_site, i), 0 );
 		}
 		button_site_type.paint(site_type-1);
 
@@ -261,12 +227,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 		switch( site_type )
 		{
 		case SITE_RAW:
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_raw.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-50,
-					-1, 36, MAX_RAW, disp_raw_rec );
-				browse_raw.open( raw_browse_recno );
-			}
+			browse_raw.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-50,
+				-1, 36, MAX_RAW, disp_raw_rec );
+			browse_raw.open( raw_browse_recno );
 			browse_raw.paint();
 			// ####### begin Gilbert 22/2 ######//
 			// browse_raw.refresh(raw_browse_recno);
@@ -274,12 +237,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 			// ####### end Gilbert 22/2 ######//
 			break;
 		case SITE_SCROLL:
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_scroll.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
-					-1, 45, MAX_RACE, disp_scroll_rec );
-				browse_scroll.open(scroll_browse_recno);
-			}
+			browse_scroll.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
+				-1, 45, MAX_RACE, disp_scroll_rec );
+			browse_scroll.open(scroll_browse_recno);
 			browse_scroll.paint();
 			// ####### begin Gilbert 22/2 ######//
 			// browse_scroll.refresh(scroll_browse_recno);
@@ -287,12 +247,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 			// ####### end Gilbert 22/2 ######//
 			break;
 		case SITE_GOLD_COIN:
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_gold.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
-					-1, 25, GOLD_COIN_AMOUNT_COUNT, disp_gold_rec );
-				browse_gold.open(gold_browse_recno);
-			}
+			browse_gold.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
+				-1, 25, GOLD_COIN_AMOUNT_COUNT, disp_gold_rec );
+			browse_gold.open(gold_browse_recno);
 			browse_gold.paint();
 			// ####### begin Gilbert 22/2 ######//
 			// browse_gold.refresh(gold_browse_recno);
@@ -300,12 +257,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 			// ####### end Gilbert 22/2 ######//
 			break;
 		case SITE_ITEM:
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_item.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
-					-1, 25, ITEM_TYPE_COUNT, disp_item_rec );
-				browse_item.open(item_browse_recno);
-			}
+			browse_item.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
+				-1, 25, ITEM_TYPE_COUNT, disp_item_rec );
+			browse_item.open(item_browse_recno);
 			browse_item.paint();
 			// ####### begin Gilbert 22/2 ######//
 			// browse_item.refresh(item_browse_recno);
@@ -314,12 +268,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 			break;
 
 		case SITE_WEAPON_BLUEPRINT:
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_tech.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-50,
-					-1, 35, tech_res.tech_class(TECH_CLASS_MEGA_WEAPON)->tech_count, disp_tech_rec );
-				browse_tech.open(tech_browse_recno);
-			}
+			browse_tech.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-50,
+				-1, 35, tech_res.tech_class(TECH_CLASS_MEGA_WEAPON)->tech_count, disp_tech_rec );
+			browse_tech.open(tech_browse_recno);
 			browse_tech.paint();
 			// ####### begin Gilbert 22/2 ######//
 			// browse_tech.refresh(tech_browse_recno);
@@ -334,12 +285,9 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 	{
 		// ----- display plant browser -------//
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_plant.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
-				-1, 25, plant_res.plant_count, disp_plant_rec );
-			browse_plant.open(plant_browse_recno);
-		}
+		browse_plant.init( INFO_X1+5, INFO_Y1+140, INFO_X2-5, INFO_Y2-30,
+			-1, 25, plant_res.plant_count, disp_plant_rec );
+		browse_plant.open(plant_browse_recno);
 		browse_plant.paint();
 		// ####### begin Gilbert 22/2 ######//
 		// browse_plant.refresh(plant_browse_recno);
@@ -348,12 +296,8 @@ void ScenarioEditor::disp_misc_main(int refreshFlag)
 
 		for( int i = 0; i < PLANT_SIZE_MAX; ++i )
 		{
-			if( refreshFlag == INFO_REPAINT )
-			{
-				button_plant_size[i].create_text( INFO_X1+5, INFO_Y1+30+i*21, INFO_X2-5, INFO_Y1+49+i*21,
-					text_editor.str_misc_mode(rock_or_site, i), 0 );
-			}
-
+			button_plant_size[i].create_text( INFO_X1+5, INFO_Y1+30+i*21, INFO_X2-5, INFO_Y1+49+i*21,
+				text_editor.str_misc_mode(rock_or_site, i), 0 );
 			button_plant_size[i].enable_flag = !browse_plant.none_record 
 				&& plant_res[plant_browse_recno]->bitmap_count > i;
 		}

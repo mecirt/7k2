@@ -70,28 +70,17 @@ static int disp_unit_list_y1;
 void FirmAnimal::put_info(int refreshFlag)
 {
 	// ------- reset selected_unit_id ------//
-
-//	if( refreshFlag == INFO_REPAINT )
-//	{
-//		selected_unit_id = 0;
-//	}
-//	else
-	{
-		if( selected_unit_id < 0 )
-			selected_unit_id = 0;
-		if( selected_unit_id > animal_unit_count )
-			selected_unit_id = animal_unit_count;
-	}
+	if( selected_unit_id < 0 )
+		selected_unit_id = 0;
+	if( selected_unit_id > animal_unit_count )
+		selected_unit_id = animal_unit_count;
 
 	Firm::put_info(refreshFlag);
 
 //	disp_basic_info(INFO_Y1, refreshFlag);
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_hire.create(INFO_X1+13, INFO_Y1+235, 'A', "F_ANIMAL" );
-		button_hire.enable_flag = 0;
-	}
+	button_hire.create(INFO_X1+13, INFO_Y1+235, 'A', "F_ANIMAL" );
+	button_hire.enable_flag = 0;
 
 	if( !should_show_info() )
 		return;

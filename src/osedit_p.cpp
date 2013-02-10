@@ -48,7 +48,6 @@
 // ----- define static variable ---------//
 
 static VBrowseIF browse_nation;
-static int last_brush_player;
 static Button button_cash_up, button_cash_down;
 static Button button_food_up, button_food_down;
 static Button button_reput_up, button_reput_down;
@@ -84,25 +83,14 @@ void ScenarioEditor::disp_players_main(int refreshFlag)
 {
 	// ------- display scroll area ----------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_nation.init( INFO_X1, INFO_Y1, INFO_X2, INFO_Y1+168,
-			-1, 32, MAX_NATION, disp_nation_rec );
-		browse_nation.open(brush_player_recno);
-	}
+	browse_nation.init( INFO_X1, INFO_Y1, INFO_X2, INFO_Y1+168,
+		-1, 32, MAX_NATION, disp_nation_rec );
+	browse_nation.open(brush_player_recno);
 	browse_nation.paint();
 	// ######## begin Gilbert 22/2 #######//
 	// browse_nation.refresh(brush_player_recno);
 	browse_nation.refresh();
 	// ######## end Gilbert 22/2 #######//
-
-	// ------- display on interface area ---------//
-
-	if( refreshFlag == INFO_REPAINT || last_brush_player != brush_player_recno )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_brush_player = brush_player_recno;
-	}
 
 	// ------ display king name -------//
 
@@ -122,21 +110,18 @@ void ScenarioEditor::disp_players_main(int refreshFlag)
 	y+=30;
 
 	// ------- treasure, food, reputation --------//
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cash_up.create_text(    INFO_X1+140, y,    INFO_X1+150, y+9,  "+" );
-		button_cash_down.create_text(  INFO_X1+140, y+10, INFO_X1+150, y+19, "-" );
-		button_food_up.create_text(    INFO_X1+140, y+22, INFO_X1+150, y+31, "+" );
-		button_food_down.create_text(  INFO_X1+140, y+32, INFO_X1+150, y+41, "-" );
-		button_reput_up.create_text(   INFO_X1+140, y+44, INFO_X1+150, y+53, "+" );
-		button_reput_down.create_text( INFO_X1+140, y+54, INFO_X1+150, y+63, "-" );
-		button_live_up.create_text(    INFO_X1+140, y+66, INFO_X1+150, y+75, "+" );
-		button_live_down.create_text(  INFO_X1+140, y+76, INFO_X1+150, y+85, "-" );
+	button_cash_up.create_text(    INFO_X1+140, y,    INFO_X1+150, y+9,  "+" );
+	button_cash_down.create_text(  INFO_X1+140, y+10, INFO_X1+150, y+19, "-" );
+	button_food_up.create_text(    INFO_X1+140, y+22, INFO_X1+150, y+31, "+" );
+	button_food_down.create_text(  INFO_X1+140, y+32, INFO_X1+150, y+41, "-" );
+	button_reput_up.create_text(   INFO_X1+140, y+44, INFO_X1+150, y+53, "+" );
+	button_reput_down.create_text( INFO_X1+140, y+54, INFO_X1+150, y+63, "-" );
+	button_live_up.create_text(    INFO_X1+140, y+66, INFO_X1+150, y+75, "+" );
+	button_live_down.create_text(  INFO_X1+140, y+76, INFO_X1+150, y+85, "-" );
 
-//		button_adjustment[0].create_text( INFO_X1+152, y, INFO_X1+214, y+18, text_editor.str_fine_coarse(0) ); // "Fine" );
-//		button_adjustment[1].create_text( INFO_X1+152, y+20, INFO_X1+214, y+38, text_editor.str_fine_coarse(1) ); // "Medium" );
-//		button_adjustment[2].create_text( INFO_X1+152, y+40, INFO_X1+214, y+58, text_editor.str_fine_coarse(2) ); // "Coarse" );
-	}
+//	button_adjustment[0].create_text( INFO_X1+152, y, INFO_X1+214, y+18, text_editor.str_fine_coarse(0) ); // "Fine" );
+//	button_adjustment[1].create_text( INFO_X1+152, y+20, INFO_X1+214, y+38, text_editor.str_fine_coarse(1) ); // "Medium" );
+//	button_adjustment[2].create_text( INFO_X1+152, y+40, INFO_X1+214, y+58, text_editor.str_fine_coarse(2) ); // "Coarse" );
 
 	if( !nation_array.is_deleted(brush_player_recno) )
 	{
@@ -174,22 +159,16 @@ void ScenarioEditor::disp_players_main(int refreshFlag)
 	}
 
 	y += 87;
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_adjustment[0].create_text( INFO_X1+147, y+18, INFO_X1+216, y+38, text_editor.str_fine_coarse(0) ); // "Fine" );
-		button_adjustment[1].create_text( INFO_X1+76, y+18, INFO_X1+145, y+38, text_editor.str_fine_coarse(1) ); // "Medium" );
-		button_adjustment[2].create_text( INFO_X1+5, y+18, INFO_X1+74, y+38, text_editor.str_fine_coarse(2) ); // "Coarse" );
-	}
+	button_adjustment[0].create_text( INFO_X1+147, y+18, INFO_X1+216, y+38, text_editor.str_fine_coarse(0) ); // "Fine" );
+	button_adjustment[1].create_text( INFO_X1+76, y+18, INFO_X1+145, y+38, text_editor.str_fine_coarse(1) ); // "Medium" );
+	button_adjustment[2].create_text( INFO_X1+5, y+18, INFO_X1+74, y+38, text_editor.str_fine_coarse(2) ); // "Coarse" );
 	font_whbl.put( INFO_X1+15, y, text_editor.str_adjustment() );
 	button_adjustment.paint();
 
 	// ------- player type --------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-//		button_player_type[0].create_text( INFO_X1+50, y, INFO_X1+100, y+18, "Either" );
-//		button_player_type[1].create_text( INFO_X1+50, y, INFO_X1+100, y+18, "Computer" );
-	}
+//	button_player_type[0].create_text( INFO_X1+50, y, INFO_X1+100, y+18, "Either" );
+//	button_player_type[1].create_text( INFO_X1+50, y, INFO_X1+100, y+18, "Computer" );
 	if( !nation_array.is_deleted(brush_player_recno) )
 	{
 //		button_player_type.paint( nation_array[brush_player_recno]->is_ai() );

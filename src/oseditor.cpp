@@ -45,8 +45,6 @@
 // ------ define static variable --------//
 
 static char last_enable_flag;
-static int last_edit_mode;
-static int last_edit_sub_menu_mode;
 
 //static char *edit_mode_button_label[SEDIT_MODE_COUNT] =
 //{
@@ -278,15 +276,6 @@ int ScenarioEditor::detect_menu_bar()
 //
 void ScenarioEditor::disp( int refreshFlag )
 {
-	if( refreshFlag == INFO_REPAINT 
-		|| edit_mode != last_edit_mode
-		|| edit_sub_menu_mode[edit_mode] != last_edit_sub_menu_mode )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_edit_mode = edit_mode;
-		last_edit_sub_menu_mode = edit_sub_menu_mode[edit_mode];
-	}
-
 	if( edit_mode != SEDIT_MODE_NONE )
 		vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("SCEN-ED") );
 

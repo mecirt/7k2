@@ -75,15 +75,12 @@ void FirmSpy::disp_firm_info(int dispY1, int refreshFlag )
 
 	// ------- display train button ------//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_train_civ.create( INFO_X1+13, INFO_Y1+281, 'A', "TRAIN-C" );
-		button_train_civ.enable_flag = 0;
-		button_train_inf.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-I" );
-		button_train_inf.enable_flag = 0;
-		button_train_spu.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-S" );
-		button_train_spu.enable_flag = 0;
-	}
+	button_train_civ.create( INFO_X1+13, INFO_Y1+281, 'A', "TRAIN-C" );
+	button_train_civ.enable_flag = 0;
+	button_train_inf.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-I" );
+	button_train_inf.enable_flag = 0;
+	button_train_spu.create( INFO_X1+13+2*BUTTON_DISTANCE, INFO_Y1+281, 'A', "TRAIN-S" );
+	button_train_spu.enable_flag = 0;
 
 	if( !should_show_info() )
 		return;

@@ -77,37 +77,21 @@ static void disp_item_button( ButtonCustom *, int );
 //
 void FirmInn::put_info(int refreshFlag)
 {
-	// firm_inn_ptr = this;
-
-	// ------- reset selected_unit_id ------//
-
-//	if( refreshFlag == INFO_REPAINT )
-//	{
-//		selected_unit_id = 0;
-//	}
-//	else
-//	{
-		if( selected_unit_id < 0 )
-			selected_unit_id = 0;
-		if( selected_unit_id > inn_unit_count )
-			selected_unit_id = inn_unit_count;
-//	}
+	if( selected_unit_id < 0 )
+		selected_unit_id = 0;
+	if( selected_unit_id > inn_unit_count )
+		selected_unit_id = inn_unit_count;
 
 	Firm::put_info(refreshFlag);
 
-//	disp_basic_info(INFO_Y1, refreshFlag);
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_hire.create(INFO_X1+13, INFO_Y1+235, 'A', "HIREUNIT" );
-		button_hire.enable_flag = 0;
-		button_spy_mobilize.create(INFO_X1+13, INFO_Y1+235, 'A', "MOBILSPY" );
-		button_spy_mobilize.enable_flag = 0;
-		button_buy_item.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 
-			INFO_X1+13+BUTTON_DISTANCE+ITEM_ICON_WIDTH, INFO_Y1+235+ITEM_ICON_HEIGHT,
-			disp_item_button, ButtonCustomPara(NULL, 0) );
-		button_buy_item.visible_flag = 0;
-	}
+	button_hire.create(INFO_X1+13, INFO_Y1+235, 'A', "HIREUNIT" );
+	button_hire.enable_flag = 0;
+	button_spy_mobilize.create(INFO_X1+13, INFO_Y1+235, 'A', "MOBILSPY" );
+	button_spy_mobilize.enable_flag = 0;
+	button_buy_item.create( INFO_X1+13+BUTTON_DISTANCE, INFO_Y1+235, 
+		INFO_X1+13+BUTTON_DISTANCE+ITEM_ICON_WIDTH, INFO_Y1+235+ITEM_ICON_HEIGHT,
+		disp_item_button, ButtonCustomPara(NULL, 0) );
+	button_buy_item.visible_flag = 0;
 
 	button_hire_visible = button_spy_mobilize_visible = 0;
 

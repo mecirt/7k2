@@ -215,20 +215,17 @@ void FirmFactory::disp_firm_info(int dispY1, int refreshFlag)
 	int x2 = INFO_X1 +13;
 	int y2 = INFO_Y1 +281;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_change.create( x2, y2, 'A', "CHGPROD" );
+	button_change.create( x2, y2, 'A', "CHGPROD" );
 
-		// manual button
-		button_auto_switch_group[0].create( INFO_X1+3*BUTTON_DISTANCE+13, INFO_Y1+281,
-			INFO_X1+3*BUTTON_DISTANCE+56-1, INFO_Y1+281+BUTTON_ACTION_HEIGHT-1,
-			i_disp_auto_switch_button, ButtonCustomPara(this, 0), 0 );
-		
-		// auto button
-		button_auto_switch_group[1].create( INFO_X1+2*BUTTON_DISTANCE+13, INFO_Y1+281,
-			INFO_X1+2*BUTTON_DISTANCE+56-1, INFO_Y1+281+BUTTON_ACTION_HEIGHT-1,
-			i_disp_auto_switch_button, ButtonCustomPara(this, 1), 0 );
-	}
+	// manual button
+	button_auto_switch_group[0].create( INFO_X1+3*BUTTON_DISTANCE+13, INFO_Y1+281,
+		INFO_X1+3*BUTTON_DISTANCE+56-1, INFO_Y1+281+BUTTON_ACTION_HEIGHT-1,
+		i_disp_auto_switch_button, ButtonCustomPara(this, 0), 0 );
+
+	// auto button
+	button_auto_switch_group[1].create( INFO_X1+2*BUTTON_DISTANCE+13, INFO_Y1+281,
+		INFO_X1+2*BUTTON_DISTANCE+56-1, INFO_Y1+281+BUTTON_ACTION_HEIGHT-1,
+		i_disp_auto_switch_button, ButtonCustomPara(this, 1), 0 );
 
 	help.set_help( INFO_X1+3*BUTTON_DISTANCE+13, INFO_Y1+281,
 		INFO_X1+3*BUTTON_DISTANCE+56-1, INFO_Y1+281+BUTTON_ACTION_HEIGHT-1, "MANUAL" );		

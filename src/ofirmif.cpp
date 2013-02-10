@@ -53,9 +53,6 @@
 
 static Button3D button_sell, button_destruct, button_builder;
 static short  	 pop_disp_y1;
-static char	last_under_construction;
-static int	last_should_show_info;
-static int	last_is_own;
 
 static int	edit_mode_y1;
 static short edit_hp_x1, edit_hp_y1, edit_hp_x2, edit_hp_y2, edit_hp_enable;
@@ -71,27 +68,6 @@ void Firm::disp_info_both(int refreshFlag)
 	disp_basic_info(INFO_Y1, refreshFlag);
 
 	// ##### begin Gilbert 7/9 ########//
-
-	// ---- when under_construction/should_show_info/is_own() change, repaint ------- //
-
-	if( refreshFlag == INFO_REPAINT 
-		|| last_under_construction != under_construction
-		|| last_should_show_info  != should_show_info()
-		|| last_is_own          != is_own() )
-	{
-		last_under_construction = under_construction;
-		last_should_show_info  = should_show_info();
-		last_is_own          = is_own();
-		// ##### begin Gilbert 5/1 #####//
-		//if( refreshFlag != INFO_REPAINT )
-		//{
-		//	info.disp();
-		//	return;
-		//}
-		refreshFlag = INFO_REPAINT;
-		// ##### end Gilbert 5/1 #####//
-	}
-	// ##### end Gilbert 7/9 ########//
 
 	if( under_construction )
 	{
@@ -175,12 +151,9 @@ void Firm::disp_basic_info(int dispY1, int refreshFlag)
 
 //	set_repair_flag( button_builder.pushed_flag, COMMAND_PLAYER );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D" );
-		button_sell.create( INFO_X1+16, INFO_Y1-61, "V_SEL-U", "V_SEL-D" );
-		button_sell.set_help_code( "SELLFIRM" );
-	}
+	button_destruct.create( INFO_X1+16, INFO_Y1-61, "V_DEM-U", "V_DEM-D" );
+	button_sell.create( INFO_X1+16, INFO_Y1-61, "V_SEL-U", "V_SEL-D" );
+	button_sell.set_help_code( "SELLFIRM" );
 
 	if( nation_recno && nation_array.player_recno == nation_recno )
 	{
@@ -204,11 +177,8 @@ void Firm::disp_basic_info(int dispY1, int refreshFlag)
 		}
 	}
 	// ####### begin Gilbert 30/11 #######//
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
-		button_builder.set_help_code( "REPAIR" );
-	}
+	button_builder.create( INFO_X1+13, INFO_Y1-96, "REPAIRU", "REPAIRD", 0 );
+	button_builder.set_help_code( "REPAIR" );
 
 	if( should_show_info() )
 	{

@@ -174,34 +174,24 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 	switch( edit_sub_menu_mode[edit_mode] )
 	{
 	case SE_VICTORY_MAIN:		// victory main menu
-		if( refreshFlag == INFO_REPAINT )
-		{
-			// win or lose button group
+		// win or lose button group
 
-			button_win_or_lose[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
-				text_editor.str_victory(), 0 );		// "Victory"
-			button_win_or_lose[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
-				text_editor.str_loss(), 0 );		// "Loss"
-		}
+		button_win_or_lose[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
+			text_editor.str_victory(), 0 );		// "Victory"
+		button_win_or_lose[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
+			text_editor.str_loss(), 0 );		// "Loss"
 
 		button_win_or_lose.paint( win_or_lose );
 
-		if( refreshFlag == INFO_REPAINT || last_win_or_lose != win_or_lose )
-		{
-			refreshFlag = INFO_REPAINT;
-			last_win_or_lose = win_or_lose;
-		}
+		last_win_or_lose = win_or_lose;
 
 		if( win_or_lose == 0 )		// win
 		{
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_win_condition.init(INFO_X1, INFO_Y1+32, INFO_X2, INFO_Y1+240, -1, 36, game.win_condition_count, disp_win_condition );
-				browse_win_condition.open(win_condition_browse_recno);
-				button_add_win_condition.create_text(INFO_X1+20, INFO_Y1+252, INFO_X1+100, INFO_Y1+272, text_editor.str_add() ); //"Add");
-				button_del_win_condition.create_text(INFO_X1+120, INFO_Y1+252, INFO_X1+200, INFO_Y1+272, text_editor.str_delete()); // "Delete");
-				button_set_win_require_all_condition.create_text(INFO_X1+12, INFO_Y1+275, INFO_X2-12, INFO_Y1+295, text_editor.str_require_all(), 0 ); //"Require All");
-			}
+			browse_win_condition.init(INFO_X1, INFO_Y1+32, INFO_X2, INFO_Y1+240, -1, 36, game.win_condition_count, disp_win_condition );
+			browse_win_condition.open(win_condition_browse_recno);
+			button_add_win_condition.create_text(INFO_X1+20, INFO_Y1+252, INFO_X1+100, INFO_Y1+272, text_editor.str_add() ); //"Add");
+			button_del_win_condition.create_text(INFO_X1+120, INFO_Y1+252, INFO_X1+200, INFO_Y1+272, text_editor.str_delete()); // "Delete");
+			button_set_win_require_all_condition.create_text(INFO_X1+12, INFO_Y1+275, INFO_X2-12, INFO_Y1+295, text_editor.str_require_all(), 0 ); //"Require All");
 			browse_win_condition.paint();
 			browse_win_condition.refresh();
 
@@ -223,13 +213,10 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		}
 		else					// lose
 		{
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_lose_condition.init(INFO_X1, INFO_Y1+32, INFO_X2, INFO_Y1+240, -1, 36, game.lose_condition_count, disp_lose_condition );
-				browse_lose_condition.open(lose_condition_browse_recno);
-				button_add_lose_condition.create_text(INFO_X1+20, INFO_Y1+252, INFO_X1+100, INFO_Y1+272, text_editor.str_add() ); //"Add");
-				button_del_lose_condition.create_text(INFO_X1+120, INFO_Y1+252, INFO_X1+200, INFO_Y1+272, text_editor.str_delete()); // "Delete");
-			}
+			browse_lose_condition.init(INFO_X1, INFO_Y1+32, INFO_X2, INFO_Y1+240, -1, 36, game.lose_condition_count, disp_lose_condition );
+			browse_lose_condition.open(lose_condition_browse_recno);
+			button_add_lose_condition.create_text(INFO_X1+20, INFO_Y1+252, INFO_X1+100, INFO_Y1+272, text_editor.str_add() ); //"Add");
+			button_del_lose_condition.create_text(INFO_X1+120, INFO_Y1+252, INFO_X1+200, INFO_Y1+272, text_editor.str_delete()); // "Delete");
 			browse_lose_condition.paint();
 			browse_lose_condition.refresh();
 
@@ -246,27 +233,21 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 			x2 = font_whbl.put( x2+6, INFO_Y1+302, date.date_str(game.win_deadline, 1));	// 1-short date
 
 			x2 += 20;
-			if( refreshFlag == INFO_REPAINT )
-			{
-				button_deadline_up.create_text( x2, INFO_Y1+302, x2+10, INFO_Y1+311, "+" );
-				button_deadline_down.create_text( x2, INFO_Y1+312, x2+10, INFO_Y1+321, "-" );
-			}
+			button_deadline_up.create_text( x2, INFO_Y1+302, x2+10, INFO_Y1+311, "+" );
+			button_deadline_down.create_text( x2, INFO_Y1+312, x2+10, INFO_Y1+321, "-" );
 			button_deadline_up.paint();
 			button_deadline_down.paint();
 		}
 		break;
 
 	case SE_VICTORY_WIN_COND:		// select winning condition
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_win_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
-				filtered_win_condition_count, disp_win_cond_id );
-			// ####### begin Gilbert 22/2 ########//
-			browse_win_id.open(win_id_browse_recno);
-			// ####### end Gilbert 22/2 ########//
-			button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); // "Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
-		}
+		browse_win_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
+			filtered_win_condition_count, disp_win_cond_id );
+		// ####### begin Gilbert 22/2 ########//
+		browse_win_id.open(win_id_browse_recno);
+		// ####### end Gilbert 22/2 ########//
+		button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); // "Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
 		browse_win_id.paint();
 		// ####### begin Gilbert 22/2 ########//
 		browse_win_id.refresh();
@@ -282,16 +263,13 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		break;
 
 	case SE_VICTORY_LOSE_COND:		// select losing condition
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_lose_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
-				filtered_lose_condition_count, disp_lose_cond_id );
-			// ####### begin Gilbert 22/2 ########//
-			browse_lose_id.open(lose_id_browse_recno);
-			// ####### begin Gilbert 22/2 ########//
-			button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); // "Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); //"Cancel" );
-		}
+		browse_lose_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
+			filtered_lose_condition_count, disp_lose_cond_id );
+		// ####### begin Gilbert 22/2 ########//
+		browse_lose_id.open(lose_id_browse_recno);
+		// ####### begin Gilbert 22/2 ########//
+		button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); // "Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); //"Cancel" );
 		browse_lose_id.paint();
 		// ####### begin Gilbert 22/2 ########//
 		browse_lose_id.refresh();
@@ -307,16 +285,13 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		break;
 
 	case SE_VICTORY_SEL_UNIT_ID:	// select unit id
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_unit_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
-				unit_res.unit_info_count, disp_unit_id );
-			// ##### begin Gilbert 22/2 #######//
-			browse_unit_id.open(unit_id_browse_recno);
-			// ##### end Gilbert 22/2 #######//
-			button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
-		}
+		browse_unit_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
+			unit_res.unit_info_count, disp_unit_id );
+		// ##### begin Gilbert 22/2 #######//
+		browse_unit_id.open(unit_id_browse_recno);
+		// ##### end Gilbert 22/2 #######//
+		button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
 		browse_unit_id.paint();
 		// ##### begin Gilbert 22/2 #######//
 		browse_unit_id.refresh();
@@ -326,16 +301,13 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		break;
 
 	case SE_VICTORY_SEL_ITEM_ID:
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_item_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
-				ITEM_TYPE_COUNT, disp_item_id );
-			// ##### begin Gilbert 22/2 #######//
-			browse_item_id.open(item_id_browse_recno);
-			// ##### end Gilbert 22/2 #######//
-			button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
-		}
+		browse_item_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
+			ITEM_TYPE_COUNT, disp_item_id );
+		// ##### begin Gilbert 22/2 #######//
+		browse_item_id.open(item_id_browse_recno);
+		// ##### end Gilbert 22/2 #######//
+		button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
 		browse_item_id.paint();
 		// ##### begin Gilbert 22/2 #######//
 		browse_item_id.refresh();
@@ -345,14 +317,11 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		break;
 
 	case SE_VICTORY_SEL_TECH_ID:
-		if( refreshFlag == INFO_REPAINT )
-		{
-			browse_tech_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
-				MAX_TECH, disp_tech_id );
-			browse_tech_id.open(tech_id_browse_recno);
-			button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
-		}
+		browse_tech_id.init(INFO_X1, INFO_Y1+6, INFO_X2, INFO_Y1+220, -1, 20,
+			MAX_TECH, disp_tech_id );
+		browse_tech_id.open(tech_id_browse_recno);
+		button_next.create_text(INFO_X1+20, INFO_Y1+230, INFO_X1+100, INFO_Y1+250, text_editor.str_next() ); //"Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+230, INFO_X1+200, INFO_Y1+250, text_editor.str_cancel() ); // "Cancel" );
 		browse_tech_id.paint();
 		browse_tech_id.refresh();
 		button_next.paint();
@@ -361,15 +330,12 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 
 
 	case SE_VICTORY_SCALAR:		// input a scalar quantity
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_scalar_up10.create_text(INFO_X1+130, INFO_Y1+10, INFO_X1+150-1, INFO_Y1+25, "++");
-			button_scalar_up.create_text(INFO_X1+150, INFO_Y1+10, INFO_X1+170-1, INFO_Y1+25, "+");
-			button_scalar_down.create_text(INFO_X1+170, INFO_Y1+10, INFO_X1+190-1, INFO_Y1+25, "-");
-			button_scalar_down10.create_text(INFO_X1+190, INFO_Y1+10, INFO_X1+210-1, INFO_Y1+25, "--");
-			button_next.create_text(INFO_X1+20, INFO_Y1+30, INFO_X1+100, INFO_Y1+50, text_editor.str_next() ); //"Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+30, INFO_X1+200, INFO_Y1+50, text_editor.str_cancel() ); //"Cancel" );
-		}
+		button_scalar_up10.create_text(INFO_X1+130, INFO_Y1+10, INFO_X1+150-1, INFO_Y1+25, "++");
+		button_scalar_up.create_text(INFO_X1+150, INFO_Y1+10, INFO_X1+170-1, INFO_Y1+25, "+");
+		button_scalar_down.create_text(INFO_X1+170, INFO_Y1+10, INFO_X1+190-1, INFO_Y1+25, "-");
+		button_scalar_down10.create_text(INFO_X1+190, INFO_Y1+10, INFO_X1+210-1, INFO_Y1+25, "--");
+		button_next.create_text(INFO_X1+20, INFO_Y1+30, INFO_X1+100, INFO_Y1+50, text_editor.str_next() ); //"Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+30, INFO_X1+200, INFO_Y1+50, text_editor.str_cancel() ); //"Cancel" );
 		font_whbl.right_put( INFO_X1+120, INFO_Y1+12, m.format(selected_scalar) );
 		button_scalar_up10.paint();
 		button_scalar_up.paint();
@@ -380,13 +346,10 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 		break;
 
 	case SE_VICTORY_YEAR_LIMIT:	// input years limit
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_year_up.create_text(INFO_X1+150, INFO_Y1+10, INFO_X1+170, INFO_Y1+25, "+");
-			button_year_down.create_text(INFO_X1+180, INFO_Y1+10, INFO_X1+200, INFO_Y1+25, "-");
-			button_next.create_text(INFO_X1+20, INFO_Y1+30, INFO_X1+100, INFO_Y1+50, text_editor.str_next() ); //"Next" );
-			button_cancel.create_text(INFO_X1+120, INFO_Y1+30, INFO_X1+200, INFO_Y1+50, text_editor.str_cancel() ); //"Cancel" );
-		}
+		button_year_up.create_text(INFO_X1+150, INFO_Y1+10, INFO_X1+170, INFO_Y1+25, "+");
+		button_year_down.create_text(INFO_X1+180, INFO_Y1+10, INFO_X1+200, INFO_Y1+25, "-");
+		button_next.create_text(INFO_X1+20, INFO_Y1+30, INFO_X1+100, INFO_Y1+50, text_editor.str_next() ); //"Next" );
+		button_cancel.create_text(INFO_X1+120, INFO_Y1+30, INFO_X1+200, INFO_Y1+50, text_editor.str_cancel() ); //"Cancel" );
 		if( selected_year_limit )
 		{
 //			int x2 =	font_whbl.put( INFO_X1+80, INFO_Y1+12, selected_year_limit );
@@ -407,17 +370,14 @@ void ScenarioEditor::disp_victory_main(int refreshFlag)
 	case SE_VICTORY_MESSAGE:
 		{
 			font_whbl.put_paragraph( INFO_X1+15, INFO_Y1+5, INFO_X2-5, INFO_Y1+100, message_str );
-			if( refreshFlag == INFO_REPAINT )
+			if( message_sub_mode == 0 )
 			{
-				if( message_sub_mode == 0 )
-				{
-					button_next.create_text(INFO_X1+20, INFO_Y1+110, text_editor.str_back() ); //"Back");
-				}
-				else
-				{
-					button_next.create_text(INFO_X1+20, INFO_Y1+110, INFO_X1+100, INFO_Y1+130, text_editor.str_next() ); //"Next" );
-					button_cancel.create_text(INFO_X1+120, INFO_Y1+110, INFO_X1+200, INFO_Y1+130, text_editor.str_cancel() ); // "Cancel" );
-				}
+				button_next.create_text(INFO_X1+20, INFO_Y1+110, text_editor.str_back() ); //"Back");
+			}
+			else
+			{
+				button_next.create_text(INFO_X1+20, INFO_Y1+110, INFO_X1+100, INFO_Y1+130, text_editor.str_next() ); //"Next" );
+				button_cancel.create_text(INFO_X1+120, INFO_Y1+110, INFO_X1+200, INFO_Y1+130, text_editor.str_cancel() ); // "Cancel" );
 			}
 			button_next.paint();
 			if( message_sub_mode == 1 )

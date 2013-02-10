@@ -79,7 +79,6 @@ enum { UNIT_MENU_MAIN,
 #define BUTTON_AUTO_RETREAT_COUNT	9
 
 //---------- Define static variables ----------//
-static char	last_menu_mode;
 static Button3D 		button_test;
 static Button3D 		button_build;
 static ButtonCustom 	button_build_array[MAX_FIRM_TYPE];
@@ -111,14 +110,12 @@ static ButtonCustom	button_auto_retreat_array[BUTTON_AUTO_RETREAT_COUNT];
 static ButtonCustom	button_auto_retreat_disabled;
 
 static short item_menu_offset = 0;
-static short last_item_menu_offset;
 static char unit_menu_mode=UNIT_MENU_MAIN;
 static short last_unit_recno=0;
 
 char	Unit::hire_hero_result;
 // ##### begin Gilbert 5/3 #####//
 static short using_item_id;
-static int last_power_command;
 
 static short edit_hp_x1, edit_hp_y1, edit_hp_x2, edit_hp_y2, edit_hp_enable;
 static short edit_loyalty_x1, edit_loyalty_y1, edit_loyalty_x2, edit_loyalty_y2, edit_loyalty_enable;
@@ -194,16 +191,8 @@ void Unit::disp_info(int refreshFlag)
 {
 	if( sprite_recno != last_unit_recno )
 	{
-		last_menu_mode = unit_menu_mode  = UNIT_MENU_MAIN;
+		unit_menu_mode  = UNIT_MENU_MAIN;
 		last_unit_recno = sprite_recno;
-	}
-	else
-	{
-		if( last_menu_mode != unit_menu_mode )		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = unit_menu_mode;
-		}
 	}
 
 	char *nationPict = image_spict.get_ptr("V_COLCOD");
@@ -213,11 +202,6 @@ void Unit::disp_info(int refreshFlag)
 	{
 		case UNIT_MENU_MAIN:
 			// ##### begin Gilbert 6/3 #######//
-			if( refreshFlag == INFO_REPAINT || last_power_command != power.command_id )
-			{
-				refreshFlag = INFO_REPAINT;
-				last_power_command = power.command_id;
-			}
 			// ##### end Gilbert 6/3 #######//
 			switch( power.command_id )
 			{
@@ -379,13 +363,9 @@ void Unit::disp_main_menu(int refreshFlag)
 	else 
 		item_menu_offset = 0;
 	
-	if( refreshFlag == INFO_REPAINT || last_item_menu_offset != item_menu_offset )
-	{
-		last_item_menu_offset = item_menu_offset;
-		// button_drop_item.create_text(INFO_X1+176 - item_menu_offset, INFO_Y1+144, INFO_X1+213 - item_menu_offset, INFO_Y1+164, "drop" );
-		button_use_item.set_font( &font_bld );
-		button_use_item.create_text(INFO_X1+127 - item_menu_offset, INFO_Y1+120, INFO_X1+164 - item_menu_offset, INFO_Y1+140, text_unit.str_item_on() ); //"on" );
-	}
+	// button_drop_item.create_text(INFO_X1+176 - item_menu_offset, INFO_Y1+144, INFO_X1+213 - item_menu_offset, INFO_Y1+164, "drop" );
+	button_use_item.set_font( &font_bld );
+	button_use_item.create_text(INFO_X1+127 - item_menu_offset, INFO_Y1+120, INFO_X1+164 - item_menu_offset, INFO_Y1+140, text_unit.str_item_on() ); //"on" );
 
 	if( item.id )
 		disp_item_menu();
@@ -617,19 +597,8 @@ void Unit::disp_unit_profile(int dispY1, int refreshFlag)
 	//-----Displaying the resign button-------------------//
 	if ( nation_recno == nation_array.player_recno && can_resign())
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-		//	if (unit_res[unit_id]->unit_class == UNIT_CLASS_WEAPON ||
-		//		 unit_res[unit_id]->unit_class == UNIT_CLASS_CARAVAN ||
-		//		 unit_res[unit_id]->unit_class == UNIT_CLASS_WAGON)
-		//		button_resign.create( INFO_X1+188, INFO_Y1+50, "WEAPX-UP", "WEAPX-DN" );
-		//	else
-		//		button_resign.create( INFO_X1+80, INFO_Y1+127, "UNITX-UP", "UNITX-DN" );
-			button_resign.create( INFO_X1+13, INFO_Y1-63, "UNITX-UP", "UNITX-DN" );
-			button_resign.set_help_code( "RESIGN" );
-		}
-		else
-			button_resign.paint();
+		button_resign.create( INFO_X1+13, INFO_Y1-63, "UNITX-UP", "UNITX-DN" );
+		button_resign.set_help_code( "RESIGN" );
 	}
 //	//-------- display hit points in numbers and the hit points bar --------//
 
@@ -892,67 +861,64 @@ void Unit::disp_button(int refreshFlag)
 #define BUTTON_X(i) (INFO_X1+13+BUTTON_DISTANCE*i)
 #define BUTTON_Y(j) (INFO_Y1+235+(281-235)*j)
 
-	if( refreshFlag == INFO_REPAINT)
+	button_succeed_king.create( BUTTON_X(1), BUTTON_Y(0), 'A', "SUCCEED" );
+	button_succeed_king.visible_flag = 0;
+
+	button_behavior_mode.create( BUTTON_X(0), BUTTON_Y(1), 'A', "AGGRESS1" );
+	button_behavior_mode.visible_flag = 0;
+
+	button_settle.create( BUTTON_X(1), BUTTON_Y(1), 'A', "SETTLE" );
+	button_settle.visible_flag = 0;
+
+	button_build.create( BUTTON_X(0), BUTTON_Y(0), 'A', "BUILD" );
+	button_build.visible_flag = 0;
+
+	if (!is_monster())
+		button_promote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "PROMOTE" );
+	else
+		button_promote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "F_PROMOT" );
+
+	if (! is_monster() )
+		button_demote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "DEMOTE" );
+	else
+		button_demote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "F_DEMOTE" );
+
+	button_promote.visible_flag = button_demote.visible_flag = 0;
+
+	if (!is_monster())
+		button_reward.create( BUTTON_X(2), BUTTON_Y(0), 'A', "REWARD" );
+	else
+		button_reward.create( BUTTON_X(2), BUTTON_Y(0), 'A', "F_REWARD" );
+	button_reward.visible_flag = 0;
+	
+	if (! is_monster() )
+		button_return_camp.create( BUTTON_X(2), BUTTON_Y(1), 'A', "RETCAMP" );
+	else
+		button_return_camp.create( BUTTON_X(2), BUTTON_Y(1), 'A', "F_RETCMP" );
+	button_return_camp.visible_flag = 0;
+
+	button_spy_notify.create( BUTTON_X(3), BUTTON_Y(1), 'A', "SPYNOTI0" );
+	button_spy_notify.visible_flag = 0;
+	button_spy_drop_identity.create( BUTTON_X(3), BUTTON_Y(0), 'A', "NOSPY" );
+	button_spy_drop_identity.visible_flag = 0;
+
+//	button_set_royal.create_text(INFO_X2-72, INFO_Y1+65, INFO_X2-50, INFO_Y1+85, "R", 0);
+//	button_set_royal.enable_flag = 0;
+
+	button_hire.create( BUTTON_X(0), BUTTON_Y(0), 'A', "HIREUNIT" );
+	button_hire.visible_flag = 0;
+
+	button_transform_fort.create( BUTTON_X(3), BUTTON_Y(0), 'A', "FORTRS-1" );
+	button_transform_fort.visible_flag = 0;
+
+	char bup[10] = "FX-U";
+	char bdw[10] = "FX-D";
+	for (int i = 0; i < MAX_FORMATION-1; i ++)
 	{
-		button_succeed_king.create( BUTTON_X(1), BUTTON_Y(0), 'A', "SUCCEED" );
-		button_succeed_king.visible_flag = 0;
-
-		button_behavior_mode.create( BUTTON_X(0), BUTTON_Y(1), 'A', "AGGRESS1" );
-		button_behavior_mode.visible_flag = 0;
-
-		button_settle.create( BUTTON_X(1), BUTTON_Y(1), 'A', "SETTLE" );
-		button_settle.visible_flag = 0;
-
-		button_build.create( BUTTON_X(0), BUTTON_Y(0), 'A', "BUILD" );
-		button_build.visible_flag = 0;
-
-		if (!is_monster())
-			button_promote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "PROMOTE" );
-		else
-			button_promote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "F_PROMOT" );
-
-		if (! is_monster() )
-			button_demote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "DEMOTE" );
-		else
-			button_demote.create( BUTTON_X(1), BUTTON_Y(0), 'A', "F_DEMOTE" );
-
-		button_promote.visible_flag = button_demote.visible_flag = 0;
-
-		if (!is_monster())
-			button_reward.create( BUTTON_X(2), BUTTON_Y(0), 'A', "REWARD" );
-		else
-			button_reward.create( BUTTON_X(2), BUTTON_Y(0), 'A', "F_REWARD" );
-		button_reward.visible_flag = 0;
-		
-		if (! is_monster() )
-			button_return_camp.create( BUTTON_X(2), BUTTON_Y(1), 'A', "RETCAMP" );
-		else
-			button_return_camp.create( BUTTON_X(2), BUTTON_Y(1), 'A', "F_RETCMP" );
-		button_return_camp.visible_flag = 0;
-
-		button_spy_notify.create( BUTTON_X(3), BUTTON_Y(1), 'A', "SPYNOTI0" );
-		button_spy_notify.visible_flag = 0;
-		button_spy_drop_identity.create( BUTTON_X(3), BUTTON_Y(0), 'A', "NOSPY" );
-		button_spy_drop_identity.visible_flag = 0;
-
-	//	button_set_royal.create_text(INFO_X2-72, INFO_Y1+65, INFO_X2-50, INFO_Y1+85, "R", 0);
-	//	button_set_royal.enable_flag = 0;
-
-		button_hire.create( BUTTON_X(0), BUTTON_Y(0), 'A', "HIREUNIT" );
-		button_hire.visible_flag = 0;
-
-		button_transform_fort.create( BUTTON_X(3), BUTTON_Y(0), 'A', "FORTRS-1" );
-		button_transform_fort.visible_flag = 0;
-
-		char bup[10] = "FX-U";
-		char bdw[10] = "FX-D";
-		for (int i = 0; i < MAX_FORMATION-1; i ++)
-		{
-			bup[1] = '1' + i;
-			bdw[1] = '1' + i;
-			button_formation[i].create( INFO_X1 +i *28 +47, INFO_Y1 -29, bup, bdw );
-			button_formation[i].visible_flag = team_info == NULL ? 0 : 1;
-		}
+		bup[1] = '1' + i;
+		bdw[1] = '1' + i;
+		button_formation[i].create( INFO_X1 +i *28 +47, INFO_Y1 -29, bup, bdw );
+		button_formation[i].visible_flag = team_info == NULL ? 0 : 1;
 	}
 
 	if( nation_recno == nation_array.player_recno && nation_array.player_recno )
@@ -1762,14 +1728,11 @@ void Unit::disp_build_menu(int refreshFlag)
 
 		//--------------------------------------//
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_build_array[i].create( x, y, x+187, y+17,
-				disp_firm_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0),
-				((int)race_id<<16) | firmId ));
+		button_build_array[i].create( x, y, x+187, y+17,
+			disp_firm_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0),
+			((int)race_id<<16) | firmId ));
 
-			y += 18;
-		}
+		y += 18;
 
 		if( firmInfo->can_build(sprite_recno) )
 		{
@@ -1785,9 +1748,7 @@ void Unit::disp_build_menu(int refreshFlag)
 		button_build_array[i].paint();
 	}
 
-	if ( refreshFlag == INFO_REPAINT )
-		button_cancel.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
-
+	button_cancel.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel.paint();
 }
 //----------- End of function Unit::disp_build_menu -----------//
@@ -1892,9 +1853,7 @@ void Unit::disp_build(int refreshFlag)
 		firm_res[power.command_para]->setup_cost, 
 		firm_res[power.command_para]->setup_live_points_cost) );
 	 
-	if ( refreshFlag == INFO_REPAINT )
-//		button_cancel2.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-		button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
+	button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel2.paint();	
 }
 //----------- End of function Unit::disp_build -----------//
@@ -1925,9 +1884,7 @@ void Unit::disp_settle(int refreshFlag)
 	font_snds.put_paragraph( INFO_X1+20, INFO_Y1+25, INFO_X1 +216, INFO_Y1 +79, 
 		text_unit.str_select_settle() );
 
-	if ( refreshFlag == INFO_REPAINT )
-//		button_cancel2.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-		button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
+	button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel2.paint();	
 }
 //----------- End of function Unit::disp_settle -----------//
@@ -2512,21 +2469,17 @@ void Unit::disp_auto_menu(int refreshFlag)
 
 	for( i=0; i<BUTTON_AUTO_RETREAT_COUNT; i++ )
 	{
-		if ( refreshFlag == INFO_REPAINT )
-			button_auto_retreat_array[i].create( x +(i/5) *94, y +(i%5) *23, x +(i/5) *94 +91, y +(i%5) *23 +20,
-					disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
+		button_auto_retreat_array[i].create( x +(i/5) *94, y +(i%5) *23, x +(i/5) *94 +91, y +(i%5) *23 +20,
+				disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
 		button_auto_retreat_array[i].paint();
 	}
 	
 	i = BUTTON_AUTO_RETREAT_COUNT;
-	if ( refreshFlag == INFO_REPAINT )
-		button_auto_retreat_disabled.create( x +(i/5) *94, y +(i%5) *23, x +(i/5) *94 +91, y +(i%5) *23 +20,
-				disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
+	button_auto_retreat_disabled.create( x +(i/5) *94, y +(i%5) *23, x +(i/5) *94 +91, y +(i%5) *23 +20,
+			disp_auto_menu_button, ButtonCustomPara( game.get_color_remap_table(nation_recno,0), i ));
 	button_auto_retreat_disabled.paint();
 
-	if ( refreshFlag == INFO_REPAINT )
-	//	button_cancel2.create( INFO_X1 +13, INFO_Y1 +235, 'A', "CANCEL" );
-		button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
+	button_cancel2.create( INFO_X1 +13 + 3 * BUTTON_DISTANCE, INFO_Y1 +281, 'A', "CANCEL" );
 	button_cancel2.paint();
 }
 //----------- End of function Unit::disp_auto_menu -----------//
@@ -2656,11 +2609,8 @@ void Unit::disp_hire_menu(int refreshFlag)
 {
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("BLDGBASE") );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_hire.create(INFO_X1+13, INFO_Y1+281, 'A', "HIREUNIT" );
-		button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
-	}
+	button_hire.create(INFO_X1+13, INFO_Y1+281, 'A', "HIREUNIT" );
+	button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
 
 //	String str;
 //	str = unit_name();
@@ -2723,10 +2673,7 @@ void Unit::disp_hire_result(int refreshFlag)
 {
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("BLDGBASE") );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
-	}
+	button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
 
 	if( hire_hero_result == 0 )
 	{
@@ -2789,10 +2736,7 @@ void Unit::disp_use_item_menu(int refreshFlag)
 {
 	vga.active_buf->put_bitmap( INFO_X1, INFO_Y1, image_gameif.read("BLDGBASE") );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
-	}
+	button_cancel2.create(INFO_X1+13 + 3*BUTTON_DISTANCE, INFO_Y1+281, 'A', "CANCEL" );
 
 	switch( power.command_id )
 	{

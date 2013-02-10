@@ -51,9 +51,7 @@ static ButtonGroup button_inf_or_spu(2);
 static ButtonCustomGroup button_player_recno(1+MAX_NATION);
 static SpinnerSmall spinner_race_group;
 static VBrowseIF vbrowse_hero_id;
-static int last_inf_or_spu;
 static int browse_hero_width;
-static int last_race_filter;
 
 // -------- define static function for the browser -------//
 
@@ -100,15 +98,12 @@ void ScenarioEditor::disp_hero_main(int refreshFlag)
 {
 	String str;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// infantry or structure unit button group
+	// infantry or structure unit button group
 
-		button_inf_or_spu[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
-			text_editor.str_hero_infantry(), 0 ); // "Infantry", 0 );
-		button_inf_or_spu[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
-			text_editor.str_hero_spu(), 0 ); // "Special", 0 );
-	}
+	button_inf_or_spu[0].create_text( INFO_X1+15, INFO_Y1+5, INFO_X1+110, INFO_Y1+25,
+		text_editor.str_hero_infantry(), 0 ); // "Infantry", 0 );
+	button_inf_or_spu[1].create_text( INFO_X1+115, INFO_Y1+5, INFO_X1+210, INFO_Y1+25,
+		text_editor.str_hero_spu(), 0 ); // "Special", 0 );
 
 	font_zoom.put( INFO_X1+10, INFO_Y2-28, text_editor.str_double_left_add(), 0, INFO_X2-5);
 	font_zoom.put( INFO_X1+10, INFO_Y2-14, text_editor.str_double_right_del(), 0, INFO_X2-5);
@@ -118,12 +113,9 @@ void ScenarioEditor::disp_hero_main(int refreshFlag)
 	// player number button group
 	for( int nationRecno = 0; nationRecno <= MAX_NATION; ++nationRecno )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			button_player_recno[nationRecno].create( INFO_X1+16+nationRecno*25, INFO_Y1+30,
-				INFO_X1+16+(nationRecno+1)*25-2, INFO_Y1+57, i_disp_nation_button,
-				ButtonCustomPara(NULL, nationRecno), 0 );
-		}
+		button_player_recno[nationRecno].create( INFO_X1+16+nationRecno*25, INFO_Y1+30,
+			INFO_X1+16+(nationRecno+1)*25-2, INFO_Y1+57, i_disp_nation_button,
+			ButtonCustomPara(NULL, nationRecno), 0 );
 		button_player_recno[nationRecno].visible_flag = 
 			button_player_recno[nationRecno].enable_flag = 
 			!nationRecno || !nation_array.is_deleted(nationRecno);		// nation 0 always enable
@@ -137,37 +129,20 @@ void ScenarioEditor::disp_hero_main(int refreshFlag)
 	
 	// display browser 
 
-	if( refreshFlag == INFO_REPAINT || last_race_filter != hero_race_filter )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_race_filter = hero_race_filter;
-		collect_hero_unit(hero_race_filter);
-	}
+	collect_hero_unit(hero_race_filter);
+	collect_hero_unit(hero_race_filter);
 
-	if( refreshFlag == INFO_REPAINT || last_inf_or_spu != inf_or_spu )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_inf_or_spu = inf_or_spu;
-		collect_hero_unit(hero_race_filter);
-	}
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// init unit browser
-		vbrowse_hero_id.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
-			-1, 20, hero_id_count, disp_hero_id );
-		vbrowse_hero_id.open(hero_id_browse_recno);
-		browse_hero_width = vbrowse_hero_id.ix2 - vbrowse_hero_id.ix1 + 1;
-	}
+	// init unit browser
+	vbrowse_hero_id.init( INFO_X1+5, INFO_Y1+80, INFO_X2-5, INFO_Y2-30,
+		-1, 20, hero_id_count, disp_hero_id );
+	vbrowse_hero_id.open(hero_id_browse_recno);
+	browse_hero_width = vbrowse_hero_id.ix2 - vbrowse_hero_id.ix1 + 1;
 	vbrowse_hero_id.paint();
 	vbrowse_hero_id.refresh();
 
 	// init race filter button
-	if( refreshFlag == INFO_REPAINT )
-	{
-		spinner_race_group.create( INFO_X1+80, INFO_Y1+58, INFO_X1+210, INFO_Y1+78, 247,
-			0, 1+MAX_RACE, i_disp_race_spinner, hero_race_filter );
-	}
+	spinner_race_group.create( INFO_X1+80, INFO_Y1+58, INFO_X1+210, INFO_Y1+78, 247,
+		0, 1+MAX_RACE, i_disp_race_spinner, hero_race_filter );
 	spinner_race_group.paint(hero_race_filter);
 
 }

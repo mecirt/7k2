@@ -70,7 +70,6 @@ static ButtonCustom	button_research_array[MAX_RESEARCH_OPTION];
 static ButtonCustom	button_research_class_array[MAX_TECH_CLASS];
 static Button3D	button_cancel;
 static int added_count;			// no. of buttons in button_research_array
-static char     		last_menu_mode;
 // ##### begin Gilbert 7/10 ######//
 static short   research_list_start, research_list_end;
 // ##### end Gilbert 7/10 ######//
@@ -85,17 +84,6 @@ static void i_disp_research_class_button(ButtonCustom *, int);
 //
 void FirmResearch::put_info(int refreshFlag)
 {
-//	if( refreshFlag==INFO_REPAINT )
-//		last_menu_mode = research_menu_mode = RESEARCH_MENU_MAIN;
-//	else
-//	{
-		if( last_menu_mode != research_menu_mode )		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = research_menu_mode;
-		}
-//	}
-
 	switch( research_menu_mode )
 	{
 		case RESEARCH_MENU_MAIN:
@@ -237,24 +225,17 @@ void FirmResearch::disp_research_class_menu(int refreshFlag)
 
 		//-----------------------------------------//
 
-		if( refreshFlag == INFO_REPAINT )
-		{
-//			button_research_class_array[b].create( x, y+(b+1)*20, x +187, y+(b+1)*20+17,
-//				i_disp_research_class_button, ButtonCustomPara( this, classTechId) );
-			button_research_class_array[b].create( x, y+b*20, x +187, y+b*20+17,
-				i_disp_research_class_button, ButtonCustomPara( this, classTechId) );
-		}
+//		button_research_class_array[b].create( x, y+(b+1)*20, x +187, y+(b+1)*20+17,
+//			i_disp_research_class_button, ButtonCustomPara( this, classTechId) );
+		button_research_class_array[b].create( x, y+b*20, x +187, y+b*20+17,
+			i_disp_research_class_button, ButtonCustomPara( this, classTechId) );
 
 		button_research_class_array[classTechId-1].paint();
 	}
 	// ##### patch end Gilbert 28/9 ########//
 	
 	x2 +=  3 * BUTTON_DISTANCE;
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_cancel.create( x2, y2, 'A', "CANCEL" );
-	}
-
+	button_cancel.create( x2, y2, 'A', "CANCEL" );
 	button_cancel.paint();
 }
 //----------- End of function FirmResearch::disp_research_class_menu -----------//
@@ -336,13 +317,10 @@ void FirmResearch::disp_research_menu(int refreshFlag)
 	added_count = 0;
 	for( techId = research_list_start ; techId<research_list_end ; techId++ )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			// ##### begin Gilbert 5/11 ######//
-			button_research_array[added_count].create( x, y +added_count*ySpacing, x +187, y +added_count*ySpacing +17,
-				i_disp_research_button, ButtonCustomPara(this, techId) );
-			// ##### end Gilbert 5/11 ######//
-		}
+		// ##### begin Gilbert 5/11 ######//
+		button_research_array[added_count].create( x, y +added_count*ySpacing, x +187, y +added_count*ySpacing +17,
+			i_disp_research_button, ButtonCustomPara(this, techId) );
+		// ##### end Gilbert 5/11 ######//
 
 		if( (button_research_array[added_count].enable_flag = tech_res[techId]->can_research(nation_recno)) )
 		{
@@ -487,16 +465,9 @@ void i_disp_research_button(ButtonCustom *button, int repaintBody)
 //
 void FirmResearch::disp_firm_info(int dispY1, int refreshFlag)
 {
-	static short lastTechId=0;
 	String str;
 	
 	int techId = nation_array[nation_recno]->research_tech_id;
-
-	if( refreshFlag==INFO_UPDATE && lastTechId != techId )
-	{
-		lastTechId = techId;
-		info.disp();
-	}
 
 	// ###### begin Gilbert 5/10 ######//
 
@@ -595,13 +566,10 @@ void FirmResearch::disp_firm_info(int dispY1, int refreshFlag)
 	// int y2 = INFO_Y1 +281;
 	if( is_own() )
 	{
-		if( refreshFlag == INFO_REPAINT )
-		{
-			if (!is_monster())
-				button_select_research.create( INFO_X1 +13, INFO_Y1 +281, 'A', "RESEARCH" );
-			else
-				button_select_research.create( INFO_X1 +13, INFO_Y1 +281, 'A', "F_RESE" );
-		}
+		if (!is_monster())
+			button_select_research.create( INFO_X1 +13, INFO_Y1 +281, 'A', "RESEARCH" );
+		else
+			button_select_research.create( INFO_X1 +13, INFO_Y1 +281, 'A', "F_RESE" );
 		button_select_research.paint();
 	}	
 	// ###### end Gilbert 5/10 ######//

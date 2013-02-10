@@ -92,10 +92,7 @@ void ScenarioEditor::disp_edit_main(int refreshFlag)
 	}
 	else
 	{
-		if( refreshFlag == INFO_REPAINT )
-			info.disp();
-		else
-			info.update();
+		info.disp();
 	}
 
 	// restore enable flag 
