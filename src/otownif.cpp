@@ -120,11 +120,7 @@ static void disp_auto_menu_button(ButtonCustom *, int);
 static void disp_man_power_button(ButtonCustom *, int);
 static int  race_filter(int recNo=0);
 static int  spy_filter(int recNo=0);
-static void put_race_rec(int recNo, int x, int y, int refreshFlag);
-static void put_spy_rec(int recNo, int x, int y, int refreshFlag);
-static void i_disp_skill_button(ButtonCustom *button, int);
-static void i_disp_queue_skill_button(ButtonCustom *button, int);
-static int ask_desc();
+static void put_spy_rec(int recNo, int x, int y);
 
 
 //--------- Begin of function Town::disp_info ---------//
@@ -1359,7 +1355,7 @@ static int spy_filter(int recNo)
 
 //-------- Begin of static function put_spy_rec --------//
 //
-static void put_spy_rec(int recNo, int x, int y, int refreshFlag)
+static void put_spy_rec(int recNo, int x, int y)
 {
 	int x2 = x+browse_spy.rec_width-1;
 	String str;
@@ -1476,7 +1472,6 @@ int Town::input_town_name()
 
 	return retFlag;
 }
-// ----- end of function GameFile::ask_desc -------//
 
 // ------ Begin of function Town::disp_edit_mode -----------//
 //

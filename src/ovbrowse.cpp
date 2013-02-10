@@ -300,7 +300,7 @@ void VBrowse::update()
 		y = iy1 + (recNo-top_rec_no)/x_max_rec * (rec_height+rec_y_space);
 		x = ix1 + (recNo-top_rec_no)%x_max_rec * (rec_width+rec_x_space);
 
-		disp_rec( recNo, x, y, INFO_UPDATE );        // call user defined function
+		disp_rec( recNo, x, y );        // call user defined function
 	}
 }
 //---------- End of function VBrowse::update ----------//
@@ -582,7 +582,7 @@ void VBrowse::disp_one(int recNo, int dispType)
 		Vga::active_buf->rect( x-2, y-2, x+rec_width+1, y+rec_height+1, 2, VBROWSE_COLOR_BACK );
 	
 	if( dispType == DISP_REC )
-		disp_rec( recNo, x, y, INFO_REPAINT );  // call user defined function
+		disp_rec( recNo, x, y );  // call user defined function
 
    if( disp_frame && dispType == DISP_HIGH && (!mode) )
    {
@@ -600,8 +600,8 @@ void VBrowse::disp_one(int recNo, int dispType)
 
 //-------- Begin of function VBrowse::disp_rec --------//
 //
-void VBrowse::disp_rec(int recNo, int x, int y, int refreshFlag)
+void VBrowse::disp_rec(int recNo, int x, int y)
 {
-	(*disp_rec_func)( recNo, x, y, refreshFlag );  // call user defined function
+	(*disp_rec_func)( recNo, x, y );  // call user defined function
 }
 //----------- End of function VBrowse::disp_rec -----------//

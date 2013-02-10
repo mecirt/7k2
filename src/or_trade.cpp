@@ -70,8 +70,8 @@ static VBrowseIF browse_caravan, browse_ship;
 
 static void create_caravan_list();
 static void create_ship_list();
-static void put_caravan_rec(int recNo, int x, int y, int refreshFlag);
-static void put_ship_rec(int recNo, int x, int y, int refreshFlag);
+static void put_caravan_rec(int recNo, int x, int y);
+static void put_ship_rec(int recNo, int x, int y);
 static void	disp_total();
 static void put_stop_info(int x, int y, TradeStop* tradeStop);
 
@@ -258,7 +258,7 @@ static void create_ship_list()
 
 //-------- Begin of static function put_caravan_rec --------//
 //
-static void put_caravan_rec(int recNo, int x, int y, int refreshFlag)
+static void put_caravan_rec(int recNo, int x, int y)
 {
 	int   		 unitRecno = info.get_report_data(recNo);
 	UnitCaravan* unitPtr   = (UnitCaravan*) unit_array[unitRecno];
@@ -334,7 +334,7 @@ static void put_caravan_rec(int recNo, int x, int y, int refreshFlag)
 
 //-------- Begin of static function put_ship_rec --------//
 //
-static void put_ship_rec(int recNo, int x, int y, int refreshFlag)
+static void put_ship_rec(int recNo, int x, int y)
 {
 	/*
 	int   		unitRecno = info.get_report_data2(recNo);

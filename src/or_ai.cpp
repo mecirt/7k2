@@ -76,8 +76,8 @@ static Nation*	  cur_nation_ptr;
 
 //----------- Define static functions ----------//
 
-static void put_action_rec(int recNo, int x, int y, int refreshFlag);
-static void put_attack_rec(int recNo, int x, int y, int refreshFlag);
+static void put_action_rec(int recNo, int x, int y);
+static void put_attack_rec(int recNo, int x, int y);
 static void disp_other_info();
 
 //--------- Begin of function Info::disp_ai_action ---------//
@@ -147,7 +147,7 @@ void Info::detect_ai_action()
 
 //-------- Begin of static function put_action_rec --------//
 //
-static void put_action_rec(int recNo, int x, int y, int refreshFlag)
+static void put_action_rec(int recNo, int x, int y)
 {
 	if( cur_nation_ptr->is_action_deleted(recNo) )		// display nothing if the action is deleted
 		return;
@@ -183,7 +183,7 @@ static void put_action_rec(int recNo, int x, int y, int refreshFlag)
 
 //-------- Begin of static function put_attack_rec --------//
 //
-static void put_attack_rec(int recNo, int x, int y, int refreshFlag)
+static void put_attack_rec(int recNo, int x, int y)
 {
 	AttackCamp* attackCamp = cur_nation_ptr->attack_camp_array+recNo-1;
 

@@ -59,10 +59,10 @@ static int last_race_filter;
 
 // -------- define static function for the browser -------//
 
-static void disp_human_unit_id(int recNo,int x,int y,int refreshFlag);
-static void disp_human_firm_group(int recNo,int x,int y,int refreshFlag);
+static void disp_human_unit_id(int recNo,int x,int y);
+static void disp_human_firm_group(int recNo,int x,int y);
 static void i_disp_nation_button( ButtonCustom *, int );
-static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2, int refreshFlag);
+static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2);
 
 
 // ----- begin of function ScenarioEditor::init_human_mode ------//
@@ -596,7 +596,7 @@ void ScenarioEditor::collect_human_firm( int raceId )
 
 // ----- begin of static function disp_human_unit_id ------//
 //
-static void disp_human_unit_id(int recNo,int x,int y,int refreshFlag)
+static void disp_human_unit_id(int recNo,int x,int y)
 {
 	if( recNo > 0 && recNo <= scenario_editor.human_unit_id_count )
 		font_san.put( x+6, y+2, unit_res[scenario_editor.human_unit_id_array[recNo-1]]->name, 0,
@@ -607,7 +607,7 @@ static void disp_human_unit_id(int recNo,int x,int y,int refreshFlag)
 
 // ----- begin of static function disp_human_firm_group ------//
 //
-static void disp_human_firm_group(int recNo,int x,int y,int refreshFlag)
+static void disp_human_firm_group(int recNo,int x,int y)
 {
 	if( recNo > 0 && recNo <= scenario_editor.human_firm_group_count )
 	{
@@ -677,7 +677,7 @@ static void i_disp_nation_button( ButtonCustom *button, int )
 // ----- end of static function i_disp_nation_button ------//
 
 // ----- begin of static function i_disp_race_spinner ------//
-static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2, int refreshFlag)
+static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2)
 {
 	if( recNo == 0 )
 	{

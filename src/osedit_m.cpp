@@ -89,15 +89,15 @@ static VBrowseIF browse_plant;
 
 // ------- define static functions ------------//
 
-static void disp_rock_rec(int recNo,int x,int y,int refreshFlag);
+static void disp_rock_rec(int recNo,int x,int y);
 
-static void disp_raw_rec(int recNo,int x,int y,int refreshFlag);
-static void disp_scroll_rec(int recNo,int x,int y,int refreshFlag);
-static void disp_gold_rec(int recNo,int x,int y,int refreshFlag);
-static void disp_item_rec(int recNo,int x,int y,int refreshFlag);
-static void disp_tech_rec(int recNo,int x,int y,int refreshFlag);
+static void disp_raw_rec(int recNo,int x,int y);
+static void disp_scroll_rec(int recNo,int x,int y);
+static void disp_gold_rec(int recNo,int x,int y);
+static void disp_item_rec(int recNo,int x,int y);
+static void disp_tech_rec(int recNo,int x,int y);
 
-static void disp_plant_rec(int recNo,int x,int y,int refreshFlag);
+static void disp_plant_rec(int recNo,int x,int y);
 
 
 // ---- begin of function ScenarioEditor::init_misc_mode ------//
@@ -861,7 +861,7 @@ int ScenarioEditor::detect_misc_view()
 
 // ---- begin of static function disp_rock_rec ------//
 //
-static void disp_rock_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_rock_rec(int recNo,int x,int y)
 {
 	RockInfo *rockInfo = rock_res.get_rock_info( 
 		scenario_editor.rock_browse_array[scenario_editor.rock_type][recNo-1] );
@@ -877,7 +877,7 @@ static void disp_rock_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_raw_rec ------//
 //
-static void disp_raw_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_raw_rec(int recNo,int x,int y)
 {
 	RawInfo *rawInfo = raw_res[recNo];
 	font_san.put( x+6, y+4, rawInfo->name );
@@ -888,7 +888,7 @@ static void disp_raw_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_scroll_rec ------//
 //
-static void disp_scroll_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_scroll_rec(int recNo,int x,int y)
 {
 	// scroll of power
 	font_san.put( x+6, y+8, race_res[recNo]->name );
@@ -907,7 +907,7 @@ static void disp_scroll_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_gold_rec ------//
 //
-static void disp_gold_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_gold_rec(int recNo,int x,int y)
 {
 	long amount;
 	if( recNo <= GOLD_COIN_AMOUNT_COUNT )
@@ -921,7 +921,7 @@ static void disp_gold_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_item_rec ------//
 //
-static void disp_item_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_item_rec(int recNo,int x,int y)
 {
 	font_san.put( x+6, y+4, item_res.item_name(recNo, 0) );
 }
@@ -930,7 +930,7 @@ static void disp_item_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_tech_rec ------//
 //
-static void disp_tech_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_tech_rec(int recNo,int x,int y)
 {
 	int techId = tech_res.tech_class(TECH_CLASS_MEGA_WEAPON)->first_tech_id+recNo-1;
 	font_san.put( x+6, y+4, tech_res[techId]->tech_des() );
@@ -940,7 +940,7 @@ static void disp_tech_rec(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_plant_rec -------//
 //
-static void disp_plant_rec(int recNo, int x, int y, int refreshFlag )
+static void disp_plant_rec(int recNo, int x, int y)
 {
 	font_san.put( x+6, y+4, plant_res[recNo]->code, 0, x+150 );
 }

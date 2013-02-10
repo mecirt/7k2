@@ -137,7 +137,7 @@ void VBrowseIF::disp_one(int recNo, int dispType)
 	//---- put a outline rect around the record if it is highlight ---//
 
 	if( dispType == DISP_REC )
-		disp_rec( recNo, x, y, INFO_REPAINT );  // call user defined function
+		disp_rec( recNo, x, y );  // call user defined function
 
 	if( disp_frame && dispType == DISP_HIGH )
 	{
@@ -159,9 +159,9 @@ void VBrowseIF::disp_one(int recNo, int dispType)
 
 //-------- Begin of function VBrowseIF::disp_rec --------//
 //
-void VBrowseIF::disp_rec(int recNo, int x, int y, int refreshFlag)
+void VBrowseIF::disp_rec(int recNo, int x, int y)
 {
-	(*disp_rec_func)( recNo, x, y, refreshFlag );  // call user defined function
+	(*disp_rec_func)( recNo, x, y );  // call user defined function
 
 	sys.yield();
 }

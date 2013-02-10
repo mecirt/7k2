@@ -60,8 +60,7 @@ static ButtonGroup button_player_type(2);
 
 // ----- declare static function ---------//
 
-static void disp_nation_rec(int recNo,int x,int y,int refreshFlag);
-static void disp_color_button(ButtonCustom *, int );
+static void disp_nation_rec(int recNo,int x,int y);
 
 // ----- begin of function ScenarioEditor::init_player_mode ------//
 //
@@ -347,7 +346,7 @@ int ScenarioEditor::detect_players_view()
 
 // ----- begin of function ScenarioEditor::disp_nation_rec ------//
 //
-static void disp_nation_rec(int recNo,int x,int y,int refreshFlag)
+static void disp_nation_rec(int recNo,int x,int y)
 {
 	if( nation_array.is_deleted(recNo) )
 	{
@@ -393,26 +392,3 @@ static void disp_nation_rec(int recNo,int x,int y,int refreshFlag)
 }
 // ----- end of function ScenarioEditor::disp_nation_rec ------//
 
-
-// ----- begin of function ScenarioEditor::disp_color_button ------//
-//
-static void disp_color_button(ButtonCustom *button, int )
-{
-	vga_buffer.bar( button->x1, button->y1, button->x2, button->y2, 
-		game.color_remap_array[button->custom_para.value].main_color);
-
-	if( button->custom_para.value == 0 )
-	{
-		font_san.center_put( button->x1, button->y1, button->x2, button->y2, "X");
-	}
-
-	if( !button->pushed_flag )
-	{
-		vga_buffer.d3_panel_up( button->x1, button->y1, button->x2, button->y2, 2, 0 );
-	}
-	else
-	{
-		vga_buffer.d3_panel_down( button->x1, button->y1, button->x2, button->y2, 2, 0 );
-	}
-}
-// ----- end of function ScenarioEditor::disp_color_button ------//

@@ -39,7 +39,7 @@
 
 //----------- Define variable type -----------//
 
-typedef void (*BrowDispFP)(int recNo,int x,int y,int refreshFlag); // user defined function to be called
+typedef void (*BrowDispFP)(int recNo,int x,int y); // user defined function to be called
 
 //---------- Define class ListBox ------------//
 
@@ -108,7 +108,7 @@ protected:
 
 	virtual void  disp_all();
 	virtual void  disp_one(int,int);
-	virtual void	disp_rec(int,int,int,int);
+	virtual void	disp_rec(int,int,int);
 	virtual int   detect_pull();
 };
 

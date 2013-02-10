@@ -63,8 +63,8 @@ static VBrowseIF browse_tech, browse_god;
 
 static int  tech_filter(int recNo=0);
 static int  god_filter(int recNo=0);
-static void put_tech_rec(int recNo, int x, int y, int refreshFlag);
-static void put_god_rec(int recNo, int x, int y, int refreshFlag);
+static void put_tech_rec(int recNo, int x, int y);
+static void put_god_rec(int recNo, int x, int y);
 static void disp_owned_scroll();
 static void disp_scroll(int x, int y, int raceId);
 
@@ -237,7 +237,7 @@ static int god_filter(int recNo)
 
 //-------- Begin of static function put_tech_rec --------//
 //
-static void put_tech_rec(int recNo, int x, int y, int refreshFlag)
+static void put_tech_rec(int recNo, int x, int y)
 {
 	int   	 techId   = tech_filter(recNo);
 	TechInfo* techInfo = tech_res[techId];
@@ -294,7 +294,7 @@ static void put_tech_rec(int recNo, int x, int y, int refreshFlag)
 
 //-------- Begin of static function put_god_rec --------//
 //
-static void put_god_rec(int recNo, int x, int y, int refreshFlag)
+static void put_god_rec(int recNo, int x, int y)
 {
 	UnitGod* unitGod = (UnitGod*) unit_array[ god_filter(recNo) ];
 

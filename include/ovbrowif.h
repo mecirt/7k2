@@ -30,7 +30,7 @@
 
 //----------- Define variable type -----------//
 
-typedef void (*BrowDispFP)(int recNo,int x,int y,int refreshFlag); // user defined function to be called
+typedef void (*BrowDispFP)(int recNo,int x,int y); // user defined function to be called
 
 //---------- Define class ListBox ------------//
 
@@ -50,7 +50,7 @@ public:
 protected:
 	void	disp_all();
 	void	disp_one(int recNo, int dispType);
-	void	disp_rec(int,int,int,int);
+	void	disp_rec(int,int,int);
 };
 
 //--------------------------------------------------//
@@ -74,7 +74,7 @@ public:
 protected:
 	void	disp_all();
 	void	disp_one(int recNo, int dispType);
-	void	disp_rec(int,int,int,int);
+	void	disp_rec(int,int,int);
 };
 
 //--------------------------------------------------//

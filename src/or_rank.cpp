@@ -83,9 +83,8 @@ static int			browse_goal_recno = 1;
 
 //----------- Define static functions ----------//
 
-static void  put_nation_rec(int recNo, int x, int y, int refreshFlag);
-static void  put_goal_rec(int recNo, int x, int y, int refreshFlag);
-// static int   nation_filter_old(int recNo=0);
+static void  put_nation_rec(int recNo, int x, int y);
+static void  put_goal_rec(int recNo, int x, int y);
 static void  disp_score();
 static int	 disp_goal(int refreshFlag);
 static void	 disp_play_time(int y1);
@@ -498,50 +497,9 @@ void Info::detect_rank()
 //----------- End of function Info::detect_rank -----------//
 
 
-//-------- Begin of static function nation_filter --------//
-//
-// This function has dual purpose :
-//
-// 1. when <int> recNo is not given :
-//    - return the total no. of nations of this nation
-//
-// 2. when <int> recNo is given :
-//    - return the nation recno in nation_array of the given recno.
-//
-static int nation_filter_old(int recNo)
-{
-	int    	i, nationCount=0;
-	Nation*  viewingNation = NULL;
-	
-	if( nation_array.player_recno )
-		viewingNation = nation_array[info.viewing_nation_recno];
-
-	for( i=1 ; i<=nation_array.size() ; i++ )
-	{
-		if( nation_array.is_deleted(i) )
-			continue;
-
-		if( i==info.viewing_nation_recno ||
-			 !viewingNation ||
-			 viewingNation->get_relation(i)->has_contact )
-		{
-			nationCount++;
-		}
-
-		if( recNo && nationCount==recNo )
-			return i;
-	}
-
-	err_when( recNo );   // the recNo is not found, it is out of range
-
-	return nationCount;
-}
-//----------- End of static function nation_filter -----------//
-
-
 //-------- Begin of static function put_nation_rec --------//
 //
-static void put_nation_rec(int recNo, int x, int y, int refreshFlag)
+static void put_nation_rec(int recNo, int x, int y)
 {
 	int	  nationRecno = info.nation_filter(recNo);
 	Nation* nationPtr   = nation_array[nationRecno];
@@ -569,7 +527,7 @@ static void put_nation_rec(int recNo, int x, int y, int refreshFlag)
 
 //-------- Begin of static function put_goal_rec --------//
 //
-static void put_goal_rec(int recNo, int x, int y, int refreshFlag)
+static void put_goal_rec(int recNo, int x, int y)
 {
 /*	font_bld.put_paragraph( NATION_GOAL_X1+6, NATION_GOAL_Y1+6,
 		 	NATION_GOAL_X2-12, NATION_GOAL_Y2 - 6, game.campaign()->full_goal_text(),

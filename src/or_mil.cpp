@@ -58,8 +58,8 @@ static VBrowseIF browse_unit;
 
 //----------- Define static functions ----------//
 
-static void put_troop_rec(int recNo, int x, int y, int refreshFlag);
-static void put_unit_rec(int recNo, int x, int y, int refreshFlag);
+static void put_troop_rec(int recNo, int x, int y);
+static void put_unit_rec(int recNo, int x, int y);
 static int  troop_filter(int recNo=0);
 static int  unit_filter(int recNo=0);
 static void	disp_troop_total();
@@ -312,7 +312,7 @@ static int troop_filter(int recNo)
 
 //-------- Begin of static function put_troop_rec --------//
 //
-static void put_troop_rec(int recNo, int x, int y, int refreshFlag)
+static void put_troop_rec(int recNo, int x, int y)
 {
 	int   unitRecno = troop_filter(recNo);
 	Unit* unitPtr   = unit_array[unitRecno];
@@ -428,7 +428,7 @@ static int unit_filter(int recNo)
 
 //-------- Begin of static function put_unit_rec --------//
 //
-static void put_unit_rec(int recNo, int x, int y, int refreshFlag)
+static void put_unit_rec(int recNo, int x, int y)
 {
 	int   	 unitId = unit_filter(recNo);
 	int   	 unitCount;

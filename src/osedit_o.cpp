@@ -57,9 +57,9 @@ static int last_race_filter;
 
 // -------- define static function for the browser -------//
 
-static void disp_hero_id(int recNo,int x,int y,int refreshFlag);
+static void disp_hero_id(int recNo,int x,int y);
 static void i_disp_nation_button( ButtonCustom *, int );
-static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2, int refreshFlag);
+static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2);
 
 
 // ----- begin of function ScenarioEditor::init_hero_mode ------//
@@ -425,7 +425,7 @@ void ScenarioEditor::collect_hero_unit( int raceId )
 
 // ----- begin of static function disp_hero_unit_id ------//
 //
-static void disp_hero_id(int recNo,int x,int y,int refreshFlag)
+static void disp_hero_id(int recNo,int x,int y)
 {
 	if( recNo > 0 && recNo <= scenario_editor.hero_id_count )
 		font_san.put( x+6, y+2, hero_res[scenario_editor.hero_id_array[recNo-1]]->name, 0,
@@ -461,7 +461,7 @@ static void i_disp_nation_button( ButtonCustom *button, int )
 // ----- end of static function i_disp_nation_button ------//
 
 // ----- begin of static function i_disp_race_spinner ------//
-static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2, int refreshFlag)
+static void i_disp_race_spinner(int recNo,int x,int y, int x2, int y2)
 {
 	if( recNo == 0 )
 	{

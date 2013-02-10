@@ -53,7 +53,7 @@ static VBrowseIF browse_spy;
 
 //----------- Define static functions ----------//
 
-static void put_spy_rec(int recNo, int x, int y, int refreshFlag);
+static void put_spy_rec(int recNo, int x, int y);
 static int  spy_filter(int recNo=0);
 static void	disp_total();
 
@@ -182,7 +182,7 @@ static int spy_filter(int recNo)
 
 //-------- Begin of static function put_spy_rec --------//
 //
-static void put_spy_rec(int recNo, int x, int y, int refreshFlag)
+static void put_spy_rec(int recNo, int x, int y)
 {
 	int  spyRecno = spy_filter(recNo);
 	Spy* spyPtr   = spy_array[spyRecno];

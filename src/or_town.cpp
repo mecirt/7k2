@@ -77,12 +77,11 @@ static VBrowseIF browse_town, browse_firm;
 static int		  total_population, total_peasant;
 static int  	  firm_income_array[MAX_FIRM_TYPE];
 static int  	  total_firm_cost, total_firm_income, total_firm_count;
-static float	  total_expense;
 
 //----------- Define static functions ----------//
 
-static void put_town_rec(int recNo, int x, int y, int refreshFlag);
-static void put_firm_rec(int recNo, int x, int y, int refreshFlag);
+static void put_town_rec(int recNo, int x, int y);
+static void put_firm_rec(int recNo, int x, int y);
 static int  town_filter(int recNo=0);
 static int  firm_filter(int recNo=0);
 static void	disp_total();
@@ -374,7 +373,7 @@ static int town_filter(int recNo)
 
 //-------- Begin of static function put_town_rec --------//
 //
-static void put_town_rec(int recNo, int x, int y, int refreshFlag)
+static void put_town_rec(int recNo, int x, int y)
 {
 	int   townRecno = town_filter(recNo);
 	Town* townPtr   = town_array[townRecno];
@@ -435,7 +434,7 @@ static int firm_filter(int recNo)
 
 //----------- Begin of static function put_firm_rec -----------//
 //
-static void put_firm_rec(int recNo, int x, int y, int refreshFlag)
+static void put_firm_rec(int recNo, int x, int y)
 {
 	int   	 firmId = firm_filter(recNo);
 	FirmInfo* firmInfo = firm_res[firmId];

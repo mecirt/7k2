@@ -31,7 +31,7 @@
 //----------- Define variable type -----------//
 
 // as same as VBrowse's
-typedef void (*SpinDispFP)(int recNo,int x,int y, int x2, int y2, int refreshFlag); // user defined function to be called
+typedef void (*SpinDispFP)(int recNo,int x,int y, int x2, int y2); // user defined function to be called
 
 // -------- define class BrowDispFp ----------//
 

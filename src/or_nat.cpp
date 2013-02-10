@@ -139,8 +139,8 @@ static int last_nation_report_mode = 0;
 
 //----------- Define static functions ----------//
 
-static void put_nation_rec(int recNo, int x, int y, int refreshFlag);
-static void put_talk_msg_rec(int recNo, int x, int y, int refreshFlag);
+static void put_nation_rec(int recNo, int x, int y);
+static void put_talk_msg_rec(int recNo, int x, int y);
 // #### begin Gilbert 19/4 #######//
 // static int  nation_filter(int recNo=0);
 // #### end Gilbert 19/4 #######//
@@ -344,7 +344,7 @@ int Info::nation_filter(int recNo)
 
 //-------- Begin of static function put_nation_rec --------//
 //
-static void put_nation_rec(int recNo, int x, int y, int refreshFlag)
+static void put_nation_rec(int recNo, int x, int y)
 {
 	int	  nationRecno = info.nation_filter(recNo);
 	Nation* nationPtr   = nation_array[nationRecno];
@@ -932,7 +932,7 @@ static int sort_talk_msg( const void *a, const void *b )
 
 //-------- Begin of static function put_talk_msg_rec --------//
 //
-static void put_talk_msg_rec(int recNo, int x1, int y, int refreshFlag)
+static void put_talk_msg_rec(int recNo, int x1, int y)
 {
 	TalkMsgDisp* talkMsgDisp = (TalkMsgDisp*) info.talk_msg_disp_array.get(recNo);
 	TalkMsg*		 talkMsg = talk_res.get_talk_msg(talkMsgDisp->recno);

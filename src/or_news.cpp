@@ -53,7 +53,7 @@ static VBrowseIF browse_news;
 
 //----------- Define static functions ----------//
 
-static void put_news_rec(int recNo, int x, int y, int refreshFlag);
+static void put_news_rec(int recNo, int x, int y);
 
 //--------- Begin of function Info::disp_news_log ---------//
 //
@@ -99,7 +99,7 @@ void Info::detect_news_log()
 
 //-------- Begin of static function put_news_rec --------//
 //
-static void put_news_rec(int recNo, int x, int y, int refreshFlag)
+static void put_news_rec(int recNo, int x, int y)
 {
 	News* newsPtr = news_array[ news_array.size()-recNo+1 ]; 	// display in reversed order
 

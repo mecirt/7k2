@@ -54,8 +54,8 @@ static VBrowseIF browse_income, browse_expense;
 
 //----------- Define static functions ----------//
 
-static void put_income_rec(int recNo, int x, int y, int refreshFlag);
-static void put_expense_rec(int recNo, int x, int y, int refreshFlag);
+static void put_income_rec(int recNo, int x, int y);
+static void put_expense_rec(int recNo, int x, int y);
 
 static void disp_total();
 
@@ -195,7 +195,7 @@ static void disp_total()
 
 //-------- Begin of static function put_income_rec --------//
 //
-static void put_income_rec(int recNo, int x, int y, int refreshFlag)
+static void put_income_rec(int recNo, int x, int y)
 {
 	//----- define income descriptions ------//
 
@@ -232,7 +232,7 @@ static void put_income_rec(int recNo, int x, int y, int refreshFlag)
 
 //-------- Begin of static function put_expense_rec --------//
 //
-static void put_expense_rec(int recNo, int x, int y, int refreshFlag)
+static void put_expense_rec(int recNo, int x, int y)
 {
 	//----- define expense descriptions -------//
 

@@ -33,7 +33,7 @@
 #define SCROLL_BUTTON_WIDTH 8
 #define D3_PANEL_THICK 4
 
-static void disp_vbrowse(int recNo,int x,int y,int refreshFlag);
+static void disp_vbrowse(int recNo,int x,int y);
 static SpinDispFP disp_vbrowse_func;
 static int vbrowse_x2;
 
@@ -106,7 +106,7 @@ void SpinnerSmall::paint(int recNo)
 
 	if( !none_record && rec_no >= min_rec_num && disp_rec_func)
 	{
-		(*disp_rec_func)(recNo, ix1, iy1, ix2, iy2, 0 );
+		(*disp_rec_func)(recNo, ix1, iy1, ix2, iy2 );
 	}
 
 	// paint scorll button
@@ -182,8 +182,8 @@ int SpinnerSmall::detect(int noPaint)
 }
 
 // ----- begin of static function disp_vbrowse ------//
-static void disp_vbrowse(int recNo,int x,int y,int refreshFlag)
+static void disp_vbrowse(int recNo,int x,int y)
 {
-	(*disp_vbrowse_func)(recNo-1, x, y, vbrowse_x2, y +20, 0 );
+	(*disp_vbrowse_func)(recNo-1, x, y, vbrowse_x2, y +20 );
 }
 // ----- end of static function disp_vbrowse ------//

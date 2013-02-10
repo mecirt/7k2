@@ -111,13 +111,13 @@ static int last_win_or_lose;
 
 // ------- define static function ---------//
 
-static void disp_win_condition(int recNo,int x,int y,int refreshFlag);
-static void disp_lose_condition(int recNo,int x,int y,int refreshFlag);
-static void disp_win_cond_id(int recNo,int x,int y,int refreshFlag);
-static void disp_lose_cond_id(int recNo,int x,int y,int refreshFlag);
-static void disp_unit_id(int recNo,int x,int y,int refreshFlag);
-static void disp_item_id(int recNo,int x,int y,int refreshFlag);
-static void disp_tech_id(int recNo,int x,int y,int refreshFlag);
+static void disp_win_condition(int recNo,int x,int y);
+static void disp_lose_condition(int recNo,int x,int y);
+static void disp_win_cond_id(int recNo,int x,int y);
+static void disp_lose_cond_id(int recNo,int x,int y);
+static void disp_unit_id(int recNo,int x,int y);
+static void disp_item_id(int recNo,int x,int y);
+static void disp_tech_id(int recNo,int x,int y);
 
 static int proceed_victory_menu();
 static void add_condition();
@@ -732,7 +732,7 @@ int ScenarioEditor::detect_victory_view()
 
 // ---- begin of static function disp_win_condition ------//
 //
-static void disp_win_condition(int recNo,int x,int y,int refreshFlag)
+static void disp_win_condition(int recNo,int x,int y)
 {
 	// ###### begin Gilbert 22/2 #######//
 	font_snds.put_paragraph( x+6, y+2, x+195, y+34, game.win_condition[recNo-1].cond_str );		// 0=win condition
@@ -743,7 +743,7 @@ static void disp_win_condition(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_lose_condition ------//
 //
-static void disp_lose_condition(int recNo,int x,int y,int refreshFlag)
+static void disp_lose_condition(int recNo,int x,int y)
 {
 	// ###### begin Gilbert 22/2 #######//
 	font_snds.put_paragraph( x+6, y+2, x+195, y+34, game.lose_condition[recNo-1].cond_str );	// 1=lose condition
@@ -754,7 +754,7 @@ static void disp_lose_condition(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_win_cond_id ------//
 //
-static void disp_win_cond_id(int recNo,int x,int y,int refreshFlag)
+static void disp_win_cond_id(int recNo,int x,int y)
 {
 	font_snds.put( x+6, y+2, EndConditionInfo::end_condition_info[filtered_win_condition[recNo-1]].name(), 0, x+194 );
 }
@@ -763,7 +763,7 @@ static void disp_win_cond_id(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_lose_cond_id ------//
 //
-static void disp_lose_cond_id(int recNo,int x,int y,int refreshFlag)
+static void disp_lose_cond_id(int recNo,int x,int y)
 {
 	font_snds.put( x+6, y+2, EndConditionInfo::end_condition_info[filtered_lose_condition[recNo-1]].name(), 0, x+194 );
 }
@@ -772,7 +772,7 @@ static void disp_lose_cond_id(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_unit_id ------//
 //
-static void disp_unit_id(int recNo,int x,int y,int refreshFlag)
+static void disp_unit_id(int recNo,int x,int y)
 {
 	// ###### patch begin Gilbert 27/9 ########//
 	font_snds.put( x+6, y+2, unit_res[recNo]->name, 0, x+194 );
@@ -783,7 +783,7 @@ static void disp_unit_id(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_item_id ------//
 //
-static void disp_item_id(int recNo,int x,int y,int refreshFlag)
+static void disp_item_id(int recNo,int x,int y)
 {
 	// ###### patch begin Gilbert 27/9 ########//
 	font_snds.put( x+6, y+2, item_res.item_name(recNo, 0), 0, x+194 );
@@ -794,7 +794,7 @@ static void disp_item_id(int recNo,int x,int y,int refreshFlag)
 
 // ---- begin of static function disp_tech_id ------//
 //
-static void disp_tech_id(int recNo,int x,int y,int refreshFlag)
+static void disp_tech_id(int recNo,int x,int y)
 {
 	// ###### patch begin Gilbert 27/9 ########//
 	font_snds.put( x+6, y+2, tech_res[recNo]->tech_des(), 0, x+194 );
