@@ -89,7 +89,7 @@ static void calc_firm_total();
 
 //--------- Begin of function Info::disp_town ---------//
 //
-void Info::disp_town(int refreshFlag)
+void Info::disp_town()
 {
 	int x=TOWN_BROWSE_X1+9;
 	int y=TOWN_BROWSE_Y1+4;
@@ -101,18 +101,10 @@ void Info::disp_town(int refreshFlag)
 	font_bld.put( x+225, y, text_reports.str_peasants() ); // "Peasants" );
 	font_bld.put( x+300, y, text_unit.str_loyalty() ); // "Loyalty" );
 	font_bld.put( x+400, y, text_reports.str_nationality() ); // "Nationality" );
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_town.init( TOWN_BROWSE_X1, TOWN_BROWSE_Y1+22, TOWN_BROWSE_X2, TOWN_BROWSE_Y2-20,
-								0, 21, town_filter(), put_town_rec, 1 );
+	browse_town.init( TOWN_BROWSE_X1, TOWN_BROWSE_Y1+22, TOWN_BROWSE_X2, TOWN_BROWSE_Y2-20,
+							0, 21, town_filter(), put_town_rec, 1 );
 
-		browse_town.open(browse_town_recno);
-	}
-	else
-	{
-		browse_town.paint();
-		browse_town.open(browse_town_recno, town_filter());
-	}
+	browse_town.open(browse_town_recno);
 
 	//------- Display the firm report -------//
 
@@ -130,20 +122,12 @@ void Info::disp_town(int refreshFlag)
 	font_bld.put( x+340, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
 	font_bld.put( x+450, y, text_reports.str_yearly_income() ); // "Yearly Income" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ###### begin Gilbert 19/10 ######//
-		browse_firm.init( FIRM_BROWSE_X1, FIRM_BROWSE_Y1+FIRM_LABEL_HEIGHT+1, FIRM_BROWSE_X2, FIRM_BROWSE_Y2-20,
-								0, 18, firm_filter(), put_firm_rec, 1 );
-		// ###### end Gilbert 19/10 ######//
+	// ###### begin Gilbert 19/10 ######//
+	browse_firm.init( FIRM_BROWSE_X1, FIRM_BROWSE_Y1+FIRM_LABEL_HEIGHT+1, FIRM_BROWSE_X2, FIRM_BROWSE_Y2-20,
+							0, 18, firm_filter(), put_firm_rec, 1 );
+	// ###### end Gilbert 19/10 ######//
 
-		browse_firm.open(browse_firm_recno);
-	}
-	else
-	{
-		browse_firm.paint();
-		browse_firm.open(browse_firm_recno, firm_filter());
-	}
+	browse_firm.open(browse_firm_recno);
 #undef FIRM_LABEL_HEIGHT
 
 	//--------- Display total ------------//

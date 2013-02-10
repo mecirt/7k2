@@ -239,7 +239,6 @@ static void 	temp_close_res();
 
 //---------- Declare static vars -----------//
 
-static char		letter_refresh_flag = INFO_REPAINT;
 static char		map[HFIELD_WIDTH][HFIELD_HEIGHT];
 
 //---------- Define struct TextBlock ----------//
@@ -1313,43 +1312,37 @@ void Campaign::disp_narrative(char* dialogText, ...)
 //
 // <int>   raceId      - race id. of the speaker
 // <char*> dialogText  - pointer to the dialog text read from resource file
-// <int>   refreshFlag - refresh flag
 //
 // return: <int> if this dialog needs a reply, the returned
 //					  value is id. of the reply.
 //
-void Campaign::disp_dialog(int raceId, char* dialogText, int refreshFlag)
+void Campaign::disp_dialog(int raceId, char* dialogText)
 {
 	return;
 
 	disp_text( DIALOG_TEXT_X1, DIALOG_TEXT_Y1, DIALOG_TEXT_X2, DIALOG_TEXT_Y2,
-				  dialogText, (refreshFlag==INFO_REPAINT ? raceId : 0) );
+				  dialogText, raceId );
 
-	if( refreshFlag == INFO_REPAINT )
+	while(1)
 	{
-		//-----------------------------//
-	 
-		while(1)
+		disp_strategic_screen();
+
+		game.process_messages();
+ 		vga.flip();
+
+		sys.yield();
+		mouse.get_event();
+		if( config.music_flag )
 		{
-			disp_strategic_screen();
+			if( !music.is_playing(3) )
+				music.play(3, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
+		}
+		else
+			music.stop();
 
-			game.process_messages();
- 			vga.flip();
-
-			sys.yield();
-			mouse.get_event();
-			if( config.music_flag )
-			{
-				if( !music.is_playing(3) )
-					music.play(3, sys.cdrom_drive ? MUSIC_CD_THEN_WAV : 0 );
-			}
-			else
-				music.stop();
-
-			if( mouse.left_press || mouse.right_press )
-				break;
-		}		
-	}	
+		if( mouse.left_press || mouse.right_press )
+			break;
+	}		
 }
 //------- End of function Campaign::disp_dialog -------//
 
@@ -1599,7 +1592,6 @@ char* Campaign::substitute_text(char* dialogText, ...)
 //
 void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 {
-	int refreshFlag = letter_refresh_flag;
 	static Font* fontPtr;
 
 	if( isMonster != -1 )		// -1 when this function is called by detect_letter() and no parameters are passed to this function. 
@@ -1664,122 +1656,88 @@ void Campaign::disp_letter(char isMonster, char* dialogText, ...)
 
 	//--- display the preface - saying we have received a letter, and click a mouse button to see the letter ---//
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		disp_strategic_screen(0);		// don't blt buffer after the display
+	disp_strategic_screen(0);		// don't blt buffer after the display
 
-		font_mid.put_paragraph( NARRATIVE_TEXT_X1+8, NARRATIVE_TEXT_Y1+8,
-			NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, text_buf );
+	font_mid.put_paragraph( NARRATIVE_TEXT_X1+8, NARRATIVE_TEXT_Y1+8,
+		NARRATIVE_TEXT_X2, NARRATIVE_TEXT_Y2, text_buf );
 
-		font_mid.put( NARRATIVE_TEXT_X1+8, font_mid.next_text_y+20, 
-			text_campaign.str_click_to_read_msg() );
-			//"Click to read message..." );
+	font_mid.put( NARRATIVE_TEXT_X1+8, font_mid.next_text_y+20, 
+		text_campaign.str_click_to_read_msg() );
+		//"Click to read message..." );
 
-		if( !auto_test_flag ) {
-			mouse.wait_press();
-                }
+	if( !auto_test_flag )
+		mouse.wait_press();
 
-		//---------- display the dialog ----------//
-		vga.disp_image_file("Letters");
+	//---------- display the dialog ----------//
+	vga.disp_image_file("Letters");
 
-		if( isMonster == 1 )
-			font_cmpf.center_put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
-				text_block_array[CONTENT_TEXT_BLOCK_ID].text_ptr );
-		else
-			font_cmph.put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
-				text_block_array[CONTENT_TEXT_BLOCK_ID].text_ptr );
+	if( isMonster == 1 )
+		font_cmpf.center_put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
+			text_block_array[CONTENT_TEXT_BLOCK_ID].text_ptr );
+	else
+		font_cmph.put_paragraph( LETTER_TEXT_X1, LETTER_TEXT_Y1, LETTER_TEXT_X2, LETTER_TEXT_Y2,
+			text_block_array[CONTENT_TEXT_BLOCK_ID].text_ptr );
 
-		// replay use different font to letter !
-		font_cmpa.next_text_y = LETTER_REPLY_Y1+8;
-	}
+	// replay use different font to letter !
+	font_cmpa.next_text_y = LETTER_REPLY_Y1+8;
 
 	//---------- display the dialog reply choices ----------//
 
 	static int lastReplyChoice;
 
-	if( refreshFlag == INFO_UPDATE )
+	lastReplyChoice=0;
+
+	for( int i=FIRST_REPLY_TEXT_BLOCK_ID ; i<text_block_count-1 ; i++ )		// the last reply is for nullification only. It doesn't have any content
 	{
-		int thisReplyChoice=0;
+		text_block_array[i].x1 = LETTER_REPLY_X1+8;
+		text_block_array[i].y1 = //fontPtr->next_text_y;
+										font_cmpa.next_text_y;
 
-		for( int i=FIRST_REPLY_TEXT_BLOCK_ID ; i<text_block_count-1 ; i++ )
+		font_cmpa.put_paragraph( LETTER_REPLY_X1+8, font_cmpa.next_text_y,
+			LETTER_REPLY_X2-8, LETTER_REPLY_Y2, text_block_array[i].text_ptr );
+
+		text_block_array[i].x2 = LETTER_REPLY_X2-8;
+		text_block_array[i].y2 = //fontPtr->next_text_y;
+										font_cmpa.next_text_y;
+
+		font_cmpa.next_text_y += (font_cmpa.height() + DEFAULT_LINE_SPACE);
+
+		if( mouse.in_area( LETTER_REPLY_X1, text_block_array[i].y1, LETTER_REPLY_X2,
+			 text_block_array[i].y2 ) )
 		{
-			if( mouse.in_area( text_block_array[i].x1, text_block_array[i].y1-8,
-									 text_block_array[i].x2, text_block_array[i].y2+8 ) )
-			{
-				thisReplyChoice = i+1;
-				break;
-			}
-		}
-
-		if( thisReplyChoice != lastReplyChoice )
-		{
-			lastReplyChoice = thisReplyChoice;
-			refreshFlag = INFO_REPAINT;
-			font_cmpa.next_text_y = text_block_array[FIRST_REPLY_TEXT_BLOCK_ID].y1;
-		}
-	}
-
-	//-----------------------------------------------//
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		lastReplyChoice=0;
-
-		for( int i=FIRST_REPLY_TEXT_BLOCK_ID ; i<text_block_count-1 ; i++ )		// the last reply is for nullification only. It doesn't have any content
-		{
-			text_block_array[i].x1 = LETTER_REPLY_X1+8;
-			text_block_array[i].y1 = //fontPtr->next_text_y;
-											font_cmpa.next_text_y;
-
-			font_cmpa.put_paragraph( LETTER_REPLY_X1+8, font_cmpa.next_text_y,
-				LETTER_REPLY_X2-8, LETTER_REPLY_Y2, text_block_array[i].text_ptr );
-
-			text_block_array[i].x2 = LETTER_REPLY_X2-8;
-			text_block_array[i].y2 = //fontPtr->next_text_y;
-											font_cmpa.next_text_y;
-
-			font_cmpa.next_text_y += (font_cmpa.height() + DEFAULT_LINE_SPACE);
-
-			if( mouse.in_area( LETTER_REPLY_X1, text_block_array[i].y1, LETTER_REPLY_X2,
-				 text_block_array[i].y2 ) )
-			{
-				lastReplyChoice = i+1;
-			}
+			lastReplyChoice = i+1;
 		}
 	}
 
 	//---------------------------------//
 
-	if( refreshFlag == INFO_REPAINT )
+	//--- if this letter is read only, there is no need to reply it, then await the user clicking to continue ---//
+
+	if( text_block_count==1 )		// only the main content text block
 	{
-		//--- if this letter is read only, there is no need to reply it, then await the user clicking to continue ---//
+		font_cmpa.put( LETTER_REPLY_X1+8, LETTER_REPLY_Y1+8,
+			text_campaign.str_click_to_continue() ); // "Click to continue..." );
+	}
 
-		if( text_block_count==1 )		// only the main content text block
-		{
-			font_cmpa.put( LETTER_REPLY_X1+8, LETTER_REPLY_Y1+8,
-				text_campaign.str_click_to_continue() ); // "Click to continue..." );
-		}
+	//----------------------------------------//
 
-		//----------------------------------------//
+	if (lastReplyChoice > 0)
+	{
+		int textWidth = font_cmpa.text_width(text_block_array[lastReplyChoice-1].text_ptr );
 
-		if (lastReplyChoice > 0)
-		{
-			int textWidth = font_cmpa.text_width(text_block_array[lastReplyChoice-1].text_ptr );
+		vga_buffer.adjust_brightness( text_block_array[lastReplyChoice-1].x1-3, text_block_array[lastReplyChoice-1].y1-3,
+			text_block_array[lastReplyChoice-1].x2+3, text_block_array[lastReplyChoice-1].y2+3, -3 );
+	}
 
-			vga_buffer.adjust_brightness( text_block_array[lastReplyChoice-1].x1-3, text_block_array[lastReplyChoice-1].y1-3,
-				text_block_array[lastReplyChoice-1].x2+3, text_block_array[lastReplyChoice-1].y2+3, -3 );
-		}
+	//----------------------------------------//
 
-		//----------------------------------------//
+	if( text_block_count==1 )		
+	{
+		if( !auto_test_flag )
+			mouse.wait_press();
 
-		if( text_block_count==1 )		
-		{
-			if( !auto_test_flag )
-				mouse.wait_press();
-
-			disp_strategic_screen();		// close the letter and return to the strategic screen
-                        vga.flip();
-		}
+		disp_strategic_screen();		// close the letter and return to the strategic screen
+                vga.flip();
 	}
 }
 //------- End of function Campaign::disp_letter -------//
@@ -1806,7 +1764,6 @@ int Campaign::detect_letter()
 
 		//-------- display the letter ---------//
 
-		letter_refresh_flag = INFO_REPAINT;
 		disp_letter();
 
                 game.process_messages();

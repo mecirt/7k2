@@ -82,7 +82,7 @@ static void disp_other_info();
 
 //--------- Begin of function Info::disp_ai_action ---------//
 //
-void Info::disp_ai_action(int refreshFlag)
+void Info::disp_ai_action()
 {
 	cur_nation_ptr = nation_array[info.viewing_nation_recno];
 
@@ -106,7 +106,7 @@ void Info::disp_ai_action(int refreshFlag)
 	browse_action.init( ACTION_BROWSE_X1, ACTION_BROWSE_Y1+20, ACTION_BROWSE_X2, ACTION_BROWSE_Y2,
 							  0, 22, cur_nation_ptr->action_count(), put_action_rec, 1 );
 
-	browse_action.open(browse_ai_action_recno );		// if refreshFlag is INFO_UPDATE, keep the original top_rec_no of the browser
+	browse_action.open(browse_ai_action_recno );
 
 	//------ display the queued action list -------//
 
@@ -123,7 +123,7 @@ void Info::disp_ai_action(int refreshFlag)
 	browse_attack.init( ATTACK_BROWSE_X1, ATTACK_BROWSE_Y1+20, ATTACK_BROWSE_X2, ATTACK_BROWSE_Y2,
 							  0, 22, cur_nation_ptr->attack_camp_count, put_attack_rec, 1 );
 
-	browse_attack.open(browse_ai_attack_recno);		// if refreshFlag is INFO_UPDATE, keep the original top_rec_no of the browser
+	browse_attack.open(browse_ai_attack_recno);
 
 	//-------------------------------//
 

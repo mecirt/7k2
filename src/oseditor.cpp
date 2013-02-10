@@ -153,7 +153,7 @@ void ScenarioEditor::enable()
 {
 	if( init_flag && !enable_flag )
 	{
-		disp_menu_bar( INFO_REPAINT );
+		disp_menu_bar();
 		enable_flag = 1;
 		open_flag = 0;
 	}
@@ -177,59 +177,48 @@ void ScenarioEditor::disable()
 //
 // display menu bar at the top of the screen
 //
-void ScenarioEditor::disp_menu_bar(int refreshFlag)
+void ScenarioEditor::disp_menu_bar()
 {
-	if( refreshFlag == INFO_REPAINT || last_enable_flag != enable_flag )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_enable_flag = enable_flag;
-	}
+	last_enable_flag = enable_flag;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_menu_on.create_text( ZOOM_X1+5, ZOOM_Y1+5, ZOOM_X1+105, ZOOM_Y1+45,
-			text_editor.str_editor_menu(), // "Scenario Editor Menu",
-			0, 0, 1 );
-		button_menu_on.is_pushed = open_flag;
-	}
+	button_menu_on.create_text( ZOOM_X1+5, ZOOM_Y1+5, ZOOM_X1+105, ZOOM_Y1+45,
+		text_editor.str_editor_menu(), // "Scenario Editor Menu",
+		0, 0, 1 );
+	button_menu_on.is_pushed = open_flag;
 		
-	if( refreshFlag == INFO_REPAINT )
+	int x0 = ZOOM_X1+5;
+	int x = x0;
+	int y = ZOOM_Y1+5;
+	int i;
+	for( i = 0; i < button_edit_mode.button_num; ++i )
 	{
-		int x0 = ZOOM_X1+5;
-//		int x0 = ZOOM_X1+20;
-		int x = x0;
-		int y = ZOOM_Y1+5;
-		int i;
-		for( i = 0; i < button_edit_mode.button_num; ++i )
+		// ####### begin Gilbert 22/1 #####//
+//		button_edit_mode[i].set_font(&font_bld);
+		// ####### end Gilbert 22/1 #####//
+		
+		button_edit_mode[i].create_text( x, y, x+100, y+40, 
+			text_editor.str_mode(i), // edit_mode_button_label[i],
+			1, 0, 1 );
+	/*	x = button_edit_mode[i].x2;
+		if( x >= ZOOM_X2 )
 		{
-			// ####### begin Gilbert 22/1 #####//
-//			button_edit_mode[i].set_font(&font_bld);
-			// ####### end Gilbert 22/1 #####//
-			
-			button_edit_mode[i].create_text( x, y, x+100, y+40, 
-				text_editor.str_mode(i), // edit_mode_button_label[i],
-				1, 0, 1 );
-		/*	x = button_edit_mode[i].x2;
-			if( x >= ZOOM_X2 )
-			{
-				x = x0;
-				y = button_edit_mode[i].y2 + 2;
-				--i;			// create again at next line
-			}
-			else
-				x += 2;		// inter button spacing*/
-
+			x = x0;
 			y = button_edit_mode[i].y2 + 2;
+			--i;			// create again at next line
 		}
+		else
+			x += 2;		// inter button spacing*/
 
-		x = x0;
-		if( i > 0 )
-			y = button_edit_mode[i-1].y2 + 2;
-		// else use original y which is ZOOM_Y1 + 5
-		button_blacken_map.create_text( x, y, x+100, y+40, 
-			text_editor.str_blacken_map(), // "Blacken Map",
-			0, 0, 1 );
+		y = button_edit_mode[i].y2 + 2;
 	}
+
+	x = x0;
+	if( i > 0 )
+		y = button_edit_mode[i-1].y2 + 2;
+	// else use original y which is ZOOM_Y1 + 5
+	button_blacken_map.create_text( x, y, x+100, y+40, 
+		text_editor.str_blacken_map(), // "Blacken Map",
+		0, 0, 1 );
 
 //	if (button_menu_on.is_pushed)
 	if (open_flag)

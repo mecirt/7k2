@@ -198,7 +198,7 @@ public:
 
 	// -------- menu bar interface functions -------- //
 
-	void	disp_menu_bar(int refreshFlag);
+	void	disp_menu_bar();
 	int	detect_menu_bar();
 
 	// -------- interface function ------------//

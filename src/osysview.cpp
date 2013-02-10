@@ -138,7 +138,7 @@ void Sys::disp_view_mode(int observeMode)
 //
 // Display the view area.
 //
-void Sys::disp_view(int mode)
+void Sys::disp_view()
 {
   disp_zoom();
 
@@ -151,43 +151,43 @@ void Sys::disp_view(int mode)
     switch( view_mode )
     {
       case MODE_TRADE:
-        info.disp_trade(mode);
+        info.disp_trade();
         break;
 
       case MODE_MILITARY:
-        info.disp_military(mode);
+        info.disp_military();
         break;
 
       case MODE_ECONOMY:
-        info.disp_economy(mode);
+        info.disp_economy();
         break;
 
       case MODE_TOWN:
-        info.disp_town(mode);
+        info.disp_town();
         break;
 
       case MODE_NATION:
-        info.disp_nation(mode);
+        info.disp_nation();
         break;
 
       case MODE_TECH:
-        info.disp_tech(mode);
+        info.disp_tech();
         break;
 
       case MODE_SPY:
-        info.disp_spy(mode);
+        info.disp_spy();
         break;
 
       case MODE_RANK:
-        info.disp_rank(mode);
+        info.disp_rank();
         break;
 
       case MODE_NEWS_LOG:
-        info.disp_news_log(mode);
+        info.disp_news_log();
         break;
 
       case MODE_AI_ACTION:
-        info.disp_ai_action(mode);
+        info.disp_ai_action();
         break;
     }
     Vga::opaque_flag = 0;
@@ -201,7 +201,7 @@ void Sys::disp_view(int mode)
   if( scenario_editor.is_enable() )
   {
     scenario_editor.disp_view();
-    scenario_editor.disp_menu_bar(mode);
+    scenario_editor.disp_menu_bar();
   }
 
   if( config.show_debug_info )
@@ -415,7 +415,7 @@ void Sys::set_view_mode(int viewMode, int viewingNationRecno, int viewingSpyRecn
 	view_mode = viewMode;
 	disp_view_mode();
 
-	disp_view(INFO_REPAINT);
+	disp_view();
 }
 //--------- End of function Sys::set_view_mode ---------//
 

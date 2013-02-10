@@ -86,12 +86,12 @@ static int			browse_goal_recno = 1;
 static void  put_nation_rec(int recNo, int x, int y);
 static void  put_goal_rec(int recNo, int x, int y);
 static void  disp_score();
-static int	 disp_goal(int refreshFlag);
+static int	 disp_goal();
 static void	 disp_play_time(int y1);
 
 //--------- Begin of function Info::disp_rank ---------//
 //
-void Info::disp_rank(int refreshFlag)
+void Info::disp_rank()
 {
 	set_rank_data(1);		// 1-only set those nations that have contact with us
 
@@ -107,23 +107,11 @@ void Info::disp_rank(int refreshFlag)
 	font_bld.put( x+406, y+7, text_reports.str_reputation() ); //"Reputation" );
 	font_bld.put( x+484, y+7, text_reports.str_overall() ); //"Overall" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ###### begin Gilbert 22/6 #######//
-		// try to view 7 nation without scrolling
-//		browse_nation.init( NATION_BROWSE_X1, NATION_BROWSE_Y1+34, NATION_BROWSE_X2, NATION_BROWSE_Y2,
-//								  0, 22, info.nation_filter(), put_nation_rec, 1 );
-		browse_nation.init( NATION_BROWSE_X1, NATION_BROWSE_Y1+34, NATION_BROWSE_X2, NATION_BROWSE_Y2,
-								  0, 19, info.nation_filter(), put_nation_rec, 1 );
-		// ###### end Gilbert 22/6 #######//
+	// ###### begin Gilbert 22/6 #######//
+	browse_nation.init( NATION_BROWSE_X1, NATION_BROWSE_Y1+34, NATION_BROWSE_X2, NATION_BROWSE_Y2,
+							  0, 19, info.nation_filter(), put_nation_rec, 1 );
 
-		browse_nation.open(browse_nation_recno);
-	}
-	else
-	{
-		browse_nation.paint();
-		browse_nation.open(browse_nation_recno, info.nation_filter());
-	}
+	browse_nation.open(browse_nation_recno);
 
 	//----- display score -------//
 	if (info.nation_filter() > 0)
@@ -133,7 +121,7 @@ void Info::disp_rank(int refreshFlag)
 
 	if( !game.game_has_ended )	// if the ending screen has already appeared once, don't display the goal
 	{
-		y = disp_goal(refreshFlag) + 6;
+		y = disp_goal() + 6;
 	//	y = NATION_GOAL_Y2+6;
 	}
 	else
@@ -285,7 +273,7 @@ static void disp_score()
 
 //--------- Begin of static function disp_goal ---------//
 //
-static int disp_goal(int refreshFlag)
+static int disp_goal()
 {
 	//----- if the ending screen has already appeared once -----//
 
@@ -324,20 +312,9 @@ static int disp_goal(int refreshFlag)
 		//		font_bld.put_paragraph( NATION_GOAL_X1+6, NATION_GOAL_Y1+6,
 		//	 	NATION_GOAL_X2-6, NATION_GOAL_Y2 - 6, game.campaign()->full_goal_text() );
 
-			if( refreshFlag == INFO_REPAINT )
-			{
-				browse_goal.init( NATION_GOAL_X1, NATION_GOAL_Y1, NATION_GOAL_X2, NATION_GOAL_Y2,
-					  0, 22, totalLines -dispLines +1, put_goal_rec, 1, 3, 0);
-				browse_goal.open(browse_goal_recno);
-			}
-			else
-			{
-				browse_goal.paint();
-				browse_goal.open(browse_goal_recno, totalLines -dispLines +1);
-				font_bld.put_paragraph( NATION_GOAL_X1+6, NATION_GOAL_Y1+6,
-					NATION_GOAL_X2-22, NATION_GOAL_Y2 - 6, game.campaign()->full_goal_text(),
-					2, browse_goal_recno);
-			}
+			browse_goal.init( NATION_GOAL_X1, NATION_GOAL_Y1, NATION_GOAL_X2, NATION_GOAL_Y2,
+				  0, 22, totalLines -dispLines +1, put_goal_rec, 1, 3, 0);
+			browse_goal.open(browse_goal_recno);
 			y = NATION_GOAL_Y2;
 		}
 		else

@@ -79,7 +79,7 @@ static int  sort_unit( const void *a, const void *b );
 
 //--------- Begin of function Info::disp_trade ---------//
 //
-void Info::disp_trade(int refreshFlag)
+void Info::disp_trade()
 {
 	create_caravan_list();
 //	create_ship_list();
@@ -97,20 +97,12 @@ void Info::disp_trade(int refreshFlag)
 	font_bld.put( x+250, y, text_reports.str_trade_stop(2) ); // "Stop 2" );
 	font_bld.put( x+340, y, text_reports.str_goods_carried() ); //"Goods Carried" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ###### begin Gilbert 19/10 #######//
-		browse_caravan.init( CARAVAN_BROWSE_X1, CARAVAN_BROWSE_Y1+22, CARAVAN_BROWSE_X2, CARAVAN_BROWSE_Y2-20,
-									0, 18, report_array.size(), put_caravan_rec, 1 );
-		// ###### end Gilbert 19/10 #######//
+	// ###### begin Gilbert 19/10 #######//
+	browse_caravan.init( CARAVAN_BROWSE_X1, CARAVAN_BROWSE_Y1+22, CARAVAN_BROWSE_X2, CARAVAN_BROWSE_Y2-20,
+								0, 18, report_array.size(), put_caravan_rec, 1 );
+	// ###### end Gilbert 19/10 #######//
 
-		browse_caravan.open(browse_caravan_recno);
-	}
-	else
-	{
-		browse_caravan.paint();
-		browse_caravan.open(browse_caravan_recno, report_array.size());
-	}
+	browse_caravan.open(browse_caravan_recno);
 
 	//------------ display total -------------//
 

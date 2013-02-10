@@ -70,7 +70,7 @@ static void disp_scroll(int x, int y, int raceId);
 
 //--------- Begin of function Info::disp_tech ---------//
 //
-void Info::disp_tech(int refreshFlag)
+void Info::disp_tech()
 {
 	//-------- display the technology browser ---------//
 
@@ -87,18 +87,10 @@ void Info::disp_tech(int refreshFlag)
 
 	font_bld.center_put_paragraph( x+440, TECH_BROWSE_Y1, x+540, TECH_BROWSE_Y1+32, text_reports.str_tech_research_progress(), 0, 1, 0);
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_tech.init( TECH_BROWSE_X1, TECH_BROWSE_Y1+34, TECH_BROWSE_X2, TECH_BROWSE_Y2,
-								0, 22, tech_filter(), put_tech_rec, 1 );
+	browse_tech.init( TECH_BROWSE_X1, TECH_BROWSE_Y1+34, TECH_BROWSE_X2, TECH_BROWSE_Y2,
+							0, 22, tech_filter(), put_tech_rec, 1 );
 
-		browse_tech.open(browse_tech_recno);
-	}
-	else
-	{
-		browse_tech.paint();
-		browse_tech.open(browse_tech_recno, tech_filter());
-	}
+	browse_tech.open(browse_tech_recno);
 
 	//----- display the list of acquired scrolls of power ----//
 
@@ -114,18 +106,10 @@ void Info::disp_tech(int refreshFlag)
 	font_bld.put( x	 , y, text_reports.str_tech_greater_being() );  // "Greater Being" );
 	font_bld.put( x+300, y, text_unit.str_hit_points() );  // "Hit Points" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_god.init( GOD_BROWSE_X1, GOD_BROWSE_Y1+22, GOD_BROWSE_X2, GOD_BROWSE_Y2,
-							  0, 22, god_filter(), put_god_rec, 1 );
+	browse_god.init( GOD_BROWSE_X1, GOD_BROWSE_Y1+22, GOD_BROWSE_X2, GOD_BROWSE_Y2,
+						  0, 22, god_filter(), put_god_rec, 1 );
 
-		browse_god.open(browse_god_recno);
-	}
-	else
-	{
-		browse_god.paint();
-		browse_god.open(browse_god_recno, god_filter());
-	}
+	browse_god.open(browse_god_recno);
 }
 //----------- End of function Info::disp_tech -----------//
 

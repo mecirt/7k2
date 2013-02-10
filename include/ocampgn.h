@@ -463,7 +463,7 @@ protected:
 	void 		disp_letter(char isMonster= -1, char* dialogText=NULL, ...);
 	int		detect_letter();
 	void 		disp_narrative(char* textCode, ...);
-	void 		disp_dialog(int raceId, char* textCode, int refreshFlag);
+	void 		disp_dialog(int raceId, char* textCode);
 	void 		disp_text(int boxX1, int boxY1, int boxX2, int boxY2, char* dialogText, int animationRaceId=0);
 	int 		detect_reply();
 	void 		play_speech_animation(int raceId);

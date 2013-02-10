@@ -74,16 +74,11 @@ static void i_disp_queue_button(ButtonCustom *button, int);
 
 void FirmIncubator::put_info(int refreshFlag)
 {
-//	if( refreshFlag==INFO_REPAINT )
-//		last_menu_mode = war_menu_mode = WAR_MENU_MAIN;
-//	else
-//	{
-		if( last_menu_mode != war_menu_mode )		// if changing menu mode pass repaint to sub-menu
-		{
-			refreshFlag = INFO_REPAINT;
-			last_menu_mode = war_menu_mode;
-		}
-//	}
+	if( last_menu_mode != war_menu_mode )		// if changing menu mode pass repaint to sub-menu
+	{
+		refreshFlag = INFO_REPAINT;
+		last_menu_mode = war_menu_mode;
+	}
 
 	switch( war_menu_mode )
 	{

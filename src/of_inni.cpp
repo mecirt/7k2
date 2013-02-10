@@ -171,47 +171,6 @@ void FirmInn::put_info(int refreshFlag)
 
 		button_buy_item.visible_flag = 0;
 	}
-
-	/*
-	//----------- display browser -----------//
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_hire.init( HIRE_BROWSE_X1, HIRE_BROWSE_Y1, HIRE_BROWSE_X2, HIRE_BROWSE_Y2,
-								0, 25, inn_unit_count, put_hire_rec );
-
-		browse_hire.open(1);
-	}
-	else
-	{
-		if( last_hire_count != inn_unit_count )
-		{
-			if( last_hire_count==0 || inn_unit_count==0 )		// repaint the whole area as the detail area needs to disappear
-			{
-				last_hire_count = inn_unit_count;
-				info.disp();
-				return;
-			}
-
-			last_hire_count = inn_unit_count;
-
-			browse_hire.refresh(-1, inn_unit_count);
-
-			if( last_hire_count==0 || inn_unit_count==0 )
-				refreshFlag = INFO_REPAINT;
-		}
-		else
-			browse_hire.update();          // update only
-	}
-
-	last_hire_count = inn_unit_count;
-
-	put_det(refreshFlag);
-
-	//---------- display spy button ----------//
-
-//	disp_spy_button(INFO_X1+BUTTON_ACTION_WIDTH, HIRE_DET_Y2+4, refreshFlag);
-	*/
 }
 //----------- End of function FirmInn::put_info -----------//
 
@@ -334,53 +293,6 @@ void FirmInn::detect_info()
 				innUnit->item.item_desc() );
 		}
 	}
-
-	//-------- detect spy button ----------//
-
-//	if( !is_own() )
-//	{
-//		detect_spy_button();
-//		return;
-//	}
-
-	/*
-	//-------------------------------------//
-
-	if( browse_hire.detect() )
-	{
-		put_det(INFO_UPDATE);
-	}
-
-	if( button_hire.detect() && inn_unit_count > 0 && browse_hire.recno() && !browse_hire.none_record )
-	{
-		InnUnit *innUnit = inn_unit_array + browse_hire.recno() - 1;
-
-		se_ctrl.immediate_sound("TAXGRANT");
-
-		int spyEscape = innUnit->spy_recno 
-			&& spy_array[innUnit->spy_recno]->true_nation_recno == nation_array.player_recno;
-
-		if( is_own() || spyEscape )
-		{
-			se_res.far_sound(center_x, center_y, 1, 'S', 
-				unit_res[inn_unit_array[browse_hire.recno()-1].unit_id]->sprite_id,
-				"RDY" );
-			if(remote.is_enable())
-			{
-				// packet structure : <firm recno>, <hire Id> <nation no>
-				short *shortPtr=(short *)remote.new_send_queue_msg(MSG_F_INN_HIRE, 4*sizeof(short));
-				shortPtr[0] = firm_recno;
-				shortPtr[1] = browse_hire.recno();
-				shortPtr[2] = nation_recno;
-				shortPtr[4] = spyEscape;
-			}
-			else
-			{
-				hire(browse_hire.recno(), spyEscape);
-			}
-		}
-	}
-	*/
 }
 //----------- End of function FirmInn::detect_info -----------//
 
@@ -408,48 +320,6 @@ int FirmInn::should_show_info()
 	return 0;
 }
 //-------- End of function FirmInn::should_show_info --------//
-
-
-/*
-//--------- Begin of function FirmInn::put_det ---------//
-//
-void FirmInn::put_det(int refreshFlag)
-{
-	if( browse_hire.none_record || browse_hire.recno() == 0 )
-	{
-		button_hire.reset();
-		return;
-	}
-
-
-	//--------- display details ----------//
-
-	InnUnit *innUnit = inn_unit_array+browse_hire.recno()-1;
-	int ownSpy = innUnit->spy_recno && spy_array[innUnit->spy_recno]->true_nation_recno == nation_array.player_recno;
-
-	disp_unit_info(HIRE_DET_Y1, innUnit, refreshFlag );
-
-	//------- paint buttons --------//
-
-	if( refreshFlag == INFO_REPAINT )
-	{
-		button_hire.paint( HIRE_DET_X1, HIRE_DET_Y2+4, 'A', "HIREUNIT" );
-	}
-	else
-	{
-		if( inn_unit_count > 0 &&
-			 ( (~nation_array)->cash >= innUnit->hire_cost || ownSpy ) )
-		{
-			button_hire.enable();
-		}
-		else
-		{
-			button_hire.disable();
-		}
-	}
-}
-//----------- End of function FirmInn::put_det -----------//
-*/
 
 // -------- Begin of function FirmInn::disp_unit_list -------//
 //

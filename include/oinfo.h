@@ -226,37 +226,37 @@ public:
 
 	int   disp_loyalty(int x, int y, int x2, int curLoyalty, int targetLoyalty, int nationRecno, int refreshFlag, int useBlueFont=0);
 
-	void	disp_military(int refreshFlag);
+	void	disp_military();
 	void	detect_military();
 
-	void	disp_nation(int refreshFlag);
+	void	disp_nation();
 	void 	detect_nation();
 	// #### begin Gilbert 19/4 #######//
 	int	nation_filter(int recNo=0);
 	// #### end Gilbert 19/4 #######//
 
-	void	disp_economy(int refreshFlag);
+	void	disp_economy();
 	void 	detect_economy();
 
-	void	disp_town(int refreshFlag);
+	void	disp_town();
 	void 	detect_town();
 
-	void	disp_trade(int refreshFlag);
+	void	disp_trade();
 	void 	detect_trade();
 
-	void	disp_tech(int refreshFlag);
+	void	disp_tech();
 	void 	detect_tech();
 
-	void	disp_rank(int refreshFlag);
+	void	disp_rank();
 	void 	detect_rank();
 
-	void	disp_spy(int refreshFlag);
+	void	disp_spy();
 	void 	detect_spy();
 
-	void	disp_ai_action(int refreshFlag);
+	void	disp_ai_action();
 	void 	detect_ai_action();
 
-	void	disp_news_log(int refreshFlag);
+	void	disp_news_log();
 	void 	detect_news_log();
 
 	void	init_player_reply(int talkToNationRecno);

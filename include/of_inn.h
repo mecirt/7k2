@@ -97,7 +97,6 @@ public:
 	void 		put_info(int);
 	void 		detect_info();
 	int  		should_show_info();
-//	void		put_det(int);
 	int		explore_for_player();
 
 	// ------ process function -------//

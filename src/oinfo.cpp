@@ -374,6 +374,8 @@ void Info::disp()
 	
 	vga.active_buf->put_bitmapW( INFO_X1, INFO_Y1, info_background_bitmap );
 
+	disp_heading();
+
 	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
 
 	//------ if units/firm selected, display info --------//
@@ -427,80 +429,7 @@ void Info::disp()
 
 void Info::update()
 {
-	if( !power.enable_flag )
-		return;
-
-	if( option_menu.is_active() )
-		return;
-
-	//-------------------------------------------//
-
-	disp_heading();
-
-	//------- use front buffer -------//
-
-	vga.active_buf->put_bitmap_trans( INFO_X1+3, INFO_Y1-125, image_gameif.read("REMSCR") );
-
-	//-------------------------------------------//
-
-	// ##### begin Gilbert 13/10 ######//
-	if( scenario_editor.is_enable() && scenario_editor.edit_mode != SEDIT_MODE_NONE)
-	{
-		scenario_editor.disp(INFO_UPDATE);
-	}
-	else if( firm_array.selected_recno )
-	// ##### end Gilbert 13/10 ######//
-	{
-		firm_array[firm_array.selected_recno]->disp_info_both(INFO_UPDATE);
-#ifdef DEBUG
-		if( town_array.selected_recno || site_array.selected_recno || unit_array.selected_recno )
-		{
-			err.msg( "invalid selected_recno" );
-		}
-#endif
-	}
-	else if( town_array.selected_recno )
-	{
-		town_array[town_array.selected_recno]->disp_info(INFO_UPDATE);
-#ifdef DEBUG
-		if( firm_array.selected_recno || site_array.selected_recno || unit_array.selected_recno )
-		{
-			err.msg( "invalid selected_recno" );
-		}
-#endif
-	}
-	else if( site_array.selected_recno )
-	{
-		site_array[site_array.selected_recno]->disp_info(INFO_UPDATE);
-#ifdef DEBUG
-		if( firm_array.selected_recno || town_array.selected_recno || unit_array.selected_recno )
-		{
-			err.msg( "invalid selected_recno" );
-		}
-#endif
-	}
-	else if( unit_array.selected_recno )
-	{
-		unit_array[unit_array.selected_recno]->disp_info(INFO_UPDATE);
-#ifdef DEBUG
-		if( firm_array.selected_recno || town_array.selected_recno || site_array.selected_recno )
-		{
-			err.msg( "invalid selected_recno" );
-		}
-#endif
-	}
-	else if( wall_res.selected_x_loc >= 0 )
-	{
-		wall_res.disp_info(INFO_UPDATE);
-	}
-	// ######## begin Gilbert 8/3 #######//
-	else
-	{
-		vga.active_buf->put_bitmapW( INFO_X1, INFO_Y1, info_background_bitmap );
-	}
-	// ######## end Gilbert 8/3 #######//
-
-	//----- restore use back buffer if it was ----//
+  disp();
 }
 //-------- End of function Info::update --------//
 

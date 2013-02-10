@@ -61,7 +61,7 @@ static void disp_total();
 
 //--------- Begin of function Info::disp_economy ---------//
 //
-void Info::disp_economy(int refreshFlag)
+void Info::disp_economy()
 {
 	//------- display the income report -------//
 
@@ -83,20 +83,12 @@ void Info::disp_economy(int refreshFlag)
 	else
 		incomeCount = INCOME_TYPE_COUNT-1;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ####### begin Gilbert 19/10 ######//
-		browse_income.init( INCOME_BROWSE_X1, INCOME_BROWSE_Y1+22, INCOME_BROWSE_X2, INCOME_BROWSE_Y2-20,
-								0, 18, incomeCount, put_income_rec, 1 );
-		// ####### begin Gilbert 19/10 ######//
+	// ####### begin Gilbert 19/10 ######//
+	browse_income.init( INCOME_BROWSE_X1, INCOME_BROWSE_Y1+22, INCOME_BROWSE_X2, INCOME_BROWSE_Y2-20,
+							0, 18, incomeCount, put_income_rec, 1 );
+	// ####### begin Gilbert 19/10 ######//
 
-		browse_income.open(browse_income_recno);		// if refreshFlag is INFO_UPDATE, keep the original top_rec_no of the browser
-	}
-	else
-	{
-		browse_income.paint();
-		browse_income.open(browse_income_recno, incomeCount);
-	}
+	browse_income.open(browse_income_recno);
 
 	//------- display the expense report -------//
 
@@ -108,20 +100,12 @@ void Info::disp_economy(int refreshFlag)
 	font_bld.put( x	 , y, text_reports.str_expense_item() ); // "Expense Item" );
 	font_bld.put( x+350, y, text_reports.str_yearly_expense() ); // "Yearly Expense" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		// ####### begin Gilbert 19/10 ######//
-		browse_expense.init( EXPENSE_BROWSE_X1, EXPENSE_BROWSE_Y1+22, EXPENSE_BROWSE_X2, EXPENSE_BROWSE_Y2-20,
-							0, 18, EXPENSE_TYPE_COUNT, put_expense_rec, 1 );
-		// ####### end Gilbert 19/10 ######//
+	// ####### begin Gilbert 19/10 ######//
+	browse_expense.init( EXPENSE_BROWSE_X1, EXPENSE_BROWSE_Y1+22, EXPENSE_BROWSE_X2, EXPENSE_BROWSE_Y2-20,
+						0, 18, EXPENSE_TYPE_COUNT, put_expense_rec, 1 );
+	// ####### end Gilbert 19/10 ######//
 
-		browse_expense.open(browse_expense_recno);		// if refreshFlag is INFO_UPDATE, keep the original top_rec_no of the browser
-	}
-	else
-	{
-		browse_expense.paint();
-		browse_expense.open(browse_expense_recno, EXPENSE_TYPE_COUNT);		// if refreshFlag is INFO_UPDATE, keep the original top_rec_no of the browser
-	}
+	browse_expense.open(browse_expense_recno);
 
 	//--------- display total ----------//
 

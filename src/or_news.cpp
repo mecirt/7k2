@@ -57,23 +57,15 @@ static void put_news_rec(int recNo, int x, int y);
 
 //--------- Begin of function Info::disp_news_log ---------//
 //
-void Info::disp_news_log(int refreshFlag)
+void Info::disp_news_log()
 {
 	int x=NEWS_BROWSE_X1+9;
 	int y=NEWS_BROWSE_Y1+4;
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_news.init( NEWS_BROWSE_X1, NEWS_BROWSE_Y1, NEWS_BROWSE_X2, NEWS_BROWSE_Y2,
-								0, 32, news_array.size(), put_news_rec, 1 );
+	browse_news.init( NEWS_BROWSE_X1, NEWS_BROWSE_Y1, NEWS_BROWSE_X2, NEWS_BROWSE_Y2,
+							0, 32, news_array.size(), put_news_rec, 1 );
 
-		browse_news.open(browse_news_recno);
-	}
-	else
-	{
-		browse_news.paint();
-		browse_news.open(browse_news_recno, news_array.size());
-	}
+	browse_news.open(browse_news_recno);
 
 	//------- display button ---------//
 

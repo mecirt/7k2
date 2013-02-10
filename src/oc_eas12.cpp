@@ -131,7 +131,7 @@ void CampaignEastWest::stage_12_prelude()
 {
 	int raceId = get_nation( state_array[attacker_state_recno]->campaign_nation_recno )->race_id;
 
-	disp_dialog( raceId, res_stage.read("12PRELUD"), INFO_REPAINT );
+	disp_dialog( raceId, res_stage.read("12PRELUD") );
 
 	attack_state( attacker_state_recno, target_state_recno, 0, 1, 2 );
 

@@ -209,7 +209,7 @@ private:
 	void		disp_button();
 	void 		detect_button();
 
-	void		disp_view(int mode);
+	void		disp_view();
 	void		detect_view();
 
 	void 		disp_map();

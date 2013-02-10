@@ -171,7 +171,7 @@ void Sys::disp_frame(int dispCampaignMsg)
 			world.paint();
 			disp_button();
 			world.refresh();
-			disp_view(INFO_REPAINT);
+			disp_view();
 			disp_map();
 
 			if( in_game_menu.is_active() )
@@ -202,7 +202,6 @@ void Sys::disp_frame(int dispCampaignMsg)
 
 			//------------------------------------//
 
-			disp_view(INFO_UPDATE);
 			info.update();
 
 			disp_view_mode();

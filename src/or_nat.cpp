@@ -146,27 +146,22 @@ static void put_talk_msg_rec(int recNo, int x, int y);
 // #### end Gilbert 19/4 #######//
 static void disp_button();
 static int  detect_button();
-static void disp_detail(int refreshFlag);
+static void disp_detail();
 static void detect_detail();
 static void disp_nation_info();
 static void detect_nation_info();
 static void disp_debug_info();
 static void disp_nation_talk();
 static void detect_nation_talk();
-static void disp_nation_chat(int refreshFlag);
+static void disp_nation_chat();
 static void detect_nation_chat();
-static void disp_talk_msg_sent(int refreshFlag);
+static void disp_talk_msg_sent();
 
 static int  sort_talk_msg( const void *a, const void *b );
 
 //--------- Begin of function Info::disp_nation ---------//
 //
-// <int> refreshFlag - INFO_REPAINT - the user has just switched
-//												  to this report.
-//							  INFO_UPDATE  - the report is already in this mode,
-//												  just keep displaying and updating.
-//
-void Info::disp_nation(int refreshFlag)
+void Info::disp_nation()
 {
 	int hideNationBrowse = nation_report_mode == NATION_REPORT_CHAT
 		&& hide_nation_browse;
@@ -189,25 +184,14 @@ void Info::disp_nation(int refreshFlag)
 		font_bld.put_paragraph( x+465, y, x+525, y+28, text_reports.str_nat_trade_amount(), 0 );
 	}
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_nation.init( REPORT_BROWSE_X1, REPORT_BROWSE_Y1+35, REPORT_BROWSE_X2, REPORT_BROWSE_Y2,
-								  0, 20, info.nation_filter(), put_nation_rec, 1 );
-
-		if( !hideNationBrowse )
-			browse_nation.open(browse_nation_recno);
-	}
-	else
-	{
-		if( !hideNationBrowse )
-		{
-			browse_nation.paint();
-			browse_nation.open(browse_nation_recno, nation_filter());
-		}
-	}
+	browse_nation.init( REPORT_BROWSE_X1, REPORT_BROWSE_Y1+35, REPORT_BROWSE_X2, REPORT_BROWSE_Y2,
+							  0, 20, info.nation_filter(), put_nation_rec, 1 );
 
 	if( !hideNationBrowse )
+	{
+		browse_nation.open(browse_nation_recno);
 		browse_nation_recno = browse_nation.recno();
+	}
 	else
 	{
 		int nCount;
@@ -222,13 +206,10 @@ void Info::disp_nation(int refreshFlag)
 
 	//--------- display detail info --------//
 
-	if( refreshFlag==INFO_REPAINT )
-	{
-		info.last_talk_nation_recno = 0;
-		browse_talk_msg_recno = 1;
-	}
+	info.last_talk_nation_recno = 0;
+	browse_talk_msg_recno = 1;
 
-	disp_detail(refreshFlag);
+	disp_detail();
 }
 //----------- End of function Info::disp_nation -----------//
 
@@ -492,18 +473,13 @@ static int detect_button()
 
 //--------- Begin of static function disp_detail ---------//
 //
-static void disp_detail(int refreshFlag)
+static void disp_detail()
 {
 	if( browse_nation.recno()==0 )		// no records in the list
 		return;
 
 	// ##### patch begin Gilbert 26/8 ########//
-	if( refreshFlag == INFO_REPAINT
-		|| info.nation_report_mode != last_nation_report_mode )
-	{
-		refreshFlag = INFO_REPAINT;
-		last_nation_report_mode = info.nation_report_mode;
-	}
+	last_nation_report_mode = info.nation_report_mode;
 	// ##### end begin Gilbert 26/8 ########//
 
 	switch( info.nation_report_mode )
@@ -517,11 +493,11 @@ static void disp_detail(int refreshFlag)
 			break;
 
 		case NATION_REPORT_CHAT:
-			disp_nation_chat(refreshFlag);
+			disp_nation_chat();
 			break;
 
 		case NATION_REPORT_TALK_LOG:
-			disp_talk_msg_sent(refreshFlag);
+			disp_talk_msg_sent();
 			break;
 
 		case NATION_REPORT_DEBUG:
@@ -739,8 +715,6 @@ static void disp_debug_info()
 	int x1=REPORT_DET_X1+6, x2=REPORT_DET_X1+160;
 	int y=REPORT_DET_Y1+6;
 
-	int refreshFlag = INFO_REPAINT;
-
 	//------------ display AI info ----------//
 
 	font_bld.put_field( x1, y    , "Food    ", x2, nationPtr->food_str() );
@@ -833,7 +807,7 @@ static void detect_nation_talk()
 
 //--------- Begin of static function disp_talk_msg_sent ---------//
 //
-static void disp_talk_msg_sent(int refreshFlag)
+static void disp_talk_msg_sent()
 {
 	//--- filter out talk messages sent by this nation and sort them by date ---//
 
@@ -900,18 +874,10 @@ static void disp_talk_msg_sent(int refreshFlag)
 
 	//----- display a browser of the talk msg sent -----//
 
-	if( refreshFlag == INFO_REPAINT || !browse_talk_msg.init_flag )
-	{
-		browse_talk_msg.init( REPORT_DET_X1, REPORT_DET_Y1, REPORT_DET_X2, REPORT_DET_Y2,
-									 0, 30, info.talk_msg_disp_array.size(), put_talk_msg_rec, 1 );
+	browse_talk_msg.init( REPORT_DET_X1, REPORT_DET_Y1, REPORT_DET_X2, REPORT_DET_Y2,
+								 0, 30, info.talk_msg_disp_array.size(), put_talk_msg_rec, 1 );
 
-		browse_talk_msg.open(info.browse_talk_msg_recno);
-	}
-	else
-	{
-		browse_talk_msg.paint();
-		browse_talk_msg.open(info.browse_talk_msg_recno, info.talk_msg_disp_array.size());
-	}
+	browse_talk_msg.open(info.browse_talk_msg_recno);
 
 	info.browse_talk_msg_recno = browse_talk_msg.recno();
 }
@@ -991,7 +957,7 @@ static void put_talk_msg_rec(int recNo, int x1, int y)
 
 //--------- Begin of static function disp_nation_chat ---------//
 //
-static void disp_nation_chat(int refreshFlag)
+static void disp_nation_chat()
 {
 	// init button
 

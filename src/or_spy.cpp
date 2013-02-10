@@ -59,7 +59,7 @@ static void	disp_total();
 
 //--------- Begin of function Info::disp_spy ---------//
 //
-void Info::disp_spy(int refreshFlag)
+void Info::disp_spy()
 {
 	//------- Display the spy report -------//
 
@@ -78,18 +78,10 @@ void Info::disp_spy(int refreshFlag)
 	font_bld.put( x+424, y, text_unit.str_loyalty() ); //"Loyalty" );
 	font_bld.put( x+490, y, text_reports.str_spy_action() ); //"Action" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_spy.init( SPY_BROWSE_X1, SPY_BROWSE_Y1+SPY_BROWSE_HEIGHT+1, SPY_BROWSE_X2, SPY_BROWSE_Y2-20,
-								 0, 21, spy_filter(), put_spy_rec, 1 );
+	browse_spy.init( SPY_BROWSE_X1, SPY_BROWSE_Y1+SPY_BROWSE_HEIGHT+1, SPY_BROWSE_X2, SPY_BROWSE_Y2-20,
+							 0, 21, spy_filter(), put_spy_rec, 1 );
 
-		browse_spy.open(browse_spy_recno);
-	}
-	else
-	{
-		browse_spy.paint();
-		browse_spy.open(browse_spy_recno, spy_filter());
-	}
+	browse_spy.open(browse_spy_recno);
 
 	//--------- Display total ------------//
 

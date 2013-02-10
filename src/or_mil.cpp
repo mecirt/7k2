@@ -67,7 +67,7 @@ static void disp_unit_total();
 
 //--------- Begin of function Info::disp_military ---------//
 //
-void Info::disp_military(int refreshFlag)
+void Info::disp_military()
 {
 	//------- Display the Troop report -------//
 
@@ -83,18 +83,10 @@ void Info::disp_military(int refreshFlag)
 	font_bld.center_put_paragraph( x+404, y, x+487, y+24, text_reports.str_mil_commanded_soldiers(), 0, 0, 0 );
 	font_bld.put( x+485, y+7 , text_reports.str_mil_status() ); // "Status" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_troop.init( TROOP_BROWSE_X1, TROOP_BROWSE_Y1+35, TROOP_BROWSE_X2, TROOP_BROWSE_Y2-20,
-								 0, 22, troop_filter(), put_troop_rec, 1 );
+	browse_troop.init( TROOP_BROWSE_X1, TROOP_BROWSE_Y1+35, TROOP_BROWSE_X2, TROOP_BROWSE_Y2-20,
+							 0, 22, troop_filter(), put_troop_rec, 1 );
 
-		browse_troop.open(browse_troop_recno);
-	}
-	else
-	{
-		browse_troop.paint();
-		browse_troop.open(browse_troop_recno, troop_filter());
-	}
+	browse_troop.open(browse_troop_recno);
 
 	disp_troop_total();
 
@@ -108,18 +100,10 @@ void Info::disp_military(int refreshFlag)
 	font_bld.put( x	 , y, text_reports.str_mil_unit_type() ); // "Unit Type" );
 	font_bld.put( x+300, y, text_reports.str_mil_no_of_units() ); // "No. of Units" );
 
-	if( refreshFlag == INFO_REPAINT )
-	{
-		browse_unit.init( UNIT_BROWSE_X1, UNIT_BROWSE_Y1+22, UNIT_BROWSE_X2, UNIT_BROWSE_Y2-20,
-								0, 18, unit_filter(), put_unit_rec, 1 );
+	browse_unit.init( UNIT_BROWSE_X1, UNIT_BROWSE_Y1+22, UNIT_BROWSE_X2, UNIT_BROWSE_Y2-20,
+							0, 18, unit_filter(), put_unit_rec, 1 );
 
-		browse_unit.open(browse_unit_recno);
-	}
-	else
-	{
-		browse_unit.paint();
-		browse_unit.open(browse_unit_recno, unit_filter());
-	}
+	browse_unit.open(browse_unit_recno);
 
 	disp_unit_total();
 }
