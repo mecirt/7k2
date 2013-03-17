@@ -169,10 +169,8 @@ long Location::evaluate_z(short x, short y)
 
 
 // render special
-#include <stdio.h>
 void LocationCorners::render_special(Blob2DW *blob, int color1, int color2)
 {
-  puts("render_special");
 	blob->resize(ZOOM_LOC_Y_WIDTH, loc_ptr->min_y, ZOOM_LOC_X_WIDTH - ZOOM_LOC_Y_WIDTH, loc_ptr->max_y-loc_ptr->min_y+1 );
 
 	// try to freeze the blob, don't allow it to resize
@@ -537,7 +535,6 @@ void LocationCorners::render(BitmapW *bitmapPtr, char *texturePtr, int offsetX, 
 
 void LocationCorners::render_special(BitmapW *bitmapPtr, int color1, int color2, int offsetX, int offsetY)
 {
-  puts("render_special 2");
 	// try to freeze the blob, don't allow it to resize
 
 	c00 = loc_ptr->c00;
