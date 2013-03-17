@@ -41,6 +41,8 @@ typedef uint32_t WPARAM;
 
 #define MAX_PATH 260
 
+#ifndef WIN32
+
 #ifndef __stdcall
 # ifdef __i386__
 #  ifdef __GNUC__
@@ -98,6 +100,16 @@ inline char *strlwr(char *str)
 	}
 	return str;
 }
+
+#endif
+
+#ifdef WIN32
+#include <io.h>
+int mkdir (char *path, int) {
+    return mkdir (path);
+}
+
+#endif
 
 typedef struct GUID {
   unsigned long  Data1;

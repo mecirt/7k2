@@ -72,7 +72,7 @@ static int 	 node_count_base;				// base node count
 
 #ifdef USE_PRIORITY_QUEUE
 	#define MAX_F (MAX_MAP_HEIGHT_A+MAX_MAP_WIDTH_A)
-	static PathNode* open[MAX_F+1];		// one linked-list for each f
+    static PathNode* openlist[MAX_F+1];		// one linked-list for each f
 	static int low_queue;
 	static int high_queue;
 
@@ -212,7 +212,7 @@ PathFinder::PathFinder()
 #ifdef USE_PRIORITY_QUEUE
 	low_queue = 0;
 	high_queue = 0;
-	memset( open, 0, sizeof(open) );
+    memset( openlist, 0, sizeof(openlist) );
 #else
 	open = NULL;
 #endif
@@ -300,7 +300,7 @@ void PathFinder::reset()
 #ifdef USE_PRIORITY_QUEUE
 	low_queue = 0;
 	high_queue = 0;
-	memset( open, 0, sizeof(open) );
+    memset( openlist, 0, sizeof(openlist) );
 #else
 	open = NULL;
 #endif
@@ -1325,7 +1325,7 @@ PathNode* PathFinder::get_closest_node()
 	// first examines the open list
 	for( int q = low_queue; q <= high_queue; ++q )
 	{
-		nodePointer = open[q];
+        nodePointer = openlist[q];
 		while (nodePointer)
 		{
 			dist = pfind_close_dist( nodePointer->x, nodePointer->y );
@@ -1513,8 +1513,8 @@ static void insert_priority_queue(PathNode *n)
 			high_queue = q;
 
 		// push at the front of queue(stack?)
-		n->next = open[q];
-		open[q] = n;
+        n->next = openlist[q];
+        openlist[q] = n;
 	}
 	else
 	{
@@ -1527,18 +1527,18 @@ static void insert_priority_queue(PathNode *n)
 			high_queue = q;
 
 		// come late should put at the front of the link list
-		if( !open[q] || open[q]->f >= f )
+        if( !openlist[q] || openlist[q]->f >= f )
 		{
 			// add at the begining of a queue
-			n->next = open[q];
-			open[q] = n;
+            n->next = openlist[q];
+            openlist[q] = n;
 		}
 		else
 		{
 			// add at middle or end of queue
 			PathNode* temp1, *temp2;
-			temp1 = open[q];
-			temp2 = open[q]->next;
+            temp1 = openlist[q];
+            temp2 = openlist[q]->next;
 			while (temp2 && (temp2->f < f))
 			{
 				temp1 = temp2;
@@ -1561,9 +1561,9 @@ static PathNode* remove_head_priority_queue()
 
 	for( f = low_queue; f <= high_queue; ++f )
 	{
-		if( (rn = open[f]) )
+        if( (rn = openlist[f]) )
 		{
-			open[f] = rn->next;
+            openlist[f] = rn->next;
 
 			// skip 
 			// open[f] = rn->next;
@@ -1572,7 +1572,7 @@ static PathNode* remove_head_priority_queue()
 			//{
 			//	++low_queue;
 			//}
-			if( !(open[f] = rn->next) )		// remove the head of queue
+            if( !(openlist[f] = rn->next) )		// remove the head of queue
 			{
 				// may need to inc low_queue further, but avoid empty queue
 				low_queue = f+1;		// may need to inc low_queue further, but avoid null

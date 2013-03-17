@@ -27,6 +27,7 @@
 #include <stdio.h>
 extern "C"
 {
+#undef _WIN32   // needed to compile on windows
 #include <jpeglib.h>
 }
 
