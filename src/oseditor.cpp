@@ -554,7 +554,7 @@ void ScenarioEditor::draw_marker( int validAction, int markerX1, int markerY1, i
 			LocationCorners lc;
 			world.get_loc_corner(xLoc, yLoc, &lc);
 			maskBitmap.clear();
-			lc.render_special(&maskBitmap, 1, NULL, pixelColor, TRANSPARENT_CODE);
+			lc.render_special(&maskBitmap, pixelColor, TRANSPARENT_CODE);
 			world.zoom_matrix->put_bitmapW_offset(xLoc * LOCATE_WIDTH, yLoc * LOCATE_HEIGHT, lc.top_left->altitude,
 				maskBitmap.bitmap_ptr(), maskBitmap.left_edge, maskBitmap.top_edge);
 		}

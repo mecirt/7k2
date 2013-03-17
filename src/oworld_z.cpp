@@ -398,8 +398,8 @@ void ZoomMatrix::draw()
 	// complete new screen
 
 	// skip filling if window is complete inside map
-	if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
-		|| disp_rect_type == RHOMBUS_LOCATION && (top_x_loc-disp_x_loc<0 || top_x_loc+disp_y_loc >= max_x_loc || top_y_loc-disp_y_loc<0 || top_y_loc+disp_x_loc+disp_y_loc >= max_y_loc ) )	// rhombus, this condition is prudent to prefer fill black
+//	if( disp_rect_type == 0 && (top_x_loc < 0 || top_x_loc+disp_x_loc > max_x_loc || top_y_loc < 0 || top_y_loc+disp_y_loc > max_y_loc )	// rectangular
+//		|| disp_rect_type == RHOMBUS_LOCATION && (top_x_loc-disp_x_loc<0 || top_x_loc+disp_y_loc >= max_x_loc || top_y_loc-disp_y_loc<0 || top_y_loc+disp_x_loc+disp_y_loc >= max_y_loc ) )	// rhombus, this condition is prudent to prefer fill black
 	{
 		BitmapW *b = (BitmapW *)save_image_buf;
 		vga_buffer.put_bar(0, 0, b->get_width()-1, b->get_height()-1, vga_buffer.translate_color(V_BLACK), 5, b->get_ptr(), b->get_true_pitch());
@@ -510,28 +510,18 @@ void ZoomMatrix::draw()
 //#ifdef DEBUG
 //						if( !cursorMarked || cursorXLoc != xLoc || cursorYLoc != yLoc )
 //#endif
-						if( newDrawState == FULL_BRIGHT_MASK_ID
-							|| newDrawState == HALF_BRIGHT_MASK_ID )
-						{
-							locCorner.render((BitmapW *)save_image_buf, textureBitmap,
-								calc_zoom_x(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_LEFT_MARGIN,		// do not pass z
-								calc_zoom_y(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_TOP_MARGIN, newDrawState );
-						}
-						else
-						{
-							locCorner.render_fog((BitmapW *)save_image_buf, textureBitmap,
-								calc_zoom_x(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_LEFT_MARGIN,		// do not pass z
-								calc_zoom_y(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_TOP_MARGIN,
-								explored_mask.get_remap_mask(newDrawState) );
-						}
+						locCorner.render((BitmapW *)save_image_buf, textureBitmap,
+							calc_zoom_x(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_LEFT_MARGIN,		// do not pass z
+							calc_zoom_y(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_TOP_MARGIN, newDrawState );
 					}
 					else
 					{
 						// black square
-
-						locCorner.render_special( (BitmapW *)save_image_buf, 1, NULL, V_BLACK, V_BLACK, 
+/*
+						locCorner.render_special( (BitmapW *)save_image_buf, V_BLACK, V_BLACK, 
 							calc_zoom_x(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_LEFT_MARGIN,		// do not pass z
 							calc_zoom_y(xLoc*LOCATE_WIDTH, yLoc*LOCATE_HEIGHT, 0) + IMAGE_BUF_TOP_MARGIN );
+                                                        */
 					}
 				}
 
@@ -1309,12 +1299,12 @@ void ZoomMatrix::draw_build_marker()
 				&& yLoc >= innerY1 && yLoc <= innerY2 )
 			{
 				// area of the build area
-				lc.render_special(&maskBitmap, 1, NULL, pixelColor, TRANSPARENT_CODE);
+				lc.render_special(&maskBitmap, pixelColor, TRANSPARENT_CODE);
 			}
 			else
 			{
 				// two squares outside the build area
-				lc.render_special(&maskBitmap, 1, NULL, VGA_GRAY+2, TRANSPARENT_CODE);
+				lc.render_special(&maskBitmap, VGA_GRAY+2, TRANSPARENT_CODE);
 			}
 
 			put_bitmapW_offset(xLoc * LOCATE_WIDTH, yLoc * LOCATE_HEIGHT, lc.top_left->altitude,

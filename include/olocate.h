@@ -377,9 +377,8 @@ struct LocationCorners
 
 	int	interpolate_z(int curX, int curY);
 	void	render(BitmapW *, char *texturePtr, int x, int y, BYTE drawState);
-	void	render_special(Blob2DW *, int effectId, char *texturePtr, int color1, int color2);
-	void	render_special(BitmapW *, int effectId, char *texturePtr, int color1, int color2, int x, int y);
-	void	render_fog(BitmapW *, char *texturePtr, int x, int y, char *fogMask);
+	void	render_special(Blob2DW *, int color1, int color2);
+	void	render_special(BitmapW *, int color1, int color2, int x, int y);
 };
 
 //-------- Begin of function Location::is_accessible --------//
