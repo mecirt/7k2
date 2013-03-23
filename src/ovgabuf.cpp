@@ -289,7 +289,9 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
   int pitch = custom_buffer ? custom_pitch : cur_pitch;
 
   // TODO: incorporate codes 4 and 5 (blending)
+  // is it even used at all? can't find any usage ...
   if (transparency == 4) {
+    puts("transparency 4");
     if (hmirror)
       IMGbltBlendAreaRemap(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table);
     else
@@ -297,6 +299,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
     return;
   }
   if (transparency == 5) {
+    puts("transparency 5");
     if (hmirror)
       IMGbltWeakblendAreaRemap(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table);
     else
