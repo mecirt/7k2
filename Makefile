@@ -476,12 +476,8 @@ LIBRARIES             =
 			src/asm/i_effect.asm \
 			src/asm/ib_bar.asm \
 			src/asm/ib_barm.asm \
-			src/asm/ib_br.asm \
-			src/asm/ib_brm.asm \
 			src/asm/ib_war.asm \
 			src/asm/ib_warm.asm \
-			src/asm/ib_wr.asm \
-			src/asm/ib_wrm.asm \
 
 
 

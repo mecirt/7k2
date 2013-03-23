@@ -3390,14 +3390,7 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 			break;
 		case 2:		// uncompressed, blending bitmap
 			// ignore coloRemapTable
-			if( !mirror )
-			{
-				vga_back.put_bitmap_blend(x1, y1, bitmapPtr);
-			}
-			else
-			{
-				vga_back.put_bitmap_blend_hmirror(x1, y1, bitmapPtr);
-			}
+			vga_back.put_bitmap(x1, y1, bitmapPtr, colorRemapTable, 4, mirror);
 			break;
 		case 0 | 4:		// uncompressed, translucent, not supported
 			err_here();
@@ -3406,15 +3399,7 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 			vga_back.put_bitmap(x1, y1, bitmapPtr, colorRemapTable, 3, mirror);
 			break;
 		case 2 | 4:		// uncompressed, blending bitmap
-			// ignore coloRemapTable
-			if( !mirror )
-			{
-				vga_back.put_bitmap_weak_blend(x1, y1, bitmapPtr);
-			}
-			else
-			{
-				vga_back.put_bitmap_weak_blend_hmirror(x1, y1, bitmapPtr);
-			}
+			vga_back.put_bitmap(x1, y1, bitmapPtr, colorRemapTable, 5, mirror);
 			break;
 		default:
 			err_here();
@@ -3446,16 +3431,7 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 			break;
 		case 2:		// uncompressed, blending
 			// ignore coloRemapTable
-			if( !mirror )
-			{
-				vga_back.put_bitmap_blend_area(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
-			else
-			{
-				vga_back.put_bitmap_blend_area_hmirror(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
+			vga_back.put_bitmap_area(x1, y1, bitmapPtr, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 4, mirror);
 			break;
 		case 0 | 4:		// uncompressed not supported
 			err_here();
@@ -3465,16 +3441,7 @@ void ZoomMatrix::put_bitmap_offset(int curX, int curY, int curZ,
 			break;
 		case 2 | 4:		// uncompressed, blending
 			// ignore coloRemapTable
-			if( !mirror )
-			{
-				vga_back.put_bitmap_weak_blend_area(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
-			else
-			{
-				vga_back.put_bitmap_weak_blend_area_hmirror(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
+			vga_back.put_bitmap_area(x1, y1, bitmapPtr, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 5, mirror);
 			break;
 		default:
 			err_here();

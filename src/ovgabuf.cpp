@@ -285,14 +285,29 @@ short doIMGeffect(unsigned char id, short color)
 // transparency: 0=no, 1=simple, 2=RLE, 3=RLE with half alpha, 4=blend, no transparency, 5=weak blend, no transparency
 void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable, int transparency, bool hmirror, short *custom_buffer, int custom_pitch)
 {
-  // TODO: codes 4 and 5 (blending)
+  short *buffer = custom_buffer ? custom_buffer : cur_buf_ptr;
+  int pitch = custom_buffer ? custom_pitch : cur_pitch;
+
+  // TODO: incorporate codes 4 and 5 (blending)
+  if (transparency == 4) {
+    if (hmirror)
+      IMGbltBlendAreaRemap(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table);
+    else
+      IMGbltBlendAreaRemapHMirror(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table );
+    return;
+  }
+  if (transparency == 5) {
+    if (hmirror)
+      IMGbltWeakblendAreaRemap(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table);
+    else
+      IMGbltWeakblendAreaRemapHMirror(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table );
+    return;
+  }
+
   bool crop = true;
   if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
 
   if (!colorRemapTable) colorRemapTable = default_remap_table;
-
-  short *buffer = custom_buffer ? custom_buffer : cur_buf_ptr;
-  int pitch = custom_buffer ? custom_pitch : cur_pitch;
 
   // first four bytes hold width/height, so pull them
   int width = *((short*)bitmapBuf);

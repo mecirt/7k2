@@ -195,34 +195,6 @@ public:
 	void		put_bitmap_area_trans_remap_decompress( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2, short *colorRemapTable)
 				{ put_bitmap_area(x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 2); }
 
-	// functions with blend bitmap
-
-	void		put_bitmap_blend( int x, int y, char *bitmapBuf )
-	{ IMGbltBlendRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_blend_table ); }
-
-	void		put_bitmap_blend_hmirror( int x, int y, char *bitmapBuf )
-	{ IMGbltBlendRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_blend_table ); }
-
-	void		put_bitmap_blend_area( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-	{ IMGbltBlendAreaRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table ); }
-
-	void		put_bitmap_blend_area_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-	{ IMGbltBlendAreaRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table ); }
-
-	// functions with weak blend bitmap
-
-	void		put_bitmap_weak_blend( int x, int y, char *bitmapBuf )
-	{ IMGbltWeakblendRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_blend_table ); }
-
-	void		put_bitmap_weak_blend_hmirror( int x, int y, char *bitmapBuf )
-	{ IMGbltWeakblendRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, default_blend_table ); }
-
-	void		put_bitmap_weak_blend_area( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-	{ IMGbltWeakblendAreaRemap( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table ); }
-
-	void		put_bitmap_weak_blend_area_hmirror( int x, int y, char *bitmapBuf, int srcX1, int srcY1, int srcX2, int srcY2 )
-	{ IMGbltWeakblendAreaRemapHMirror( cur_buf_ptr, cur_pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table ); }
-
 	// 16->16 blt
 
         void put_bitmapW(int x, int y, short *bitmapBuf, bool transparency = false, short *custom_buffer = 0, int custom_pitch = 0);

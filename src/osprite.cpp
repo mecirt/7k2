@@ -275,14 +275,7 @@ void Sprite::draw_abs(int colorSchemeId, int scrnX, int scrnY, int clipX1, int c
 			break;
 		case 1:		// uncompressed, blending bitmap
 			// ignore coloRemapTable
-			if( !needMirror )
-			{
-				vga_back.put_bitmap_blend(x1, y1, bitmapPtr);
-			}
-			else
-			{
-				vga_back.put_bitmap_blend_hmirror(x1, y1, bitmapPtr);
-			}
+			vga_back.put_bitmap(x1, y1, bitmapPtr, colorRemapTable, 4, needMirror);
 			break;
 
 		default:
@@ -303,16 +296,7 @@ void Sprite::draw_abs(int colorSchemeId, int scrnX, int scrnY, int clipX1, int c
 			break;
 		case 1:		// uncompressed, blending
 			// ignore coloRemapTable
-			if( !needMirror )
-			{
-				vga_back.put_bitmap_blend_area(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
-			else
-			{
-				vga_back.put_bitmap_blend_area_hmirror(x1, y1, bitmapPtr, 
-					srcX1, srcY1, srcX2, srcY2);
-			}
+			vga_back.put_bitmap_area(x1, y1, bitmapPtr, srcX1, srcY1, srcX2, srcY2, colorRemapTable, 4, needMirror);
 			break;
 
 		default:
