@@ -466,7 +466,7 @@ LIBRARIES             =
 			src/oisoarea.cpp \
 			src/oend_con.cpp \
 			src/ofirmlnk.cpp \
-			src/asm/CRC.cpp
+			src/CRC.cpp
 
 			
 7k2_ASM_SRCSO  =         \
