@@ -42,7 +42,6 @@ extern "C"
 	// basic functions
 
 	void IMGcall INITeffect(int pixelFormatFlag) __asmsym__("_INITeffect");
-	void IMGcall IMGline( short *imageBuf, int pitch, int w, int h, int x1, int y1, int x2, int y2, int color) __asmsym__("_IMGline");
 
 	// 8->16 blt
 

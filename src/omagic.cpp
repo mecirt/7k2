@@ -1216,9 +1216,7 @@ void Magic::draw_particle(int x1, int y1, int x2, int y2, int dirx, int diry, in
 				(particle->prev_x<= bound_x2) && (particle->prev_x>= bound_x1) && 
 				(particle->pos_y <= bound_y2) && (particle->pos_y >= bound_y1) &&
 				(particle->prev_y<= bound_y2) && (particle->prev_y>= bound_y1))
-				IMGline(vgabuf->buf_ptr(), vgabuf->buf_true_pitch(), vgabuf->buf_width(),
-						vgabuf->buf_height(), particle->prev_x, particle->prev_y,
-						particle->pos_x, particle->pos_y, particle->color);
+				vgabuf->line(particle->prev_x, particle->prev_y, particle->pos_x, particle->pos_y, particle->color);
 		}
 	}
 	mem_del(h_particle);

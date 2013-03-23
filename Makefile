@@ -474,7 +474,6 @@ LIBRARIES             =
 7k2_ASM_SRCS  =         \
 			src/asm/i_ctrl.asm \
 			src/asm/i_effect.asm \
-			src/asm/i_line.asm \
 			src/asm/ib_bar.asm \
 			src/asm/ib_barm.asm \
 			src/asm/ib_br.asm \

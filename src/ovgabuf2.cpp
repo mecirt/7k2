@@ -205,46 +205,104 @@ void VgaBuf::indicator(int x1, int y1, int x2, int y2, float curValue,
 //
 void VgaBuf::line(int x1,int y1,int x2,int y2,int lineColor)
 {
-	IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1, x2, y2, translate_color(lineColor));
+  int	dx = x2 - x1;
+  int	dy = y2 - y1;
+  short *bufPtr = buf_ptr(x1,y1);
+  short color = translate_color(lineColor);
+  int	d;
+  int	inc_x = dx > 0 ? 1 : -1;
+  int	inc_y = dy > 0 ? 1 : -1;
+  int	lPitch = dy > 0 ? cur_pitch : -cur_pitch;
+  if( dy == 0)
+  {
+    if( x1 <= x2)
+    {
+      // from left to right
+      for(short x = x1; x <= x2; ++x, ++bufPtr)
+        *bufPtr = color;
+    }
+    else
+    {
+      // from right to left
+      for( short x = x1; x >= x2; --x, --bufPtr)
+        *bufPtr = color;
+    }
+    return;
+  }
+
+  if( dx == 0)
+  {
+    if( y1 <= y2)
+    {
+      // from top to bottom
+      for(short y = y1; y <= y2; ++y, bufPtr += lPitch)
+        *bufPtr = color;
+    }
+    else
+    {
+      // from bottom to top
+      for( short y = y1; y >= y2; --y, bufPtr -= lPitch)
+        *bufPtr = color;
+    }
+    return;
+  }
+
+  if( abs(dy) <= abs(dx) )
+  {
+    // draw gentle line
+    // use x as independent variable
+    dx = abs(dx);
+    dy = abs(dy);
+
+    d = 2 * dy - dx;	
+    int x = x1-inc_x;
+    do
+    {
+      x += inc_x;
+      *bufPtr = translate_color(lineColor);
+      bufPtr += inc_x;
+      if( d >= 0)
+      {
+        // y increase by 1
+        bufPtr += lPitch;
+        d += 2 * (dy - dx);
+      }
+      else
+      {
+        // y remain unchange;
+        d += 2 * dy;
+      }
+    } while ( x != x2);
+  }
+  else
+  {
+    // draw steep line
+    // use y as independent variable
+    dx = abs(dx);
+    dy = abs(dy);
+
+    d = 2 * dx - dy;
+    int y = y1 - inc_y;
+    do
+    {
+      y += inc_y;
+      *bufPtr = translate_color(lineColor);
+      bufPtr += lPitch;
+      if( d >= 0)
+      {
+        // x increase by 1
+        bufPtr += inc_x;
+        d += 2 * (dx - dy);
+      }
+      else
+      {
+        // x remain unchange;
+        d += 2 * dx;
+      }
+    } while ( y != y2);
+  }
 }
 //------------ End of function VgaBuf::line -------------//
-
-
-//---------- Begin of function VgaBuf::thick_line -------------//
-//
-// Draw a thick line
-//
-// <int> x1,y1,x2,y2 = the coordination of the line
-// <int> lineColor   = color of the line
-//
-void VgaBuf::thick_line(int x1,int y1,int x2,int y2,int lineColor)
-{
-	err_when( x1<0 || y1<0 || x2>=VGA_WIDTH || y2>=VGA_HEIGHT );
-
-	if( y1-y2 > abs(x2-x1) )   // keep thickness of the line to 3
-	{
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1-1, x2  , y2-1, lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1  , x2  , y2  , lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1+1, x2  , y2+1, lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1+1, y1+1, x2+1, y2+1, lineColor );
-	}
-
-	else if( y2-y1 > abs(x2-x1) )
-	{
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1+1, y1-1, x2+1, y2-1, lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1-1, x2  , y2-1, lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1  , x2  , y2  , lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1  , y1+1, x2  , y2+1, lineColor );
-	}
-
-	else
-	{
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1-1, x2, y2-1, lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1  , x2, y2  , lineColor );
-		IMGline(cur_buf_ptr, cur_pitch, buf_width(), buf_height(), x1, y1+1, x2, y2+1, lineColor );
-	}
-}
-//------------ End of function VgaBuf::thick_line -------------//
 
 
 //----------- Begin of function VgaBuf::d3_panel_up ------------//

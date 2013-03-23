@@ -141,7 +141,6 @@ public:
 
 	void  	separator(int,int,int,int);
 	void		line(int x1,int y1,int x2,int y2,int colorCode);
-	void  	thick_line(int x1,int y1,int x2,int y2,int colorCode);
 
 	void  	indicator(int,int,int,int,float,float,int,int= -1);
 
