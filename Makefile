@@ -11,7 +11,6 @@ EXES                  = 7k2
 
 CEXTRA                = -g -O2 -Wall -m32
 CXXEXTRA              = -g -O2 -Wall -m32
-ASMFLAGS              = -elf -Zg -zt1
 RCEXTRA               =
 DEFINES               =
 INCLUDE_PATH          = -I. \
@@ -469,22 +468,8 @@ LIBRARIES             =
 			src/CRC.cpp
 
 			
-7k2_ASM_SRCSO  =         \
-
-7k2_ASM_SRCS  =         \
-			src/asm/i_ctrl.asm \
-			src/asm/i_effect.asm \
-			src/asm/ib_bar.asm \
-			src/asm/ib_barm.asm \
-			src/asm/ib_war.asm \
-			src/asm/ib_warm.asm \
-
-
-
 7k2_OBJS      = $(7k2_C_SRCS:.c=.o) \
 			$(7k2_CXX_SRCS:.cpp=.o)
-
-7k2_ASMOBJS   = $(7k2_ASM_SRCS:.asm=.o)
 
 ### Global source lists
 
@@ -497,7 +482,6 @@ CXX_SRCS              = $(7k2_CXX_SRCS)
 CC = gcc
 CXX = g++
 AR = ar r
-ASM = ./jwasm
 
 ### Generic targets
 
@@ -512,7 +496,7 @@ $(SUBDIRS): dummy
 
 # Implicit rules
 
-.SUFFIXES: .cpp .cxx .asm .rc .res
+.SUFFIXES: .cpp .cxx .rc .res
 DEFINCL = $(INCLUDE_PATH) $(DEFINES) $(OPTIONS)
 
 .c.o:
@@ -520,11 +504,6 @@ DEFINCL = $(INCLUDE_PATH) $(DEFINES) $(OPTIONS)
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $(CXXEXTRA) $(DEFINCL) -o $@ $<
-
-.asm.o:
-	$(ASM) $(ASMFLAGS) -Fo$@.coff $<
-	objcopy -O elf32-i386 $@.coff $@
-	rm -f $@.coff
 
 .cxx.o:
 	$(CXX) -c $(CXXFLAGS) $(CXXEXTRA) $(DEFINCL) -o $@ $<
@@ -535,7 +514,7 @@ CLEAN_FILES     = y.tab.c y.tab.h lex.yy.c core *.orig *.rej \
                   \\\#*\\\# *~ *% .\\\#*
 
 clean:: $(SUBDIRS:%=%/__clean__) $(EXTRASUBDIRS:%=%/__clean__)
-	$(RM) $(CLEAN_FILES) $(C_SRCS:.c=.o) $(CXX_SRCS:.cpp=.o) $(ASM_SRCS:.asm=.o)
+	$(RM) $(CLEAN_FILES) $(C_SRCS:.c=.o) $(CXX_SRCS:.cpp=.o)
 	$(RM) $(DLLS:%=%.so) $(LIBS) $(EXES) $(EXES:%=%.so)
 
 $(SUBDIRS:%=%/__clean__): dummy
@@ -547,7 +526,7 @@ $(EXTRASUBDIRS:%=%/__clean__): dummy
 ### Target specific build rules
 DEFLIB = $(LIBRARY_PATH) $(LIBRARIES) $(DLL_PATH) $(DLL_IMPORTS:%=-l%)
 
-$(7k2_MODULE): $(7k2_OBJS) $(7k2_ASMOBJS)
-	$(CXX) $(7k2_LDFLAGS) -o $@ $(7k2_OBJS) $(7k2_ASMOBJS) $(7k2_LIBRARY_PATH) $(DEFLIB) $(7k2_DLLS:%=-l%) $(7k2_LIBRARIES:%=-l%)
+$(7k2_MODULE): $(7k2_OBJS)
+	$(CXX) $(7k2_LDFLAGS) -o $@ $(7k2_OBJS) $(7k2_LIBRARY_PATH) $(DEFLIB) $(7k2_DLLS:%=-l%) $(7k2_LIBRARIES:%=-l%)
 
 

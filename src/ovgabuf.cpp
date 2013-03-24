@@ -290,6 +290,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 
   // TODO: incorporate codes 4 and 5 (blending)
   // is it even used at all? can't find any usage ...
+/*
   if (transparency == 4) {
     puts("transparency 4");
     if (hmirror)
@@ -306,6 +307,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
       IMGbltWeakblendAreaRemapHMirror(buffer, pitch, x, y, bitmapBuf, srcX1, srcY1, srcX2, srcY2, default_blend_table );
     return;
   }
+*/
 
   bool crop = true;
   if ((srcX1 < 0) && (srcY1 < 0) && (srcX2 < 0) && (srcY2 < 0)) crop = false;
@@ -329,7 +331,7 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
       unsigned char pixel = (unsigned char) *bitmapBuf++;
       if (transparency && (transparency <= 3) && (pixel == TRANSCODE)) continue;
       // skip multiple pixels at once (a sort-of RLE with transparency)
-      if (((transparency == 2) || (transparency == 3)) && (pixel >= MULTITRANS_CODE)) {
+      if ((transparency >= 2) && (pixel >= MULTITRANS_CODE)) {
         if (pixel == MULTITRANS_CODE)
           skip = (unsigned char) *bitmapBuf++;
         else
@@ -341,12 +343,12 @@ void VgaBuf::put_bitmap_area(int x, int y, char *bitmapBuf, int srcX1, int srcY1
 
       short *bufptr = BUFFER_INDEX(x + (hmirror?width-xx:xx), y + yy);
 
-      if (((transparency == 2) || (transparency == 3)) && (pixel >= EFFECT_CODE)) {
+      if ((transparency >= 2) && (pixel >= EFFECT_CODE)) {
         *bufptr = doIMGeffect(pixel - EFFECT_CODE, *bufptr);
         continue;
       }
 
-      if (transparency == 3)  // alpha-adjust
+      if (transparency >= 3)  // alpha-adjust
       {
         RGBColor c, c2;
         vga.decode_pixel(colorRemapTable[pixel], &c);

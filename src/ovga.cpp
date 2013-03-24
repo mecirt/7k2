@@ -46,10 +46,7 @@
 char    Vga::opaque_flag  = 0;
 VgaBuf* Vga::active_buf   = &vga_buffer;
 
-extern "C"
-{
-	short transparent_code_w;
-}
+short transparent_code_w;
 
 // ------ declare static function ----------//
 
@@ -129,12 +126,7 @@ BOOL Vga::init_dd()
 
 BOOL Vga::set_mode(int w, int h)
 {
-  if (!SetDisplayMode (w, h)) return false;
-
-  // assembly functions to initalize effect processing
-  INITeffect(pixel_format_flag);
-
-  return true;
+  return SetDisplayMode (w, h);
 }
 //-------- End of function Vga::set_mode ----------//
 

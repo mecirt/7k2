@@ -19,12 +19,10 @@
  */
 
 // Filename    : IMGFUN.H
-// Description : Declaration of assembly functions
+// Description : Declaration of pixel formats
 
 #ifndef __IMGFUN_H
 #define __IMGFUN_H
-
-#include <asmfun.h>
 
 // ----- define enum type PixelFormatFlag16 -------//
 
@@ -37,35 +35,5 @@ enum PixelFormatFlag
 };
 
 
-extern "C"
-{
-	// basic functions
-
-	void IMGcall INITeffect(int pixelFormatFlag) __asmsym__("_INITeffect");
-
-	// 8->16 blt
-
-	// functions with blend bitmap
-
-	void IMGcall IMGbltBlendRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltBlendRemap");
-	void IMGcall IMGbltBlendRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltBlendRemapHMirror");
-	void IMGcall IMGbltBlendAreaRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltBlendAreaRemap");
-	void IMGcall IMGbltBlendAreaRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltBlendAreaRemapHMirror");
-
-	// functions with weaker blend bitmap
-
-	void IMGcall IMGbltWeakblendRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltWeakblendRemap");
-	void IMGcall IMGbltWeakblendRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		short *colorTable ) __asmsym__("_IMGbltWeakblendRemapHMirror");
-	void IMGcall IMGbltWeakblendAreaRemap( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltWeakblendAreaRemap");
-	void IMGcall IMGbltWeakblendAreaRemapHMirror( short *imageBuf, int pitch, int x, int y, char *bitmapBuf,
-		int srcX1, int srcY1, int srcX2, int srcY2, short *colorTable ) __asmsym__("_IMGbltWeakblendAreaRemapHMirror");
-};
 
 #endif
