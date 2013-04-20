@@ -223,7 +223,6 @@ oimgres.cpp - class ImageRes : public ResourceIdx
 oimmplay.cpp - class MultiPlayerIM
 oinfo.cpp - class Info; parts of class Info are spread out across the various or_* files
 oingmenu.cpp - class InGameMenu
-oisoarea.cpp - class IsolateArea
 oitem.cpp - class Item
 oitemres.cpp - class ItemRes
 ojpeg.cpp - class Jpeg
@@ -278,61 +277,58 @@ oremoteq.cpp - class RemoteQueue, class RemoteQueueTraverse
 oremote2.cpp - part of class Remote
 ores.cpp - class Resource : public File
 oresdb.cpp - class ResourceDb : public File
-orespal.cpp
-orestxt.cpp
-oresx.cpp
-orle.cpp
+oresx.cpp - class ResourceIdx : public File
+orle.cpp - class Rle
 or_mil.cpp - part of class Info
 or_nat.cpp - part of class Info
 or_news.cpp - part of class Info
-orock.cpp
-orockres.cpp
+orock.cpp - class Rock, class RockArray : public DynArrayB
+orockres.cpp - class RockRes
 or_rank.cpp - part of class Info
 or_spy.cpp - part of class Info
 or_tech.cpp - part of class Info
 or_town.cpp - part of class Info
 or_trade.cpp - part of class Info
-oscroll.cpp
-ose.cpp
-osedit_e.cpp
-osedit_f.cpp
-osedit_h.cpp
-osedit_m.cpp
-osedit_o.cpp
-oseditor.cpp
-osedit_p.cpp
-osedit_r.cpp
-osedit_v.cpp
-oseres.cpp
-oserial.cpp
-osfrmres.cpp
-osite.cpp
-ositedrw.cpp
-oskill.cpp
-oslidcus.cpp
-oslider.cpp
-osnowg.cpp
-osnowres.cpp
-osnow1.cpp
-osnow2.cpp
-osoldier.cpp
-ospinner.cpp
-ospin_s.cpp
-ospritea.cpp
-osprite.cpp
-osprite2.cpp
-osprtres.cpp
-ospya.cpp
-ospy.cpp
-ospy2.cpp
-ostate.cpp
-ostr.cpp
-osysdet.cpp
-osysdisp.cpp
-osysfile.cpp
-osysinit.cpp
-osysproc.cpp
-osysview.cpp
+oscroll.cpp - class ScrollBar
+ose.cpp - class SERequest, class SECtrl
+osedit_e.cpp - part of class ScenarioEditor
+osedit_f.cpp - part of class ScenarioEditor
+osedit_h.cpp - part of class ScenarioEditor
+osedit_m.cpp - part of class ScenarioEditor
+osedit_o.cpp - part of class ScenarioEditor
+oseditor.cpp - part of class ScenarioEditor
+osedit_p.cpp - part of class ScenarioEditor
+osedit_r.cpp - part of class ScenarioEditor
+osedit_v.cpp - part of class ScenarioEditor
+oseres.cpp - class SERes
+oserial.cpp - class SerialRepository
+osfrmres.cpp - class SpriteFrameRes
+osite.cpp - class SiteArray : public DynArrayB, part of class Site
+ositedrw.cpp - part of class Site
+oskill.cpp - class Skill
+oslidcus.cpp - class SlideBar, class SlideVBar
+osnowg.cpp - class SnowGround, class SnowGroundArray
+osnowres.cpp - class SnowRes
+osnow1.cpp - class SnowLayer
+osnow2.cpp - class Snow
+osoldier.cpp - class Soldier
+ospinner.cpp - class Spinner
+ospin_s.cpp - class SpinnerSmall
+ospritea.cpp - class SpriteArray : public DynArrayB
+osprite.cpp - part of class Sprite : public BaseObj
+osprite2.cpp - part of class Sprite : public BaseObj
+osprtres.cpp - class SpriteRes
+ospya.cpp - class SpyArray : public DynArrayB
+ospy.cpp - part of class Spy
+ospy2.cpp - part of class Spy
+ostate.cpp - class StateArray, class StateInfo
+ostr.cpp - class String
+osysdet.cpp - part of class Sys
+osysdisp.cpp - part of class Sys
+osysfile.cpp - part of class Sys
+osysinit.cpp - part of class Sys
+osysproc.cpp - part of class Sys
+osysview.cpp - part of class Sys
 otalkeng.cpp
 otalkmsg.cpp
 otalkres.cpp

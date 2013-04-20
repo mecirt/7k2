@@ -118,7 +118,6 @@ LIBRARIES             =
 			src/of_alch.cpp \
 			src/otownres.cpp \
 			src/opfind.cpp \
-			src/orestxt.cpp \
 			src/ofont.cpp \
 			src/of_camps.cpp \
 			src/obitmapw.cpp \
@@ -346,7 +345,6 @@ LIBRARIES             =
 			src/oc_eas10.cpp \
 			src/otowndef.cpp \
 			src/ogeta.cpp \
-			src/oslider.cpp \
 			src/osedit_h.cpp \
 			src/olightn2.cpp \
 			src/ow_rock.cpp \

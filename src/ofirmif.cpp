@@ -31,7 +31,6 @@
 #include <ofont.h>
 #include <obutt3d.h>
 #include <obutton.h>
-#include <oslider.h>
 #include <oconfig.h>
 #include <onation.h>
 #include <oinfo.h>

@@ -36,7 +36,6 @@
 #include <ofont.h>
 #include <obutt3d.h>
 #include <obutton.h>
-#include <oslider.h>
 #include <onation.h>
 
 #include <oraceres.h>
