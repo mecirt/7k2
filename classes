@@ -1,0 +1,431 @@
+am.cpp - global objects, main
+CRC.cpp - crc8()
+oai_act.cpp - part of class Nation : public NationBase
+oai_act2.cpp - part of class Nation
+oai_attk.cpp - part of class Nation
+oai_buil.cpp - part of class Nation
+oai_capt.cpp - part of class Nation
+oai_cap2.cpp - part of class Nation
+oai_defe.cpp - part of class Nation
+oai_dipl.cpp - part of class Nation
+oai_eco.cpp - part of class Nation
+oai_gran.cpp - part of class Nation
+oai_info.cpp - part of class Nation
+oai_main.cpp - part of class Nation
+oai_mili.cpp - part of class Nation
+oai_quer.cpp - part of class Nation
+oai_seek.cpp - part of class Nation
+oai_spy.cpp - part of class Nation
+oai_talk.cpp - part of class Nation
+oai_unit.cpp - part of class Nation
+oanline.cpp - class AnimLine
+oattack.cpp - class AttackAttribute
+oaudio.cpp - class Audio
+obaseoba.cpp - class BaseObjArray : public DynArrayB
+obaseobj.cpp - class BaseObj
+obattle.cpp - class Battle
+ob_flame.cpp - class BulletFlame : public Bullet
+ob_homin.cpp - class BulletHoming : public Bullet
+obitmap.cpp - class Bitmap
+obitmapw.cpp - class BitmapW
+oblob.cpp - class Blob
+oblob2.cpp - class Blob2D
+oblob2w.cpp - class Blob2DW
+obox.cpp - class Box
+ob_prog.cpp - class BulletProgram : public Bullet
+ob_proj.cpp - class Projectile : public Bullet
+obulleta.cpp - class BulletArray
+obullet.cpp - class Bullet : public Sprite
+obuttcus.cpp - class ButtonCustom, class ButtonCustomGroup
+obutton.cpp - class Button, class ButtonGroup
+obutt3d.cpp - class Button3D
+ocampgn.cpp - part of class Campaign
+ocampgn2.cpp - part of class Campaign
+ocampgn3.cpp - part of class Campaign, class CampaignMember
+ocampgn4.cpp - part of class Campaign
+oc_east.cpp - part of class CampaignEastWest
+oc_easte.cpp - part of class CampaignEastWest
+oc_eastp.cpp - part of class CampaignEastWest
+oc_east1.cpp - part of class CampaignEastWest
+oc_east2.cpp - part of class CampaignEastWest
+oc_east3.cpp - part of class CampaignEastWest
+oc_east4.cpp - part of class CampaignEastWest
+oc_east5.cpp - part of class CampaignEastWest
+oc_east6.cpp - part of class CampaignEastWest
+oc_east7.cpp - part of class CampaignEastWest
+oc_east8.cpp - part of class CampaignEastWest
+oc_east9.cpp - part of class CampaignEastWest
+oc_eas10.cpp - part of class CampaignEastWest
+oc_eas11.cpp - part of class CampaignEastWest
+oc_eas12.cpp - part of class CampaignEastWest
+oc_eas13.cpp - part of class CampaignEastWest
+oc_eas14.cpp - part of class CampaignEastWest
+oc_eas15.cpp - part of class CampaignEastWest
+oc_eas16.cpp - part of class CampaignEastWest
+oc_eas17.cpp - part of class CampaignEastWest
+oc_eas18.cpp - part of class CampaignEastWest
+oc_eas19.cpp - part of class CampaignEastWest
+oc_eas20.cpp - part of class CampaignEastWest
+oc_eas21.cpp - part of class CampaignEastWest
+oc_eas22.cpp - part of class CampaignEastWest
+oc_eas23.cpp - part of class CampaignEastWest
+oc_eas24.cpp - part of class CampaignEastWest
+oc_eas25.cpp - part of class CampaignEastWest
+oc_eas26.cpp - part of class CampaignEastWest
+oc_eas27.cpp - part of class CampaignEastWest
+oc_eas28.cpp - part of class CampaignEastWest
+ocnation.cpp - class CampaignNation
+ocoltbl.cpp - class ColorTable, class PalDescFile
+oconfig.cpp - class Config
+oc_pla1.cpp - part of class CampaignEastWest
+oc_pla2.cpp - part of class CampaignEastWest
+oc_pla3.cpp - part of class CampaignEastWest
+oc_pla4.cpp - part of class CampaignEastWest
+oc_pla5.cpp - part of class CampaignEastWest
+oc_pla6.cpp - part of class CampaignEastWest
+oc_pla7.cpp - part of class CampaignEastWest
+oc_plc1.cpp - part of class CampaignEastWest
+oc_plc2.cpp - part of class CampaignEastWest
+oc_plc3.cpp - part of class CampaignEastWest
+oc_plc4.cpp - part of class CampaignEastWest
+oc_pld1.cpp - part of class CampaignEastWest
+oc_pld2.cpp - part of class CampaignEastWest
+oc_pld3.cpp - part of class CampaignEastWest
+oc_pld4.cpp - part of class CampaignEastWest
+oc_pld5.cpp - part of class CampaignEastWest
+oc_plot.cpp - part of class CampaignEastWest
+ocrc_sto.cpp - class CrcStore
+odate.cpp - class DateInfo
+odb.cpp - class Database
+odir.cpp - class Directory
+odplay.cpp - class MultiPlayerDP
+odynarr.cpp - class DynArray
+odynarrb.cpp - class DynArrayB : public DynArray
+oeffect.cpp - class Effect : public Sprite
+oend_con.cpp - class EndCondition
+oerrctrl.cpp - class ErrorControl
+oerror.cpp - class Error
+oevent.cpp - class RandomEvent
+oexpmask.cpp - class ExploredMask
+of_alcha.cpp - part of class FirmMonsterAlchemy : public Firm
+of_alch.cpp - part of class FirmMonsterAlchemy : public Firm
+of_alchi.cpp - part of class FirmMonsterAlchemy : public Firm
+of_anima.cpp - part of class FirmAnimal : public Firm
+of_anim.cpp - part of class FirmAnimal : public Firm
+of_animi.cpp - part of class FirmAnimal : public Firm
+of_basea.cpp - part of class FirmBase : public FirmWork
+of_base.cpp - part of class FirmBase : public FirmWork
+of_basei.cpp - part of class FirmBase : public FirmWork
+of_basew.cpp - part of class FirmBase : public FirmWork
+of_campa.cpp - part of class FirmCamp : public Firm
+of_campb.cpp - part of class FirmCamp : public Firm
+of_camp.cpp - part of class FirmCamp : public Firm
+of_campi.cpp - part of class FirmCamp : public Firm
+of_camps.cpp - part of class FirmCamp : public Firm
+of_campu.cpp - part of class FirmCamp : public Firm
+of_facta.cpp - part of class FirmFactory : public FirmWork
+of_fact.cpp - part of class FirmFactory : public FirmWork
+of_facti.cpp - part of class FirmFactory : public FirmWork
+of_forta.cpp - part of class FirmFort : public FirmCamp
+of_fort.cpp - part of class FirmFort : public FirmCamp
+of_forti.cpp - part of class FirmFort : public FirmCamp
+ofile.cpp - class File
+ofiletxt.cpp - class FileTxt : public File
+of_incua.cpp - part of class FirmIncubator : public Firm
+of_incu.cpp - part of class FirmIncubator : public Firm
+of_incui.cpp - part of class FirmIncubator : public Firm
+of_inna.cpp - part of class FirmInn : public Firm
+of_inn.cpp - part of class FirmInn : public Firm
+of_inni.cpp - part of class FirmInn : public Firm
+ofirma.cpp - class FirmArray : public DynArrayB
+ofirmai.cpp - part of class Firm : public Place
+ofirmat.cpp - part of class Firm : public Place
+ofirm.cpp - part of class Firm : public Place
+ofirmdie.cpp - class FirmDie, class FirmDieArray : public DynArrayB
+ofirmdrw.cpp - part of class Firm : public Place
+ofirmif.cpp - part of class Firm : public Place
+ofirmlnk.cpp - part of class Firm : public Place
+ofirmres.cpp - class FirmRes
+of_laira.cpp - part of class FirmLair : public FirmCamp
+of_lair.cpp - part of class FirmLair : public FirmCamp
+of_lairi.cpp - part of class FirmLair : public FirmCamp
+oflame.cpp - class Flame
+of_lara2.cpp - part of class FirmLair : public FirmCamp
+oflc.cpp - class Flc
+of_lish.cpp - part of class FirmLishorr : public Firm
+of_lishi.cpp - part of class FirmLishorr : public Firm
+of_magia.cpp - part of class FirmMagic : public Firm
+of_magi.cpp - part of class FirmMagic : public Firm
+of_magii.cpp - part of class FirmMagic : public Firm
+of_marka.cpp - part of class FirmMarket : public Firm
+of_mark.cpp - part of class FirmMarket : public Firm
+of_marki.cpp - part of class FirmMarket : public Firm
+of_mfori.cpp - part of class FirmMonsterFortress : public Firm
+of_mfork.cpp - part of class FirmMonsterFortress : public Firm
+of_mfort.cpp - part of class FirmMonsterFortress : public Firm
+of_minea.cpp - part of class FirmMine : public FirmWork
+of_mine.cpp - part of class FirmMine : public FirmWork
+of_minei.cpp - part of class FirmMine : public FirmWork
+of_monsi.cpp - part of class FirmMonster : public Firm
+of_mtrna.cpp - part of class FirmMonsterTrain : public Firm
+of_mtrn.cpp - part of class FirmMonsterTrain : public Firm
+of_mtrni.cpp - part of class FirmMonsterTrain : public Firm
+of_off.cpp - part of class FirmOffensive : public FirmMagic
+of_offi.cpp - part of class FirmOffensive : public FirmMagic
+of_off2.cpp - part of class FirmOffensive2 : public Firm
+of_off2i.cpp - part of class FirmOffensive2 : public Firm
+ofont.cpp - class Font
+oformat.cpp - part of class UnitGroup : public DynArray
+of_resea.cpp - part of class FirmResearch : public FirmWork
+of_rese.cpp - part of class FirmResearch : public FirmWork
+of_resei.cpp - part of class FirmResearch : public FirmWork
+of_speca.cpp - part of class FirmSpecial : public FirmTrain
+of_spec.cpp - part of class FirmSpecial : public FirmTrain
+of_speci.cpp - part of class FirmSpecial : public FirmTrain
+of_spya.cpp - part of class FirmSpy : public FirmTrain
+of_spy.cpp - part of class FirmSpy : public FirmTrain
+of_spyi.cpp - part of class FirmSpy : public FirmTrain
+of_traia.cpp - part of class FirmTrain : public Firm
+of_traii.cpp - part of class FirmTrain : public Firm
+of_train.cpp - part of class FirmTrain : public Firm
+of_wara.cpp - part of class FirmWar : public FirmWork
+of_war.cpp - part of class FirmWar : public FirmWork
+of_wari.cpp - part of class FirmWar : public FirmWork
+of_worka.cpp - class FirmWork : public Firm
+of_work.cpp - class FirmWork : public Firm
+of_worki.cpp - class FirmWork : public Firm
+ogamcamp.cpp - part of class Game
+ogamcred.cpp - part of class Game
+ogamecon.cpp - part of class Game
+ogame.cpp - part of class Game
+ogamemp.cpp - part of class Game
+ogamend.cpp - part of class Game
+ogameset.cpp - class GameSet
+ogamhall.cpp - part of class GameFileArray, class HallFame
+ogammain.cpp - part of class Game
+ogamscen.cpp - part of class Game
+ogamsce2.cpp - part of class Game
+ogamsing.cpp - part of class Game
+ogenhill.cpp - part of class World
+ogenmap.cpp - part of class World
+ogenmap2.cpp - part of class Game
+ogeta.cpp - class GetA, class GetAGroup
+oget.cpp - class Get
+ogfilea.cpp - class GameFileArray : public DynArray
+ogfile.cpp - part of class GameFile
+ogfile2.cpp - part of class GameFile, read_file/write_file functions from various classes
+ogfile3.cpp - read_file/write_file functions from various classes
+ogodres.cpp - class GodRes, class GodInfo
+ohelp.cpp - class Help
+oherores.cpp - class HeroRes
+ohillres.cpp - class HillRes
+oimgres.cpp - class ImageRes : public ResourceIdx
+oimmplay.cpp - class MultiPlayerIM
+oinfo.cpp - class Info; parts of class Info are spread out across the various or_* files
+oingmenu.cpp - class InGameMenu
+oisoarea.cpp - class IsolateArea
+oitem.cpp - class Item
+oitemres.cpp - class ItemRes
+ojpeg.cpp - class Jpeg
+olightn.cpp - class Lightning
+olightn2.cpp - class YLightning : public Lightning
+olinear.cpp - class LinearCounter
+olocate.cpp - class Location, part of class LocationCorners
+olocbmp.cpp - class LocationBitmap
+olog.cpp - class Log
+olonglog.cpp - class LongLog : public File
+omagic.cpp - class Magic
+omatrix.cpp - class Matrix
+omatrix2.cpp - part of class LocationCorners, part of class Location
+omem.cpp - class Mem
+omisc.cpp - class Misc
+omodeid.cpp-  class DisplayModeInfo
+omonsres.cpp - class MosterRes
+omouse.cpp - class Mouse
+omousecr.cpp - class MouseCursor
+omp_crc.cpp - crc8 functions for many classes
+omusic.cpp - class Music
+onationa.cpp - class NationArray : public DynArrayB
+onationb.cpp - class NationBase
+onews.cpp - part of class NewsArray : public DynArray
+onewseng.cpp - part of class News
+onews2.cpp - part of class News, part of class NewsArray : public DynArray
+on_human.cpp - class NationHuman : public Nation
+on_mons.cpp - class NationMonster : public Nation
+ooptmenu.cpp - class OptionMenu
+opfind.cpp - class PathFinder
+oplace.cpp - class Place : public BaseObj
+oplant.cpp - class PlantRes, class PlantBitmap
+oplasma.cpp - class Plasma
+opower.cpp - part of class Power
+opower2.cpp - part of class Power
+opreuse.cpp - class PathReuse
+oprofile.cpp - part of class PlayerProfile, class ProfileHero
+oprofil2.cpp - part of class PlayerProfile
+oraceres.cpp - class RaceRes
+or_ai.cpp - part of class Info
+orain1.cpp - class RainDrop
+orain2.cpp - class Rain
+orain3.cpp - class RainSpot
+orawres.cpp - class RawRes
+orebel.cpp - class RebelArray : public DynArrayB, class Rebel
+or_eco.cpp - part of class Info
+oregion.cpp - class RegionArray
+oregions.cpp - class RegionStat, part of class RegionArray
+oremote.cpp - part of class Remote
+oremotem.cpp - class RemoteMsg
+oremoteq.cpp - class RemoteQueue, class RemoteQueueTraverse
+oremote2.cpp - part of class Remote
+ores.cpp - class Resource : public File
+oresdb.cpp - class ResourceDb : public File
+orespal.cpp
+orestxt.cpp
+oresx.cpp
+orle.cpp
+or_mil.cpp - part of class Info
+or_nat.cpp - part of class Info
+or_news.cpp - part of class Info
+orock.cpp
+orockres.cpp
+or_rank.cpp - part of class Info
+or_spy.cpp - part of class Info
+or_tech.cpp - part of class Info
+or_town.cpp - part of class Info
+or_trade.cpp - part of class Info
+oscroll.cpp
+ose.cpp
+osedit_e.cpp
+osedit_f.cpp
+osedit_h.cpp
+osedit_m.cpp
+osedit_o.cpp
+oseditor.cpp
+osedit_p.cpp
+osedit_r.cpp
+osedit_v.cpp
+oseres.cpp
+oserial.cpp
+osfrmres.cpp
+osite.cpp
+ositedrw.cpp
+oskill.cpp
+oslidcus.cpp
+oslider.cpp
+osnowg.cpp
+osnowres.cpp
+osnow1.cpp
+osnow2.cpp
+osoldier.cpp
+ospinner.cpp
+ospin_s.cpp
+ospritea.cpp
+osprite.cpp
+osprite2.cpp
+osprtres.cpp
+ospya.cpp
+ospy.cpp
+ospy2.cpp
+ostate.cpp
+ostr.cpp
+osysdet.cpp
+osysdisp.cpp
+osysfile.cpp
+osysinit.cpp
+osysproc.cpp
+osysview.cpp
+otalkeng.cpp
+otalkmsg.cpp
+otalkres.cpp
+ot_basic.cpp
+ot_camp.cpp
+oteam.cpp
+otechres.cpp
+ot_endc.cpp
+oterrain.cpp
+ot_firm.cpp
+ot_gmenu.cpp
+otips.cpp
+ot_item.cpp
+ot_news.cpp
+otornado.cpp
+otowna.cpp
+otownai.cpp
+otownat.cpp
+otownbld.cpp
+otown.cpp
+otowndef.cpp
+otowndrw.cpp
+otownif.cpp
+otownind.cpp
+otownlnk.cpp
+otownpop.cpp
+otownres.cpp
+otownwal.cpp
+otrainee.cpp
+otransl.cpp
+ot_reps.cpp
+ot_sedit.cpp
+ot_talk.cpp
+ot_tutor.cpp
+ot_unit.cpp
+otutor.cpp
+otutor3.cpp
+otwalres.cpp
+otxtres.cpp
+ou_caraa.cpp
+ou_cara.cpp
+ou_carai.cpp
+ou_caras.cpp
+ou_carat.cpp
+ou_cart.cpp
+ou_god.cpp
+ou_godi.cpp
+ou_god2.cpp
+ou_mons.cpp
+oun_act.cpp
+ounadraw.cpp
+oun_ai.cpp
+oun_ai2.cpp
+oun_atk.cpp
+oun_atk2.cpp
+oun_drw.cpp
+oun_grp.cpp
+oun_hero.cpp
+oun_if.cpp
+oun_ind.cpp
+oun_info.cpp
+oun_init.cpp
+ounita.cpp
+ounitb.cpp
+oun_item.cpp
+ounitres.cpp
+oun_mode.cpp
+oun_ord.cpp
+oun_proc.cpp
+oun_spab.cpp
+ou_wagon.cpp
+ovbrowif.cpp
+ovbrowi2.cpp
+ovbrowse.cpp
+ovgabuf.cpp
+ovgabuf2.cpp
+ovga.cpp
+ovgalock.cpp
+ovga2.cpp
+ovideo.cpp
+ovolume.cpp
+ovqueue.cpp
+owallres.cpp
+owarpt.cpp
+owaypnt.cpp
+oweather.cpp
+ow_fire.cpp
+oworld.cpp
+oworld_m.cpp
+oworld_z.cpp
+ow_plant.cpp
+ow_rock.cpp
+ow_sound.cpp
+ow_trv.cpp
+ow_wall.cpp
+platform.cpp

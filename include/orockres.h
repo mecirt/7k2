@@ -29,7 +29,6 @@
 
 #include <gamedef.h>
 #include <oresdb.h>
-#include <orespal.h>
 #include <obitmap.h>
 
 // ----------- Define constant ----------//
@@ -129,7 +128,6 @@ public:
 	RockBitmapInfo*  rock_bitmap_array;
 
 	ResourceDb       res_bitmap;
-	ResourcePal			res_pal;
 
 public:
 	RockRes();

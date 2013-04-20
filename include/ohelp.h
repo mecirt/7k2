@@ -73,33 +73,6 @@ struct HelpInfo
 class Blob2DW;
 class VgaBuf;
 
-class HelpSaveScreen
-{
-	char			clear_flag;
-	char			hiding_flag;
-	char			hide_area_count;
-	char			dummy;
-	Blob2DW		*save_scr_buf;      // have a private save screen buffer for displaying the helpial text
-	short       save_scr_x1, save_scr_y1, save_scr_x2, save_scr_y2;
-
-public:
-	HelpSaveScreen();
-	~HelpSaveScreen();
-
-	void			init();
-	void			deinit();
-	void			swap( HelpSaveScreen &);
-
-	void			save_scr(int x1, int y1, int x2, int y2, VgaBuf* =0 );
-	void			rest_scr(VgaBuf* =0, int keepUnclear=0 );
-	void			hide_area(int x1, int y1, int x2, int y2);
-	void			show_area();
-	void			clear();
-	void			unclear();
-	int			is_clear();
-};
-
-
 //-----------------------------------------------//
 
 class Help

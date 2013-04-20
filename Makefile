@@ -222,7 +222,6 @@ LIBRARIES             =
 			src/of_campi.cpp \
 			src/ob_prog.cpp \
 			src/obulleta.cpp \
-			src/ohsetres.cpp \
 			src/oremotem.cpp \
 			src/of_laira.cpp \
 			src/oai_gran.cpp \
@@ -269,7 +268,6 @@ LIBRARIES             =
 			src/ob_proj.cpp \
 			src/ogameset.cpp \
 			src/ot_talk.cpp \
-			src/orespal.cpp \
 			src/of_marki.cpp \
 			src/oc_eas13.cpp \
 			src/oinfo.cpp \
@@ -462,7 +460,6 @@ LIBRARIES             =
 			src/omatrix2.cpp \
 			src/orain3.cpp \
 			src/osfrmres.cpp \
-			src/oisoarea.cpp \
 			src/oend_con.cpp \
 			src/ofirmlnk.cpp \
 			src/CRC.cpp
