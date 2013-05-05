@@ -322,7 +322,7 @@ void Info::next_day()
 //
 void Info::disp_panel()
 {
-	image_interface.put_to_buf( &vga_back, "MAINSCR" );
+	image_interface.put_back( VGA_WIDTH - 800, 0, "MAINSCR", 0);
 	if( config.race_id < 0 )
 		vga_back.put_bitmap(313, 0, image_interface.read("800-HUM"));
 
