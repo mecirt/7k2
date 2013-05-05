@@ -263,14 +263,6 @@ void FirmInn::detect_info()
 		}
 		else if( innUnit->item.id )
 		{
-			// set custom help
-
-//			String str;
-//			str = "Buy ";
-//			str += innUnit->item.item_name();
-//			help.set_custom_help( button_buy_item.x1, button_buy_item.y1, 
-//				button_buy_item.x2, button_buy_item.y2, str, innUnit->item.item_desc() );
-
 			help.set_custom_help( button_buy_item.x1, button_buy_item.y1, 
 				button_buy_item.x2, button_buy_item.y2, 
 				text_firm.str_buy_item_help( &innUnit->item ),

@@ -75,13 +75,6 @@ struct DisplayModeInfo
 	int	info_x2;
 	int	info_y2;
 
-	int	info_msg_x1;
-	int	info_msg_y1;
-	int	info_msg_x2;
-	int	info_msg_y2;
-
-	// reserved for expansion
-
 	int	map_mode_button_x1;
 	int	map_mode_button_y1;
 	int	map_mode_button_width;
@@ -104,16 +97,6 @@ struct DisplayModeInfo
 	int	cash_x1;
 	int	cash_y1;
 	int	cash_length;
-
-	int	scroll_menu_x1;
-	int	scroll_menu_y1;
-	int	scroll_menu_x2;
-	int	scroll_menu_y2;
-
-	int	help_short_x1;
-	int	help_short_y1;
-	int	help_short_x2;
-	int	help_short_y2;
 
 	int	mouse_x1;
 	int	mouse_y1;
@@ -161,11 +144,6 @@ extern DisplayModeInfo current_display_mode;
 #define INFO_X2      current_display_mode.info_x2
 #define INFO_Y2      current_display_mode.info_y2
 
-#define MSG_X1       current_display_mode.info_msg_x1
-#define MSG_Y1       current_display_mode.info_msg_y1
-#define MSG_X2       current_display_mode.info_msg_x2
-#define MSG_Y2       current_display_mode.info_msg_y2
-
 #define MAP_MODE_BUTTON_X1      current_display_mode.map_mode_button_x1
 #define MAP_MODE_BUTTON_Y1      current_display_mode.map_mode_button_y1
 #define MAP_MODE_BUTTON_WIDTH   current_display_mode.map_mode_button_width
@@ -188,16 +166,6 @@ extern DisplayModeInfo current_display_mode;
 #define CASH_X1         current_display_mode.cash_x1
 #define CASH_Y1         current_display_mode.cash_y1
 #define CASH_LENGTH     current_display_mode.cash_length
-
-#define SCROLL_MENU_X1  current_display_mode.scroll_menu_x1
-#define SCROLL_MENU_Y1  current_display_mode.scroll_menu_y1
-#define SCROLL_MENU_X2  current_display_mode.scroll_menu_x2
-#define SCROLL_MENU_Y2  current_display_mode.scroll_menu_y2
-
-#define HELP_SHORT_X1   current_display_mode.help_short_x1
-#define HELP_SHORT_Y1   current_display_mode.help_short_y1
-#define HELP_SHORT_X2   current_display_mode.help_short_x2
-#define HELP_SHORT_Y2   current_display_mode.help_short_y2
 
 #define MOUSE_X1   current_display_mode.mouse_x1
 #define MOUSE_Y1   current_display_mode.mouse_y1

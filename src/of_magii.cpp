@@ -201,11 +201,6 @@ void FirmMagic::detect_main_menu()
 
 		if( button_magic[i].visible_flag )
 		{
-		//	str = "minimun life points cost : ";
-		//	str += magic_info_array[i].min_live_point;
-
-		//	help.set_custom_help( button_magic[i].x1, button_magic[i].y1, button_magic[i].x2, button_magic[i].y2,
-		//		tech_res[magic_info_array[button_magic[i].custom_para.value -1].tech_id]->tech_des(), str );			
 			char helpName[10] = "MAGIC0";
 			helpName[5] = '1' + i;
 			help.set_help( button_magic[i].x1, button_magic[i].y1, button_magic[i].x2, button_magic[i].y2,

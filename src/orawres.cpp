@@ -337,30 +337,4 @@ char *RawRes::interface_raw_icon(int rawId)
 }
 // --------- end of function RawRes::interface_raw_icon --------//
 
-//---------- Begin of function RawRes::put_small_raw_icon -----------//
-
-void RawRes::put_small_raw_icon(int x, int y, int rawId)
-{
-	char* bitmapPtr = small_raw_icon(rawId);
-
-	Vga::active_buf->put_bitmap_trans(x, y, bitmapPtr);
-
-	help.set_custom_help( x, y, x+RAW_SMALL_ICON_WIDTH-1, y+RAW_SMALL_ICON_HEIGHT-1,
-		operator[](rawId)->name );
-}
-//---------- End of function RawRes::put_small_raw_icon -----------//
-
-
-//---------- Begin of function RawRes::put_small_product_icon -----------//
-
-void RawRes::put_small_product_icon(int x, int y, int rawId)
-{
-	char* bitmapPtr = small_product_icon(rawId);
-
-	Vga::active_buf->put_bitmap_trans(x, y, bitmapPtr);
-
-	help.set_custom_help( x, y, x+RAW_SMALL_ICON_WIDTH-1, y+RAW_SMALL_ICON_HEIGHT-1, 
-		text_firm.str_product_name(rawId) );
-}
-//---------- End of function RawRes::put_small_product_icon -----------//
 

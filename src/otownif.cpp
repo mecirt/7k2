@@ -1334,14 +1334,6 @@ static void put_spy_rec(int recNo, int x, int y)
 		INFO_X1, INFO_Y1, INFO_X2, INFO_Y2, 1);
 	font_whbl.center_put( x, y, x+21, y+23, m.format(recNo,1));
 	
-	//--------- set help parameters --------//
-
-//	if( mouse.in_area(x+1, y+1, x+RACE_ICON_WIDTH+4, y+RACE_ICON_HEIGHT+4) )
-//	{
-//		int unitId = race_res[spyPtr->race_id]->civilian_unit_id;
-//		help.set_unit_help( unitId, 0, x+1, y+1, x+RACE_ICON_WIDTH+4, y+RACE_ICON_HEIGHT+4 );
-//	}
-
 	//-------- display spy skill -------//
 	str = spyPtr->spy_skill;
 	font_whbl.center_put( INFO_X1+54, y+6, INFO_X1+76, y+20, str);

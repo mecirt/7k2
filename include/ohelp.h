@@ -57,8 +57,7 @@ struct HelpInfo
 	enum { HELP_CODE_LEN=8, HELP_TITLE_LEN=60 };
 
 	char  help_code[HELP_CODE_LEN+1];			// either identify the help message by help code or area position
-	short area800x600_x1, area800x600_y1, area800x600_x2, area800x600_y2;
-	short area1024x768_x1, area1024x768_y1, area1024x768_x2, area1024x768_y2;
+	short area_x1, area_y1, area_x2, area_y2;
 	short monster_human_interface; // 0 when display for both interfaces
 											 // 1 when display only for monster interface
 											 // 2 when display only for human interface
@@ -67,6 +66,9 @@ struct HelpInfo
 
 	char* help_text_ptr;          // offset of the help text in the text buffer
 	short help_text_len;          // length of the help text
+
+  short calc_x1();
+  short calc_x2();
 };
 
 
@@ -114,12 +116,7 @@ public:
 
 	void       load(char*);
 
-	void 		  push_screen(char* screenCode);
-	void		  pop_screen();
-	void		  set_screen(char* screenCode);
-
 	void		  set_help(int x1, int y1, int x2, int y2, const char* helpCode);
-	void		  set_unit_help(int unitId, int rankId, int x1, int y1, int x2, int y2);
 	void		  set_custom_help(int x1, int y1, int x2, int y2, const char* helpTitle, const char* helpDetail=NULL);
 
 	int		  should_disp();
@@ -127,9 +124,6 @@ public:
 	void 		  disp_help(int centerX, int centerY, char* helpTitle, char* helpDetail);
 
 	void			disp_short_help(VgaBuf *);
-	void			hide_short_help(VgaBuf *);
-
-	void			flip();
 };
 
 //-----------------------------------------------//

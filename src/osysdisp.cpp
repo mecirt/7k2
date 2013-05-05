@@ -62,10 +62,7 @@ static Button3D  button_menu;
 //
 void Sys::disp_button()
 {
-	if (current_display_mode.mode_id == MODE_ID_800x600x16)
-		button_menu.paint( MENU_BUTTON_X1, MENU_BUTTON_Y1, "MENU-U", "MENU-D" );
-	else
-		button_menu.paint( MENU_BUTTON_X1, MENU_BUTTON_Y1, "MU_1024", "MD_1024" );
+	button_menu.paint( MENU_BUTTON_X1, MENU_BUTTON_Y1, "MENU-U", "MENU-D" );
 	button_menu.set_help_code( "GAMEMENU" );
 }
 //--------- End of function Sys::disp_button ---------//
@@ -90,35 +87,17 @@ void Sys::detect_button()
 
 	int VIEW_MODE_BUTTON_X_SPACE; 
 	int i, x, y;
-	if (current_display_mode.mode_id == MODE_ID_800x600x16)
-	{
-		VIEW_MODE_BUTTON_X_SPACE = VIEW_MODE_BUTTON_WIDTH + 2;
-		x = 6;
-		y = 7;
-	}
-	else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-	{
-		VIEW_MODE_BUTTON_X_SPACE = VIEW_MODE_BUTTON_WIDTH + 37;
-		x = 819;
-		y = 80;
-	}
-	else
-		err_here();
+	VIEW_MODE_BUTTON_X_SPACE = VIEW_MODE_BUTTON_WIDTH + 2;
+	x = 6;
+	y = 7;
 
-	
 	static char viewModeArray[] =
 	{
 		MODE_NATION, MODE_TOWN, MODE_ECONOMY, MODE_TRADE, MODE_MILITARY, MODE_TECH, MODE_SPY, MODE_RANK
 	};
 	for( i=0 ; i<8 ; i++, x+=VIEW_MODE_BUTTON_X_SPACE )
 	{
-		if(( ((i-1) % 2) == 1) && (current_display_mode.mode_id == MODE_ID_1024x768x16))
-		{
-			x = 819;
-			y = y + VIEW_MODE_BUTTON_HEIGHT;
-		}
-
-		if(( i==4 ) && (current_display_mode.mode_id == MODE_ID_800x600x16))		// the second row
+		if( i==4 )		// the second row
 		{
 			x = 6;
 			y = 29;

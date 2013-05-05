@@ -329,99 +329,100 @@ osysfile.cpp - part of class Sys
 osysinit.cpp - part of class Sys
 osysproc.cpp - part of class Sys
 osysview.cpp - part of class Sys
-otalkeng.cpp
-otalkmsg.cpp
-otalkres.cpp
-ot_basic.cpp
-ot_camp.cpp
-oteam.cpp
-otechres.cpp
-ot_endc.cpp
-oterrain.cpp
-ot_firm.cpp
-ot_gmenu.cpp
-otips.cpp
-ot_item.cpp
-ot_news.cpp
-otornado.cpp
-otowna.cpp
-otownai.cpp
-otownat.cpp
-otownbld.cpp
-otown.cpp
-otowndef.cpp
-otowndrw.cpp
-otownif.cpp
-otownind.cpp
-otownlnk.cpp
-otownpop.cpp
-otownres.cpp
-otownwal.cpp
-otrainee.cpp
-otransl.cpp
-ot_reps.cpp
-ot_sedit.cpp
-ot_talk.cpp
-ot_tutor.cpp
-ot_unit.cpp
-otutor.cpp
-otutor3.cpp
-otwalres.cpp
-otxtres.cpp
-ou_caraa.cpp
-ou_cara.cpp
-ou_carai.cpp
-ou_caras.cpp
-ou_carat.cpp
-ou_cart.cpp
-ou_god.cpp
-ou_godi.cpp
-ou_god2.cpp
-ou_mons.cpp
-oun_act.cpp
-ounadraw.cpp
-oun_ai.cpp
-oun_ai2.cpp
-oun_atk.cpp
-oun_atk2.cpp
-oun_drw.cpp
-oun_grp.cpp
-oun_hero.cpp
-oun_if.cpp
-oun_ind.cpp
-oun_info.cpp
-oun_init.cpp
-ounita.cpp
-ounitb.cpp
-oun_item.cpp
-ounitres.cpp
-oun_mode.cpp
-oun_ord.cpp
-oun_proc.cpp
-oun_spab.cpp
-ou_wagon.cpp
-ovbrowif.cpp
-ovbrowi2.cpp
-ovbrowse.cpp
-ovgabuf.cpp
-ovgabuf2.cpp
-ovga.cpp
-ovgalock.cpp
-ovga2.cpp
-ovideo.cpp
-ovolume.cpp
-ovqueue.cpp
-owallres.cpp
-owarpt.cpp
-owaypnt.cpp
-oweather.cpp
-ow_fire.cpp
-oworld.cpp
-oworld_m.cpp
-oworld_z.cpp
-ow_plant.cpp
-ow_rock.cpp
-ow_sound.cpp
-ow_trv.cpp
-ow_wall.cpp
-platform.cpp
+otalkeng.cpp - part of class TalkMsg
+otalkmsg.cpp - part of class TalkMsg
+otalkres.cpp - class TalkRes
+ot_basic.cpp - class TextResBasic : public TextResource
+ot_camp.cpp - class TextResCampaign : public TextResource
+oteam.cpp - class TeamInfo
+otechres.cpp - class TechRes, class TechInfo
+ot_endc.cpp - class TextResEndCondition : public TextResource
+oterrain.cpp - cass TerrainRes, class TerrainInfo
+ot_firm.cpp - class TextResFirm : public TextResource
+ot_gmenu.cpp - class TextResGameMenu : public TextResource
+otips.cpp - class TipsRes
+ot_item.cpp - class TextResItem : public TextResource
+ot_news.cpp - class TextResNews : public TextResource
+otornado.cpp - class Tornado : public Sprite, class TornadoArray : public SpriteArray
+otowna.cpp - class TownArray : public DynArrayB
+otownai.cpp - part of class Town : public Place
+otownat.cpp - part of class Town : public Place
+otownbld.cpp - class TownBuild
+otown.cpp - part of class Town : public Place
+otowndef.cpp - part of class Town : public Place
+otowndrw.cpp - part of class Town : public Place
+otownif.cpp - part of class Town : public Place
+otownind.cpp - part of class Town : public Place
+otownlnk.cpp - part of class Town : public Place
+otownpop.cpp - part of class Town : public Place
+otownres.cpp - class TownRes
+otownwal.cpp - part of class Town : public Place
+otrainee.cpp - class Trainee
+otransl.cpp - class Translate
+ot_reps.cpp - class TextResReports : public TextResource
+ot_sedit.cpp - class TextResEditor : public TextResource
+ot_talk.cpp - class TextResTalk : public TextResource
+ot_tutor.cpp - class TextResTutorial : public TextResource
+ot_unit.cpp - class TextResUnit : public TextResource
+otutor.cpp - part of class Tutor
+otutor3.cpp - part of class Tutor
+otwalres.cpp - class TownWallRes
+otxtres.cpp - class TextResource
+ou_caraa.cpp - part of class UnitCaravan : public Unit
+ou_cara.cpp - part of class UnitCaravan : public Unit
+ou_carai.cpp - part of class UnitCaravan : public Unit
+ou_caras.cpp - class TradeStop, class CaravanStop : public TradeStop
+ou_carat.cpp - part of class UnitCaravan : public Unit
+ou_cart.cpp - class UnitExpCart : public Unit
+ou_god.cpp - class UnitGod : public Unit
+ou_godi.cpp - class UnitGod : public Unit
+ou_god2.cpp - class UnitGod : public Unit
+ou_mons.cpp - class UnitMonster : public Unit
+oun_act.cpp - part of class Unit : public UnitB
+ounadraw.cpp - part of class UnitArray : public SpriteArray
+oun_ai.cpp - part of class Unit : public UnitB
+oun_ai2.cpp - part of class Unit : public UnitB
+oun_atk.cpp - part of class Unit : public UnitB
+oun_atk2.cpp - part of class Unit : public UnitB
+oun_drw.cpp - part of class Unit : public UnitB
+oun_grp.cpp - class UnitGroup : public DynArray
+oun_hero.cpp - part of class Unit : public UnitB
+oun_if.cpp - part of class Unit : public UnitB
+oun_ind.cpp - part of class Unit : public UnitB
+oun_info.cpp - part of class Unit : public UnitB
+oun_init.cpp - part of class Unit : public UnitB
+ounita.cpp - part of class UnitArray : public SpriteArray
+ounitb.cpp - class UnitB : public Sprite
+oun_item.cpp - part of class Unit : public UnitB
+ounitres.cpp - class UnitRes
+oun_mode.cpp - part of class Unit : public UnitB
+oun_ord.cpp - part of class Unit : public UnitB
+oun_proc.cpp - part of class Unit : public UnitB
+oun_spab.cpp - part of class Unit : public UnitB
+ou_wagon.cpp - class UnitWagon : public Unit
+ovbrowif.cpp - class VBrowseIF : public VBrowse
+ovbrowi2.cpp - class VBrowseIF2 : public VBrowse
+ovbrowse.cpp - class VBrowse
+ovgabuf.cpp - part of class VgaBuf
+ovgabuf2.cpp - part of class VgaBuf
+ovga.cpp - part of class Vga
+ovgalock.cpp - class VgaFrontLock, class VgaFrontReLock
+ovga2.cpp - part of class Vga
+ovideo.cpp - class Video (unused)
+ovolume.cpp - class DsVolume, class RelVolume, class AbsVolume, class PosVolume
+ovqueue.cpp - class VLenQueue
+owallres.cpp - class WallRes, class WallInfo
+owarpt.cpp - class WarPoint, class WarPointArray
+owaypnt.cpp - class WayPoint : public DynArray, class WayPointArray : public DynArray
+oweather.cpp - class Weather, class MagicWeather
+ow_fire.cpp - part of class World
+oworld.cpp - part of class World
+oworld_m.cpp - class MapMatrix : public Matrix
+oworld_z.cpp - class ZoomMatrix : public Matrix
+ow_plant.cpp - part of class World
+ow_rock.cpp - part of class World
+ow_sound.cpp - part of class World
+ow_trv.cpp - class WorldScanTraverser
+ow_wall.cpp - part of class World
+platform.cpp - class Platform
+

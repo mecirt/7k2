@@ -851,9 +851,6 @@ void FirmCamp::detect_steal_tech_confirm()
 		return;
 	}
 
-//	int rc = button_go.detect();
-//	help.set_custom_help(button_go.x1, button_go.y1, button_go.x2, button_go.y2, "Steal Technology");
-//	if( rc )
 	if( button_yes.detect() )
 	{
 		firm_menu_mode = FIRM_MENU_STEAL_TECH_RESULT;

@@ -252,15 +252,11 @@ void FirmMarket::disp_market_info(int dispY1, int refreshFlag)
 		int x = (i%3) * 72 + 18 + INFO_X1;
 		int y = (i/3) * 89 + 60 + INFO_Y1;
 
-//		char *bitmapPtr;
-
 		if( marketGoods->raw_id )
 		{
-//			bitmapPtr = raw_res.large_raw_icon(marketGoods->raw_id);
 		}
 		else if( marketGoods->product_raw_id )
 		{
-//			bitmapPtr = raw_res.large_product_icon(marketGoods->product_raw_id);
 		}
 		else
 		{

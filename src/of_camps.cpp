@@ -357,11 +357,6 @@ void FirmCamp::detect_spy_menu()
 			action_spy_recno = spyPtr->spy_recno;
 			se_ctrl.immediate_sound("TURN_ON");
 		}
-//		if( button_create_incident.visible_flag )
-//		{
-//			help.set_custom_help(button_create_incident.x1, button_create_incident.y1, 
-//				button_create_incident.x2, button_create_incident.y2, "Create Incident" );
-//		}
 
 		if( button_steal_tech.detect() )
 		{
@@ -371,11 +366,6 @@ void FirmCamp::detect_spy_menu()
 			spy_action_chance = spyPtr->get_steal_rating(nation_recno);
 			se_ctrl.immediate_sound("TURN_ON");
 		}
-//		if( button_steal_tech.visible_flag )
-//		{
-//			help.set_custom_help(button_steal_tech.x1, button_steal_tech.y1, 
-//				button_steal_tech.x2, button_steal_tech.y2, "Steal Technology" );
-//		}
 
 		if( button_assassinate.detect() )
 		{

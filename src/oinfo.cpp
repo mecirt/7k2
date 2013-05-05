@@ -322,21 +322,10 @@ void Info::next_day()
 //
 void Info::disp_panel()
 {
-	if (current_display_mode.mode_id == MODE_ID_800x600x16)
-	{
-		image_interface.put_to_buf( &vga_back, "MAINSCR" );
-		if( config.race_id < 0 )
-			vga_back.put_bitmap(313, 0, image_interface.read("800-HUM"));
-	}
-	else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-	{
-		image_interface.put_to_buf( &vga_back, "MSCR1024" );
-		if( config.race_id < 0 )
-			vga_back.put_bitmap(800, 1, image_interface.read("1024-HUM"));
-	}
-	else
-		err_here();
-	
+	image_interface.put_to_buf( &vga_back, "MAINSCR" );
+	if( config.race_id < 0 )
+		vga_back.put_bitmap(313, 0, image_interface.read("800-HUM"));
+
 	//------ keep a copy of bitmap of the panel texture -----//
 
 	if( !info_background_bitmap ) 
@@ -346,13 +335,6 @@ void Info::disp_panel()
 	if( !heading_background_bitmap )
 		heading_background_bitmap = (short *)mem_add( BitmapW::size(TOP_MENU_X2-TOP_MENU_X1+1, TOP_MENU_Y2-TOP_MENU_Y1+1) );
 	vga_back.read_bitmapW( TOP_MENU_X1, TOP_MENU_Y1, TOP_MENU_X2, TOP_MENU_Y2, heading_background_bitmap );
-
-//	if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-//	{
-//		if( !heading_background_bitmap2 )
-//			heading_background_bitmap2 = (short *)mem_add( BitmapW::size(31, 101) );
-//		vga_back.read_bitmapW( REPU_BUTTON_X1, REPU_BUTTON_Y1, REPU_BUTTON_X1 +100, REPU_BUTTON_Y1 +30, heading_background_bitmap2 );
-//	}
 }
 //--------- End of function Info::disp_panel ---------//
 
@@ -569,50 +551,16 @@ void Info::disp_heading()
 
 	if( !nation_array.player_recno )		// the player has lost the game
 	{
-		
-		if (current_display_mode.mode_id == MODE_ID_800x600x16)
-		{
-			font_snds.disp( FOOD_X1, FOOD_Y1, "", FOOD_X1 +FOOD_LENGTH);	// clear the display 
-			font_snds.disp( CASH_X1, CASH_Y1, "", CASH_X1 +CASH_LENGTH);	
-		}
-		else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-		{
-			font_snds.disp( FOOD_X1, FOOD_Y1, "", FOOD_X1 +FOOD_LENGTH);	// clear the display 
-			font_snds.disp( CASH_X1, CASH_Y1, "", CASH_X1 +CASH_LENGTH);	
-			font_snds.disp( FOOD_X1-7, FOOD_Y1+12, "", FOOD_X1 +FOOD_LENGTH);
-			font_snds.disp( CASH_X1-7, CASH_Y1+12, "", CASH_X1 +CASH_LENGTH);	
-		}
-		else
-			err_here();
-		
+		font_snds.disp( FOOD_X1, FOOD_Y1, "", FOOD_X1 +FOOD_LENGTH);	// clear the display 
+		font_snds.disp( CASH_X1, CASH_Y1, "", CASH_X1 +CASH_LENGTH);	
+
 		char *thumbBmp;
 		if( config.race_id > 0 )
 		{
-			if (current_display_mode.mode_id == MODE_ID_800x600x16)
-				thumbBmp = image_icon.get_ptr( "REPU_DW" );
-			else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-				thumbBmp = image_icon.get_ptr( "REDW1024" );
-			else
-				err_here();
+			thumbBmp = image_icon.get_ptr( "REPU_DW" );
 			vga.active_buf->put_bitmap(REPU_BUTTON_X1, REPU_BUTTON_Y1, thumbBmp);
 		}
-		if (current_display_mode.mode_id == MODE_ID_800x600x16)
-			font_snds.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, "", REPU_BUTTON_X1 +100);
-		else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-		{
-			if( config.race_id > 0 )
-			{
-				font_snds.disp( REPU_BUTTON_X1+12, REPU_BUTTON_Y1 +27, "", REPU_BUTTON_X1 +50);
-				font_snds.disp( REPU_BUTTON_X1+2, REPU_BUTTON_Y1 +39, "", REPU_BUTTON_X1 +50);
-			}
-			else
-			{
-				font_snds.disp( REPU_BUTTON_X1+5, REPU_BUTTON_Y1 +27, "", REPU_BUTTON_X1 +50);
-				font_snds.disp( REPU_BUTTON_X1-2, REPU_BUTTON_Y1 +39, "", REPU_BUTTON_X1 +50);
-			}
-		}
-		else
-			err_here();
+		font_snds.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, "", REPU_BUTTON_X1 +100);
 	}
 	else
 	{
@@ -629,137 +577,64 @@ void Info::disp_heading()
 		//------- display food and net food change --------//
 
 		char* strPtr; 
-		if (current_display_mode.mode_id == MODE_ID_800x600x16)
-		{
-		//	strPtr = nationPtr->food_str();
-		//	font_snds.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-			int tempx; 
-			strPtr = nationPtr->total_food_str();
-			if (strPtr[0] == '-')
-				tempx = font_red.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-			else
-				tempx = font_snds.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-
-			strPtr = nationPtr->annual_food_str();
-			if (strPtr[2] == '-')
-				font_red.disp( tempx, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-			else
-				font_snds.disp( tempx, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-		}
-		else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-		{
-			strPtr = nationPtr->total_food_str();
-			if (strPtr[0] == '-')
-				font_red.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-			else
-				font_snds.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
-
-			strPtr = nationPtr->annual_food_str();
-			if (strPtr[2] == '-')
-				font_red.disp( FOOD_X1-7, FOOD_Y1 +12, strPtr, FOOD_X1 +FOOD_LENGTH);
-			else
-				font_snds.disp( FOOD_X1-7, FOOD_Y1 +12, strPtr, FOOD_X1 +FOOD_LENGTH);
-		}
+		int tempx; 
+		strPtr = nationPtr->total_food_str();
+		if (strPtr[0] == '-')
+			tempx = font_red.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
 		else
-			err_here();
+			tempx = font_snds.disp( FOOD_X1, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
+
+		strPtr = nationPtr->annual_food_str();
+		if (strPtr[2] == '-')
+			font_red.disp( tempx, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
+		else
+			font_snds.disp( tempx, FOOD_Y1, strPtr, FOOD_X1 +FOOD_LENGTH);
 			
 		//------- display cash and profit --------//
-		if (current_display_mode.mode_id == MODE_ID_800x600x16)
+		if (nationPtr->increased_cash > 0)
 		{
-		//	strPtr = nationPtr->cash_str();
-		//	font_snds.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
-
-			int tempx;
-			if (nationPtr->increased_cash > 0)
+			int tempCash = (int)(nationPtr->cash - nationPtr->increased_cash);
+			if( tempCash >= 0 )
 			{
-				int tempCash = (int)(nationPtr->cash - nationPtr->increased_cash);
-				if( tempCash >= 0 )
-				{
-					strPtr = m.format( (int)tempCash, 4 );			// format type 4 - no thousand separators
-				}
-				else
-				{
-					str = "-";
-					str += m.format( (int)-tempCash, 4 );		// format type 4 - no thousand separators
-					strPtr = str;
-				}
-				if (nationPtr->increased_cash > 1000)
-					nationPtr->increased_cash = nationPtr->increased_cash - 1000;
-				else
-				if (nationPtr->increased_cash > 100)
-					nationPtr->increased_cash = nationPtr->increased_cash - 100;
-				else
-				if (nationPtr->increased_cash > 10)
-					nationPtr->increased_cash = nationPtr->increased_cash - 10;
-				else
-					nationPtr->increased_cash = nationPtr->increased_cash - 1;
-							
-				if (nationPtr->increased_cash < 0)
-					nationPtr->increased_cash = 0;
+				strPtr = m.format( (int)tempCash, 4 );			// format type 4 - no thousand separators
 			}
 			else
-				strPtr = nationPtr->total_cash_str();
-
-			if (strPtr[0] == '-')
-				tempx = font_red.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
-			else
-				tempx = font_snds.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
-
-			strPtr = nationPtr->annual_cash_str();
-			if (strPtr[2] == '-')
-				font_red.disp( tempx, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
-			else
-				font_snds.disp( tempx, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
-		}
-		else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-		{
-			if (nationPtr->increased_cash > 0)
 			{
-				int tempCash = (int)(nationPtr->cash - nationPtr->increased_cash);
-				if( tempCash >= 0 )
-				{
-					strPtr = m.format( (int)tempCash, 4 );			// format type 4 - no thousand separators
-				}
-				else
-				{
-					str = "-";
-					str += m.format( (int)-tempCash, 4 );		// format type 4 - no thousand separators
-					strPtr = str;
-				}
-				if (nationPtr->increased_cash > 1000)
-					nationPtr->increased_cash = nationPtr->increased_cash - 1000;
-				else
-				if (nationPtr->increased_cash > 100)
-					nationPtr->increased_cash = nationPtr->increased_cash - 100;
-				else
-				if (nationPtr->increased_cash > 10)
-					nationPtr->increased_cash = nationPtr->increased_cash - 10;
-				else
-					nationPtr->increased_cash = nationPtr->increased_cash - 1;
-							
-				if (nationPtr->increased_cash < 0)
-					nationPtr->increased_cash = 0;
+				str = "-";
+				str += m.format( (int)-tempCash, 4 );		// format type 4 - no thousand separators
+				strPtr = str;
 			}
+			if (nationPtr->increased_cash > 1000)
+				nationPtr->increased_cash = nationPtr->increased_cash - 1000;
 			else
-				strPtr = nationPtr->total_cash_str();
-
-			if (strPtr[0] == '-')
-				font_red.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);	
+			if (nationPtr->increased_cash > 100)
+				nationPtr->increased_cash = nationPtr->increased_cash - 100;
 			else
-				font_snds.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);	
-
-			strPtr = nationPtr->annual_cash_str();
-			if (strPtr[2] == '-')
-				font_red.disp( CASH_X1-7, CASH_Y1+12, strPtr, CASH_X1 +CASH_LENGTH);
+			if (nationPtr->increased_cash > 10)
+				nationPtr->increased_cash = nationPtr->increased_cash - 10;
 			else
-				font_snds.disp( CASH_X1-7, CASH_Y1+12, strPtr, CASH_X1 +CASH_LENGTH);
+				nationPtr->increased_cash = nationPtr->increased_cash - 1;
+						
+			if (nationPtr->increased_cash < 0)
+				nationPtr->increased_cash = 0;
 		}
 		else
-			err_here();
+			strPtr = nationPtr->total_cash_str();
+
+		if (strPtr[0] == '-')
+			tempx = font_red.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
+		else
+			tempx = font_snds.disp( CASH_X1, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
+
+		strPtr = nationPtr->annual_cash_str();
+		if (strPtr[2] == '-')
+			font_red.disp( tempx, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
+		else
+			font_snds.disp( tempx, CASH_Y1, strPtr, CASH_X1 +CASH_LENGTH);
 
 		//------- display reputation ---------//
 
-		int   dispValue, dispChange, tempx;
+		int   dispValue, dispChange;
 		float changeAmt;
 
 		if( config.race_id > 0 )
@@ -778,49 +653,20 @@ void Info::disp_heading()
 		char *thumbBmp;
 		if( config.race_id > 0 )
 		{
-			if (current_display_mode.mode_id == MODE_ID_800x600x16)
-				thumbBmp = image_icon.get_ptr(changeAmt >= 0 ? (char*)"REPU_UP" : (char*)"REPU_DW" );
-			else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-				thumbBmp = image_icon.get_ptr(changeAmt >= 0 ? (char*)"REUP1024" : (char*)"REDW1024" );
-			else 
-				err_here();
+			thumbBmp = image_icon.get_ptr(changeAmt >= 0 ? (char*)"REPU_UP" : (char*)"REPU_DW" );
 			vga.active_buf->put_bitmap(REPU_BUTTON_X1, REPU_BUTTON_Y1, thumbBmp);
 		}
 
 		if( dispValue >= 0 )
 		{
 			str = m.format( (int)dispValue, 4 );			// format type 4 - no thousand separators
-			if (current_display_mode.mode_id == MODE_ID_800x600x16)
-			{
-				tempx = font_snds.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
-			}
-			else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				if ( config.race_id > 0 )
-					font_snds.disp( REPU_BUTTON_X1 +12, REPU_BUTTON_Y1 +27, str, REPU_BUTTON_X1 +50);
-				else
-					font_snds.disp( REPU_BUTTON_X1 +5, REPU_BUTTON_Y1 +27, str, REPU_BUTTON_X1 +50);
-			}
-			else
-				err_here();
+			tempx = font_snds.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
 		}
 		else
 		{
 			str  = "-";
 			str += m.format( (int)-dispValue, 4 );		// format type 4 - no thousand separators
-			if (current_display_mode.mode_id == MODE_ID_800x600x16)
-			{
-				tempx = font_red.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
-			}
-			else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				if ( config.race_id > 0 )
-					font_red.disp( REPU_BUTTON_X1 +12, REPU_BUTTON_Y1 +27, str, REPU_BUTTON_X1 +50);
-				else
-					font_red.disp( REPU_BUTTON_X1 +5, REPU_BUTTON_Y1 +27, str, REPU_BUTTON_X1 +50);
-			}
-			else
-				err_here();
+			tempx = font_red.disp( REPU_BUTTON_X1 +30, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
 		}
 		
 		if( dispChange )
@@ -836,35 +682,11 @@ void Info::disp_heading()
 			
 			if (str[2] == '-')
 			{
-				if (current_display_mode.mode_id == MODE_ID_800x600x16)
-				{
-					font_red.disp( tempx, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
-				}
-				else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-				{
-					if ( config.race_id > 0 )
-						font_red.disp( REPU_BUTTON_X1 +2, REPU_BUTTON_Y1 +39, str, REPU_BUTTON_X1 +50);
-					else
-						font_red.disp( REPU_BUTTON_X1 -2, REPU_BUTTON_Y1 +39, str, REPU_BUTTON_X1 +50);
-				}
-				else
-					err_here();
+				font_red.disp( tempx, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
 			}
 			else
 			{
-				if (current_display_mode.mode_id == MODE_ID_800x600x16)
-				{
-					font_snds.disp( tempx, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
-				}
-				else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-				{
-					if ( config.race_id > 0 )
-						font_snds.disp( REPU_BUTTON_X1 +2, REPU_BUTTON_Y1 +39, str, REPU_BUTTON_X1 +50);
-					else
-						font_snds.disp( REPU_BUTTON_X1 -2, REPU_BUTTON_Y1 +39, str, REPU_BUTTON_X1 +50);
-				}
-				else
-					err_here();
+				font_snds.disp( tempx, REPU_BUTTON_Y1 +12, str, REPU_BUTTON_X1 +120);
 			}
 		}
 	}

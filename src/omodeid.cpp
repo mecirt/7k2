@@ -27,7 +27,9 @@
 
 #define MAX_DISPLAY_MODE_ID 2
 
+static DisplayModeInfo *display_info_array = NULL;
 
+/*
 static DisplayModeInfo display_info_array[MAX_DISPLAY_MODE_ID] = 
 {
 	// 800x600x16
@@ -38,15 +40,12 @@ static DisplayModeInfo display_info_array[MAX_DISPLAY_MODE_ID] =
 		592, 24, 791, 223, 200, 200,			// map_matrix_x1,y1,x2,y2,width,height
 		332, 0, 574, 67-12,						// top_menu_x1,y1,x2,y2
 		576, 258, 799, 583,						// info_x1,y1,x2,y2
-		586, 560, 790, 589,						// msg_info_x1,y1,x2,y2
 		716-3, 3, 24, 24,							// map_mode_button_x1, y1, width, height
 		588, 6,									// menu_button_x1, y1
 		486-30, 24,								// repu_button_x1, y1
 		480, 12-2, 105,							// date_x1, y1, length
 		378-20, 9+4, 67+100,								// food_x1, y1, length
 		376-20, 36+1, 69+100,							// cash_x1, y1, length
-		0, 0, 331-19, 66-11,							// scroll_menu_x1, y1, x2, y2 
-		577, 584, 799, 599, 								// help_short_x1, y1, x2, y2
 		0, 0, 797, 598						// mouse_x1,y1,x2,y2
 	},
 
@@ -59,22 +58,92 @@ static DisplayModeInfo display_info_array[MAX_DISPLAY_MODE_ID] =
 	//	810, 120, 1018, 167,					// top_menu_x1,y1,x2,y2
 		804-5, 2, 1023, 74,						// top_menu_x1,y1,x2,y2
 		800, 426, 1023, 751,					// info_x1,y1,x2,y2
-		810, 589-29, 1014, 589,					// msg_info_x1,y1,x2,y2
 		937, 171, 24, 24,						// map_mode_button_x1, y1, width, height
 		901, 20+60,								// menu_button_x1, y1
 		814+155, 165-165,								// repu_button_x1, y1
 		875, 150-90, 150,							// date_x1, y1, length
 		947-120, 122-95, 72,							// food_x1, y1, length
 		848+50, 122-95, 56,							// cash_x1, y1, length
-		801-2, 80-5, 1018, 168,						// scroll_menu_x1, y1, x2, y2 
-		801, 752, 1023, 767,						// help_short_x1, y1, x2, y2
 
 		32, 2, 1018, 762							// mouse_x1,y1,x2,y2
 	},
 };
+*/
+
+static void init_display_mode(int id, int width, int height, int bpp)
+{
+  DisplayModeInfo a;
+  a.mode_id = id;
+  a.screen_width = width;
+  a.screen_height = height;
+  a.screen_bpp = bpp;
+
+  // atrix_width must be a multiplier of 64
+  a.zoom_matrix_x1 = 0;
+  a.zoom_matrix_y1 = 56;
+  a.zoom_matrix_x2 = width - 220;
+  a.zoom_matrix_x2 -= a.zoom_matrix_x2 % 64;
+  a.zoom_matrix_y2 = height - 2;
+  a.zoom_matrix_width = a.zoom_matrix_x2 - a.zoom_matrix_x1 + 1;
+  a.zoom_matrix_height = a.zoom_matrix_y2 - a.zoom_matrix_y1 + 1;
+
+  a.map_matrix_x1 = width - 208;
+  a.map_matrix_y1 = 24;
+  a.map_matrix_x2 = width - 9;
+  a.map_matrix_y2 = 223;
+  a.map_matrix_width = a.map_matrix_x2 - a.map_matrix_x1 + 1;
+  a.map_matrix_height = a.map_matrix_y2 - a.map_matrix_y1 + 1;
+
+  a.top_menu_x1 = 332;
+  a.top_menu_y1 = 0;
+  a.top_menu_x2 = a.top_menu_x1 + 242;
+  a.top_menu_y2 = 55;
+
+  a.info_x1 = width - 224;
+  a.info_y1 = 258;
+  a.info_x2 = width - 1;
+  a.info_y2 = height - 17;
+
+  a.map_mode_button_x1 = width - 88;
+  a.map_mode_button_y1 = 3;
+  a.map_mode_button_width = 24;
+  a.map_mode_button_height = 24;
+
+  a.menu_button_x1 = width - 212;
+  a.menu_button_y1 = 6;
+
+  a.repu_button_x1 = 456;
+  a.repu_button_y1 = 24;
+  a.date_x1 = 480;
+  a.date_y1 = 10;
+  a.date_length = 105;
+  a.food_x1 = 358;
+  a.food_y1 = 13;
+  a.food_length = 167;
+  a.cash_x1 = 356;
+  a.cash_y1 = 37;
+  a.cash_length = 169;
+
+  a.mouse_x1 = 0;
+  a.mouse_y1 = 0;
+  a.mouse_x2 = width - 3;
+  a.mouse_y2 = height - 2;
+
+  display_info_array[id] = a;
+}
+
+static void init_display_modes()
+{
+  if (display_info_array) return;
+  display_info_array = new DisplayModeInfo[MAX_DISPLAY_MODE_ID];
+  init_display_mode(0, 800, 600, 16);
+  init_display_mode(1, 1024, 768, 16);
+}
 
 void DisplayModeInfo::init(int modeId)
 {
+  init_display_modes();
+
 	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
 	{
 		 *this = display_info_array[modeId];
@@ -88,6 +157,8 @@ void DisplayModeInfo::init(int modeId)
 // return NULL for non-existing display mode
 DisplayModeInfo *DisplayModeInfo::get_display_info(int modeId)
 {
+  init_display_modes();
+
 	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
 		return display_info_array + modeId;
 	else
@@ -97,6 +168,8 @@ DisplayModeInfo *DisplayModeInfo::get_display_info(int modeId)
 
 void DisplayModeInfo::set_current_display_mode(int modeId)
 {
+  init_display_modes();
+
 	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
 	{
 		current_display_mode = display_info_array[modeId];

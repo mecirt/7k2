@@ -69,54 +69,25 @@ void Sys::disp_view_mode(int observeMode)
 	const int MAX_MODE_TO_DISPLAY = 8;
 	const int MODE_TO_DISPLAY_COUNT = MAX_MODE_TO_DISPLAY - MIN_MODE_TO_DISPLAY + 1;
 
-	//###### end Gilbert 4/1 #####//
-	static short darkenXM0[MODE_TO_DISPLAY_COUNT] = {  6,  82, 158, 234,   6,  82, 158, 234};
-	static short darkenYM0[MODE_TO_DISPLAY_COUNT] = {  7,   7,   7,   7,  29,  29,  29,  29};
-	static short darkenXM1[MODE_TO_DISPLAY_COUNT] = { 819, 931, 819, 931, 819, 931, 819, 931 };//{ 810, 931, 819, 940, 810, 931, 819, 940 };
-	static short darkenYM1[MODE_TO_DISPLAY_COUNT] = {  80,  80, 102, 102, 124, 124, 146, 146 };//{  10,  10,  35,  35,  60,  60,  85,  85 };
-
-	short *darkenX, *darkenY;
-	if (current_display_mode.mode_id == MODE_ID_800x600x16)
-	{
-		darkenX = darkenXM0;
-		darkenY = darkenYM0;
-	}
-	else if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-	{
-		darkenX = darkenXM1;
-		darkenY = darkenYM1;
-	}
-	else
-	{
-		err_here();
-	}
-	//###### end Gilbert 4/1 #####//
-	
-//	static char* scroll_name[8] = {"Kingdoms", "Towns", "Economy", "Trade",
-//										 "Military", "Tech", "Spies", "Rank"};
+	static short darkenX[MODE_TO_DISPLAY_COUNT] = {  6,  82, 158, 234,   6,  82, 158, 234};
+	static short darkenY[MODE_TO_DISPLAY_COUNT] = {  7,   7,   7,   7,  29,  29,  29,  29};
 
 	const int darkenWidth = 75;
 	const int darkenHeight = 21;
 	char scrollName[] = "SR1024-B";
 	
-//	if (current_display_mode.mode_id == MODE_ID_800x600x16)
+	for (int i = 0 ; i < 8 ; i ++)
 	{
-		for (int i = 0 ; i < 8 ; i ++)
-		{
-			image_button.put_back( darkenX[i], darkenY[i], "SR800-UP");
-			font_bld.center_put(darkenX[i], darkenY[i], darkenX[i] + darkenWidth -1,
-									 darkenY[i] + darkenHeight -3, text_reports.str_report_mode(i+1)); // scroll_name[i]);
-		}
+		image_button.put_back( darkenX[i], darkenY[i], "SR800-UP");
+		font_bld.center_put(darkenX[i], darkenY[i], darkenX[i] + darkenWidth -1,
+								 darkenY[i] + darkenHeight -3, text_reports.str_report_mode(i+1)); // scroll_name[i]);
 	}
 	// highlight of the mode after
 	if( view_mode >= MIN_MODE_TO_DISPLAY && view_mode <= MAX_MODE_TO_DISPLAY )
 	{
-//		if (current_display_mode.mode_id == MODE_ID_800x600x16)
-		{
-			image_button.put_back( darkenX[view_mode-1], darkenY[view_mode-1], "SR800-DW");
-			font_bld.center_put(darkenX[view_mode-1]+1, darkenY[view_mode-1]+1, darkenX[view_mode-1] + darkenWidth,
-									 darkenY[view_mode-1] + darkenHeight -2, text_reports.str_report_mode(view_mode));	// scroll_name[view_mode-1]);
-		}	
+		image_button.put_back( darkenX[view_mode-1], darkenY[view_mode-1], "SR800-DW");
+		font_bld.center_put(darkenX[view_mode-1]+1, darkenY[view_mode-1]+1, darkenX[view_mode-1] + darkenWidth,
+								 darkenY[view_mode-1] + darkenHeight -2, text_reports.str_report_mode(view_mode));	// scroll_name[view_mode-1]);
 	}
 
 	// darken buttons of view mode 1-7 if nation_array.player_recno == 0

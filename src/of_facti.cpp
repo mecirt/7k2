@@ -87,19 +87,6 @@ void FirmFactory::detect_info()
 void FirmFactory::draw(int displayLayer)
 {
 	Firm::draw(displayLayer);
-
-	if( !should_show_info() )
-		return;
-
-	if( under_construction )
-		return;
-
-	if( product_raw_id && displayLayer == 1 )
-	{
-		int cargoCount = MAX_CARGO * (int)stock_qty / (int)max_stock_qty;
-
-		// draw_cargo( max(1,cargoCount), raw_res.small_product_icon(product_raw_id) );
-	}
 }
 //--------- End of function FirmFactory::draw -----------//
 

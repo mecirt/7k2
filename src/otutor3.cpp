@@ -3086,44 +3086,20 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		//	strcpy( tutor_box[0].text, "This shows your Reputation." );
 			tutor_box[0].screen_loc_centre_x = REPU_BUTTON_X1+20;
 			tutor_box[0].screen_loc_centre_y = REPU_BUTTON_Y1+20;
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[0].pointer_offset_x = -257;
-				tutor_box[0].pointer_offset_y = 110;
-			}
-			else
-			{
-				tutor_box[0].pointer_offset_x = 0;
-				tutor_box[0].pointer_offset_y = 100;
-			}
+			tutor_box[0].pointer_offset_x = 0;
+			tutor_box[0].pointer_offset_y = 100;
 			
 		//	strcpy( tutor_box[1].text, "This shows your Money." );
 			tutor_box[1].screen_loc_centre_x = CASH_X1+20;
 			tutor_box[1].screen_loc_centre_y = CASH_Y1+10;
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[1].pointer_offset_x = -300;
-				tutor_box[1].pointer_offset_y = 60;
-			}
-			else
-			{
-				tutor_box[1].pointer_offset_x = -30;
-				tutor_box[1].pointer_offset_y = 150;
-			}
+			tutor_box[1].pointer_offset_x = -30;
+			tutor_box[1].pointer_offset_y = 150;
 			
 		//	strcpy( tutor_box[2].text, "This shows your Food." );
 			tutor_box[2].screen_loc_centre_x = FOOD_X1+20;
 			tutor_box[2].screen_loc_centre_y = FOOD_Y1+10;
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[2].pointer_offset_x = -300;
-				tutor_box[2].pointer_offset_y = 0;
-			}
-			else
-			{
-				tutor_box[2].pointer_offset_x = -100;
-				tutor_box[2].pointer_offset_y = 100;
-			}
+			tutor_box[2].pointer_offset_x = -100;
+			tutor_box[2].pointer_offset_y = 100;
 		}
 		else
 		if (cur_tutor_id == 2)
@@ -3714,30 +3690,14 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 		//	strcpy( tutor_box[0].text, "This shows your Life Points." );
 			tutor_box[0].screen_loc_centre_x = REPU_BUTTON_X1+20;
 			tutor_box[0].screen_loc_centre_y = REPU_BUTTON_Y1+20;
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[0].pointer_offset_x = -300;
-				tutor_box[0].pointer_offset_y = 0;
-			}
-			else
-			{
-				tutor_box[0].pointer_offset_x = 0;
-				tutor_box[0].pointer_offset_y = 100;
-			}
+			tutor_box[0].pointer_offset_x = 0;
+			tutor_box[0].pointer_offset_y = 100;
 			
 		//	strcpy( tutor_box[1].text, "This shows your Money." );
 			tutor_box[1].screen_loc_centre_x = CASH_X1+20;
 			tutor_box[1].screen_loc_centre_y = CASH_Y1+10;
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[1].pointer_offset_x = -300;
-				tutor_box[1].pointer_offset_y = 100;
-			}
-			else
-			{
-				tutor_box[1].pointer_offset_x = -100;
-				tutor_box[1].pointer_offset_y = 100;
-			}
+			tutor_box[1].pointer_offset_x = -100;
+			tutor_box[1].pointer_offset_y = 100;
 			
 		//	strcpy( tutor_box[2].text, "This shows the amount of tribute that you receive from your Slave Town." );
 			tutor_box[2].screen_loc_centre_x = INFO_X1 + 150;
@@ -4400,19 +4360,10 @@ void Tutor::disp_objective_text(int objestiveRecNo)
 			}
 			load_in_game_box(cur_tutor_id, 14);
 		//	strcpy( tutor_box[0].text, "This is the Kingdoms Button. You may Click here or press F1 on your keyboard to bring up the Diplomacy Menu. Press Esc to exit the Kingdoms menu." );
-			if (current_display_mode.mode_id == MODE_ID_1024x768x16)
-			{
-				tutor_box[0].screen_loc_centre_x = 814;
-				tutor_box[0].screen_loc_centre_y = 85;
-				tutor_box[0].pointer_offset_x = -150;
-			}
-			else
-			{
-				tutor_box[0].screen_loc_centre_x = 40;
-				tutor_box[0].screen_loc_centre_y = 30;
-				tutor_box[0].pointer_offset_y = 300;
-				tutor_box[0].pointer_offset_x = 200;
-			}			
+			tutor_box[0].screen_loc_centre_x = 40;
+			tutor_box[0].screen_loc_centre_y = 30;
+			tutor_box[0].pointer_offset_y = 300;
+			tutor_box[0].pointer_offset_x = 200;
 		}
 		else
 		if (cur_tutor_id == 9)

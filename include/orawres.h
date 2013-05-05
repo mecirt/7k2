@@ -150,9 +150,6 @@ public:
 	void		next_day();
 	void		update_supply_firm();
 
-	void  	put_small_product_icon(int x, int y, int rawId);
-	void		put_small_raw_icon(int x, int y, int rawId);
-
 	char* 	large_product_icon(int rawId);
 	char* 	small_product_icon(int rawId);
 	char* 	large_raw_icon(int rawId);

@@ -71,7 +71,6 @@ static VBrowseIF browse_caravan, browse_ship;
 static void create_caravan_list();
 static void create_ship_list();
 static void put_caravan_rec(int recNo, int x, int y);
-static void put_ship_rec(int recNo, int x, int y);
 static void	disp_total();
 static void put_stop_info(int x, int y, TradeStop* tradeStop);
 
@@ -322,80 +321,6 @@ static void put_caravan_rec(int recNo, int x, int y)
 	}
 }
 //----------- End of static function put_caravan_rec -----------//
-
-
-//-------- Begin of static function put_ship_rec --------//
-//
-static void put_ship_rec(int recNo, int x, int y)
-{
-	/*
-	int   		unitRecno = info.get_report_data2(recNo);
-	UnitMarine* unitPtr   = (UnitMarine*) unit_array[unitRecno];
-
-	int x2 = x+browse_ship.rec_width-3;
-
-	//---------- display info ----------//
-
-	x+=3;
-	y+=3;
-
-	String str;
-	str  = (int) unitPtr->hit_points;
-	str += "/";
-	str += unitPtr->max_hit_points();
-
-	font_bld.put( x    , y, unitPtr->unit_name() );
-	font_bld.put( x+90 , y, str );
-
-	//------- display pick up type of each stop -------//
-
-	if( unitPtr->stop_defined_num >= 1 )
-		put_stop_info( x+160, y, unitPtr->stop_array );
-
-	if( unitPtr->stop_defined_num >= 2 )
-		put_stop_info( x+220, y, unitPtr->stop_array+1 );
-
-	if( unitPtr->stop_defined_num >= 3 )
-		put_stop_info( x+280, y, unitPtr->stop_array+2 );
-
-	//------- display goods carried -------//
-
-	x += 340;
-
-	char *bitmapPtr;
-
-	for(int i=0; i<MAX_RAW; i++)
-	{
-		if( unitPtr->raw_qty_array[i]==0 )
-			continue;
-
-		bitmapPtr = raw_res.small_raw_icon(i+1);
-		vga_back.put_bitmap( x, y, bitmapPtr );
-
-		font_bld.disp( x+14, y-1, unitPtr->raw_qty_array[i], 1, x+45 );
-		x+=36;
-
-		if( x+36 > x2 )
-			return;
-	}
-
-	for( i=0; i<MAX_PRODUCT; i++)
-	{
-		if( unitPtr->product_raw_qty_array[i]==0 )
-			continue;
-
-		bitmapPtr = raw_res.small_product_icon(i+1);
-		vga_back.put_bitmap( x, y, bitmapPtr );
-
-		font_bld.disp( x+14, y-1, unitPtr->product_raw_qty_array[i], 1, x+45 );
-		x+=36;
-
-		if( x+36 > x2 )
-			return;
-	}
-	*/
-}
-//----------- End of static function put_ship_rec -----------//
 
 
 //-------- Begin of static function put_stop_info --------//

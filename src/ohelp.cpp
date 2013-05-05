@@ -69,6 +69,22 @@ enum { MSG_WIN_WIDTH   = 390,
 		 MSG_HEAD_HEIGHT = 16   };
 
 
+short HelpInfo::calc_x1()
+{
+  // hack to properly support the existing data without having to convert it
+  short diff = VGA_WIDTH - 800;
+  if (area_x1 > 550) return area_x1 + diff;
+  return area_x1;
+}
+
+short HelpInfo::calc_x2()
+{
+  // hack to properly support the existing data without having to convert it ... that x1 is intended
+  short diff = VGA_WIDTH - 800;
+  if (area_x1 > 550) return area_x2 + diff;
+  return area_x2;
+}
+
 //------- Begin of function Help::Help ----------//
 
 Help::Help()
@@ -184,14 +200,16 @@ void Help::load(char* helpFileName)
 
 		else if( tokenStr[0] >= '0' && tokenStr[0] <= '9' )
 		{
-			iptr->area800x600_x1 = (short) fileTxt.get_num();
-			iptr->area800x600_y1 = (short) fileTxt.get_num();
-			iptr->area800x600_x2 = (short) fileTxt.get_num();
-			iptr->area800x600_y2 = (short) fileTxt.get_num();
-			iptr->area1024x768_x1 = (short) fileTxt.get_num();
-			iptr->area1024x768_y1 = (short) fileTxt.get_num();
-			iptr->area1024x768_x2 = (short) fileTxt.get_num();
-			iptr->area1024x768_y2 = (short) fileTxt.get_num();
+			iptr->area_x1 = (short) fileTxt.get_num();
+			iptr->area_y1 = (short) fileTxt.get_num();
+			iptr->area_x2 = (short) fileTxt.get_num();
+			iptr->area_y2 = (short) fileTxt.get_num();
+
+                        // skip the 1024x768 numbers
+			fileTxt.get_num();
+			fileTxt.get_num();
+			fileTxt.get_num();
+			fileTxt.get_num();
 			iptr->monster_human_interface = (short) fileTxt.get_num();// 0 when display for both interfaces
 																						 // 1 when display only for monster interface
 																						 // 2 when display only for human interface
@@ -304,39 +322,17 @@ void Help::disp()
 	{
 		//--------- locate the help and display it ----------//
 
-		switch( current_display_mode.mode_id )
+		helpInfo = help_info_array + (i = first_help_by_area);
+		for( ; i<last_help_by_area ; i++, helpInfo++ )
 		{
-		case MODE_ID_800x600x16:
-			helpInfo = help_info_array + (i = first_help_by_area);
-			for( ; i<last_help_by_area ; i++, helpInfo++ )
+			if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->calc_x1(), helpInfo->area_y1,
+				helpInfo->calc_x2(), helpInfo->area_y2) && 
+				( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
+					(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
+					(helpInfo->monster_human_interface == 0) ) )
 			{
-				if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->area800x600_x1, helpInfo->area800x600_y1,
-					helpInfo->area800x600_x2, helpInfo->area800x600_y2) && 
-					( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
-						(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
-						(helpInfo->monster_human_interface == 0) ) )
-				{
-					break;
-				}
+				break;
 			}
-			break;
-
-		case MODE_ID_1024x768x16:
-			helpInfo = help_info_array + (i = first_help_by_area);
-			for( ; i<last_help_by_area ; i++, helpInfo++ )
-			{
-				if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->area1024x768_x1, helpInfo->area1024x768_y1,
-					helpInfo->area1024x768_x2, helpInfo->area1024x768_y2) &&
-					( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
-						(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
-						(helpInfo->monster_human_interface == 0) ) )
-				{
-					break;
-				}
-			}
-			break;
-		default:
-			err_here();
 		}
 
 		if( i >= last_help_by_area )		// not found
@@ -365,23 +361,9 @@ void Help::disp()
 
 	else if( helpInfo )
 	{
-		switch( current_display_mode.mode_id )
-		{
-		case MODE_ID_800x600x16:
-			disp_help( (helpInfo->area800x600_x1+helpInfo->area800x600_x2)/2,
-						(helpInfo->area800x600_y1+helpInfo->area800x600_y2)/2,
-						 helpInfo->help_title, helpInfo->help_text_ptr );
-			break;
-
-		case MODE_ID_1024x768x16:
-			disp_help( (helpInfo->area1024x768_x1+helpInfo->area1024x768_x2)/2,
-						(helpInfo->area1024x768_y1+helpInfo->area1024x768_y2)/2,
-						 helpInfo->help_title, helpInfo->help_text_ptr );
-			break;
-
-		default:
-			err_here();
-		}
+		disp_help( (helpInfo->calc_x1()+helpInfo->calc_x2())/2,
+					(helpInfo->area_y1+helpInfo->area_y2)/2,
+					 helpInfo->help_title, helpInfo->help_text_ptr );
 	}
 }
 //------------ End of function Help::disp ----------//
@@ -531,35 +513,6 @@ void Help::set_help(int x1, int y1, int x2, int y2, const char* helpCode)
 //---------- End of function Help::set_help ---------//
 
 
-//--------- Begin of function Help::set_unit_help --------//
-//
-void Help::set_unit_help(int unitId, int rankId, int x1, int y1, int x2, int y2)
-{
-	if( !mouse.in_area(x1, y1, x2, y2) )
-		return;
-
-	//-------- compose the help string --------//
-
-	static String str;
-
-	str = unit_res[unitId]->name;
-
-	if( rankId==RANK_KING )
-	{
-		str += " ";
-		str += translate.process( "King" );
-	}
-	else if( rankId==RANK_GENERAL )
-	{
-		str += " ";
-		str += translate.process( "General" );
-	}
-
-	set_custom_help( x1, y1, x2, y2, str );
-}
-//---------- End of function Help::set_unit_help ---------//
-
-
 //--------- Begin of function Help::set_custom_help --------//
 //
 // <int>   x1, y1, x2, y2 - the coordination of the help
@@ -642,49 +595,22 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 	{
 		//--------- locate the help and display it ----------//
 
-		switch( current_display_mode.mode_id )
+		helpInfo = help_info_array + (i = first_help_by_area);
+		for( ; i<last_help_by_area ; i++, helpInfo++ )
 		{
-		case MODE_ID_800x600x16:
-			helpInfo = help_info_array + (i = first_help_by_area);
-			for( ; i<last_help_by_area ; i++, helpInfo++ )
+			if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->calc_x1(), helpInfo->area_y1,
+				helpInfo->calc_x2(), helpInfo->area_y2)  &&
+				!(game.game_mode == GAME_TUTORIAL && tutor.should_not_display_report_button_flag) &&		 
+				( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
+					(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
+					(helpInfo->monster_human_interface == 0) ) )
 			{
-				if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->area800x600_x1, helpInfo->area800x600_y1,
-					helpInfo->area800x600_x2, helpInfo->area800x600_y2)  &&
-					!(game.game_mode == GAME_TUTORIAL && tutor.should_not_display_report_button_flag) &&		 
-					( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
-						(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
-						(helpInfo->monster_human_interface == 0) ) )
-				{
-					help_x1 = helpInfo->area800x600_x1;
-					help_y1 = helpInfo->area800x600_y1;
-					help_x2 = helpInfo->area800x600_x2;
-					help_y2 = helpInfo->area800x600_y2;
-					break;
-				}
+				help_x1 = helpInfo->calc_x1();
+				help_y1 = helpInfo->area_y1;
+				help_x2 = helpInfo->calc_x2();
+				help_y2 = helpInfo->area_y2;
+				break;
 			}
-			break;
-
-		case MODE_ID_1024x768x16:
-			helpInfo = help_info_array + (i = first_help_by_area);
-			for( ; i<last_help_by_area ; i++, helpInfo++ )
-			{
-				if( !helpInfo->help_code[0] && mouse.in_area( helpInfo->area1024x768_x1, helpInfo->area1024x768_y1,
-					helpInfo->area1024x768_x2, helpInfo->area1024x768_y2) &&
-					!(game.game_mode == GAME_TUTORIAL && tutor.should_not_display_report_button_flag) &&
-					( (helpInfo->monster_human_interface == 1 && config.race_id < 0) ||
-						(helpInfo->monster_human_interface == 2 && config.race_id > 0) ||
-						(helpInfo->monster_human_interface == 0) ) )
-				{
-					help_x1 = helpInfo->area1024x768_x1;
-					help_y1 = helpInfo->area1024x768_y1;
-					help_x2 = helpInfo->area1024x768_x2;
-					help_y2 = helpInfo->area1024x768_y2;
-					break;
-				}
-			}
-			break;
-		default:
-			err_here();
 		}
 
 		if( i >= last_help_by_area )		// not found
@@ -726,17 +652,8 @@ void Help::disp_short_help(VgaBuf *vgaBuf)
 			x2 = x1 + textWidth - 1;
 		}
 
-		// save buffer
-
 		if( config.help_mode >= BRIEF_HELP )
 		{
-			// for safety, still capture the screen even though short help is not displayed
-			// may cause problem when changing help_mode
-
-			// put text
-
-			// vgaBuf->bar(x1, y1, x2, y2, V_WHITE);
-			// vgaBuf->rect(x1, y1, x2, y2, 1, V_BLACK);
 			vgaBuf->bar( x1, y1, x2-3, y2-3, VgaBuf::color_up );
 			vgaBuf->rect( x1, y1, x2-3, y2-3, 3, HELP_BOX_COLOR );
 			vgaBuf->bar_alpha( x2-2, y1+2, x2, y2-3, 1, V_BLACK );
