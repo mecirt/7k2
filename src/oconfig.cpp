@@ -260,7 +260,7 @@ void Config::default_preference()
 	fog_mask_method = 2;
 
 	// display mode
-	display_mode_id = MODE_ID_DEFAULT;			// see OMODEID.H
+	display_mode_id = 0;			// see OMODEID.H
 
 	enable_weather_visual();
 	enable_weather_audio();
@@ -810,8 +810,8 @@ int Config::validate()
 
 	// ----------- display mode -----------//
 
-	if( display_mode_id != MODE_ID_800x600x16 && display_mode_id != MODE_ID_1024x768x16 )
-		invalidPoint = 0x3c0;
+//	if( !DisplayModeInfo::get_display_info(display_mode_id) )
+//		invalidPoint = 0x3c0;
 
 	if( invalidPoint != 0 )
 		return 0;			// set break point here

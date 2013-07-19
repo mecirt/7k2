@@ -435,7 +435,7 @@ go_point1:
 
 			if( !replay_stage_flag )
 			{
-				sys.change_display_mode(MODE_ID_DEFAULT);
+				sys.change_display_mode(defaultMode);
 				for (i = 0; i < HFIELD_WIDTH; i++)
 					for (j = 0; j < HFIELD_HEIGHT; j++)
 						map[i][j] = smoothing_checking(i, j, HFIELD_BIT_SHIFT);

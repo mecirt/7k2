@@ -25,16 +25,8 @@
 #define __OMOUSECR_H
 
 
-// #include <ovga.h>
-
 #include <oresdb.h>
 #include <oblob2w.h>
-
-
-// ------------ Define constant -------- // 
-
-#define MAX_VGA_WIDTH 1024
-#define MAX_VGA_HEIGHT 768
 
 
 //------------ Define cursor id. ----------//
@@ -147,11 +139,6 @@ public:
 	int	frame_x1, frame_y1, frame_x2, frame_y2;
 	int	frame_origin_x, frame_origin_y;
 	int	frame_border_x1, frame_border_y1, frame_border_x2, frame_border_y2;
-
-	short	frame_top_save_scr[MAX_VGA_WIDTH+2];		// for saving the nation selection frame
-	short	frame_bottom_save_scr[MAX_VGA_WIDTH+2];	// +4 is for the width & height info
-	short	frame_left_save_scr[MAX_VGA_HEIGHT+2];
-	short	frame_right_save_scr[MAX_VGA_HEIGHT+2];
 
 	//------- cursor bitmap resource --------//
 

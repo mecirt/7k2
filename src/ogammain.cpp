@@ -370,7 +370,7 @@ void Game::main_menu()
 			String resStr;
 
 			if( !DisplayModeInfo::get_display_info(config.display_mode_id) )
-				config.display_mode_id = MODE_ID_DEFAULT;
+				config.display_mode_id = 0;
 
 			resStr  = DisplayModeInfo::get_display_info(config.display_mode_id)->screen_width;
 			resStr += "X";

@@ -151,14 +151,14 @@ int Sys::init_win()
 //
 int Sys::init_directx()
 {
-  DisplayModeInfo::set_current_display_mode(MODE_ID_DEFAULT);
-
   //-------- initialize graphics --------//
 
   DEBUG_LOG("Attempt vga.init()");
   if( !vga.init() )
     return FALSE;
   DEBUG_LOG("vga.init() ok");
+
+  DisplayModeInfo::set_current_display_mode(800, 600);
 
   init_display();
   ShowMouseCursor(false);

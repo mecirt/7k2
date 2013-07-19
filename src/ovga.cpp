@@ -85,7 +85,7 @@ BOOL Vga::init()
    if( !init_dd() )
       return FALSE;
 
-   if( !set_mode(VGA_WIDTH, VGA_HEIGHT) )
+   if( !set_mode(800, 600) )
       return FALSE;
 
    File palFile;
@@ -124,8 +124,10 @@ BOOL Vga::init_dd()
 
 //-------- Begin of function Vga::set_mode ----------//
 
+#include <iostream>
 BOOL Vga::set_mode(int w, int h)
 {
+  std::cout<<"Setting mode: "<<w<<"x"<<h<<std::endl;
   return SetDisplayMode (w, h);
 }
 //-------- End of function Vga::set_mode ----------//

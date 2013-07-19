@@ -261,7 +261,7 @@ void Game::game_end(int winNationRecno, int playerDestroyed, int surrenderToNati
 
 	// -------- change display mode ---------//
 
-	sys.change_display_mode(MODE_ID_DEFAULT);
+	sys.change_display_mode(defaultMode);
 
 	//------- display the winning/losing picture -------//
 

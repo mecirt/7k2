@@ -24,51 +24,12 @@
 
 #include <omodeid.h>
 #include <all.h>
+#include <SDL/SDL.h>
 
-#define MAX_DISPLAY_MODE_ID 2
+static int maxDisplayMode = 0;
+int defaultMode = 0;
 
 static DisplayModeInfo *display_info_array = NULL;
-
-/*
-static DisplayModeInfo display_info_array[MAX_DISPLAY_MODE_ID] = 
-{
-	// 800x600x16
-	{
-		MODE_ID_800x600x16,						// mode id
-		800, 600, 16,							// screen_width, height, bbp
-		0, 68-12, 575, 598, 576, 531+12,				// zoom_matrix_x1,y1,x2,y2,width,height
-		592, 24, 791, 223, 200, 200,			// map_matrix_x1,y1,x2,y2,width,height
-		332, 0, 574, 67-12,						// top_menu_x1,y1,x2,y2
-		576, 258, 799, 583,						// info_x1,y1,x2,y2
-		716-3, 3, 24, 24,							// map_mode_button_x1, y1, width, height
-		588, 6,									// menu_button_x1, y1
-		486-30, 24,								// repu_button_x1, y1
-		480, 12-2, 105,							// date_x1, y1, length
-		378-20, 9+4, 67+100,								// food_x1, y1, length
-		376-20, 36+1, 69+100,							// cash_x1, y1, length
-		0, 0, 797, 598						// mouse_x1,y1,x2,y2
-	},
-
-	// 1024x768x16
-	{
-		MODE_ID_1024x768x16,					// mode id
-		1024,768, 16,							// screen_width, height, bbp
-		32, 2, 799, 762, 768, 761,				// zoom_matrix_x1,y1,x2,y2,width,height  {y1 must never 0, 64 must be a factor of y1 - y2}
-		816, 193, 1015, 392, 200, 200,			// map_matrix_x1,y1,x2,y2,width,height
-	//	810, 120, 1018, 167,					// top_menu_x1,y1,x2,y2
-		804-5, 2, 1023, 74,						// top_menu_x1,y1,x2,y2
-		800, 426, 1023, 751,					// info_x1,y1,x2,y2
-		937, 171, 24, 24,						// map_mode_button_x1, y1, width, height
-		901, 20+60,								// menu_button_x1, y1
-		814+155, 165-165,								// repu_button_x1, y1
-		875, 150-90, 150,							// date_x1, y1, length
-		947-120, 122-95, 72,							// food_x1, y1, length
-		848+50, 122-95, 56,							// cash_x1, y1, length
-
-		32, 2, 1018, 762							// mouse_x1,y1,x2,y2
-	},
-};
-*/
 
 static void init_display_mode(int id, int width, int height, int bpp)
 {
@@ -135,16 +96,28 @@ static void init_display_mode(int id, int width, int height, int bpp)
 static void init_display_modes()
 {
   if (display_info_array) return;
-  display_info_array = new DisplayModeInfo[MAX_DISPLAY_MODE_ID];
-  init_display_mode(0, 800, 600, 16);
-  init_display_mode(1, 1024, 768, 16);
+  SDL_Rect **modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+  if (modes == (SDL_Rect**)0) return;
+  maxDisplayMode = 0;
+  for (int i = 0; modes[i]; ++i) {
+    if ((modes[i]->w < 800) || (modes[i]->h < 600)) continue;
+    maxDisplayMode++;
+  }
+  display_info_array = new DisplayModeInfo[maxDisplayMode];
+  int idx = 0;
+  for (int i = 0; modes[i]; ++i)
+  {
+    if ((modes[i]->w < 800) || (modes[i]->h < 600)) continue;
+    init_display_mode(idx++, modes[i]->w, modes[i]->h, 16);
+    if ((modes[i]->w == 800) && (modes[i]->h == 600)) defaultMode = idx;
+  }
 }
 
 void DisplayModeInfo::init(int modeId)
 {
   init_display_modes();
 
-	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
+	if( modeId >= 0 && modeId < maxDisplayMode )
 	{
 		 *this = display_info_array[modeId];
 	}
@@ -159,7 +132,7 @@ DisplayModeInfo *DisplayModeInfo::get_display_info(int modeId)
 {
   init_display_modes();
 
-	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
+	if( modeId >= 0 && modeId < maxDisplayMode )
 		return display_info_array + modeId;
 	else
 		return NULL;
@@ -170,7 +143,7 @@ void DisplayModeInfo::set_current_display_mode(int modeId)
 {
   init_display_modes();
 
-	if( modeId >= 0 && modeId < MAX_DISPLAY_MODE_ID )
+	if( modeId >= 0 && modeId < maxDisplayMode )
 	{
 		current_display_mode = display_info_array[modeId];
 	}
@@ -178,6 +151,17 @@ void DisplayModeInfo::set_current_display_mode(int modeId)
 	{
 		err_here();
 	}	
+}
+
+void DisplayModeInfo::set_current_display_mode(int w, int h)
+{
+  init_display_modes();
+
+  for (int i = 0; i < maxDisplayMode; ++i)
+    if ((display_info_array[i].screen_width == w) && (display_info_array[i].screen_height == h)) {
+      set_current_display_mode(i);
+      return;
+    }
 }
 
 

@@ -28,10 +28,7 @@
 
 // -------- define constant for existing modeId ---------//
 
-#define MODE_ID_DEFAULT			0
-#define MODE_ID_800x600x16		0	
-#define MODE_ID_1024x768x16	1
-
+extern int defaultMode;
 
 // -------- define struct DisplayModeInfo --------------//
 
@@ -105,10 +102,11 @@ struct DisplayModeInfo
 
 	// ------------------------------ //
 
-	void	init(int modeId = MODE_ID_DEFAULT);
+	void	init(int mode);
 
 	static DisplayModeInfo *get_display_info(int modeId);		// return NULL for non-existing display mode
 	static void	set_current_display_mode(int modeId);
+	static void	set_current_display_mode(int w, int h);
 };
 
 extern DisplayModeInfo current_display_mode;
